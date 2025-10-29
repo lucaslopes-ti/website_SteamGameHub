@@ -5,11 +5,9 @@ import path from "path";
 import { randomUUID } from "crypto";
 import { useLocalStorage } from "@/lib/config";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// Configuração de rota segment - Next.js 14+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
