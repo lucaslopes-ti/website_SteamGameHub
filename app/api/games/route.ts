@@ -111,6 +111,22 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     
+    // Validar campos obrigatórios
+    if (!body.title || !body.description || !body.author || !body.authorEmail) {
+      return NextResponse.json(
+        { error: "Campos obrigatórios faltando: title, description, author, authorEmail" },
+        { status: 400 }
+      );
+    }
+
+    // Validar: deve ter OU executableFile OU downloadLink
+    if (!body.executableFile && !body.downloadLink) {
+      return NextResponse.json(
+        { error: "É necessário fornecer um arquivo executável ou um link de download" },
+        { status: 400 }
+      );
+    }
+
     const newGameData: Omit<Game, "id"> = {
       title: body.title,
       description: body.description,
@@ -122,6 +138,7 @@ export async function POST(request: NextRequest) {
       image: body.image,
       trailerUrl: body.trailerUrl,
       playableLink: body.playableLink,
+      downloadLink: body.downloadLink, // Link do Google Drive ou outro serviço
       executableFile: body.executableFile,
       executableFileName: body.executableFileName,
       executableFileSize: body.executableFileSize,
