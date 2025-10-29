@@ -64,7 +64,8 @@ class FirebaseStorageService implements StorageService {
     if (file instanceof File) {
       blob = file;
     } else {
-      blob = new Blob([file]);
+      // Converter Buffer para Blob corretamente
+      blob = new Blob([new Uint8Array(file)]);
     }
 
     await uploadBytes(storageRef, blob);
