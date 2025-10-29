@@ -26,30 +26,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    // Autenticação usando variáveis de ambiente para segurança
-    const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL || "";
-    const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "";
-    
-    const validUsers: User[] = [
-      {
-        id: "1",
-        name: "Lucas Lopes",
-        email: adminEmail || "admin",
-        role: "teacher",
-      },
-    ];
+    try {
+      // Autenticação no servidor (mais seguro)
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    // Validação usando variáveis de ambiente
-    if (adminEmail && adminPassword && email === adminEmail && password === adminPassword) {
-      const user = validUsers.find((u) => u.email === email);
-      if (user) {
-        setUser(user);
-        localStorage.setItem("user", JSON.stringify(user));
-        return true;
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.user) {
+          setUser(data.user);
+          localStorage.setItem("user", JSON.stringify(data.user));
+          return true;
+        }
       }
-    }
 
-    return false;
+      return false;
+    } catch (error) {
+      console.error("Erro ao fazer login:", error);
+      return false;
+    }
   };
 
   const logout = () => {
