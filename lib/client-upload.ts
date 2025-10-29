@@ -19,7 +19,7 @@ function generateUUID(): string {
 export async function uploadToFirebaseDirect(
   file: File,
   type: "image" | "executable"
-): Promise<{ url: string; path: string; fileName: string }> {
+): Promise<{ url: string; path: string; fileName: string; originalFileName: string; fileSize: number }> {
   // Verificar se Firebase está configurado
   const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
   if (!storageBucket) {
@@ -49,6 +49,8 @@ export async function uploadToFirebaseDirect(
     url,
     path: storagePath,
     fileName: uniqueFileName,
+    originalFileName: file.name,
+    fileSize: file.size,
   };
 }
 
