@@ -9,7 +9,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "migrate:firebase": "tsx scripts/migrate-to-firebase.ts"
+    "migrate:firebase": "tsx scripts/migrate-to-firebase.ts",
+    "test:firebase": "tsx scripts/test-firebase-connection.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",

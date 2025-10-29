@@ -3,6 +3,7 @@ import { writeFile, mkdir } from "fs/promises";
 import { existsSync } from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
+import { useLocalStorage } from "@/lib/config";
 
 export const config = {
   api: {
@@ -57,6 +58,44 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Se estiver usando Firebase Storage
+    if (!useLocalStorage()) {
+      try {
+        // Importar Firebase Storage dinamicamente
+        const { storage } = await import("@/lib/firebase/config");
+        const { ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
+
+        // Gerar caminho único
+        const uniqueFileName = `${randomUUID()}${fileExtension}`;
+        const storagePath = type === "image" 
+          ? `images/${uniqueFileName}`
+          : `games/${uniqueFileName}`;
+
+        const storageRef = ref(storage, storagePath);
+
+        // Converter File para Blob
+        const bytes = await file.arrayBuffer();
+        const blob = new Blob([bytes], { type: file.type });
+
+        // Fazer upload
+        await uploadBytes(storageRef, blob);
+
+        // Obter URL pública
+        const url = await getDownloadURL(storageRef);
+
+        return NextResponse.json({
+          success: true,
+          url: url,
+          path: storagePath,
+          fileName: uniqueFileName,
+        });
+      } catch (firebaseError) {
+        console.error("Erro no Firebase Storage, tentando local:", firebaseError);
+        // Fallback para local se Firebase falhar
+      }
+    }
+
+    // Modo local (ou fallback)
     // Criar diretório de uploads se não existir
     if (!existsSync(uploadDir)) {
       await mkdir(uploadDir, { recursive: true });
@@ -72,19 +111,18 @@ export async function POST(request: NextRequest) {
     await writeFile(filePath, buffer);
 
     // Retornar caminho relativo para acesso público
-    const publicPath = type === "image" 
+    const publicPath = type === "image"
       ? `/uploads/images/${uniqueFileName}`
       : `/uploads/games/${uniqueFileName}`;
 
     return NextResponse.json({
       success: true,
-      fileName: uniqueFileName,
-      originalFileName: file.name,
-      fileSize: file.size,
+      url: publicPath,
       path: publicPath,
+      fileName: uniqueFileName,
     });
   } catch (error) {
-    console.error("Erro no upload:", error);
+    console.error("Erro ao fazer upload:", error);
     return NextResponse.json(
       { error: "Erro ao fazer upload do arquivo" },
       { status: 500 }

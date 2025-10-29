@@ -1,0 +1,11 @@
+# Garantir que arquivos binários sejam tratados corretamente
+*.exe binary
+*.zip binary
+*.rar binary
+*.7z binary
+*.app binary
+*.dmg binary
+
+# Arquivos de dados JSON podem ser text
+*.json text
+

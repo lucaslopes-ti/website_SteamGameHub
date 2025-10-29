@@ -4,10 +4,11 @@ import { existsSync } from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
 import { Game } from "@/lib/games";
+import { useLocalDatabase } from "@/lib/config";
 
 const GAMES_FILE = path.join(process.cwd(), "data", "games.json");
 
-// Garantir que o diretório existe
+// Funções locais para backup/fallback
 async function ensureDataDir() {
   const dataDir = path.join(process.cwd(), "data");
   if (!existsSync(dataDir)) {
@@ -30,15 +31,75 @@ async function saveGamesToFile(games: Game[]) {
   await writeFile(GAMES_FILE, JSON.stringify(games, null, 2));
 }
 
+// Função para buscar jogos (Firestore ou Local)
+async function getGames(approved?: boolean): Promise<Game[]> {
+  if (!useLocalDatabase()) {
+    try {
+      const { db } = await import("@/lib/firebase/config");
+      const { collection, query, where, getDocs } = await import("firebase/firestore");
+
+      const gamesRef = collection(db, "games");
+      let q = approved !== undefined 
+        ? query(gamesRef, where("approved", "==", approved === true))
+        : query(gamesRef);
+
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map((doc) => ({ 
+        id: doc.id, 
+        ...doc.data() 
+      } as Game));
+    } catch (error) {
+      console.error("Erro ao buscar do Firestore, usando fallback local:", error);
+      // Fallback para local
+    }
+  }
+
+  // Modo local
+  const games = await getGamesFromFile();
+  if (approved === "true") {
+    return games.filter((g) => g.approved);
+  }
+  return games;
+}
+
+// Função para criar jogo (Firestore ou Local)
+async function createGame(gameData: Omit<Game, "id">): Promise<Game> {
+  if (!useLocalDatabase()) {
+    try {
+      const { db } = await import("@/lib/firebase/config");
+      const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
+
+      const gamesRef = collection(db, "games");
+      const docRef = await addDoc(gamesRef, {
+        ...gameData,
+        createdAt: serverTimestamp(),
+      });
+
+      return {
+        id: docRef.id,
+        ...gameData,
+      } as Game;
+    } catch (error) {
+      console.error("Erro ao criar no Firestore, usando fallback local:", error);
+      // Fallback para local
+    }
+  }
+
+  // Modo local
+  const games = await getGamesFromFile();
+  const newGame: Game = {
+    id: randomUUID(),
+    ...gameData,
+  };
+  games.push(newGame);
+  await saveGamesToFile(games);
+  return newGame;
+}
+
 export async function GET(request: NextRequest) {
   try {
-    const games = await getGamesFromFile();
     const approved = request.nextUrl.searchParams.get("approved");
-    
-    if (approved === "true") {
-      return NextResponse.json(games.filter((g) => g.approved));
-    }
-    
+    const games = await getGames(approved === "true");
     return NextResponse.json(games);
   } catch (error) {
     console.error("Erro ao buscar jogos:", error);
@@ -49,10 +110,8 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const games = await getGamesFromFile();
-
-    const newGame: Game = {
-      id: randomUUID(),
+    
+    const newGameData: Omit<Game, "id"> = {
       title: body.title,
       description: body.description,
       author: body.author,
@@ -66,6 +125,7 @@ export async function POST(request: NextRequest) {
       executableFile: body.executableFile,
       executableFileName: body.executableFileName,
       executableFileSize: body.executableFileSize,
+      screenshots: body.screenshots || [],
       rating: 0,
       totalRatings: 0,
       featured: false,
@@ -73,8 +133,7 @@ export async function POST(request: NextRequest) {
       pending: true,
     };
 
-    games.push(newGame);
-    await saveGamesToFile(games);
+    const newGame = await createGame(newGameData);
 
     return NextResponse.json({ success: true, game: newGame }, { status: 201 });
   } catch (error) {
@@ -82,4 +141,3 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Erro ao criar jogo" }, { status: 500 });
   }
 }
-

@@ -25,6 +25,9 @@ yarn-error.log*
 # local env files
 .env*.local
 .env.local
+.env
+.env.production
+.env.development
 
 # vercel
 .vercel
@@ -41,4 +44,12 @@ public/uploads/games/*
 # data
 data/*
 !data/.gitkeep
+
+# documentação explicativa (não necessária no repo)
+DEPLOY.md
+MIGRACAO.md
+TESTE_LOCAL.md
+README_PRODUCAO.md
+IMPLEMENTACAO.md
+CHANGELOG.md
 

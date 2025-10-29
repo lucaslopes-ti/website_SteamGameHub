@@ -8,24 +8,38 @@ export interface User {
   role: "student" | "teacher" | "admin";
 }
 
-// Mock de usuários (em produção, use banco de dados)
-const mockUsers: User[] = [
-  {
-    id: "1",
-    name: "Admin",
-    email: "admin@senai.com",
-    role: "admin",
-  },
-  {
-    id: "2",
-    name: "Professor Silva",
-    email: "professor@senai.com",
-    role: "teacher",
-  },
-];
+// Usuários válidos (em produção, use banco de dados ou Firebase Auth)
+// Email obtido de variável de ambiente para segurança
+function getValidUsers(): User[] {
+  const adminEmail = process.env.ADMIN_EMAIL || "";
+  if (adminEmail) {
+    return [
+      {
+        id: "1",
+        name: "Lucas Lopes",
+        email: adminEmail,
+        role: "teacher",
+      },
+    ];
+  }
+  return [];
+}
+
+const validUsers: User[] = getValidUsers();
 
 export function getUserByEmail(email: string): User | undefined {
-  return mockUsers.find((u) => u.email === email);
+  return validUsers.find((u) => u.email === email);
+}
+
+export function validateLogin(email: string, password: string): boolean {
+  // Validação usando variáveis de ambiente para segurança
+  const adminEmail = process.env.ADMIN_EMAIL || "";
+  const adminPassword = process.env.ADMIN_PASSWORD || "";
+  
+  if (adminEmail && adminPassword && email === adminEmail && password === adminPassword) {
+    return true;
+  }
+  return false;
 }
 
 export function isAdmin(user: User | null): boolean {

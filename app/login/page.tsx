@@ -53,12 +53,12 @@ export default function LoginPage() {
           <div>
             <label className="block text-steam-blueLight mb-2">E-mail</label>
             <input
-              type="email"
+              type="text"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white focus:outline-none focus:border-steam-blueLight"
-              placeholder="professor@senai.com"
+              placeholder="digite o email"
             />
           </div>
 
@@ -83,17 +83,6 @@ export default function LoginPage() {
             {loading ? "Entrando..." : "Entrar"}
           </button>
         </form>
-
-        <div className="mt-6 p-4 bg-steam-darker rounded">
-          <p className="text-gray-400 text-sm text-center">
-            <strong className="text-white">Contas de teste:</strong>
-          </p>
-          <p className="text-gray-400 text-xs mt-2 text-center">
-            Admin: admin@senai.com
-            <br />
-            Professor: professor@senai.com
-          </p>
-        </div>
       </div>
     </div>
   );
