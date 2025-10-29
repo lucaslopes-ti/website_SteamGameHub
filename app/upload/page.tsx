@@ -155,7 +155,12 @@ export default function UploadPage() {
       // Se forneceu link do Google Drive, usar ele (não fazer upload)
       if (formData.downloadLink && !selectedFile) {
         // Usar link externo - não precisa fazer upload
-        executableFileName = "Arquivo do Google Drive";
+        // Validar que o link é do Google Drive ou um serviço conhecido
+        const drivePattern = /drive\.google\.com|onedrive\.live\.com|dropbox\.com|mega\.nz/i;
+        if (!drivePattern.test(formData.downloadLink)) {
+          throw new Error("Link inválido. Use Google Drive, OneDrive, Dropbox ou MEGA.");
+        }
+        executableFileName = "Arquivo externo (Google Drive/OneDrive/etc)";
         executableFileSize = 0; // Tamanho desconhecido
         uploadData = null;
         setUploadProgress(40);

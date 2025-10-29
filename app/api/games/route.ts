@@ -153,8 +153,12 @@ export async function POST(request: NextRequest) {
     const newGame = await createGame(newGameData);
 
     return NextResponse.json({ success: true, game: newGame }, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erro ao criar jogo:", error);
-    return NextResponse.json({ error: "Erro ao criar jogo" }, { status: 500 });
+    const errorMessage = error?.message || "Erro ao criar jogo";
+    return NextResponse.json(
+      { error: errorMessage, details: error?.stack },
+      { status: 500 }
+    );
   }
 }
