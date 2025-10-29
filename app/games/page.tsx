@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import GameGrid from "@/components/GameGrid";
 import { GameGridSkeleton } from "@/components/SkeletonLoader";
@@ -33,7 +33,7 @@ const TECHNOLOGIES = [
   "RPG Maker",
 ];
 
-export default function GamesPage() {
+function GamesPageContent() {
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
   const [selectedGenre, setSelectedGenre] = useState("Todos");
@@ -333,5 +333,13 @@ export default function GamesPage() {
         </>
       )}
     </div>
+  );
+}
+
+export default function GamesPage() {
+  return (
+    <Suspense fallback={<GameGridSkeleton />}>
+      <GamesPageContent />
+    </Suspense>
   );
 }
