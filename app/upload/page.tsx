@@ -21,6 +21,7 @@ export default function UploadPage() {
     author: "",
     authorEmail: "",
     trailerUrl: "",
+    downloadLink: "", // Link alternativo do Google Drive ou outro serviço
   });
 
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
@@ -117,9 +118,20 @@ export default function UploadPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!selectedFile) {
-      showToast("Por favor, selecione o arquivo executável do jogo", "warning");
+    // Validar: precisa ter OU arquivo OU link do Google Drive
+    if (!selectedFile && !formData.downloadLink) {
+      showToast("Por favor, selecione o arquivo executável OU forneça um link do Google Drive", "warning");
       return;
+    }
+
+    // Se forneceu link do Google Drive, validar URL
+    if (formData.downloadLink && !selectedFile) {
+      try {
+        new URL(formData.downloadLink);
+      } catch {
+        showToast("Link do Google Drive inválido. Verifique a URL.", "error");
+        return;
+      }
     }
 
     if (selectedGenres.length === 0) {
@@ -135,31 +147,45 @@ export default function UploadPage() {
     setLoading(true);
     setUploadProgress(0);
 
-    try {
-      // Validação de arquivo
-      const allowedExtensions = [".exe", ".zip", ".rar", ".7z", ".app", ".dmg"];
-      const fileExtension = "." + selectedFile.name.split(".").pop()?.toLowerCase();
-      if (!allowedExtensions.includes(fileExtension)) {
-        throw new Error(`Formato não permitido. Use: ${allowedExtensions.join(", ")}`);
-      }
-      
-      if (selectedFile.size > 500 * 1024 * 1024) {
-        throw new Error("Arquivo muito grande. Tamanho máximo: 500MB");
-      }
+      try {
+      let uploadData: { url: string; path: string; fileName: string } | null = null;
+      let executableFileName = "";
+      let executableFileSize = 0;
 
-      let uploadData: { url: string; path: string; fileName: string };
-
-      // Verificar se deve usar upload direto para Firebase (para arquivos grandes)
-      const shouldUseDirect = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET && 
-                               process.env.ENABLE_LOCAL_STORAGE !== "true";
-
-      if (shouldUseDirect && selectedFile.size > 10 * 1024 * 1024) {
-        // Upload direto para Firebase (sem passar pelo servidor)
-        setUploadProgress(10);
-        const { uploadToFirebaseDirect } = await import("@/lib/client-upload");
-        uploadData = await uploadToFirebaseDirect(selectedFile, "executable");
+      // Se forneceu link do Google Drive, usar ele (não fazer upload)
+      if (formData.downloadLink && !selectedFile) {
+        // Usar link externo - não precisa fazer upload
+        executableFileName = "Arquivo do Google Drive";
+        executableFileSize = 0; // Tamanho desconhecido
+        uploadData = null;
         setUploadProgress(40);
-      } else {
+      } else if (selectedFile) {
+        // Fazer upload do arquivo
+        // Validação de arquivo
+        const allowedExtensions = [".exe", ".zip", ".rar", ".7z", ".app", ".dmg"];
+        const fileExtension = "." + selectedFile.name.split(".").pop()?.toLowerCase();
+        if (!allowedExtensions.includes(fileExtension)) {
+          throw new Error(`Formato não permitido. Use: ${allowedExtensions.join(", ")}`);
+        }
+        
+        if (selectedFile.size > 500 * 1024 * 1024) {
+          throw new Error("Arquivo muito grande. Tamanho máximo: 500MB");
+        }
+
+        executableFileName = selectedFile.name;
+        executableFileSize = selectedFile.size;
+
+        // Verificar se deve usar upload direto para Firebase (para arquivos grandes)
+        const shouldUseDirect = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET && 
+                                 process.env.ENABLE_LOCAL_STORAGE !== "true";
+
+        if (shouldUseDirect && selectedFile.size > 10 * 1024 * 1024) {
+          // Upload direto para Firebase (sem passar pelo servidor)
+          setUploadProgress(10);
+          const { uploadToFirebaseDirect } = await import("@/lib/client-upload");
+          uploadData = await uploadToFirebaseDirect(selectedFile, "executable");
+          setUploadProgress(40);
+        } else {
         // Upload via servidor (para arquivos pequenos ou modo local)
         const executableFormData = new FormData();
         executableFormData.append("file", selectedFile);
@@ -200,8 +226,9 @@ export default function UploadPage() {
           throw new Error(errorMessage);
         }
 
-        uploadData = await uploadResponse.json();
-        setUploadProgress(40);
+          uploadData = await uploadResponse.json();
+          setUploadProgress(40);
+        }
       }
 
       // Upload da imagem de capa (se houver)
@@ -267,9 +294,10 @@ export default function UploadPage() {
           genres: selectedGenres,
           technologies: selectedTechnologies,
           trailerUrl: formData.trailerUrl || undefined,
-          executableFile: uploadData.fileName,
-          executableFileName: selectedFile.name,
-          executableFileSize: selectedFile.size,
+          executableFile: uploadData?.fileName || undefined,
+          executableFileName: executableFileName || undefined,
+          executableFileSize: executableFileSize || undefined,
+          downloadLink: formData.downloadLink || undefined, // Link do Google Drive se fornecido
           image: imageUrl || undefined,
           screenshots: screenshotUrls.length > 0 ? screenshotUrls : undefined,
         }),
@@ -480,6 +508,23 @@ export default function UploadPage() {
                 </button>
               </div>
             )}
+            <div className="mt-4 pt-4 border-t border-steam-blue">
+              <p className="text-gray-400 text-sm mb-2 text-center">
+                OU forneça um link do Google Drive/OneDrive/etc
+              </p>
+              <input
+                type="url"
+                value={formData.downloadLink}
+                onChange={(e) =>
+                  setFormData({ ...formData, downloadLink: e.target.value })
+                }
+                placeholder="https://drive.google.com/file/d/..."
+                className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight"
+              />
+              <p className="text-gray-500 text-xs mt-1">
+                Se você já enviou o arquivo para Google Drive, cole o link compartilhado aqui (compartilhe como "Qualquer pessoa com o link")
+              </p>
+            </div>
           </div>
         </div>
 
