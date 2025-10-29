@@ -139,6 +139,7 @@ export default function UploadPage() {
       // Upload do arquivo executável
       const executableFormData = new FormData();
       executableFormData.append("file", selectedFile);
+      executableFormData.append("type", "executable"); // Tipo necessário para validação
       executableFormData.append(
         "gameData",
         JSON.stringify({
@@ -147,14 +148,39 @@ export default function UploadPage() {
         })
       );
 
+      // Timeout de 5 minutos (300s) para arquivos grandes
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5 * 60 * 1000);
+
       const uploadResponse = await fetch("/api/upload", {
         method: "POST",
         body: executableFormData,
-      });
+        signal: controller.signal,
+      }).finally(() => clearTimeout(timeoutId));
 
       if (!uploadResponse.ok) {
-        const error = await uploadResponse.json();
-        throw new Error(error.error || "Erro ao fazer upload do arquivo");
+        // Tentar ler como JSON, mas tratar caso seja texto/HTML
+        let errorMessage = "Erro ao fazer upload do arquivo";
+        try {
+          const contentType = uploadResponse.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+            const error = await uploadResponse.json();
+            errorMessage = error.error || errorMessage;
+          } else {
+            // Se não for JSON, ler como texto
+            const text = await uploadResponse.text();
+            errorMessage = text || errorMessage;
+            // Tentar extrair mensagem de erro comum
+            if (text.includes("Request Entity Too Large") || text.includes("413")) {
+              errorMessage = "Arquivo muito grande. Tamanho máximo: 500MB";
+            } else if (text.includes("Request timeout") || text.includes("504")) {
+              errorMessage = "Timeout no upload. Tente com um arquivo menor ou verifique sua conexão.";
+            }
+          }
+        } catch (parseError) {
+          errorMessage = `Erro ${uploadResponse.status}: ${uploadResponse.statusText}`;
+        }
+        throw new Error(errorMessage);
       }
 
       const uploadData = await uploadResponse.json();
@@ -167,10 +193,14 @@ export default function UploadPage() {
         imageFormData.append("file", imageFile);
         imageFormData.append("type", "image");
 
+        const imageController = new AbortController();
+        const imageTimeoutId = setTimeout(() => imageController.abort(), 60 * 1000); // 1 minuto para imagens
+
         const imageUploadResponse = await fetch("/api/upload", {
           method: "POST",
           body: imageFormData,
-        });
+          signal: imageController.signal,
+        }).finally(() => clearTimeout(imageTimeoutId));
 
         if (imageUploadResponse.ok) {
           const imageData = await imageUploadResponse.json();
@@ -187,10 +217,14 @@ export default function UploadPage() {
         screenshotFormData.append("file", screenshotFiles[i]);
         screenshotFormData.append("type", "image");
 
+        const screenshotController = new AbortController();
+        const screenshotTimeoutId = setTimeout(() => screenshotController.abort(), 60 * 1000);
+
         const screenshotUploadResponse = await fetch("/api/upload", {
           method: "POST",
           body: screenshotFormData,
-        });
+          signal: screenshotController.signal,
+        }).finally(() => clearTimeout(screenshotTimeoutId));
 
         if (screenshotUploadResponse.ok) {
           const screenshotData = await screenshotUploadResponse.json();
@@ -224,7 +258,19 @@ export default function UploadPage() {
       });
 
       if (!gameResponse.ok) {
-        throw new Error("Erro ao criar registro do jogo");
+        let errorMessage = "Erro ao criar registro do jogo";
+        try {
+          const contentType = gameResponse.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+            const error = await gameResponse.json();
+            errorMessage = error.error || errorMessage;
+          } else {
+            errorMessage = await gameResponse.text() || errorMessage;
+          }
+        } catch (parseError) {
+          errorMessage = `Erro ${gameResponse.status}: ${gameResponse.statusText}`;
+        }
+        throw new Error(errorMessage);
       }
 
       setUploadProgress(100);
@@ -234,7 +280,18 @@ export default function UploadPage() {
         router.push("/games");
       }, 1500);
     } catch (error: any) {
-      showToast(`Erro: ${error.message}`, "error");
+      console.error("Erro no upload:", error);
+      
+      // Tratamento específico para diferentes tipos de erro
+      if (error.name === 'AbortError' || error.message?.includes('aborted')) {
+        showToast("Upload cancelado por timeout. Tente novamente com um arquivo menor ou verifique sua conexão.", "error");
+      } else if (error.message?.includes('Failed to fetch') || error.message?.includes('network')) {
+        showToast("Erro de conexão. Verifique sua internet e tente novamente.", "error");
+      } else if (error.message) {
+        showToast(`Erro: ${error.message}`, "error");
+      } else {
+        showToast("Erro ao fazer upload. Tente novamente.", "error");
+      }
     } finally {
       setLoading(false);
       setUploadProgress(0);

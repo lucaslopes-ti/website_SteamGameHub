@@ -4,6 +4,13 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   
+  // Configurações para uploads grandes
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '500mb',
+    },
+  },
+  
   // Configuração de imagens
   images: {
     domains: [
