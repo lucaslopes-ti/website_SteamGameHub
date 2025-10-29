@@ -161,7 +161,7 @@ export default function EditGamePage() {
       }
 
       // Upload de novos screenshots se houver
-      let screenshotUrls = game.screenshots || [];
+      let screenshotUrls = game?.screenshots || [];
       if (screenshotFiles.length > 0) {
         const newScreenshotUrls: string[] = [];
         for (const file of screenshotFiles) {
@@ -332,7 +332,7 @@ export default function EditGamePage() {
                   type="button"
                   onClick={() => {
                     setImageFile(null);
-                    setImagePreview(game.image || null);
+                    setImagePreview(game?.image || null);
                   }}
                   className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition"
                 >
