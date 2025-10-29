@@ -136,55 +136,73 @@ export default function UploadPage() {
     setUploadProgress(0);
 
     try {
-      // Upload do arquivo executável
-      const executableFormData = new FormData();
-      executableFormData.append("file", selectedFile);
-      executableFormData.append("type", "executable"); // Tipo necessário para validação
-      executableFormData.append(
-        "gameData",
-        JSON.stringify({
-          title: formData.title,
-          description: formData.description,
-        })
-      );
-
-      // Timeout de 5 minutos (300s) para arquivos grandes
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5 * 60 * 1000);
-
-      const uploadResponse = await fetch("/api/upload", {
-        method: "POST",
-        body: executableFormData,
-        signal: controller.signal,
-      }).finally(() => clearTimeout(timeoutId));
-
-      if (!uploadResponse.ok) {
-        // Tentar ler como JSON, mas tratar caso seja texto/HTML
-        let errorMessage = "Erro ao fazer upload do arquivo";
-        try {
-          const contentType = uploadResponse.headers.get("content-type");
-          if (contentType && contentType.includes("application/json")) {
-            const error = await uploadResponse.json();
-            errorMessage = error.error || errorMessage;
-          } else {
-            // Se não for JSON, ler como texto
-            const text = await uploadResponse.text();
-            errorMessage = text || errorMessage;
-            // Tentar extrair mensagem de erro comum
-            if (text.includes("Request Entity Too Large") || text.includes("413")) {
-              errorMessage = "Arquivo muito grande. Tamanho máximo: 500MB";
-            } else if (text.includes("Request timeout") || text.includes("504")) {
-              errorMessage = "Timeout no upload. Tente com um arquivo menor ou verifique sua conexão.";
-            }
-          }
-        } catch (parseError) {
-          errorMessage = `Erro ${uploadResponse.status}: ${uploadResponse.statusText}`;
-        }
-        throw new Error(errorMessage);
+      // Validação de arquivo
+      const allowedExtensions = [".exe", ".zip", ".rar", ".7z", ".app", ".dmg"];
+      const fileExtension = "." + selectedFile.name.split(".").pop()?.toLowerCase();
+      if (!allowedExtensions.includes(fileExtension)) {
+        throw new Error(`Formato não permitido. Use: ${allowedExtensions.join(", ")}`);
+      }
+      
+      if (selectedFile.size > 500 * 1024 * 1024) {
+        throw new Error("Arquivo muito grande. Tamanho máximo: 500MB");
       }
 
-      const uploadData = await uploadResponse.json();
-      setUploadProgress(40);
+      let uploadData: { url: string; path: string; fileName: string };
+
+      // Verificar se deve usar upload direto para Firebase (para arquivos grandes)
+      const shouldUseDirect = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET && 
+                               process.env.ENABLE_LOCAL_STORAGE !== "true";
+
+      if (shouldUseDirect && selectedFile.size > 10 * 1024 * 1024) {
+        // Upload direto para Firebase (sem passar pelo servidor)
+        setUploadProgress(10);
+        const { uploadToFirebaseDirect } = await import("@/lib/client-upload");
+        uploadData = await uploadToFirebaseDirect(selectedFile, "executable");
+        setUploadProgress(40);
+      } else {
+        // Upload via servidor (para arquivos pequenos ou modo local)
+        const executableFormData = new FormData();
+        executableFormData.append("file", selectedFile);
+        executableFormData.append("type", "executable");
+
+        // Timeout de 5 minutos (300s) para arquivos grandes
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5 * 60 * 1000);
+
+        const uploadResponse = await fetch("/api/upload", {
+          method: "POST",
+          body: executableFormData,
+          signal: controller.signal,
+        }).finally(() => clearTimeout(timeoutId));
+
+        if (!uploadResponse.ok) {
+          // Tentar ler como JSON, mas tratar caso seja texto/HTML
+          let errorMessage = "Erro ao fazer upload do arquivo";
+          try {
+            const contentType = uploadResponse.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+              const error = await uploadResponse.json();
+              errorMessage = error.error || errorMessage;
+            } else {
+              // Se não for JSON, ler como texto
+              const text = await uploadResponse.text();
+              errorMessage = text || errorMessage;
+              // Tentar extrair mensagem de erro comum
+              if (text.includes("Request Entity Too Large") || text.includes("413")) {
+                errorMessage = "Arquivo muito grande para upload via servidor. Use um arquivo menor ou tente novamente.";
+              } else if (text.includes("Request timeout") || text.includes("504")) {
+                errorMessage = "Timeout no upload. Tente com um arquivo menor ou verifique sua conexão.";
+              }
+            }
+          } catch (parseError) {
+            errorMessage = `Erro ${uploadResponse.status}: ${uploadResponse.statusText}`;
+          }
+          throw new Error(errorMessage);
+        }
+
+        uploadData = await uploadResponse.json();
+        setUploadProgress(40);
+      }
 
       // Upload da imagem de capa (se houver)
       let imageUrl = "";
