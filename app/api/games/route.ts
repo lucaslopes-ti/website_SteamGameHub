@@ -56,7 +56,7 @@ async function getGames(approved?: boolean): Promise<Game[]> {
 
   // Modo local
   const games = await getGamesFromFile();
-  if (approved === "true") {
+  if (approved === true) {
     return games.filter((g) => g.approved);
   }
   return games;
