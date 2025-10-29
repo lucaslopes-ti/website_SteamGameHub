@@ -6,7 +6,7 @@ import GameGrid from "@/components/GameGrid";
 import { GameGridSkeleton } from "@/components/SkeletonLoader";
 import { Game } from "@/lib/games";
 import { useDebounce } from "@/hooks/useDebounce";
-import { Filter, X, ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { Filter, X, ArrowUpDown, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 
 const GENRES = [
   "Todos",
