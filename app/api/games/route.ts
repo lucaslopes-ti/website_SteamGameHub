@@ -155,8 +155,11 @@ async function createGame(gameData: Omit<Game, "id">): Promise<Game> {
 
 export async function GET(request: NextRequest) {
   try {
-    const approved = request.nextUrl.searchParams.get("approved");
-    const games = await getGames(approved === "true");
+    const search = request.nextUrl.searchParams;
+    const approvedParam = search.has("approved")
+      ? search.get("approved") === "true"
+      : undefined; // quando não enviado, buscar TODOS
+    const games = await getGames(approvedParam);
     return NextResponse.json(games);
   } catch (error) {
     console.error("Erro ao buscar jogos:", error);
