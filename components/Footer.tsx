@@ -41,7 +41,7 @@ export default function Footer() {
             <h3 className="text-steam-blueLight font-bold mb-4">Contato</h3>
             <div className="flex gap-4">
               <a
-                href="https://github.com"
+                href="https://github.com/lucaslopes-ti"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-steam-blueLight transition"
@@ -49,7 +49,7 @@ export default function Footer() {
                 <Github className="w-5 h-5" />
               </a>
               <a
-                href="mailto:contato@senai.com"
+                href="mailto:lucas.dalps@gmail.com"
                 className="text-gray-400 hover:text-steam-blueLight transition"
               >
                 <Mail className="w-5 h-5" />
