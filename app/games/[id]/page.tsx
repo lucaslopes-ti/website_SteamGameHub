@@ -26,14 +26,19 @@ export default function GameDetailPage() {
   useEffect(() => {
     loadGame();
     registerView();
-    loadViews();
   }, [params.id]);
 
   const registerView = async () => {
     try {
-      await fetch(`/api/games/${params.id}/views`, {
+      const res = await fetch(`/api/games/${params.id}/views`, {
         method: "POST",
       });
+      if (res.ok) {
+        const data = await res.json();
+        if (typeof data.views === "number") setViews(data.views);
+      }
+      // Fazer GET para garantir consistência com a origem de dados
+      loadViews();
     } catch (error) {
       console.error("Erro ao registrar visualização:", error);
     }

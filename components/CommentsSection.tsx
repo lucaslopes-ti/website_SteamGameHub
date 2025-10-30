@@ -18,6 +18,8 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
   const [loading, setLoading] = useState(true);
   const [newComment, setNewComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [guestName, setGuestName] = useState("");
+  const [guestEmail, setGuestEmail] = useState("");
 
   useEffect(() => {
     loadComments();
@@ -41,7 +43,7 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newComment.trim() || !isAuthenticated || !user) return;
+    if (!newComment.trim()) return;
 
     setSubmitting(true);
     try {
@@ -51,14 +53,21 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          author: user.name,
-          authorEmail: user.email,
+          author: isAuthenticated && user ? user.name : guestName.trim() || "Anônimo",
+          authorEmail:
+            isAuthenticated && user
+              ? user.email
+              : guestEmail.trim() || `anon-${Date.now()}@example.com`,
           content: newComment.trim(),
         }),
       });
 
       if (response.ok) {
         setNewComment("");
+        if (!isAuthenticated) {
+          setGuestName("");
+          setGuestEmail("");
+        }
         showToast("Comentário enviado com sucesso!", "success");
         loadComments();
       } else {
@@ -97,39 +106,49 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
         Comentários ({comments.length})
       </h2>
 
-      {isAuthenticated ? (
-        <form onSubmit={handleSubmit} className="mb-6">
-          <div className="flex gap-4">
-            <textarea
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Escreva um comentário..."
-              rows={3}
-              className="flex-1 bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight"
+      <form onSubmit={handleSubmit} className="mb-6">
+        {!isAuthenticated && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <input
+              type="text"
+              value={guestName}
+              onChange={(e) => setGuestName(e.target.value)}
+              placeholder="Seu nome (opcional)"
+              className="bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight"
             />
-            <button
-              type="submit"
-              disabled={!newComment.trim() || submitting}
-              className="bg-steam-blueLight hover:bg-steam-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-2 rounded transition flex items-center gap-2 h-fit"
-            >
-              {submitting ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : (
-                <>
-                  <Send className="w-5 h-5" />
-                  Enviar
-                </>
-              )}
-            </button>
+            <input
+              type="email"
+              value={guestEmail}
+              onChange={(e) => setGuestEmail(e.target.value)}
+              placeholder="Seu e-mail (opcional)"
+              className="bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight"
+            />
           </div>
-        </form>
-      ) : (
-        <div className="mb-6 p-4 bg-steam-darker rounded border border-steam-blue">
-          <p className="text-gray-400 text-center">
-            Faça login para comentar
-          </p>
+        )}
+        <div className="flex gap-4">
+          <textarea
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Escreva um comentário..."
+            rows={3}
+            className="flex-1 bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight"
+          />
+          <button
+            type="submit"
+            disabled={!newComment.trim() || submitting}
+            className="bg-steam-blueLight hover:bg-steam-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-2 rounded transition flex items-center gap-2 h-fit"
+          >
+            {submitting ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <>
+                <Send className="w-5 h-5" />
+                Enviar
+              </>
+            )}
+          </button>
         </div>
-      )}
+      </form>
 
       {loading ? (
         <div className="flex justify-center py-8">

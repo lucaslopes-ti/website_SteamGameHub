@@ -13,6 +13,7 @@ const nextConfig = {
   
   // Configuração de imagens
   images: {
+    unoptimized: true,
     domains: [
       'firebasestorage.googleapis.com',
       'localhost',
