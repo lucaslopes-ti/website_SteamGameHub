@@ -151,51 +151,32 @@ export default function UploadPage() {
       }
 
       // Upload da imagem de capa (se houver)
+      // Nota: Em produção (Vercel), usamos apenas API route devido a problemas de CORS com upload direto
       let imageUrl: string | undefined = undefined;
       if (imageFile) {
         try {
-          const hasFirebase = !!process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET && process.env.ENABLE_LOCAL_STORAGE !== "true";
-          let uploadSuccess = false;
+          const imageFormData = new FormData();
+          imageFormData.append("file", imageFile);
+          imageFormData.append("type", "image");
 
-          // Tentar upload direto ao Firebase primeiro (se configurado)
-          if (hasFirebase) {
-            try {
-              const { uploadToFirebaseDirect } = await import("@/lib/client-upload");
-              const imgUpload = await uploadToFirebaseDirect(imageFile, "image");
-              imageUrl = imgUpload.url;
-              uploadSuccess = true;
-              console.log("Imagem enviada para Firebase (direto):", imageUrl);
-            } catch (directUploadError: any) {
-              // Se falhar por CORS ou outro erro, fazer fallback para API route
-              console.warn("Upload direto falhou, usando API route:", directUploadError?.message);
-              uploadSuccess = false;
-            }
-          }
+          const imageController = new AbortController();
+          const imageTimeoutId = setTimeout(() => imageController.abort(), 60 * 1000); // 1 minuto para imagens
 
-          // Fallback: usar API route se upload direto não foi usado ou falhou
-          if (!uploadSuccess) {
-            const imageFormData = new FormData();
-            imageFormData.append("file", imageFile);
-            imageFormData.append("type", "image");
+          const imageUploadResponse = await fetch("/api/upload", {
+            method: "POST",
+            body: imageFormData,
+            signal: imageController.signal,
+          }).finally(() => clearTimeout(imageTimeoutId));
 
-            const imageController = new AbortController();
-            const imageTimeoutId = setTimeout(() => imageController.abort(), 60 * 1000); // 1 minuto para imagens
-
-            const imageUploadResponse = await fetch("/api/upload", {
-              method: "POST",
-              body: imageFormData,
-              signal: imageController.signal,
-            }).finally(() => clearTimeout(imageTimeoutId));
-
-            if (imageUploadResponse.ok) {
-              const imageData = await imageUploadResponse.json();
-              imageUrl = imageData.url || imageData.path;
-              console.log("Imagem enviada via API:", imageUrl);
-            } else {
-              const errorText = await imageUploadResponse.text();
-              console.error("Erro ao fazer upload da imagem via API:", imageUploadResponse.status, errorText);
-              throw new Error(`Erro ao fazer upload: ${imageUploadResponse.status}`);
-            }
+          if (imageUploadResponse.ok) {
+            const imageData = await imageUploadResponse.json();
+            imageUrl = imageData.url || imageData.path;
+            console.log("Imagem enviada via API:", imageUrl);
+          } else {
+            const errorText = await imageUploadResponse.text();
+            console.error("Erro ao fazer upload da imagem via API:", imageUploadResponse.status, errorText);
+            // Continuar sem imagem se o upload falhar
+            showToast("Aviso: Falha ao enviar imagem de capa. O jogo será criado sem imagem.", "warning");
           }
         } catch (imageError: any) {
           console.error("Erro ao fazer upload da imagem:", imageError);
@@ -209,53 +190,32 @@ export default function UploadPage() {
       setUploadProgress(60);
 
       // Upload de screenshots (múltiplos)
+      // Nota: Em produção (Vercel), usamos apenas API route devido a problemas de CORS com upload direto
       const screenshotUrls: string[] = [];
       for (let i = 0; i < screenshotFiles.length; i++) {
         try {
-          const hasFirebase = !!process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET && process.env.ENABLE_LOCAL_STORAGE !== "true";
-          let uploadSuccess = false;
+          const screenshotFormData = new FormData();
+          screenshotFormData.append("file", screenshotFiles[i]);
+          screenshotFormData.append("type", "image");
 
-          // Tentar upload direto ao Firebase primeiro (se configurado)
-          if (hasFirebase) {
-            try {
-              const { uploadToFirebaseDirect } = await import("@/lib/client-upload");
-              const up = await uploadToFirebaseDirect(screenshotFiles[i], "image");
-              if (up.url) {
-                screenshotUrls.push(up.url);
-                uploadSuccess = true;
-              }
-            } catch (directUploadError: any) {
-              // Se falhar por CORS ou outro erro, fazer fallback para API route
-              console.warn(`Upload direto do screenshot ${i + 1} falhou, usando API route:`, directUploadError?.message);
-              uploadSuccess = false;
+          const screenshotController = new AbortController();
+          const screenshotTimeoutId = setTimeout(() => screenshotController.abort(), 60 * 1000);
+
+          const screenshotUploadResponse = await fetch("/api/upload", {
+            method: "POST",
+            body: screenshotFormData,
+            signal: screenshotController.signal,
+          }).finally(() => clearTimeout(screenshotTimeoutId));
+
+          if (screenshotUploadResponse.ok) {
+            const screenshotData = await screenshotUploadResponse.json();
+            const url = screenshotData.url || screenshotData.path;
+            if (url) {
+              screenshotUrls.push(url);
             }
-          }
-
-          // Fallback: usar API route se upload direto não foi usado ou falhou
-          if (!uploadSuccess) {
-            const screenshotFormData = new FormData();
-            screenshotFormData.append("file", screenshotFiles[i]);
-            screenshotFormData.append("type", "image");
-
-            const screenshotController = new AbortController();
-            const screenshotTimeoutId = setTimeout(() => screenshotController.abort(), 60 * 1000);
-
-            const screenshotUploadResponse = await fetch("/api/upload", {
-              method: "POST",
-              body: screenshotFormData,
-              signal: screenshotController.signal,
-            }).finally(() => clearTimeout(screenshotTimeoutId));
-
-            if (screenshotUploadResponse.ok) {
-              const screenshotData = await screenshotUploadResponse.json();
-              const url = screenshotData.url || screenshotData.path;
-              if (url) {
-                screenshotUrls.push(url);
-              }
-            } else {
-              console.error(`Erro ao fazer upload do screenshot ${i + 1} via API:`, screenshotUploadResponse.status);
-              // Continuar mesmo se um screenshot falhar
-            }
+          } else {
+            console.error(`Erro ao fazer upload do screenshot ${i + 1} via API:`, screenshotUploadResponse.status);
+            // Continuar mesmo se um screenshot falhar
           }
         } catch (screenshotError: any) {
           console.error(`Erro ao fazer upload do screenshot ${i + 1}:`, screenshotError);
