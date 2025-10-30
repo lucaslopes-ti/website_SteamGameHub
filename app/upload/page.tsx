@@ -153,23 +153,30 @@ export default function UploadPage() {
       // Upload da imagem de capa (se houver)
       let imageUrl = "";
       if (imageFile) {
-        const imageFormData = new FormData();
-        imageFormData.append("file", imageFile);
-        imageFormData.append("type", "image");
+        const hasFirebase = !!process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET && process.env.ENABLE_LOCAL_STORAGE !== "true";
+        if (hasFirebase) {
+          // Upload direto ao Firebase (mais confiável no Vercel)
+          const { uploadToFirebaseDirect } = await import("@/lib/client-upload");
+          const imgUpload = await uploadToFirebaseDirect(imageFile, "image");
+          imageUrl = imgUpload.url;
+        } else {
+          const imageFormData = new FormData();
+          imageFormData.append("file", imageFile);
+          imageFormData.append("type", "image");
 
-        const imageController = new AbortController();
-        const imageTimeoutId = setTimeout(() => imageController.abort(), 60 * 1000); // 1 minuto para imagens
+          const imageController = new AbortController();
+          const imageTimeoutId = setTimeout(() => imageController.abort(), 60 * 1000); // 1 minuto para imagens
 
-        const imageUploadResponse = await fetch("/api/upload", {
-          method: "POST",
-          body: imageFormData,
-          signal: imageController.signal,
-        }).finally(() => clearTimeout(imageTimeoutId));
+          const imageUploadResponse = await fetch("/api/upload", {
+            method: "POST",
+            body: imageFormData,
+            signal: imageController.signal,
+          }).finally(() => clearTimeout(imageTimeoutId));
 
-        if (imageUploadResponse.ok) {
-          const imageData = await imageUploadResponse.json();
-          // Preferir URL pública do Firebase quando disponível
-          imageUrl = imageData.url || imageData.path;
+          if (imageUploadResponse.ok) {
+            const imageData = await imageUploadResponse.json();
+            imageUrl = imageData.url || imageData.path;
+          }
         }
       }
 
@@ -178,23 +185,29 @@ export default function UploadPage() {
       // Upload de screenshots (múltiplos)
       const screenshotUrls: string[] = [];
       for (let i = 0; i < screenshotFiles.length; i++) {
-        const screenshotFormData = new FormData();
-        screenshotFormData.append("file", screenshotFiles[i]);
-        screenshotFormData.append("type", "image");
+        const hasFirebase = !!process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET && process.env.ENABLE_LOCAL_STORAGE !== "true";
+        if (hasFirebase) {
+          const { uploadToFirebaseDirect } = await import("@/lib/client-upload");
+          const up = await uploadToFirebaseDirect(screenshotFiles[i], "image");
+          screenshotUrls.push(up.url);
+        } else {
+          const screenshotFormData = new FormData();
+          screenshotFormData.append("file", screenshotFiles[i]);
+          screenshotFormData.append("type", "image");
 
-        const screenshotController = new AbortController();
-        const screenshotTimeoutId = setTimeout(() => screenshotController.abort(), 60 * 1000);
+          const screenshotController = new AbortController();
+          const screenshotTimeoutId = setTimeout(() => screenshotController.abort(), 60 * 1000);
 
-        const screenshotUploadResponse = await fetch("/api/upload", {
-          method: "POST",
-          body: screenshotFormData,
-          signal: screenshotController.signal,
-        }).finally(() => clearTimeout(screenshotTimeoutId));
+          const screenshotUploadResponse = await fetch("/api/upload", {
+            method: "POST",
+            body: screenshotFormData,
+            signal: screenshotController.signal,
+          }).finally(() => clearTimeout(screenshotTimeoutId));
 
-        if (screenshotUploadResponse.ok) {
-          const screenshotData = await screenshotUploadResponse.json();
-          // Preferir URL pública do Firebase quando disponível
-          screenshotUrls.push(screenshotData.url || screenshotData.path);
+          if (screenshotUploadResponse.ok) {
+            const screenshotData = await screenshotUploadResponse.json();
+            screenshotUrls.push(screenshotData.url || screenshotData.path);
+          }
         }
         setUploadProgress(60 + (i + 1) * (20 / screenshotFiles.length));
       }
