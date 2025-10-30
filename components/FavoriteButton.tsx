@@ -81,7 +81,17 @@ export default function FavoriteButton({ gameId, size = "md" }: FavoriteButtonPr
   };
 
   if (!isAuthenticated) {
-    return null;
+    return (
+      <button
+        onClick={(e: React.MouseEvent<HTMLButtonElement>) => e.preventDefault()}
+        disabled
+        aria-disabled="true"
+        className={`${sizeClasses[size]} transition-all disabled:opacity-50 text-gray-400`}
+        title="Faça login para favoritar"
+      >
+        <Heart className="w-full h-full" />
+      </button>
+    );
   }
 
   return (
