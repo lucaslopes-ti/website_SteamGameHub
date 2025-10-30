@@ -22,6 +22,7 @@ export default function GameDetailPage() {
   const [loading, setLoading] = useState(true);
   const [selectedScreenshot, setSelectedScreenshot] = useState<string | null>(null);
   const [views, setViews] = useState(0);
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     loadGame();
