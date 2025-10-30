@@ -84,12 +84,18 @@ async function getGames(approved?: boolean): Promise<Game[]> {
   return games;
 }
 
-// Função helper para remover campos undefined (Firestore não aceita undefined)
+// Função helper para remover campos undefined e strings vazias (Firestore não aceita undefined)
 function removeUndefinedFields<T extends Record<string, any>>(obj: T): Partial<T> {
   const cleaned: Partial<T> = {};
   for (const key in obj) {
-    if (obj[key] !== undefined) {
-      cleaned[key] = obj[key];
+    const value = obj[key];
+    // Manter valores válidos: não undefined, não null, não string vazia (exceto para alguns campos específicos)
+    if (value !== undefined && value !== null && value !== "") {
+      cleaned[key] = value;
+    }
+    // Exceção: arrays vazios são permitidos, mas strings vazias não
+    if (Array.isArray(value) && value.length === 0 && (key === "genres" || key === "technologies" || key === "screenshots")) {
+      cleaned[key] = value; // Arrays vazios são permitidos
     }
   }
   return cleaned;
@@ -187,6 +193,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Normalizar URLs de imagem: converter strings vazias para undefined
+    const imageUrl = body.image && body.image.trim() !== "" ? body.image.trim() : undefined;
+    const screenshots = body.screenshots && Array.isArray(body.screenshots) && body.screenshots.length > 0
+      ? body.screenshots.filter((url: string) => url && url.trim() !== "")
+      : undefined;
+
     const newGameData: Omit<Game, "id"> = {
       title: body.title,
       description: body.description,
@@ -195,20 +207,30 @@ export async function POST(request: NextRequest) {
       genres: body.genres || [],
       technologies: body.technologies || [],
       releaseDate: new Date().toISOString().split("T")[0],
-      image: body.image,
-      trailerUrl: body.trailerUrl,
-      playableLink: body.playableLink,
-      downloadLink: body.downloadLink, // Link do Google Drive ou outro serviço
-      executableFile: body.executableFile,
-      executableFileName: body.executableFileName,
-      executableFileSize: body.executableFileSize,
-      screenshots: body.screenshots || [],
+      image: imageUrl, // URL normalizada (undefined se vazia)
+      trailerUrl: body.trailerUrl && body.trailerUrl.trim() !== "" ? body.trailerUrl.trim() : undefined,
+      playableLink: body.playableLink && body.playableLink.trim() !== "" ? body.playableLink.trim() : undefined,
+      downloadLink: body.downloadLink && body.downloadLink.trim() !== "" ? body.downloadLink.trim() : undefined,
+      executableFile: body.executableFile && body.executableFile.trim() !== "" ? body.executableFile.trim() : undefined,
+      executableFileName: body.executableFileName && body.executableFileName.trim() !== "" ? body.executableFileName.trim() : undefined,
+      executableFileSize: body.executableFileSize || undefined,
+      screenshots: screenshots,
       rating: 0,
       totalRatings: 0,
       featured: false,
       approved: false,
       pending: true,
     };
+
+    // Log para debug (apenas em desenvolvimento)
+    if (process.env.NODE_ENV !== "production") {
+      console.log("Dados do jogo a serem salvos:", {
+        title: newGameData.title,
+        image: imageUrl || "N/A",
+        hasImage: !!imageUrl,
+        screenshotsCount: screenshots?.length || 0,
+      });
+    }
 
     const newGame = await createGame(newGameData);
 

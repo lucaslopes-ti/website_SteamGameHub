@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Star, User } from "lucide-react";
@@ -13,16 +13,42 @@ interface GameCardProps {
 }
 
 export default function GameCard({ game }: GameCardProps) {
+  const [imageError, setImageError] = useState(false);
+  const [imageSrc, setImageSrc] = useState(game.image || "");
+
+  // Atualizar imagem quando o game mudar
+  useEffect(() => {
+    setImageSrc(game.image || "");
+    setImageError(false);
+  }, [game.image]);
+
+  // Se a imagem for uma URL do Firebase ou externa, garantir que está acessível
+  const isValidImageUrl = imageSrc && imageSrc.trim() !== "" && (imageSrc.startsWith("http") || imageSrc.startsWith("/"));
+
   return (
     <Link href={`/games/${game.id}`}>
       <div className="bg-steam-dark rounded-lg overflow-hidden hover-lift cursor-pointer group animate-fadeIn">
         <div className="relative h-48 bg-steam-blue overflow-hidden">
-          {game.image ? (
+          {isValidImageUrl && !imageError ? (
             <Image
-              src={game.image}
+              src={imageSrc}
               alt={game.title}
               fill
               className="object-cover group-hover:scale-110 transition-transform duration-300"
+              onError={() => {
+                console.error("Erro ao carregar imagem:", imageSrc);
+                setImageError(true);
+              }}
+              unoptimized={imageSrc.startsWith("http")}
+              priority={false}
+            />
+          ) : isValidImageUrl && imageError ? (
+            // Fallback: usar img tag normal se Next.js Image falhar
+            <img
+              src={imageSrc}
+              alt={game.title}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+              onError={() => setImageError(true)}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400">

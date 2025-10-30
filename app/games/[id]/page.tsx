@@ -62,6 +62,8 @@ export default function GameDetailPage() {
       if (response.ok) {
         const data = await response.json();
         setGame(data);
+        setImageError(false); // Reset erro ao carregar novo jogo
+        console.log("Jogo carregado:", { id: data.id, title: data.title, image: data.image || "N/A" });
       } else {
         setGame(null);
       }
@@ -98,12 +100,25 @@ export default function GameDetailPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
         <div className="relative h-64 md:h-96 bg-steam-blue rounded-lg overflow-hidden mb-6">
-          {game.image ? (
+          {game.image && game.image.trim() !== "" && (game.image.startsWith("http") || game.image.startsWith("/")) && !imageError ? (
             <Image
               src={game.image}
               alt={game.title}
               fill
               className="object-cover"
+              unoptimized={game.image.startsWith("http")}
+              onError={() => {
+                console.error("Erro ao carregar imagem:", game.image);
+                setImageError(true);
+              }}
+            />
+          ) : game.image && game.image.trim() !== "" && (game.image.startsWith("http") || game.image.startsWith("/")) && imageError ? (
+            // Fallback: usar img tag normal se Next.js Image falhar
+            <img
+              src={game.image}
+              alt={game.title}
+              className="w-full h-full object-cover"
+              onError={() => setImageError(true)}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400 text-xl">

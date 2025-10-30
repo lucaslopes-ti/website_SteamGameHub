@@ -151,32 +151,42 @@ export default function UploadPage() {
       }
 
       // Upload da imagem de capa (se houver)
-      let imageUrl = "";
+      let imageUrl: string | undefined = undefined;
       if (imageFile) {
-        const hasFirebase = !!process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET && process.env.ENABLE_LOCAL_STORAGE !== "true";
-        if (hasFirebase) {
-          // Upload direto ao Firebase (mais confiável no Vercel)
-          const { uploadToFirebaseDirect } = await import("@/lib/client-upload");
-          const imgUpload = await uploadToFirebaseDirect(imageFile, "image");
-          imageUrl = imgUpload.url;
-        } else {
-          const imageFormData = new FormData();
-          imageFormData.append("file", imageFile);
-          imageFormData.append("type", "image");
+        try {
+          const hasFirebase = !!process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET && process.env.ENABLE_LOCAL_STORAGE !== "true";
+          if (hasFirebase) {
+            // Upload direto ao Firebase (mais confiável no Vercel)
+            const { uploadToFirebaseDirect } = await import("@/lib/client-upload");
+            const imgUpload = await uploadToFirebaseDirect(imageFile, "image");
+            imageUrl = imgUpload.url;
+            console.log("Imagem enviada para Firebase:", imageUrl);
+          } else {
+            const imageFormData = new FormData();
+            imageFormData.append("file", imageFile);
+            imageFormData.append("type", "image");
 
-          const imageController = new AbortController();
-          const imageTimeoutId = setTimeout(() => imageController.abort(), 60 * 1000); // 1 minuto para imagens
+            const imageController = new AbortController();
+            const imageTimeoutId = setTimeout(() => imageController.abort(), 60 * 1000); // 1 minuto para imagens
 
-          const imageUploadResponse = await fetch("/api/upload", {
-            method: "POST",
-            body: imageFormData,
-            signal: imageController.signal,
-          }).finally(() => clearTimeout(imageTimeoutId));
+            const imageUploadResponse = await fetch("/api/upload", {
+              method: "POST",
+              body: imageFormData,
+              signal: imageController.signal,
+            }).finally(() => clearTimeout(imageTimeoutId));
 
-          if (imageUploadResponse.ok) {
-            const imageData = await imageUploadResponse.json();
-            imageUrl = imageData.url || imageData.path;
+            if (imageUploadResponse.ok) {
+              const imageData = await imageUploadResponse.json();
+              imageUrl = imageData.url || imageData.path;
+              console.log("Imagem enviada via API:", imageUrl);
+            } else {
+              console.error("Erro ao fazer upload da imagem:", imageUploadResponse.status);
+            }
           }
+        } catch (imageError) {
+          console.error("Erro ao fazer upload da imagem:", imageError);
+          // Continuar sem imagem se o upload falhar
+          imageUrl = undefined;
         }
       }
 
@@ -185,29 +195,39 @@ export default function UploadPage() {
       // Upload de screenshots (múltiplos)
       const screenshotUrls: string[] = [];
       for (let i = 0; i < screenshotFiles.length; i++) {
-        const hasFirebase = !!process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET && process.env.ENABLE_LOCAL_STORAGE !== "true";
-        if (hasFirebase) {
-          const { uploadToFirebaseDirect } = await import("@/lib/client-upload");
-          const up = await uploadToFirebaseDirect(screenshotFiles[i], "image");
-          screenshotUrls.push(up.url);
-        } else {
-          const screenshotFormData = new FormData();
-          screenshotFormData.append("file", screenshotFiles[i]);
-          screenshotFormData.append("type", "image");
+        try {
+          const hasFirebase = !!process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET && process.env.ENABLE_LOCAL_STORAGE !== "true";
+          if (hasFirebase) {
+            const { uploadToFirebaseDirect } = await import("@/lib/client-upload");
+            const up = await uploadToFirebaseDirect(screenshotFiles[i], "image");
+            if (up.url) {
+              screenshotUrls.push(up.url);
+            }
+          } else {
+            const screenshotFormData = new FormData();
+            screenshotFormData.append("file", screenshotFiles[i]);
+            screenshotFormData.append("type", "image");
 
-          const screenshotController = new AbortController();
-          const screenshotTimeoutId = setTimeout(() => screenshotController.abort(), 60 * 1000);
+            const screenshotController = new AbortController();
+            const screenshotTimeoutId = setTimeout(() => screenshotController.abort(), 60 * 1000);
 
-          const screenshotUploadResponse = await fetch("/api/upload", {
-            method: "POST",
-            body: screenshotFormData,
-            signal: screenshotController.signal,
-          }).finally(() => clearTimeout(screenshotTimeoutId));
+            const screenshotUploadResponse = await fetch("/api/upload", {
+              method: "POST",
+              body: screenshotFormData,
+              signal: screenshotController.signal,
+            }).finally(() => clearTimeout(screenshotTimeoutId));
 
-          if (screenshotUploadResponse.ok) {
-            const screenshotData = await screenshotUploadResponse.json();
-            screenshotUrls.push(screenshotData.url || screenshotData.path);
+            if (screenshotUploadResponse.ok) {
+              const screenshotData = await screenshotUploadResponse.json();
+              const url = screenshotData.url || screenshotData.path;
+              if (url) {
+                screenshotUrls.push(url);
+              }
+            }
           }
+        } catch (screenshotError) {
+          console.error(`Erro ao fazer upload do screenshot ${i + 1}:`, screenshotError);
+          // Continuar mesmo se um screenshot falhar
         }
         setUploadProgress(60 + (i + 1) * (20 / screenshotFiles.length));
       }
