@@ -138,6 +138,13 @@ export async function POST(request: NextRequest) {
           // Obter URL pública
           const url = `https://storage.googleapis.com/${storageBucket}/${storagePath}`;
           console.log(`Upload concluído para ${storagePath}, URL: ${url}`);
+
+          return NextResponse.json({
+            success: true,
+            url: url,
+            path: storagePath,
+            fileName: uniqueFileName,
+          });
         } catch (adminError: any) {
           console.error("Erro ao usar Firebase Admin SDK:", adminError);
           // Fallback: usar Client SDK
@@ -171,13 +178,6 @@ export async function POST(request: NextRequest) {
             fileName: uniqueFileName,
           });
         }
-
-        return NextResponse.json({
-          success: true,
-          url: url,
-          path: storagePath,
-          fileName: uniqueFileName,
-        });
       } catch (firebaseError: any) {
         console.error("Erro no Firebase Storage:", {
           message: firebaseError?.message,
