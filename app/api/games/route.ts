@@ -33,6 +33,24 @@ async function saveGamesToFile(games: Game[]) {
 
 // Função para buscar jogos (Firestore ou Local)
 async function getGames(approved?: boolean): Promise<Game[]> {
+  // Em produção (Vercel), sempre usar Firestore (sistema de arquivos é read-only)
+  if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
+    const { db } = await import("@/lib/firebase/config");
+    const { collection, query, where, getDocs } = await import("firebase/firestore");
+
+    const gamesRef = collection(db, "games");
+    let q = approved !== undefined 
+      ? query(gamesRef, where("approved", "==", approved === true))
+      : query(gamesRef);
+
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((doc) => ({ 
+      id: doc.id, 
+      ...doc.data() 
+    } as Game));
+  }
+
+  // Desenvolvimento local
   if (!useLocalDatabase()) {
     try {
       const { db } = await import("@/lib/firebase/config");
@@ -49,12 +67,12 @@ async function getGames(approved?: boolean): Promise<Game[]> {
         ...doc.data() 
       } as Game));
     } catch (error) {
-      console.error("Erro ao buscar do Firestore, usando fallback local:", error);
-      // Fallback para local
+      console.error("Erro ao buscar do Firestore:", error);
+      throw error; // Não fazer fallback em produção
     }
   }
 
-  // Modo local
+  // Modo local apenas em desenvolvimento
   const games = await getGamesFromFile();
   if (approved === true) {
     return games.filter((g) => g.approved);
@@ -64,6 +82,24 @@ async function getGames(approved?: boolean): Promise<Game[]> {
 
 // Função para criar jogo (Firestore ou Local)
 async function createGame(gameData: Omit<Game, "id">): Promise<Game> {
+  // Em produção (Vercel), sempre usar Firestore (sistema de arquivos é read-only)
+  if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
+    const { db } = await import("@/lib/firebase/config");
+    const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
+
+    const gamesRef = collection(db, "games");
+    const docRef = await addDoc(gamesRef, {
+      ...gameData,
+      createdAt: serverTimestamp(),
+    });
+
+    return {
+      id: docRef.id,
+      ...gameData,
+    } as Game;
+  }
+
+  // Desenvolvimento local
   if (!useLocalDatabase()) {
     try {
       const { db } = await import("@/lib/firebase/config");
@@ -80,12 +116,12 @@ async function createGame(gameData: Omit<Game, "id">): Promise<Game> {
         ...gameData,
       } as Game;
     } catch (error) {
-      console.error("Erro ao criar no Firestore, usando fallback local:", error);
-      // Fallback para local
+      console.error("Erro ao criar no Firestore:", error);
+      throw error; // Não fazer fallback em produção
     }
   }
 
-  // Modo local
+  // Modo local apenas em desenvolvimento
   const games = await getGamesFromFile();
   const newGame: Game = {
     id: randomUUID(),
