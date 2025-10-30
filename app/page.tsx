@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Hero from "@/components/Hero";
 import GameCarousel from "@/components/GameCarousel";
 import GameGrid from "@/components/GameGrid";
