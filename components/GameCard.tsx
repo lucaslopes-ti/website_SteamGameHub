@@ -1,7 +1,12 @@
+"use client";
+
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Star, User } from "lucide-react";
 import { Game } from "@/lib/games";
+import FavoriteButton from "@/components/FavoriteButton";
+import type { MouseEvent } from "react";
 
 interface GameCardProps {
   game: Game;
@@ -29,6 +34,15 @@ export default function GameCard({ game }: GameCardProps) {
               DESTAQUE
             </div>
           )}
+          <div
+            className="absolute top-2 left-2"
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+          >
+            <FavoriteButton gameId={game.id} size="sm" />
+          </div>
         </div>
         <div className="p-4">
           <h3 className="text-lg font-bold text-white mb-2 line-clamp-1 group-hover:text-steam-blueLight transition">

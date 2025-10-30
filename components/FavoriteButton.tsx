@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import type { MouseEvent } from "react";
 import { Heart } from "lucide-react";
 import { useAuth } from "./AuthProvider";
 import { useToast } from "./ToastProvider";
@@ -83,7 +84,7 @@ export default function FavoriteButton({ gameId, size = "md" }: FavoriteButtonPr
   if (!isAuthenticated) {
     return (
       <button
-        onClick={(e: React.MouseEvent<HTMLButtonElement>) => e.preventDefault()}
+        onClick={(e: MouseEvent<HTMLButtonElement>) => e.preventDefault()}
         disabled
         aria-disabled="true"
         className={`${sizeClasses[size]} transition-all disabled:opacity-50 text-gray-400`}
