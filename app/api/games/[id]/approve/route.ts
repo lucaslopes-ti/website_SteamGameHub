@@ -68,3 +68,46 @@ export async function POST(
   }
 }
 
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    // Em produção, sempre usar Firestore
+    if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
+      const { db } = await import("@/lib/firebase/config");
+      const { doc, updateDoc, getDoc } = await import("firebase/firestore");
+
+      const gameRef = doc(db, "games", params.id);
+      await updateDoc(gameRef, { approved: false, pending: true });
+      const updated = await getDoc(gameRef);
+      return NextResponse.json({ success: true, game: { id: updated.id, ...updated.data() } });
+    }
+
+    // Desenvolvimento local
+    if (!useLocalDatabase()) {
+      const { db } = await import("@/lib/firebase/config");
+      const { doc, updateDoc, getDoc } = await import("firebase/firestore");
+
+      const gameRef = doc(db, "games", params.id);
+      await updateDoc(gameRef, { approved: false, pending: true });
+      const updated = await getDoc(gameRef);
+      return NextResponse.json({ success: true, game: { id: updated.id, ...updated.data() } });
+    }
+
+    // Modo local apenas em desenvolvimento
+    const games = await getGamesFromFile();
+    const index = games.findIndex((g) => g.id === params.id);
+    if (index === -1) {
+      return NextResponse.json({ error: "Jogo não encontrado" }, { status: 404 });
+    }
+    games[index].approved = false;
+    games[index].pending = true;
+    await saveGamesToFile(games);
+    return NextResponse.json({ success: true, game: games[index] });
+  } catch (error) {
+    console.error("Erro ao reverter aprovação:", error);
+    return NextResponse.json({ error: "Erro ao reverter aprovação" }, { status: 500 });
+  }
+}
+

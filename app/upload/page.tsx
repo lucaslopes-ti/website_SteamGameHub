@@ -75,26 +75,10 @@ export default function UploadPage() {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Validar extensão
-      const allowedExtensions = [".exe", ".zip", ".rar", ".7z", ".app", ".dmg"];
-      const fileName = file.name.toLowerCase();
-      const isValid = allowedExtensions.some((ext) => fileName.endsWith(ext));
-
-      if (!isValid) {
-        showToast("Formato não permitido. Use: .exe, .zip, .rar, .7z, .app, .dmg", "error");
-        return;
-      }
-
-      // Validar tamanho (500MB)
-      if (file.size > 500 * 1024 * 1024) {
-        showToast("Arquivo muito grande. Tamanho máximo: 500MB", "error");
-        return;
-      }
-
-      setSelectedFile(file);
-    }
+    // Bloqueado temporariamente: envio de arquivo executável desativado
+    e.target.value = "";
+    showToast("Envio de arquivo executável temporariamente desativado. Use o link do Google Drive.", "warning");
+    return;
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,9 +102,9 @@ export default function UploadPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validar: precisa ter OU arquivo OU link do Google Drive
-    if (!selectedFile && !formData.downloadLink) {
-      showToast("Por favor, selecione o arquivo executável OU forneça um link do Google Drive", "warning");
+    // Temporariamente, apenas link externo é aceito
+    if (!formData.downloadLink) {
+      showToast("Por favor, forneça o link do Google Drive/OneDrive/Dropbox do seu jogo", "warning");
       return;
     }
 
@@ -164,76 +148,6 @@ export default function UploadPage() {
         executableFileSize = 0; // Tamanho desconhecido
         uploadData = null;
         setUploadProgress(40);
-      } else if (selectedFile) {
-        // Fazer upload do arquivo
-        // Validação de arquivo
-        const allowedExtensions = [".exe", ".zip", ".rar", ".7z", ".app", ".dmg"];
-        const fileExtension = "." + selectedFile.name.split(".").pop()?.toLowerCase();
-        if (!allowedExtensions.includes(fileExtension)) {
-          throw new Error(`Formato não permitido. Use: ${allowedExtensions.join(", ")}`);
-        }
-        
-        if (selectedFile.size > 500 * 1024 * 1024) {
-          throw new Error("Arquivo muito grande. Tamanho máximo: 500MB");
-        }
-
-        executableFileName = selectedFile.name;
-        executableFileSize = selectedFile.size;
-
-        // Verificar se deve usar upload direto para Firebase (para arquivos grandes)
-        const shouldUseDirect = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET && 
-                                 process.env.ENABLE_LOCAL_STORAGE !== "true";
-
-        if (shouldUseDirect && selectedFile.size > 10 * 1024 * 1024) {
-          // Upload direto para Firebase (sem passar pelo servidor)
-          setUploadProgress(10);
-          const { uploadToFirebaseDirect } = await import("@/lib/client-upload");
-          uploadData = await uploadToFirebaseDirect(selectedFile, "executable");
-          setUploadProgress(40);
-        } else {
-        // Upload via servidor (para arquivos pequenos ou modo local)
-        const executableFormData = new FormData();
-        executableFormData.append("file", selectedFile);
-        executableFormData.append("type", "executable");
-
-        // Timeout de 5 minutos (300s) para arquivos grandes
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5 * 60 * 1000);
-
-        const uploadResponse = await fetch("/api/upload", {
-          method: "POST",
-          body: executableFormData,
-          signal: controller.signal,
-        }).finally(() => clearTimeout(timeoutId));
-
-        if (!uploadResponse.ok) {
-          // Tentar ler como JSON, mas tratar caso seja texto/HTML
-          let errorMessage = "Erro ao fazer upload do arquivo";
-          try {
-            const contentType = uploadResponse.headers.get("content-type");
-            if (contentType && contentType.includes("application/json")) {
-              const error = await uploadResponse.json();
-              errorMessage = error.error || errorMessage;
-            } else {
-              // Se não for JSON, ler como texto
-              const text = await uploadResponse.text();
-              errorMessage = text || errorMessage;
-              // Tentar extrair mensagem de erro comum
-              if (text.includes("Request Entity Too Large") || text.includes("413")) {
-                errorMessage = "Arquivo muito grande para upload via servidor. Use um arquivo menor ou tente novamente.";
-              } else if (text.includes("Request timeout") || text.includes("504")) {
-                errorMessage = "Timeout no upload. Tente com um arquivo menor ou verifique sua conexão.";
-              }
-            }
-          } catch (parseError) {
-            errorMessage = `Erro ${uploadResponse.status}: ${uploadResponse.statusText}`;
-          }
-          throw new Error(errorMessage);
-        }
-
-          uploadData = await uploadResponse.json();
-          setUploadProgress(40);
-        }
       }
 
       // Upload da imagem de capa (se houver)
@@ -301,9 +215,9 @@ export default function UploadPage() {
           genres: selectedGenres,
           technologies: selectedTechnologies,
           trailerUrl: formData.trailerUrl || undefined,
-          executableFile: uploadData?.fileName || undefined,
-          executableFileName: executableFileName || undefined,
-          executableFileSize: executableFileSize || undefined,
+          executableFile: undefined,
+          executableFileName: executableFileName || (formData.downloadLink ? "Arquivo externo (Google Drive/OneDrive/etc)" : undefined),
+          executableFileSize: executableFileSize || 0,
           downloadLink: formData.downloadLink || undefined, // Link do Google Drive se fornecido
           image: imageUrl || undefined,
           screenshots: screenshotUrls.length > 0 ? screenshotUrls : undefined,
@@ -471,7 +385,7 @@ export default function UploadPage() {
         <div className="bg-steam-dark rounded-lg p-6">
           <h2 className="text-2xl font-bold mb-4 text-white flex items-center gap-2">
             <FileText className="w-6 h-6" />
-            Arquivo Executável do Jogo *
+            Arquivo Executável do Jogo (temporariamente indisponível)
           </h2>
           <div className="space-y-4">
             <div className="border-2 border-dashed border-steam-blue rounded p-8 text-center">
@@ -481,43 +395,25 @@ export default function UploadPage() {
                 accept=".exe,.zip,.rar,.7z,.app,.dmg"
                 onChange={handleFileChange}
                 className="hidden"
+                disabled
               />
               <label
                 htmlFor="executable-file"
-                className="cursor-pointer flex flex-col items-center"
+                className="flex flex-col items-center opacity-60 cursor-not-allowed"
               >
                 <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
                 <p className="text-gray-300 mb-2">
-                  Clique para selecionar o arquivo executável
+                  Envio de arquivo executável será liberado em breve
                 </p>
                 <p className="text-gray-400 text-sm">
-                  Formatos aceitos: .exe, .zip, .rar, .7z, .app, .dmg (máx. 500MB)
+                  Por enquanto, envie o link do Google Drive/OneDrive/Dropbox
                 </p>
               </label>
             </div>
-            {selectedFile && (
-              <div className="bg-steam-darker rounded p-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-steam-green" />
-                  <div>
-                    <p className="text-white font-semibold">{selectedFile.name}</p>
-                    <p className="text-gray-400 text-sm">
-                      {formatFileSize(selectedFile.size)}
-                    </p>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setSelectedFile(null)}
-                  className="text-red-400 hover:text-red-300"
-                >
-                  Remover
-                </button>
-              </div>
-            )}
+            {/* Se voltar a habilitar, mostrar o bloco de arquivo selecionado */}
             <div className="mt-4 pt-4 border-t border-steam-blue">
               <p className="text-gray-400 text-sm mb-2 text-center">
-                OU forneça um link do Google Drive/OneDrive/etc
+                Envie o link do Google Drive/OneDrive/Dropbox do seu jogo (obrigatório)
               </p>
               <input
                 type="url"
@@ -527,6 +423,7 @@ export default function UploadPage() {
                 }
                 placeholder="https://drive.google.com/file/d/..."
                 className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight"
+                required
               />
               <p className="text-gray-500 text-xs mt-1">
                 Se você já enviou o arquivo para Google Drive, cole o link compartilhado aqui (compartilhe como "Qualquer pessoa com o link")
