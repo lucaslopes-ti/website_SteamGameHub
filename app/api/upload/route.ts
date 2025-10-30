@@ -146,37 +146,73 @@ export async function POST(request: NextRequest) {
             fileName: uniqueFileName,
           });
         } catch (adminError: any) {
-          console.error("Erro ao usar Firebase Admin SDK:", adminError);
-          // Fallback: usar Client SDK
+          console.error("Erro ao usar Firebase Admin SDK:", {
+            message: adminError?.message,
+            code: adminError?.code,
+            stack: adminError?.stack,
+          });
+          
+          // Informar ao usuário sobre a necessidade de configurar
+          const errorDetails = adminError?.message || "Erro desconhecido";
+          const needsConfig = errorDetails.includes("credential") || 
+                            errorDetails.includes("service account") ||
+                            !process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+          
+          if (needsConfig) {
+            console.warn("Firebase Admin SDK precisa de Service Account configurada no Vercel");
+            return NextResponse.json(
+              { 
+                error: "Firebase Storage não configurado corretamente",
+                details: "É necessário configurar FIREBASE_SERVICE_ACCOUNT_KEY no Vercel ou ajustar as regras do Firebase Storage para permitir uploads não autenticados.",
+                code: "CONFIG_REQUIRED"
+              },
+              { status: 500 }
+            );
+          }
+          
+          // Fallback: usar Client SDK apenas se Admin SDK falhou por outro motivo
           console.log("Tentando fallback para Client SDK...");
           
-          const { storage } = await import("@/lib/firebase/config");
-          const { ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
-          
-          if (!storage) {
-            throw new Error("Firebase Storage não foi inicializado");
+          try {
+            const { storage } = await import("@/lib/firebase/config");
+            const { ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
+            
+            if (!storage) {
+              throw new Error("Firebase Storage não foi inicializado");
+            }
+
+            const uniqueFileName = `${randomUUID()}${fileExtension}`;
+            const storagePath = type === "image" 
+              ? `images/${uniqueFileName}`
+              : `games/${uniqueFileName}`;
+
+            console.log(`Iniciando upload para Firebase Storage (Client SDK): ${storagePath}, tamanho: ${file.size} bytes`);
+
+            const storageRef = ref(storage, storagePath);
+            const bytes = await file.arrayBuffer();
+            const blob = new Blob([bytes], { type: file.type });
+
+            await uploadBytes(storageRef, blob);
+            const url = await getDownloadURL(storageRef);
+
+            return NextResponse.json({
+              success: true,
+              url: url,
+              path: storagePath,
+              fileName: uniqueFileName,
+            });
+          } catch (clientError: any) {
+            console.error("Erro ao usar Client SDK também:", clientError);
+            return NextResponse.json(
+              { 
+                error: "Erro ao fazer upload no Firebase Storage",
+                details: clientError?.message || adminError?.message || "Erro desconhecido",
+                code: clientError?.code || "UPLOAD_FAILED",
+                suggestion: "Verifique as regras do Firebase Storage ou configure a Service Account"
+              },
+              { status: 500 }
+            );
           }
-
-          const uniqueFileName = `${randomUUID()}${fileExtension}`;
-          const storagePath = type === "image" 
-            ? `images/${uniqueFileName}`
-            : `games/${uniqueFileName}`;
-
-          console.log(`Iniciando upload para Firebase Storage (Client SDK): ${storagePath}, tamanho: ${file.size} bytes`);
-
-          const storageRef = ref(storage, storagePath);
-          const bytes = await file.arrayBuffer();
-          const blob = new Blob([bytes], { type: file.type });
-
-          await uploadBytes(storageRef, blob);
-          const url = await getDownloadURL(storageRef);
-
-          return NextResponse.json({
-            success: true,
-            url: url,
-            path: storagePath,
-            fileName: uniqueFileName,
-          });
         }
       } catch (firebaseError: any) {
         console.error("Erro no Firebase Storage:", {
