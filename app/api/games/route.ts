@@ -80,6 +80,17 @@ async function getGames(approved?: boolean): Promise<Game[]> {
   return games;
 }
 
+// Função helper para remover campos undefined (Firestore não aceita undefined)
+function removeUndefinedFields<T extends Record<string, any>>(obj: T): Partial<T> {
+  const cleaned: Partial<T> = {};
+  for (const key in obj) {
+    if (obj[key] !== undefined) {
+      cleaned[key] = obj[key];
+    }
+  }
+  return cleaned;
+}
+
 // Função para criar jogo (Firestore ou Local)
 async function createGame(gameData: Omit<Game, "id">): Promise<Game> {
   // Em produção (Vercel), sempre usar Firestore (sistema de arquivos é read-only)
@@ -87,9 +98,12 @@ async function createGame(gameData: Omit<Game, "id">): Promise<Game> {
     const { db } = await import("@/lib/firebase/config");
     const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
 
+    // Remover campos undefined antes de salvar no Firestore
+    const cleanedData = removeUndefinedFields(gameData);
+
     const gamesRef = collection(db, "games");
     const docRef = await addDoc(gamesRef, {
-      ...gameData,
+      ...cleanedData,
       createdAt: serverTimestamp(),
     });
 
@@ -105,9 +119,12 @@ async function createGame(gameData: Omit<Game, "id">): Promise<Game> {
       const { db } = await import("@/lib/firebase/config");
       const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
 
+      // Remover campos undefined antes de salvar no Firestore
+      const cleanedData = removeUndefinedFields(gameData);
+
       const gamesRef = collection(db, "games");
       const docRef = await addDoc(gamesRef, {
-        ...gameData,
+        ...cleanedData,
         createdAt: serverTimestamp(),
       });
 

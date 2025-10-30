@@ -25,6 +25,17 @@ async function saveGamesToFile(games: Game[]) {
   await writeFile(GAMES_FILE, JSON.stringify(games, null, 2));
 }
 
+// Função helper para remover campos undefined (Firestore não aceita undefined)
+function removeUndefinedFields<T extends Record<string, any>>(obj: T): Partial<T> {
+  const cleaned: Partial<T> = {};
+  for (const key in obj) {
+    if (obj[key] !== undefined) {
+      cleaned[key] = obj[key];
+    }
+  }
+  return cleaned;
+}
+
 // Função helper para buscar jogo do Firestore
 async function getGameFromFirestore(id: string): Promise<Game | null> {
   const { db } = await import("@/lib/firebase/config");
@@ -42,8 +53,11 @@ async function updateGameInFirestore(id: string, updates: Partial<Game>): Promis
   const { db } = await import("@/lib/firebase/config");
   const { doc, updateDoc, getDoc } = await import("firebase/firestore");
   
+  // Remover campos undefined antes de atualizar no Firestore
+  const cleanedUpdates = removeUndefinedFields(updates);
+  
   const gameRef = doc(db, "games", id);
-  await updateDoc(gameRef, updates);
+  await updateDoc(gameRef, cleanedUpdates);
   
   const updated = await getDoc(gameRef);
   return { id: updated.id, ...updated.data() } as Game;
