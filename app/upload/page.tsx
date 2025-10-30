@@ -155,13 +155,25 @@ export default function UploadPage() {
       if (imageFile) {
         try {
           const hasFirebase = !!process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET && process.env.ENABLE_LOCAL_STORAGE !== "true";
+          let uploadSuccess = false;
+
+          // Tentar upload direto ao Firebase primeiro (se configurado)
           if (hasFirebase) {
-            // Upload direto ao Firebase (mais confiável no Vercel)
-            const { uploadToFirebaseDirect } = await import("@/lib/client-upload");
-            const imgUpload = await uploadToFirebaseDirect(imageFile, "image");
-            imageUrl = imgUpload.url;
-            console.log("Imagem enviada para Firebase:", imageUrl);
-          } else {
+            try {
+              const { uploadToFirebaseDirect } = await import("@/lib/client-upload");
+              const imgUpload = await uploadToFirebaseDirect(imageFile, "image");
+              imageUrl = imgUpload.url;
+              uploadSuccess = true;
+              console.log("Imagem enviada para Firebase (direto):", imageUrl);
+            } catch (directUploadError: any) {
+              // Se falhar por CORS ou outro erro, fazer fallback para API route
+              console.warn("Upload direto falhou, usando API route:", directUploadError?.message);
+              uploadSuccess = false;
+            }
+          }
+
+          // Fallback: usar API route se upload direto não foi usado ou falhou
+          if (!uploadSuccess) {
             const imageFormData = new FormData();
             imageFormData.append("file", imageFile);
             imageFormData.append("type", "image");
@@ -180,13 +192,17 @@ export default function UploadPage() {
               imageUrl = imageData.url || imageData.path;
               console.log("Imagem enviada via API:", imageUrl);
             } else {
-              console.error("Erro ao fazer upload da imagem:", imageUploadResponse.status);
+              const errorText = await imageUploadResponse.text();
+              console.error("Erro ao fazer upload da imagem via API:", imageUploadResponse.status, errorText);
+              throw new Error(`Erro ao fazer upload: ${imageUploadResponse.status}`);
             }
           }
-        } catch (imageError) {
+        } catch (imageError: any) {
           console.error("Erro ao fazer upload da imagem:", imageError);
           // Continuar sem imagem se o upload falhar
           imageUrl = undefined;
+          // Não bloquear o processo, mas avisar o usuário
+          showToast("Aviso: Falha ao enviar imagem de capa. O jogo será criado sem imagem.", "warning");
         }
       }
 
@@ -197,13 +213,26 @@ export default function UploadPage() {
       for (let i = 0; i < screenshotFiles.length; i++) {
         try {
           const hasFirebase = !!process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET && process.env.ENABLE_LOCAL_STORAGE !== "true";
+          let uploadSuccess = false;
+
+          // Tentar upload direto ao Firebase primeiro (se configurado)
           if (hasFirebase) {
-            const { uploadToFirebaseDirect } = await import("@/lib/client-upload");
-            const up = await uploadToFirebaseDirect(screenshotFiles[i], "image");
-            if (up.url) {
-              screenshotUrls.push(up.url);
+            try {
+              const { uploadToFirebaseDirect } = await import("@/lib/client-upload");
+              const up = await uploadToFirebaseDirect(screenshotFiles[i], "image");
+              if (up.url) {
+                screenshotUrls.push(up.url);
+                uploadSuccess = true;
+              }
+            } catch (directUploadError: any) {
+              // Se falhar por CORS ou outro erro, fazer fallback para API route
+              console.warn(`Upload direto do screenshot ${i + 1} falhou, usando API route:`, directUploadError?.message);
+              uploadSuccess = false;
             }
-          } else {
+          }
+
+          // Fallback: usar API route se upload direto não foi usado ou falhou
+          if (!uploadSuccess) {
             const screenshotFormData = new FormData();
             screenshotFormData.append("file", screenshotFiles[i]);
             screenshotFormData.append("type", "image");
@@ -223,9 +252,12 @@ export default function UploadPage() {
               if (url) {
                 screenshotUrls.push(url);
               }
+            } else {
+              console.error(`Erro ao fazer upload do screenshot ${i + 1} via API:`, screenshotUploadResponse.status);
+              // Continuar mesmo se um screenshot falhar
             }
           }
-        } catch (screenshotError) {
+        } catch (screenshotError: any) {
           console.error(`Erro ao fazer upload do screenshot ${i + 1}:`, screenshotError);
           // Continuar mesmo se um screenshot falhar
         }

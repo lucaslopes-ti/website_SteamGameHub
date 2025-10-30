@@ -39,19 +39,33 @@ export async function uploadToFirebaseDirect(
 
   const storageRef = ref(storage, storagePath);
 
-  // Fazer upload direto
-  await uploadBytes(storageRef, file);
+  try {
+    // Fazer upload direto com timeout
+    const uploadPromise = uploadBytes(storageRef, file);
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("Upload timeout")), 30000) // 30 segundos
+    );
 
-  // Obter URL pública
-  const url = await getDownloadURL(storageRef);
+    await Promise.race([uploadPromise, timeoutPromise]);
 
-  return {
-    url,
-    path: storagePath,
-    fileName: uniqueFileName,
-    originalFileName: file.name,
-    fileSize: file.size,
-  };
+    // Obter URL pública
+    const url = await getDownloadURL(storageRef);
+
+    return {
+      url,
+      path: storagePath,
+      fileName: uniqueFileName,
+      originalFileName: file.name,
+      fileSize: file.size,
+    };
+  } catch (error: any) {
+    // Verificar se é erro de CORS ou rede
+    const errorMessage = error?.message || "";
+    if (errorMessage.includes("CORS") || errorMessage.includes("network") || errorMessage.includes("Failed to fetch")) {
+      throw new Error("CORS_ERROR: Upload direto bloqueado. Use API route.");
+    }
+    throw error;
+  }
 }
 
 /**
