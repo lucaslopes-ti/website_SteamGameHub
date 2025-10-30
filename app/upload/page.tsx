@@ -254,7 +254,8 @@ export default function UploadPage() {
 
         if (imageUploadResponse.ok) {
           const imageData = await imageUploadResponse.json();
-          imageUrl = imageData.path;
+          // Preferir URL pública do Firebase quando disponível
+          imageUrl = imageData.url || imageData.path;
         }
       }
 
@@ -278,7 +279,8 @@ export default function UploadPage() {
 
         if (screenshotUploadResponse.ok) {
           const screenshotData = await screenshotUploadResponse.json();
-          screenshotUrls.push(screenshotData.path);
+          // Preferir URL pública do Firebase quando disponível
+          screenshotUrls.push(screenshotData.url || screenshotData.path);
         }
         setUploadProgress(60 + (i + 1) * (20 / screenshotFiles.length));
       }
