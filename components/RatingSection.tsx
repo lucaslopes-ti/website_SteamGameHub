@@ -56,19 +56,31 @@ export default function RatingSection({
   };
 
   return (
-    <div className="bg-steam-dark rounded-lg p-6">
-      <h2 className="text-2xl font-bold mb-4 text-steam-blueLight">
+    <section className="bg-steam-dark rounded-lg p-6" aria-labelledby="rating-heading">
+      <h2 id="rating-heading" className="text-2xl font-bold mb-4 text-steam-blueLight">
         Avaliar este jogo
       </h2>
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-4" role="radiogroup" aria-label="Selecione uma avaliação de 1 a 5 estrelas">
         {[1, 2, 3, 4, 5].map((value) => (
           <button
             key={value}
+            type="button"
+            role="radio"
+            aria-checked={rating === value}
+            aria-label={`${value} ${value === 1 ? "estrela" : "estrelas"}`}
             onMouseEnter={() => setHoveredRating(value)}
             onMouseLeave={() => setHoveredRating(0)}
+            onFocus={() => setHoveredRating(value)}
+            onBlur={() => setHoveredRating(0)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleRating(value);
+              }
+            }}
             onClick={() => handleRating(value)}
             disabled={submitted || loading}
-            className="transition-transform hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="transition-transform hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-yellow-400 focus-visible:outline-offset-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Star
               className={`w-8 h-8 ${
@@ -76,32 +88,37 @@ export default function RatingSection({
                   ? "fill-yellow-400 text-yellow-400"
                   : "text-gray-600"
               }`}
+              aria-hidden="true"
             />
           </button>
         ))}
         {rating > 0 && (
-          <span className="ml-4 text-gray-300">
-            {rating} {rating === 1 ? "estrela" : "estrelas"}
+          <span className="ml-4 text-gray-300" aria-live="polite">
+            {rating} {rating === 1 ? "estrela" : "estrelas"} selecionada{rating === 1 ? "" : "s"}
           </span>
         )}
       </div>
       {rating > 0 && !submitted && !loading && (
         <button
+          type="button"
           onClick={handleSubmit}
-          className="bg-steam-blueLight hover:bg-steam-blue text-white px-6 py-2 rounded transition"
+          className="bg-steam-blueLight hover:bg-steam-blue text-white px-6 py-2 rounded transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
+          aria-label={`Enviar avaliação de ${rating} ${rating === 1 ? "estrela" : "estrelas"}`}
         >
           Enviar Avaliação
         </button>
       )}
       {loading && (
-        <div className="flex items-center gap-2 text-gray-400">
-          <Loader2 className="w-4 h-4 animate-spin" />
-          <span>Enviando...</span>
+        <div className="flex items-center gap-2 text-gray-400" role="status" aria-live="polite" aria-label="Enviando avaliação">
+          <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+          <span>Enviando avaliação...</span>
         </div>
       )}
       {submitted && (
-        <p className="text-steam-green">Obrigado pela sua avaliação!</p>
+        <p className="text-steam-green" role="status" aria-live="polite" aria-atomic="true">
+          Obrigado pela sua avaliação!
+        </p>
       )}
-    </div>
+    </section>
   );
 }

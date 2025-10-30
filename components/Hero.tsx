@@ -79,8 +79,8 @@ export default function Hero() {
             </div>
             
             <h1 className="text-6xl md:text-7xl lg:text-8xl font-extrabold text-white mb-6 leading-tight">
-              <span className="block mb-2">SENAI</span>
-              <span className="block bg-gradient-to-r from-steam-blueLight via-steam-green to-steam-blueLight bg-clip-text text-transparent leading-none">
+              <span className="block mb-2 animate-slideIn">SENAI</span>
+              <span className="block bg-gradient-to-r from-steam-blueLight via-steam-green to-steam-blueLight bg-clip-text text-transparent leading-none gradient-text-animated">
                 Game HUB
               </span>
             </h1>
@@ -97,10 +97,10 @@ export default function Hero() {
 
           {/* Stats grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-            <div className="group">
-              <div className="bg-steam-dark/40 backdrop-blur-sm border border-steam-blue/20 rounded-xl p-6 transition-all duration-300 hover:border-steam-blueLight/40 hover:bg-steam-dark/60">
+            <div className="group stagger-item">
+              <div className="glass-card border border-steam-blue/20 rounded-xl p-6 transition-all duration-300 hover:border-steam-blueLight/40 hover:bg-steam-dark/70 hover-lift-modern">
                 <div className="flex items-start justify-between mb-3">
-                  <div className="p-3 bg-steam-blue/10 rounded-lg">
+                  <div className="p-3 bg-steam-blue/10 rounded-lg float-animation">
                     <Gamepad2 className="w-6 h-6 text-steam-blueLight" />
                   </div>
                   <div className="text-right">
@@ -113,10 +113,10 @@ export default function Hero() {
               </div>
             </div>
 
-            <div className="group">
-              <div className="bg-steam-dark/40 backdrop-blur-sm border border-steam-blue/20 rounded-xl p-6 transition-all duration-300 hover:border-steam-green/40 hover:bg-steam-dark/60">
+            <div className="group stagger-item">
+              <div className="glass-card border border-steam-blue/20 rounded-xl p-6 transition-all duration-300 hover:border-steam-green/40 hover:bg-steam-dark/70 hover-lift-modern">
                 <div className="flex items-start justify-between mb-3">
-                  <div className="p-3 bg-steam-green/10 rounded-lg">
+                  <div className="p-3 bg-steam-green/10 rounded-lg float-animation">
                     <Users className="w-6 h-6 text-steam-green" />
                   </div>
                   <div className="text-right">
@@ -129,10 +129,10 @@ export default function Hero() {
               </div>
             </div>
 
-            <div className="group">
-              <div className="bg-steam-dark/40 backdrop-blur-sm border border-steam-blue/20 rounded-xl p-6 transition-all duration-300 hover:border-yellow-400/40 hover:bg-steam-dark/60">
+            <div className="group stagger-item">
+              <div className="glass-card border border-steam-blue/20 rounded-xl p-6 transition-all duration-300 hover:border-yellow-400/40 hover:bg-steam-dark/70 hover-lift-modern">
                 <div className="flex items-start justify-between mb-3">
-                  <div className="p-3 bg-yellow-400/10 rounded-lg">
+                  <div className="p-3 bg-yellow-400/10 rounded-lg float-animation">
                     <Award className="w-6 h-6 text-yellow-400" />
                   </div>
                   <div className="text-right">
@@ -150,19 +150,19 @@ export default function Hero() {
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
               href="/games"
-              className="group relative flex items-center justify-center gap-3 bg-steam-blueLight hover:bg-steam-blue text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 overflow-hidden"
+              className="group relative flex items-center justify-center gap-3 bg-steam-blueLight hover:bg-steam-blue text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 overflow-hidden ripple-effect glow-effect"
             >
               <span className="relative z-10 flex items-center gap-3">
                 <Play className="w-5 h-5" />
                 Explorar Jogos
               </span>
               <ArrowRight className="w-5 h-5 relative z-10 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 shimmer" />
             </Link>
 
             <Link
               href="/upload"
-              className="group flex items-center justify-center gap-3 bg-transparent border-2 border-steam-green/50 hover:border-steam-green hover:bg-steam-green/10 text-steam-green px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200"
+              className="group flex items-center justify-center gap-3 bg-transparent border-2 border-steam-green/50 hover:border-steam-green hover:bg-steam-green/10 text-steam-green px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover-lift-modern ripple-effect"
             >
               <span>Enviar Seu Jogo</span>
               <ArrowRight className="w-5 h-5 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />

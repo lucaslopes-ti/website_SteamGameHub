@@ -26,13 +26,17 @@ export default function GameCard({ game }: GameCardProps) {
   const isValidImageUrl = imageSrc && imageSrc.trim() !== "" && (imageSrc.startsWith("http") || imageSrc.startsWith("/"));
 
   return (
-    <Link href={`/games/${game.id}`}>
-      <div className="bg-steam-dark rounded-lg overflow-hidden hover-lift cursor-pointer group animate-fadeIn">
+    <article className="animate-fadeIn stagger-item">
+      <Link 
+        href={`/games/${game.id}`}
+        className="block bg-steam-dark rounded-lg overflow-hidden hover-lift-modern cursor-pointer group focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 card-shine"
+        aria-label={`Ver detalhes do jogo ${game.title}${game.featured ? " (Destaque)" : ""}`}
+      >
         <div className="relative h-48 bg-steam-blue overflow-hidden">
           {isValidImageUrl && !imageError ? (
             <Image
               src={imageSrc}
-              alt={game.title}
+              alt={`Capa do jogo ${game.title}`}
               fill
               className="object-cover group-hover:scale-110 transition-transform duration-300"
               onError={() => {
@@ -40,23 +44,25 @@ export default function GameCard({ game }: GameCardProps) {
                 setImageError(true);
               }}
               unoptimized={imageSrc.startsWith("http")}
-              priority={false}
+              loading="lazy"
+              quality={85}
             />
           ) : isValidImageUrl && imageError ? (
             // Fallback: usar img tag normal se Next.js Image falhar
             <img
               src={imageSrc}
-              alt={game.title}
+              alt={`Capa do jogo ${game.title}`}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               onError={() => setImageError(true)}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400">
-              Sem imagem
+            <div className="w-full h-full flex items-center justify-center text-gray-400" role="img" aria-label={`${game.title} - Sem imagem de capa disponível`}>
+              <span className="sr-only">Sem imagem de capa</span>
+              <span aria-hidden="true">Sem imagem</span>
             </div>
           )}
           {game.featured && (
-            <div className="absolute top-2 right-2 bg-steam-green text-white px-2 py-1 rounded text-xs font-bold">
+            <div className="absolute top-2 right-2 bg-steam-green text-white px-2 py-1 rounded text-xs font-bold" aria-label="Jogo em destaque">
               DESTAQUE
             </div>
           )}
@@ -66,6 +72,7 @@ export default function GameCard({ game }: GameCardProps) {
               e.preventDefault();
               e.stopPropagation();
             }}
+            role="none"
           >
             <FavoriteButton gameId={game.id} size="sm" />
           </div>
@@ -78,27 +85,32 @@ export default function GameCard({ game }: GameCardProps) {
             {game.description}
           </p>
           <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-1 text-yellow-400">
-              <Star className="w-4 h-4 fill-current" />
+            <div className="flex items-center gap-1 text-yellow-400" aria-label={`Avaliação: ${game.rating.toFixed(1)} de 5 estrelas`}>
+              <Star className="w-4 h-4 fill-current" aria-hidden="true" />
               <span>{game.rating.toFixed(1)}</span>
+              <span className="sr-only">de 5 estrelas</span>
             </div>
-            <div className="flex items-center gap-1 text-gray-400">
-              <User className="w-4 h-4" />
+            <div className="flex items-center gap-1 text-gray-400" aria-label={`Autor: ${game.author}`}>
+              <User className="w-4 h-4" aria-hidden="true" />
               <span>{game.author}</span>
             </div>
           </div>
-          <div className="flex flex-wrap gap-2 mt-3">
+          <div className="flex flex-wrap gap-2 mt-3" role="list" aria-label="Gêneros do jogo">
             {game.genres.slice(0, 2).map((genre) => (
               <span
                 key={genre}
                 className="bg-steam-blue text-steam-blueLight text-xs px-2 py-1 rounded"
+                role="listitem"
               >
                 {genre}
               </span>
             ))}
+            {game.genres.length > 2 && (
+              <span className="sr-only">e mais {game.genres.length - 2} gênero{game.genres.length - 2 > 1 ? "s" : ""}</span>
+            )}
           </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </article>
   );
 }

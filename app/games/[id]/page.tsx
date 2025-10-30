@@ -104,10 +104,12 @@ export default function GameDetailPage() {
           {game.image && game.image.trim() !== "" && (game.image.startsWith("http") || game.image.startsWith("/")) && !imageError ? (
             <Image
               src={game.image}
-              alt={game.title}
+              alt={`Capa do jogo ${game.title}`}
               fill
               className="object-cover"
               unoptimized={game.image.startsWith("http")}
+              loading="lazy"
+              quality={90}
               onError={() => {
                 console.error("Erro ao carregar imagem:", game.image);
                 setImageError(true);
@@ -214,15 +216,17 @@ export default function GameDetailPage() {
                     <button
                       key={index}
                       onClick={() => setSelectedScreenshot(screenshot)}
-                      className="relative aspect-video bg-steam-dark rounded overflow-hidden hover:ring-2 ring-steam-blueLight transition group"
+                      className="relative aspect-video bg-steam-dark rounded-lg overflow-hidden hover:ring-2 ring-steam-blueLight transition-all group shadow-lg"
+                      aria-label={`Ver screenshot ${index + 1} em tamanho maior`}
                     >
                       <img
                         src={screenshot}
-                        alt={`Screenshot ${index + 1}`}
+                        alt={`Screenshot ${index + 1} do jogo ${game.title}`}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        loading="lazy"
                       />
                       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition flex items-center justify-center">
-                        <ImageIcon className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition" />
+                        <ImageIcon className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition transform scale-0 group-hover:scale-100" />
                       </div>
                     </button>
                   ))}
@@ -232,20 +236,31 @@ export default function GameDetailPage() {
 
             {selectedScreenshot && (
               <div
-                className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+                className="fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
                 onClick={() => setSelectedScreenshot(null)}
+                role="dialog"
+                aria-modal="true"
+                aria-label="Visualização ampliada do screenshot"
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    setSelectedScreenshot(null);
+                  }
+                }}
+                tabIndex={-1}
               >
                 <button
                   onClick={() => setSelectedScreenshot(null)}
-                  className="absolute top-4 right-4 text-white hover:text-gray-300 transition"
+                  className="absolute top-4 right-4 bg-red-600 hover:bg-red-700 text-white rounded-full p-2 transition transform hover:scale-110 shadow-lg z-10"
+                  aria-label="Fechar visualização ampliada"
                 >
-                  <X className="w-8 h-8" />
+                  <X className="w-6 h-6" />
                 </button>
                 <img
                   src={selectedScreenshot}
-                  alt="Screenshot ampliada"
-                  className="max-w-full max-h-full object-contain"
+                  alt={`Screenshot ampliado do jogo ${game.title}`}
+                  className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
                   onClick={(e) => e.stopPropagation()}
+                  loading="eager"
                 />
               </div>
             )}

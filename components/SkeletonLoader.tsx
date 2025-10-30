@@ -1,18 +1,18 @@
 export function GameCardSkeleton() {
   return (
     <div className="bg-steam-dark rounded-lg overflow-hidden animate-pulse">
-      <div className="h-48 bg-steam-blue" />
+      <div className="h-48 bg-steam-blue skeleton" />
       <div className="p-4 space-y-3">
-        <div className="h-6 bg-steam-darker rounded w-3/4" />
-        <div className="h-4 bg-steam-darker rounded w-full" />
-        <div className="h-4 bg-steam-darker rounded w-5/6" />
+        <div className="h-6 bg-steam-darker rounded w-3/4 skeleton" />
+        <div className="h-4 bg-steam-darker rounded w-full skeleton" />
+        <div className="h-4 bg-steam-darker rounded w-5/6 skeleton" />
         <div className="flex justify-between">
-          <div className="h-4 bg-steam-darker rounded w-16" />
-          <div className="h-4 bg-steam-darker rounded w-24" />
+          <div className="h-4 bg-steam-darker rounded w-16 skeleton" />
+          <div className="h-4 bg-steam-darker rounded w-24 skeleton" />
         </div>
         <div className="flex gap-2">
-          <div className="h-6 bg-steam-darker rounded w-20" />
-          <div className="h-6 bg-steam-darker rounded w-20" />
+          <div className="h-6 bg-steam-darker rounded w-20 skeleton" />
+          <div className="h-6 bg-steam-darker rounded w-20 skeleton" />
         </div>
       </div>
     </div>

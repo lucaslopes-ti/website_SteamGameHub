@@ -106,44 +106,72 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
         Comentários ({comments.length})
       </h2>
 
-      <form onSubmit={handleSubmit} className="mb-6">
+      <form onSubmit={handleSubmit} className="mb-6" aria-label="Formulário de comentários">
         {!isAuthenticated && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <input
-              type="text"
-              value={guestName}
-              onChange={(e) => setGuestName(e.target.value)}
-              placeholder="Seu nome (opcional)"
-              className="bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight"
-            />
-            <input
-              type="email"
-              value={guestEmail}
-              onChange={(e) => setGuestEmail(e.target.value)}
-              placeholder="Seu e-mail (opcional)"
-              className="bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight"
-            />
+            <div>
+              <label htmlFor="guest-name" className="sr-only">
+                Seu nome (opcional)
+              </label>
+              <input
+                id="guest-name"
+                type="text"
+                autoComplete="name"
+                value={guestName}
+                onChange={(e) => setGuestName(e.target.value)}
+                placeholder="Seu nome (opcional)"
+                className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight focus-visible:ring-2 focus-visible:ring-steam-blueLight"
+                aria-label="Seu nome para exibição no comentário (opcional)"
+              />
+            </div>
+            <div>
+              <label htmlFor="guest-email" className="sr-only">
+                Seu e-mail (opcional)
+              </label>
+              <input
+                id="guest-email"
+                type="email"
+                autoComplete="email"
+                value={guestEmail}
+                onChange={(e) => setGuestEmail(e.target.value)}
+                placeholder="Seu e-mail (opcional)"
+                className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight focus-visible:ring-2 focus-visible:ring-steam-blueLight"
+                aria-label="Seu e-mail (opcional, não será exibido publicamente)"
+              />
+            </div>
           </div>
         )}
         <div className="flex gap-4">
-          <textarea
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            placeholder="Escreva um comentário..."
-            rows={3}
-            className="flex-1 bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight"
-          />
+          <div className="flex-1">
+            <label htmlFor="comment-text" className="sr-only">
+              Escreva seu comentário
+            </label>
+            <textarea
+              id="comment-text"
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Escreva um comentário..."
+              rows={3}
+              className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight focus-visible:ring-2 focus-visible:ring-steam-blueLight resize-y"
+              aria-label="Campo de texto para escrever seu comentário"
+              aria-required="true"
+            />
+          </div>
           <button
             type="submit"
             disabled={!newComment.trim() || submitting}
-            className="bg-steam-blueLight hover:bg-steam-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-2 rounded transition flex items-center gap-2 h-fit"
+            className="bg-steam-blueLight hover:bg-steam-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-2 rounded transition flex items-center gap-2 h-fit focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
+            aria-label={submitting ? "Enviando comentário, aguarde" : "Enviar comentário"}
           >
             {submitting ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
+                <span className="sr-only">Enviando</span>
+              </>
             ) : (
               <>
-                <Send className="w-5 h-5" />
-                Enviar
+                <Send className="w-5 h-5" aria-hidden="true" />
+                <span>Enviar</span>
               </>
             )}
           </button>
@@ -151,27 +179,40 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
       </form>
 
       {loading ? (
-        <div className="flex justify-center py-8">
-          <Loader2 className="w-6 h-6 animate-spin text-steam-blueLight" />
+        <div className="flex justify-center py-8" role="status" aria-live="polite" aria-label="Carregando comentários">
+          <Loader2 className="w-6 h-6 animate-spin text-steam-blueLight" aria-hidden="true" />
+          <span className="sr-only">Carregando comentários</span>
         </div>
       ) : comments.length === 0 ? (
-        <div className="text-center py-8 text-gray-400">
-          <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" />
+        <div className="text-center py-8 text-gray-400" role="status">
+          <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" aria-hidden="true" />
           <p>Nenhum comentário ainda. Seja o primeiro a comentar!</p>
         </div>
       ) : (
-        <div className="space-y-4">
-          {comments.map((comment) => (
-            <div
+        <div className="space-y-4" role="list" aria-label={`Lista de ${comments.length} comentário${comments.length > 1 ? "s" : ""}`}>
+          {comments.map((comment, index) => (
+            <article
               key={comment.id}
               className="bg-steam-darker rounded p-4 border border-steam-blue"
+              role="listitem"
+              aria-labelledby={`comment-author-${comment.id}`}
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <User className="w-5 h-5 text-steam-blueLight" />
-                  <div>
+                  <User className="w-5 h-5 text-steam-blueLight" aria-hidden="true" />
+                  <div id={`comment-author-${comment.id}`}>
                     <p className="text-white font-semibold">{comment.author}</p>
-                    <p className="text-gray-400 text-xs">
+                    <time 
+                      className="text-gray-400 text-xs"
+                      dateTime={comment.createdAt}
+                      aria-label={`Comentário publicado em ${new Date(comment.createdAt).toLocaleDateString("pt-BR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}`}
+                    >
                       {new Date(comment.createdAt).toLocaleDateString("pt-BR", {
                         day: "2-digit",
                         month: "2-digit",
@@ -179,20 +220,23 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
                         hour: "2-digit",
                         minute: "2-digit",
                       })}
-                    </p>
+                    </time>
                   </div>
                 </div>
                 {(isAuthenticated && (user?.email === comment.authorEmail || user?.role === "admin")) && (
                   <button
+                    type="button"
                     onClick={() => handleDelete(comment.id)}
-                    className="text-red-400 hover:text-red-300 transition"
+                    className="text-red-400 hover:text-red-300 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-400 focus-visible:outline-offset-2 rounded p-1"
+                    aria-label={`Excluir comentário de ${comment.author}`}
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-4 h-4" aria-hidden="true" />
+                    <span className="sr-only">Excluir comentário</span>
                   </button>
                 )}
               </div>
               <p className="text-gray-300 whitespace-pre-wrap">{comment.content}</p>
-            </div>
+            </article>
           ))}
         </div>
       )}

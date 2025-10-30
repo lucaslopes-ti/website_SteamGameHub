@@ -42,45 +42,70 @@ export default function LoginPage() {
           Acesso restrito para professores e administradores
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6" aria-label="Formulário de login">
           {error && (
-            <div className="bg-red-900 bg-opacity-50 border border-red-500 rounded p-4 flex items-center gap-2 text-red-200">
-              <AlertCircle className="w-5 h-5" />
+            <div 
+              role="alert"
+              aria-live="assertive"
+              className="bg-red-900 bg-opacity-50 border border-red-500 rounded p-4 flex items-center gap-2 text-red-200"
+            >
+              <AlertCircle className="w-5 h-5" aria-hidden="true" />
               <span>{error}</span>
             </div>
           )}
 
           <div>
-            <label className="block text-steam-blueLight mb-2">E-mail</label>
+            <label htmlFor="email" className="block text-steam-blueLight mb-2">
+              E-mail *
+            </label>
             <input
-              type="text"
+              id="email"
+              type="email"
               required
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white focus:outline-none focus:border-steam-blueLight"
+              className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight focus-visible:ring-2 focus-visible:ring-steam-blueLight"
               placeholder="digite o email"
+              aria-describedby="email-description"
+              aria-invalid={error ? "true" : "false"}
+              aria-required="true"
             />
+            <span id="email-description" className="sr-only">
+              Digite seu endereço de e-mail de acesso
+            </span>
           </div>
 
           <div>
-            <label className="block text-steam-blueLight mb-2">Senha</label>
+            <label htmlFor="password" className="block text-steam-blueLight mb-2">
+              Senha *
+            </label>
             <input
+              id="password"
               type="password"
               required
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white focus:outline-none focus:border-steam-blueLight"
+              className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight focus-visible:ring-2 focus-visible:ring-steam-blueLight"
               placeholder="••••••••"
+              aria-describedby="password-description"
+              aria-invalid={error ? "true" : "false"}
+              aria-required="true"
             />
+            <span id="password-description" className="sr-only">
+              Digite sua senha de acesso
+            </span>
           </div>
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full bg-steam-blueLight hover:bg-steam-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded font-semibold transition flex items-center justify-center gap-2"
+            disabled={loading || !email || !password}
+            className="w-full bg-steam-blueLight hover:bg-steam-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded font-semibold transition flex items-center justify-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
+            aria-label={loading ? "Fazendo login, aguarde" : "Fazer login no sistema"}
           >
-            <LogIn className="w-5 h-5" />
-            {loading ? "Entrando..." : "Entrar"}
+            <LogIn className="w-5 h-5" aria-hidden="true" />
+            <span>{loading ? "Entrando..." : "Entrar"}</span>
           </button>
         </form>
       </div>

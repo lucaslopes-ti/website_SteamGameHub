@@ -307,78 +307,124 @@ export default function UploadPage() {
 
           <div className="space-y-4">
             <div>
-              <label className="block text-steam-blueLight mb-2">
-                Título do Jogo *
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.title}
-                onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
-                }
-                className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white focus:outline-none focus:border-steam-blueLight"
-              />
-            </div>
+                <label htmlFor="game-title" className="block text-steam-blueLight mb-2">
+                  Título do Jogo *
+                </label>
+                <input
+                  id="game-title"
+                  type="text"
+                  required
+                  value={formData.title}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
+                  className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight focus-visible:ring-2 focus-visible:ring-steam-blueLight"
+                  placeholder="Digite o título do seu jogo"
+                  aria-describedby="title-description"
+                  aria-required="true"
+                />
+                <span id="title-description" className="sr-only">
+                  O título deve ter pelo menos 3 caracteres
+                </span>
+              </div>
 
-            <div>
-              <label className="block text-steam-blueLight mb-2">
-                Descrição *
-              </label>
-              <textarea
-                required
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-                rows={5}
-                className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white focus:outline-none focus:border-steam-blueLight"
-              />
-            </div>
+              <div>
+                <label htmlFor="game-description" className="block text-steam-blueLight mb-2">
+                  Descrição *
+                </label>
+                <textarea
+                  id="game-description"
+                  required
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                  rows={5}
+                  className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight focus-visible:ring-2 focus-visible:ring-steam-blueLight resize-y"
+                  placeholder="Descreva seu jogo, mecânicas principais, objetivo, etc."
+                  aria-describedby="description-description"
+                  aria-required="true"
+                />
+                <span id="description-description" className="sr-only">
+                  A descrição deve ter pelo menos 10 caracteres
+                </span>
+              </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-steam-blueLight mb-2">
+                <label htmlFor="author-name" className="block text-steam-blueLight mb-2">
                   Seu Nome *
                 </label>
                 <input
+                  id="author-name"
                   type="text"
                   required
+                  autoComplete="name"
                   value={formData.author}
                   onChange={(e) =>
                     setFormData({ ...formData, author: e.target.value })
                   }
-                  className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white focus:outline-none focus:border-steam-blueLight"
+                  className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight focus-visible:ring-2 focus-visible:ring-steam-blueLight"
+                  placeholder="Seu nome completo"
+                  aria-describedby="author-description"
+                  aria-required="true"
                 />
+                <span id="author-description" className="sr-only">
+                  Digite seu nome completo
+                </span>
               </div>
 
               <div>
-                <label className="block text-steam-blueLight mb-2">
+                <label htmlFor="author-email" className="block text-steam-blueLight mb-2">
                   E-mail *
                 </label>
                 <input
+                  id="author-email"
                   type="email"
                   required
+                  autoComplete="email"
                   value={formData.authorEmail}
                   onChange={(e) =>
                     setFormData({ ...formData, authorEmail: e.target.value })
                   }
-                  className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white focus:outline-none focus:border-steam-blueLight"
+                  className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight focus-visible:ring-2 focus-visible:ring-steam-blueLight"
+                  placeholder="seu@email.com"
+                  aria-describedby="email-description"
+                  aria-required="true"
                 />
+                <span id="email-description" className="sr-only">
+                  Digite um endereço de e-mail válido
+                </span>
               </div>
             </div>
           </div>
         </div>
 
         <div className="bg-steam-dark rounded-lg p-6">
-          <h2 className="text-2xl font-bold mb-4 text-white">Gêneros *</h2>
-          <div className="flex flex-wrap gap-2">
+          <h2 className="text-2xl font-bold mb-4 text-white" id="genres-heading">Gêneros *</h2>
+          <div 
+            className="flex flex-wrap gap-2" 
+            role="group" 
+            aria-labelledby="genres-heading"
+            aria-describedby="genres-description"
+          >
+            <span id="genres-description" className="sr-only">
+              Selecione pelo menos um gênero para o seu jogo. Pressione Espaço ou Enter para selecionar ou desselecionar.
+            </span>
             {availableGenres.map((genre) => (
               <button
                 key={genre}
                 type="button"
                 onClick={() => handleGenreToggle(genre)}
-                className={`px-4 py-2 rounded transition ${
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleGenreToggle(genre);
+                  }
+                }}
+                aria-pressed={selectedGenres.includes(genre)}
+                aria-label={`${selectedGenres.includes(genre) ? "Selecionado" : "Não selecionado"}: ${genre}`}
+                className={`px-4 py-2 rounded transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 ${
                   selectedGenres.includes(genre)
                     ? "bg-steam-blueLight text-white"
                     : "bg-steam-darker text-gray-300 hover:bg-steam-blue"
@@ -388,17 +434,38 @@ export default function UploadPage() {
               </button>
             ))}
           </div>
+          {selectedGenres.length === 0 && (
+            <p className="text-yellow-400 text-sm mt-2" role="alert" aria-live="polite">
+              Selecione pelo menos um gênero
+            </p>
+          )}
         </div>
 
         <div className="bg-steam-dark rounded-lg p-6">
-          <h2 className="text-2xl font-bold mb-4 text-white">Tecnologias *</h2>
-          <div className="flex flex-wrap gap-2">
+          <h2 className="text-2xl font-bold mb-4 text-white" id="technologies-heading">Tecnologias *</h2>
+          <div 
+            className="flex flex-wrap gap-2" 
+            role="group" 
+            aria-labelledby="technologies-heading"
+            aria-describedby="technologies-description"
+          >
+            <span id="technologies-description" className="sr-only">
+              Selecione pelo menos uma tecnologia usada no desenvolvimento do jogo. Pressione Espaço ou Enter para selecionar ou desselecionar.
+            </span>
             {availableTechnologies.map((tech) => (
               <button
                 key={tech}
                 type="button"
                 onClick={() => handleTechnologyToggle(tech)}
-                className={`px-4 py-2 rounded transition ${
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleTechnologyToggle(tech);
+                  }
+                }}
+                aria-pressed={selectedTechnologies.includes(tech)}
+                aria-label={`${selectedTechnologies.includes(tech) ? "Selecionado" : "Não selecionado"}: ${tech}`}
+                className={`px-4 py-2 rounded transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-green focus-visible:outline-offset-2 ${
                   selectedTechnologies.includes(tech)
                     ? "bg-steam-green text-white"
                     : "bg-steam-darker text-gray-300 hover:bg-steam-blue"
@@ -408,6 +475,11 @@ export default function UploadPage() {
               </button>
             ))}
           </div>
+          {selectedTechnologies.length === 0 && (
+            <p className="text-yellow-400 text-sm mt-2" role="alert" aria-live="polite">
+              Selecione pelo menos uma tecnologia
+            </p>
+          )}
         </div>
 
         <div className="bg-steam-dark rounded-lg p-6">
@@ -443,17 +515,23 @@ export default function UploadPage() {
               <p className="text-gray-400 text-sm mb-2 text-center">
                 Envie o link do Google Drive/OneDrive/Dropbox do seu jogo (obrigatório)
               </p>
+              <label htmlFor="download-link" className="sr-only">
+                Link de download do jogo (Google Drive, OneDrive, Dropbox, etc.)
+              </label>
               <input
+                id="download-link"
                 type="url"
                 value={formData.downloadLink}
                 onChange={(e) =>
                   setFormData({ ...formData, downloadLink: e.target.value })
                 }
                 placeholder="https://drive.google.com/file/d/..."
-                className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight"
+                className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight focus-visible:ring-2 focus-visible:ring-steam-blueLight"
                 required
+                aria-describedby="download-link-description"
+                aria-required="true"
               />
-              <p className="text-gray-500 text-xs mt-1">
+              <p id="download-link-description" className="text-gray-500 text-xs mt-1">
                 Se você já enviou o arquivo para Google Drive, cole o link compartilhado aqui (compartilhe como "Qualquer pessoa com o link")
               </p>
             </div>
@@ -467,22 +545,29 @@ export default function UploadPage() {
           </h2>
           <div className="space-y-4">
             {imagePreview ? (
-              <div className="relative">
+              <div className="relative group">
                 <img
                   src={imagePreview}
-                  alt="Preview"
-                  className="w-full h-64 object-cover rounded border border-steam-blue"
+                  alt="Preview da imagem de capa"
+                  className="w-full h-64 object-cover rounded-lg border-2 border-steam-blueLight shadow-lg"
                 />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors rounded-lg" />
                 <button
                   type="button"
                   onClick={() => {
                     setImageFile(null);
                     setImagePreview(null);
                   }}
-                  className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition"
+                  className="absolute top-3 right-3 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-lg transition transform hover:scale-110"
+                  aria-label="Remover imagem"
                 >
-                  Remover
+                  <X className="w-5 h-5" />
                 </button>
+                {imageFile && (
+                  <div className="absolute bottom-3 left-3 bg-black/70 text-white text-xs px-3 py-1 rounded backdrop-blur-sm">
+                    {formatFileSize(imageFile.size)}
+                  </div>
+                )}
               </div>
             ) : (
               <div className="border-2 border-dashed border-steam-blue rounded p-8 text-center">
@@ -590,9 +675,10 @@ export default function UploadPage() {
                   <div key={index} className="relative group">
                     <img
                       src={preview}
-                      alt={`Screenshot ${index + 1}`}
-                      className="w-full h-32 object-cover rounded border border-steam-blue"
+                      alt={`Screenshot ${index + 1} do jogo`}
+                      className="w-full h-32 object-cover rounded-lg border-2 border-steam-blue shadow-md group-hover:border-steam-blueLight transition-all"
                     />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors rounded-lg" />
                     <button
                       type="button"
                       onClick={() => {
@@ -601,10 +687,16 @@ export default function UploadPage() {
                         setScreenshotFiles(newFiles);
                         setScreenshotPreviews(newPreviews);
                       }}
-                      className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
+                      className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-all transform hover:scale-110 shadow-lg"
+                      aria-label={`Remover screenshot ${index + 1}`}
                     >
                       <X className="w-4 h-4" />
                     </button>
+                    {screenshotFiles[index] && (
+                      <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm text-[10px]">
+                        {formatFileSize(screenshotFiles[index].size)}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

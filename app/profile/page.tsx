@@ -138,35 +138,38 @@ export default function ProfilePage() {
         </div>
 
         <div className="md:col-span-2 bg-steam-dark rounded-lg p-6">
-          <h3 className="text-xl font-bold mb-4 text-white">Estatísticas</h3>
+          <h3 className="text-xl font-bold mb-4 text-white flex items-center gap-2">
+            <History className="w-5 h-5 text-steam-blueLight" />
+            Estatísticas
+          </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-steam-darker rounded p-4">
+            <div className="bg-steam-darker rounded p-4 border border-steam-blue/30 hover:border-steam-blueLight transition-colors">
               <div className="flex items-center gap-2 mb-2">
                 <Gamepad2 className="w-5 h-5 text-steam-blueLight" />
                 <p className="text-gray-400 text-sm">Total de Jogos</p>
               </div>
-              <p className="text-2xl font-bold text-white">{stats.totalGames}</p>
+              <p className="text-3xl font-bold text-white">{stats.totalGames}</p>
             </div>
-            <div className="bg-steam-darker rounded p-4">
+            <div className="bg-steam-darker rounded p-4 border border-steam-green/30 hover:border-steam-green transition-colors">
               <div className="flex items-center gap-2 mb-2">
                 <Eye className="w-5 h-5 text-steam-green" />
                 <p className="text-gray-400 text-sm">Aprovados</p>
               </div>
-              <p className="text-2xl font-bold text-white">{stats.approvedGames}</p>
+              <p className="text-3xl font-bold text-white">{stats.approvedGames}</p>
             </div>
-            <div className="bg-steam-darker rounded p-4">
+            <div className="bg-steam-darker rounded p-4 border border-yellow-400/30 hover:border-yellow-400 transition-colors">
               <div className="flex items-center gap-2 mb-2">
                 <Calendar className="w-5 h-5 text-yellow-400" />
                 <p className="text-gray-400 text-sm">Aguardando</p>
               </div>
-              <p className="text-2xl font-bold text-white">{stats.pendingGames}</p>
+              <p className="text-3xl font-bold text-white">{stats.pendingGames}</p>
             </div>
-            <div className="bg-steam-darker rounded p-4">
+            <div className="bg-steam-darker rounded p-4 border border-yellow-400/30 hover:border-yellow-400 transition-colors">
               <div className="flex items-center gap-2 mb-2">
                 <Star className="w-5 h-5 text-yellow-400 fill-current" />
                 <p className="text-gray-400 text-sm">Avaliação Média</p>
               </div>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-3xl font-bold text-white">
                 {stats.averageRating > 0 ? stats.averageRating.toFixed(1) : "-"}
               </p>
             </div>

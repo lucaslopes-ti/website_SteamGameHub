@@ -3,7 +3,7 @@ import { Github, Mail } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-steam-darker border-t border-steam-blue mt-20">
+    <footer id="footer" className="bg-steam-darker border-t border-steam-blue mt-20" role="contentinfo">
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
@@ -14,24 +14,40 @@ export default function Footer() {
           </div>
           <div>
             <h3 className="text-steam-blueLight font-bold mb-4">Links</h3>
-            <ul className="space-y-2 text-gray-400 text-sm">
-              <li>
-                <Link href="/games" className="hover:text-steam-blueLight transition">
+            <ul className="space-y-2 text-gray-400 text-sm" role="list">
+              <li role="listitem">
+                <Link 
+                  href="/games" 
+                  className="hover:text-steam-blueLight transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 rounded px-1"
+                  aria-label="Ver todos os jogos"
+                >
                   Todos os Jogos
                 </Link>
               </li>
-              <li>
-                <Link href="/upload" className="hover:text-steam-blueLight transition">
+              <li role="listitem">
+                <Link 
+                  href="/upload" 
+                  className="hover:text-steam-blueLight transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 rounded px-1"
+                  aria-label="Enviar um novo jogo"
+                >
                   Enviar Jogo
                 </Link>
               </li>
-              <li>
-                <Link href="/about" className="hover:text-steam-blueLight transition">
+              <li role="listitem">
+                <Link 
+                  href="/about" 
+                  className="hover:text-steam-blueLight transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 rounded px-1"
+                  aria-label="Sobre o projeto Game HUB"
+                >
                   Sobre o Projeto
                 </Link>
               </li>
-              <li>
-                <Link href="/stats" className="hover:text-steam-blueLight transition">
+              <li role="listitem">
+                <Link 
+                  href="/stats" 
+                  className="hover:text-steam-blueLight transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 rounded px-1"
+                  aria-label="Ver estatísticas do site"
+                >
                   Estatísticas
                 </Link>
               </li>
@@ -39,20 +55,24 @@ export default function Footer() {
           </div>
           <div>
             <h3 className="text-steam-blueLight font-bold mb-4">Contato</h3>
-            <div className="flex gap-4">
+            <div className="flex gap-4" role="list">
               <a
                 href="https://github.com/lucaslopes-ti"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-steam-blueLight transition"
+                className="text-gray-400 hover:text-steam-blueLight transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 rounded p-1"
+                aria-label="Abrir perfil do desenvolvedor no GitHub em nova aba"
               >
-                <Github className="w-5 h-5" />
+                <Github className="w-5 h-5" aria-hidden="true" />
+                <span className="sr-only">GitHub - Lucas Lopes</span>
               </a>
               <a
                 href="mailto:lucas.dalps@gmail.com"
-                className="text-gray-400 hover:text-steam-blueLight transition"
+                className="text-gray-400 hover:text-steam-blueLight transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 rounded p-1"
+                aria-label="Enviar e-mail para lucas.dalps@gmail.com"
               >
-                <Mail className="w-5 h-5" />
+                <Mail className="w-5 h-5" aria-hidden="true" />
+                <span className="sr-only">E-mail - lucas.dalps@gmail.com</span>
               </a>
             </div>
           </div>
