@@ -41,64 +41,77 @@ export default function StatsPage() {
 
   const loadStats = async () => {
     try {
-      const response = await fetch("/api/games");
-      if (response.ok) {
-        const games: Game[] = await response.json();
-        
-        // Calcular estatísticas
-        const approved = games.filter((g) => g.approved);
-        const pending = games.filter((g) => g.pending && !g.approved);
-        const totalRatings = games.reduce((sum, g) => sum + g.totalRatings, 0);
-        const avgRating = approved.length > 0
-          ? approved.reduce((sum, g) => sum + g.rating, 0) / approved.length
-          : 0;
-        
-        // Autores únicos
-        const uniqueAuthors = new Set(games.map((g) => g.authorEmail));
-        
-        // Top jogos
-        const topRated = [...approved]
-          .sort((a, b) => b.rating - a.rating)
-          .slice(0, 5);
-        
-        const mostRated = [...approved]
-          .sort((a, b) => b.totalRatings - a.totalRatings)
-          .slice(0, 5);
-        
-        const recent = [...approved]
-          .sort((a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime())
-          .slice(0, 5);
-        
-        // Estatísticas por gênero
-        const gamesByGenre: Record<string, number> = {};
-        approved.forEach((game) => {
-          game.genres.forEach((genre) => {
-            gamesByGenre[genre] = (gamesByGenre[genre] || 0) + 1;
-          });
-        });
-        
-        // Estatísticas por tecnologia
-        const gamesByTechnology: Record<string, number> = {};
-        approved.forEach((game) => {
-          game.technologies.forEach((tech) => {
-            gamesByTechnology[tech] = (gamesByTechnology[tech] || 0) + 1;
-          });
-        });
-        
-        setStats({
-          totalGames: games.length,
-          approvedGames: approved.length,
-          pendingGames: pending.length,
-          totalRatings,
-          averageRating: avgRating,
-          totalAuthors: uniqueAuthors.size,
-          topRatedGames: topRated,
-          mostRatedGames: mostRated,
-          recentGames: recent,
-          gamesByGenre,
-          gamesByTechnology,
-        });
+      // Buscar todos os jogos e os aprovados em paralelo
+      const [allRes, approvedRes] = await Promise.all([
+        fetch("/api/games"),
+        fetch("/api/games?approved=true"),
+      ]);
+
+      if (!allRes.ok && !approvedRes.ok) {
+        throw new Error("Falha ao buscar jogos");
       }
+
+      let allGames: Game[] = allRes.ok ? await allRes.json() : [];
+      const approvedOnly: Game[] = approvedRes.ok ? await approvedRes.json() : [];
+
+      // Fallback: se 'todos' vier vazio mas aprovados tiverem itens, usar aprovados
+      if (allGames.length === 0 && approvedOnly.length > 0) {
+        allGames = approvedOnly;
+      }
+
+      // Calcular estatísticas
+      const approved = allGames.filter((g) => g.approved);
+      const pending = allGames.filter((g) => g.pending && !g.approved);
+      const totalRatings = allGames.reduce((sum, g) => sum + (g.totalRatings || 0), 0);
+      const avgRating = approved.length > 0
+        ? approved.reduce((sum, g) => sum + (g.rating || 0), 0) / approved.length
+        : 0;
+
+      // Autores únicos
+      const uniqueAuthors = new Set(allGames.map((g) => g.authorEmail));
+
+      // Top jogos
+      const topRated = [...approved]
+        .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+        .slice(0, 5);
+
+      const mostRated = [...approved]
+        .sort((a, b) => (b.totalRatings || 0) - (a.totalRatings || 0))
+        .slice(0, 5);
+
+      const recent = [...approved]
+        .sort((a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime())
+        .slice(0, 5);
+
+      // Estatísticas por gênero
+      const gamesByGenre: Record<string, number> = {};
+      approved.forEach((game) => {
+        (game.genres || []).forEach((genre) => {
+          gamesByGenre[genre] = (gamesByGenre[genre] || 0) + 1;
+        });
+      });
+
+      // Estatísticas por tecnologia
+      const gamesByTechnology: Record<string, number> = {};
+      approved.forEach((game) => {
+        (game.technologies || []).forEach((tech) => {
+          gamesByTechnology[tech] = (gamesByTechnology[tech] || 0) + 1;
+        });
+      });
+
+      setStats({
+        totalGames: allGames.length,
+        approvedGames: approved.length,
+        pendingGames: pending.length,
+        totalRatings,
+        averageRating: avgRating,
+        totalAuthors: uniqueAuthors.size,
+        topRatedGames: topRated,
+        mostRatedGames: mostRated,
+        recentGames: recent,
+        gamesByGenre,
+        gamesByTechnology,
+      });
     } catch (error) {
       console.error("Erro ao carregar estatísticas:", error);
     } finally {
