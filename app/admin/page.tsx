@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { Game } from "@/lib/games";
-import { CheckCircle, XCircle, Eye, Trash2, Loader2 } from "lucide-react";
+import { CheckCircle, XCircle, Eye, Trash2, Loader2, Search, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/components/ToastProvider";
 
@@ -15,6 +15,7 @@ export default function AdminPage() {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "pending" | "approved">("pending");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (!isAuthenticated || !isTeacher) {
@@ -46,13 +47,31 @@ export default function AdminPage() {
       if (response.ok) {
         showToast("Jogo aprovado com sucesso!", "success");
         loadGames();
-        // Forçar atualização nas outras páginas também
         window.dispatchEvent(new Event("gamesUpdated"));
       } else {
         showToast("Erro ao aprovar jogo", "error");
       }
     } catch (error) {
       showToast("Erro ao aprovar jogo", "error");
+    }
+  };
+
+  const handleUnapprove = async (gameId: string) => {
+    if (!confirm("Tem certeza que deseja reprovar este jogo? Ele voltará para 'Aguardando Aprovação'.")) return;
+
+    try {
+      const response = await fetch(`/api/games/${gameId}/approve`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        showToast("Aprovação revertida! Jogo voltou para pendência.", "success");
+        loadGames();
+        window.dispatchEvent(new Event("gamesUpdated"));
+      } else {
+        showToast("Erro ao reprovar jogo", "error");
+      }
+    } catch (error) {
+      showToast("Erro ao reprovar jogo", "error");
     }
   };
 
@@ -74,12 +93,25 @@ export default function AdminPage() {
     }
   };
 
-  const filteredGames =
-    filter === "all"
-      ? games
-      : filter === "pending"
-      ? games.filter((g) => g.pending && !g.approved)
-      : games.filter((g) => g.approved);
+  // Filtrar jogos por status
+  const statusFilteredGames = useMemo(() => {
+    if (filter === "all") return games;
+    if (filter === "pending") return games.filter((g) => g.pending && !g.approved);
+    return games.filter((g) => g.approved);
+  }, [games, filter]);
+
+  // Filtrar por busca
+  const filteredGames = useMemo(() => {
+    if (!searchQuery.trim()) return statusFilteredGames;
+    const query = searchQuery.toLowerCase().trim();
+    return statusFilteredGames.filter(
+      (game) =>
+        game.title.toLowerCase().includes(query) ||
+        game.author.toLowerCase().includes(query) ||
+        game.authorEmail.toLowerCase().includes(query) ||
+        game.description.toLowerCase().includes(query)
+    );
+  }, [statusFilteredGames, searchQuery]);
 
   if (!isAuthenticated || !isTeacher) {
     return null;
@@ -96,7 +128,22 @@ export default function AdminPage() {
         </div>
       </div>
 
-      <div className="flex gap-4 mb-6">
+      {/* Busca */}
+      <div className="mb-6">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <input
+            type="text"
+            placeholder="Buscar por título, autor, e-mail ou descrição..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-steam-dark border border-steam-blue rounded px-4 py-2 pl-10 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight"
+          />
+        </div>
+      </div>
+
+      {/* Filtros */}
+      <div className="flex gap-4 mb-6 flex-wrap">
         <button
           onClick={() => setFilter("pending")}
           className={`px-4 py-2 rounded transition ${
@@ -129,6 +176,19 @@ export default function AdminPage() {
         </button>
       </div>
 
+      {/* Resultados da busca */}
+      {searchQuery && (
+        <div className="mb-4 text-sm text-gray-400">
+          {filteredGames.length === 0 ? (
+            <p>Nenhum jogo encontrado com "{searchQuery}"</p>
+          ) : (
+            <p>
+              {filteredGames.length} resultado{filteredGames.length !== 1 ? "s" : ""} encontrado{filteredGames.length !== 1 ? "s" : ""}
+            </p>
+          )}
+        </div>
+      )}
+
       {loading ? (
         <div className="flex justify-center items-center py-20">
           <Loader2 className="w-8 h-8 animate-spin text-steam-blueLight" />
@@ -136,7 +196,9 @@ export default function AdminPage() {
       ) : filteredGames.length === 0 ? (
         <div className="bg-steam-dark rounded-lg p-12 text-center">
           <p className="text-gray-400 text-xl">
-            Nenhum jogo encontrado nesta categoria.
+            {searchQuery
+              ? `Nenhum jogo encontrado com "${searchQuery}"`
+              : "Nenhum jogo encontrado nesta categoria."}
           </p>
         </div>
       ) : (
@@ -144,9 +206,21 @@ export default function AdminPage() {
           {filteredGames.map((game) => (
             <div
               key={game.id}
-              className="bg-steam-dark rounded-lg p-6 border border-steam-blue"
+              className="bg-steam-dark rounded-lg p-6 border border-steam-blue hover:border-steam-blueLight transition"
             >
-              <h3 className="text-xl font-bold text-white mb-2">{game.title}</h3>
+              <div className="flex items-start justify-between mb-2">
+                <h3 className="text-xl font-bold text-white flex-1">{game.title}</h3>
+                {game.approved && (
+                  <span className="bg-steam-green text-white text-xs px-2 py-1 rounded ml-2">
+                    Aprovado
+                  </span>
+                )}
+                {game.pending && !game.approved && (
+                  <span className="bg-yellow-600 text-white text-xs px-2 py-1 rounded ml-2">
+                    Pendente
+                  </span>
+                )}
+              </div>
               <p className="text-gray-400 text-sm mb-4 line-clamp-2">
                 {game.description}
               </p>
@@ -161,6 +235,19 @@ export default function AdminPage() {
                   <strong>Data:</strong>{" "}
                   {new Date(game.releaseDate).toLocaleDateString("pt-BR")}
                 </p>
+                {game.downloadLink && (
+                  <p className="text-gray-300 text-sm">
+                    <strong>Link:</strong>{" "}
+                    <a
+                      href={game.downloadLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-steam-blueLight hover:underline break-all"
+                    >
+                      {game.downloadLink.substring(0, 40)}...
+                    </a>
+                  </p>
+                )}
                 {game.executableFileName && (
                   <p className="text-gray-300 text-sm">
                     <strong>Arquivo:</strong> {game.executableFileName}
@@ -177,15 +264,15 @@ export default function AdminPage() {
                   </span>
                 ))}
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 <Link
                   href={`/games/${game.id}`}
-                  className="flex-1 bg-steam-blue hover:bg-steam-blueLight text-white px-4 py-2 rounded text-center transition flex items-center justify-center gap-2"
+                  className="flex-1 bg-steam-blue hover:bg-steam-blueLight text-white px-4 py-2 rounded text-center transition flex items-center justify-center gap-2 min-w-[100px]"
                 >
                   <Eye className="w-4 h-4" />
                   Ver
                 </Link>
-                {!game.approved && (
+                {!game.approved ? (
                   <button
                     onClick={() => handleApprove(game.id)}
                     className="bg-steam-green hover:bg-green-600 text-white px-4 py-2 rounded transition flex items-center gap-2"
@@ -193,10 +280,20 @@ export default function AdminPage() {
                     <CheckCircle className="w-4 h-4" />
                     Aprovar
                   </button>
+                ) : (
+                  <button
+                    onClick={() => handleUnapprove(game.id)}
+                    className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded transition flex items-center gap-2"
+                    title="Desfazer aprovação"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    Reprovar
+                  </button>
                 )}
                 <button
                   onClick={() => handleDelete(game.id)}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition"
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition flex items-center gap-2"
+                  title="Deletar jogo"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -208,4 +305,3 @@ export default function AdminPage() {
     </div>
   );
 }
-

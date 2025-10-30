@@ -13,7 +13,8 @@ import {
   TrendingUp, 
   Calendar,
   Award,
-  Loader2
+  Loader2,
+  Eye
 } from "lucide-react";
 import Link from "next/link";
 
@@ -29,6 +30,10 @@ interface Stats {
   recentGames: Game[];
   gamesByGenre: Record<string, number>;
   gamesByTechnology: Record<string, number>;
+  totalViews: number;
+  totalDownloads: number;
+  topViewedGames: Array<Game & { views: number }>;
+  topDownloadedGames: Array<Game & { downloads: number }>;
 }
 
 export default function StatsPage() {
@@ -41,10 +46,11 @@ export default function StatsPage() {
 
   const loadStats = async () => {
     try {
-      // Buscar todos os jogos e os aprovados em paralelo
-      const [allRes, approvedRes] = await Promise.all([
+      // Buscar jogos e estatísticas em paralelo
+      const [allRes, approvedRes, statsRes] = await Promise.all([
         fetch("/api/games"),
         fetch("/api/games?approved=true"),
+        fetch("/api/stats"),
       ]);
 
       if (!allRes.ok && !approvedRes.ok) {
@@ -58,6 +64,18 @@ export default function StatsPage() {
       if (allGames.length === 0 && approvedOnly.length > 0) {
         allGames = approvedOnly;
       }
+
+      // Estatísticas de views e downloads
+      const statsData = statsRes.ok ? await statsRes.json() : { 
+        totalViews: 0, 
+        totalDownloads: 0, 
+        viewsByGame: {}, 
+        downloadsByGame: {} 
+      };
+      const viewsByGame = statsData.viewsByGame || {};
+      const downloadsByGame = statsData.downloadsByGame || {};
+      const totalViews = statsData.totalViews || 0;
+      const totalDownloads = statsData.totalDownloads || 0;
 
       // Calcular estatísticas
       const approved = allGames.filter((g) => g.approved);
@@ -99,6 +117,24 @@ export default function StatsPage() {
         });
       });
 
+      // Top jogos mais vistos
+      const topViewedGames = [...approved]
+        .map((game) => ({
+          ...game,
+          views: viewsByGame[game.id] || 0,
+        }))
+        .sort((a, b) => b.views - a.views)
+        .slice(0, 5);
+
+      // Top jogos mais baixados
+      const topDownloadedGames = [...approved]
+        .map((game) => ({
+          ...game,
+          downloads: downloadsByGame[game.id] || 0,
+        }))
+        .sort((a, b) => b.downloads - a.downloads)
+        .slice(0, 5);
+
       setStats({
         totalGames: allGames.length,
         approvedGames: approved.length,
@@ -111,6 +147,10 @@ export default function StatsPage() {
         recentGames: recent,
         gamesByGenre,
         gamesByTechnology,
+        totalViews,
+        totalDownloads,
+        topViewedGames,
+        topDownloadedGames,
       });
     } catch (error) {
       console.error("Erro ao carregar estatísticas:", error);
@@ -202,6 +242,33 @@ export default function StatsPage() {
         </div>
       </div>
 
+      {/* Cards de Views e Downloads */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="bg-steam-dark rounded-lg p-6 border border-steam-blue">
+          <div className="flex items-center justify-between mb-4">
+            <Eye className="w-8 h-8 text-steam-blueLight" />
+            <TrendingUp className="w-5 h-5 text-green-400" />
+          </div>
+          <h3 className="text-gray-400 text-sm mb-1">Total de Visualizações</h3>
+          <p className="text-3xl font-bold text-white">{stats.totalViews.toLocaleString()}</p>
+          <p className="text-xs text-gray-400 mt-2">
+            Páginas de jogos visualizadas
+          </p>
+        </div>
+
+        <div className="bg-steam-dark rounded-lg p-6 border border-steam-blue">
+          <div className="flex items-center justify-between mb-4">
+            <Download className="w-8 h-8 text-steam-green" />
+            <TrendingUp className="w-5 h-5 text-green-400" />
+          </div>
+          <h3 className="text-gray-400 text-sm mb-1">Total de Downloads</h3>
+          <p className="text-3xl font-bold text-white">{stats.totalDownloads.toLocaleString()}</p>
+          <p className="text-xs text-gray-400 mt-2">
+            Jogos baixados
+          </p>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         {/* Top Jogos por Avaliação */}
         <div className="bg-steam-dark rounded-lg p-6 border border-steam-blue">
@@ -245,7 +312,7 @@ export default function StatsPage() {
         {/* Jogos Mais Avaliados */}
         <div className="bg-steam-dark rounded-lg p-6 border border-steam-blue">
           <div className="flex items-center gap-2 mb-6">
-            <Download className="w-6 h-6 text-steam-blueLight" />
+            <Star className="w-6 h-6 text-steam-blueLight" />
             <h2 className="text-2xl font-bold text-white">Mais Avaliados</h2>
           </div>
           <div className="space-y-4">
@@ -279,6 +346,91 @@ export default function StatsPage() {
               ))
             ) : (
               <p className="text-gray-400 text-center py-4">Nenhum jogo ainda</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Top Mais Vistos e Mais Baixados */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        {/* Top Mais Vistos */}
+        <div className="bg-steam-dark rounded-lg p-6 border border-steam-blue">
+          <div className="flex items-center gap-2 mb-6">
+            <Eye className="w-6 h-6 text-steam-blueLight" />
+            <h2 className="text-2xl font-bold text-white">Mais Visualizados</h2>
+          </div>
+          <div className="space-y-4">
+            {stats.topViewedGames.length > 0 ? (
+              stats.topViewedGames.map((game, index) => (
+                <Link
+                  key={game.id}
+                  href={`/games/${game.id}`}
+                  className="block bg-steam-darker rounded p-4 hover:bg-steam-blue transition group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3 flex-1">
+                      <div className="w-8 h-8 bg-steam-blueLight rounded flex items-center justify-center text-white font-bold">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-white font-semibold group-hover:text-steam-blueLight transition">
+                          {game.title}
+                        </h3>
+                        <p className="text-gray-400 text-sm">{game.author}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-steam-blueLight font-bold">
+                        {game.views.toLocaleString()}
+                      </p>
+                      <p className="text-gray-400 text-xs">visualizações</p>
+                    </div>
+                  </div>
+                </Link>
+              ))
+            ) : (
+              <p className="text-gray-400 text-center py-4">Nenhum dado ainda</p>
+            )}
+          </div>
+        </div>
+
+        {/* Top Mais Baixados */}
+        <div className="bg-steam-dark rounded-lg p-6 border border-steam-blue">
+          <div className="flex items-center gap-2 mb-6">
+            <Download className="w-6 h-6 text-steam-green" />
+            <h2 className="text-2xl font-bold text-white">Mais Baixados</h2>
+          </div>
+          <div className="space-y-4">
+            {stats.topDownloadedGames.length > 0 ? (
+              stats.topDownloadedGames.map((game, index) => (
+                <Link
+                  key={game.id}
+                  href={`/games/${game.id}`}
+                  className="block bg-steam-darker rounded p-4 hover:bg-steam-blue transition group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3 flex-1">
+                      <div className="w-8 h-8 bg-steam-green rounded flex items-center justify-center text-white font-bold">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-white font-semibold group-hover:text-steam-blueLight transition">
+                          {game.title}
+                        </h3>
+                        <p className="text-gray-400 text-sm">{game.author}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-steam-green font-bold">
+                        {game.downloads.toLocaleString()}
+                      </p>
+                      <p className="text-gray-400 text-xs">downloads</p>
+                    </div>
+                  </div>
+                </Link>
+              ))
+            ) : (
+              <p className="text-gray-400 text-center py-4">Nenhum dado ainda</p>
             )}
           </div>
         </div>
