@@ -214,12 +214,15 @@ export default function UploadPage() {
 
       setUploadProgress(85);
 
-      // Criar registro do jogo
+      // Criar registro do jogo (com timeout)
+      const gameController = new AbortController();
+      const gameTimeoutId = setTimeout(() => gameController.abort(), 60 * 1000);
       const gameResponse = await fetch("/api/games", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        signal: gameController.signal,
         body: JSON.stringify({
           title: formData.title,
           description: formData.description,
@@ -235,7 +238,7 @@ export default function UploadPage() {
           image: imageUrl || undefined,
           screenshots: screenshotUrls.length > 0 ? screenshotUrls : undefined,
         }),
-      });
+      }).finally(() => clearTimeout(gameTimeoutId));
 
       if (!gameResponse.ok) {
         let errorMessage = "Erro ao criar registro do jogo";
