@@ -56,18 +56,47 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Se estiver usando Firebase Storage
-    if (!useLocalStorage()) {
+    // Em produção (Vercel), sempre usar Firebase Storage (sistema de arquivos é read-only)
+    const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL;
+    
+    if (!useLocalStorage() || isProduction) {
       try {
+        // Verificar se Firebase Storage está configurado
+        const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
+        if (!storageBucket) {
+          console.error("Firebase Storage não está configurado - storageBucket ausente");
+          return NextResponse.json(
+            { 
+              error: "Firebase Storage não está configurado",
+              details: "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET não está definido"
+            },
+            { status: 500 }
+          );
+        }
+
         // Importar Firebase Storage dinamicamente
         const { storage } = await import("@/lib/firebase/config");
         const { ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
+
+        // Verificar se storage foi inicializado
+        if (!storage) {
+          console.error("Firebase Storage não foi inicializado");
+          return NextResponse.json(
+            { 
+              error: "Firebase Storage não foi inicializado",
+              details: "Storage instance é null/undefined"
+            },
+            { status: 500 }
+          );
+        }
 
         // Gerar caminho único
         const uniqueFileName = `${randomUUID()}${fileExtension}`;
         const storagePath = type === "image" 
           ? `images/${uniqueFileName}`
           : `games/${uniqueFileName}`;
+
+        console.log(`Iniciando upload para Firebase Storage: ${storagePath}, tamanho: ${file.size} bytes`);
 
         const storageRef = ref(storage, storagePath);
 
@@ -76,10 +105,13 @@ export async function POST(request: NextRequest) {
         const blob = new Blob([bytes], { type: file.type });
 
         // Fazer upload
+        console.log(`Fazendo upload de ${file.size} bytes para ${storagePath}...`);
         await uploadBytes(storageRef, blob);
+        console.log(`Upload concluído para ${storagePath}`);
 
         // Obter URL pública
         const url = await getDownloadURL(storageRef);
+        console.log(`URL obtida: ${url}`);
 
         return NextResponse.json({
           success: true,
@@ -87,42 +119,83 @@ export async function POST(request: NextRequest) {
           path: storagePath,
           fileName: uniqueFileName,
         });
-      } catch (firebaseError) {
-        console.error("Erro no Firebase Storage, tentando local:", firebaseError);
-        // Fallback para local se Firebase falhar
+      } catch (firebaseError: any) {
+        console.error("Erro no Firebase Storage:", {
+          message: firebaseError?.message,
+          code: firebaseError?.code,
+          stack: firebaseError?.stack,
+          name: firebaseError?.name,
+        });
+        
+        // Em produção, não tentar fallback local
+        if (isProduction) {
+          return NextResponse.json(
+            { 
+              error: "Erro ao fazer upload no Firebase Storage", 
+              details: firebaseError?.message || firebaseError?.code || "Erro desconhecido",
+              code: firebaseError?.code || "UNKNOWN"
+            },
+            { status: 500 }
+          );
+        }
+        // Em desenvolvimento, tentar fallback local apenas se não estiver em produção
+        console.warn("Erro no Firebase Storage, tentando local:", firebaseError);
       }
     }
 
-    // Modo local (ou fallback)
-    // Criar diretório de uploads se não existir
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
+    // Modo local (apenas em desenvolvimento, não em produção)
+    if (!isProduction) {
+      try {
+        // Criar diretório de uploads se não existir
+        if (!existsSync(uploadDir)) {
+          await mkdir(uploadDir, { recursive: true });
+        }
+
+        // Gerar nome único para o arquivo
+        const uniqueFileName = `${randomUUID()}${fileExtension}`;
+        const filePath = path.join(uploadDir, uniqueFileName);
+
+        // Salvar arquivo
+        const bytes = await file.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+        await writeFile(filePath, buffer);
+
+        // Retornar caminho relativo para acesso público
+        const publicPath = type === "image"
+          ? `/uploads/images/${uniqueFileName}`
+          : `/uploads/games/${uniqueFileName}`;
+
+        return NextResponse.json({
+          success: true,
+          url: publicPath,
+          path: publicPath,
+          fileName: uniqueFileName,
+        });
+      } catch (localError: any) {
+        console.error("Erro ao salvar arquivo localmente:", localError);
+        return NextResponse.json(
+          { 
+            error: "Erro ao salvar arquivo localmente", 
+            details: localError?.message || "Erro desconhecido" 
+          },
+          { status: 500 }
+        );
+      }
     }
 
-    // Gerar nome único para o arquivo
-    const uniqueFileName = `${randomUUID()}${fileExtension}`;
-    const filePath = path.join(uploadDir, uniqueFileName);
-
-    // Salvar arquivo
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    await writeFile(filePath, buffer);
-
-    // Retornar caminho relativo para acesso público
-    const publicPath = type === "image"
-      ? `/uploads/images/${uniqueFileName}`
-      : `/uploads/games/${uniqueFileName}`;
-
-    return NextResponse.json({
-      success: true,
-      url: publicPath,
-      path: publicPath,
-      fileName: uniqueFileName,
-    });
-  } catch (error) {
+    // Se chegou aqui, não conseguiu fazer upload nem local nem Firebase
+    return NextResponse.json(
+      { error: "Não foi possível fazer upload do arquivo" },
+      { status: 500 }
+    );
+  } catch (error: any) {
     console.error("Erro ao fazer upload:", error);
     return NextResponse.json(
-      { error: "Erro ao fazer upload do arquivo" },
+      { 
+        error: "Erro ao fazer upload do arquivo", 
+        details: error?.message || "Erro desconhecido",
+        stack: process.env.NODE_ENV !== "production" ? error?.stack : undefined
+      },
       { status: 500 }
     );
   }
