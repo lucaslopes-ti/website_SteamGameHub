@@ -74,44 +74,103 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        // Importar Firebase Storage dinamicamente
-        const { storage } = await import("@/lib/firebase/config");
-        const { ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
+        // Importar Firebase Admin SDK dinamicamente para upload no servidor
+        const admin = await import("firebase-admin");
+        
+        // Verificar se Firebase Admin já foi inicializado
+        let adminApp;
+        try {
+          if (admin.apps.length === 0) {
+            // Tentar inicializar com service account (se disponível)
+            const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+            if (serviceAccountKey) {
+              try {
+                const serviceAccount = JSON.parse(serviceAccountKey);
+                adminApp = admin.initializeApp({
+                  credential: admin.credential.cert(serviceAccount),
+                  storageBucket: storageBucket,
+                });
+              } catch (parseError) {
+                console.error("Erro ao fazer parse do service account:", parseError);
+                // Continuar sem service account
+              }
+            }
+            
+            // Se não inicializou com service account, tentar com credenciais padrão
+            if (!adminApp) {
+              adminApp = admin.initializeApp({
+                storageBucket: storageBucket,
+              });
+            }
+          } else {
+            adminApp = admin.apps[0];
+          }
 
-        // Verificar se storage foi inicializado
-        if (!storage) {
-          console.error("Firebase Storage não foi inicializado");
-          return NextResponse.json(
-            { 
-              error: "Firebase Storage não foi inicializado",
-              details: "Storage instance é null/undefined"
+          // Usar Admin SDK para upload
+          const bucket = admin.storage().bucket();
+
+          // Gerar caminho único
+          const uniqueFileName = `${randomUUID()}${fileExtension}`;
+          const storagePath = type === "image" 
+            ? `images/${uniqueFileName}`
+            : `games/${uniqueFileName}`;
+
+          console.log(`Iniciando upload para Firebase Storage (Admin SDK): ${storagePath}, tamanho: ${file.size} bytes`);
+
+          // Converter File para Buffer
+          const bytes = await file.arrayBuffer();
+          const buffer = Buffer.from(bytes);
+
+          // Criar referência do arquivo no bucket
+          const fileRef = bucket.file(storagePath);
+
+          // Fazer upload usando Admin SDK
+          await fileRef.save(buffer, {
+            contentType: file.type || "application/octet-stream",
+            metadata: {
+              contentType: file.type || "application/octet-stream",
             },
-            { status: 500 }
-          );
+          });
+
+          // Tornar o arquivo público
+          await fileRef.makePublic();
+
+          // Obter URL pública
+          const url = `https://storage.googleapis.com/${storageBucket}/${storagePath}`;
+          console.log(`Upload concluído para ${storagePath}, URL: ${url}`);
+        } catch (adminError: any) {
+          console.error("Erro ao usar Firebase Admin SDK:", adminError);
+          // Fallback: usar Client SDK
+          console.log("Tentando fallback para Client SDK...");
+          
+          const { storage } = await import("@/lib/firebase/config");
+          const { ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
+          
+          if (!storage) {
+            throw new Error("Firebase Storage não foi inicializado");
+          }
+
+          const uniqueFileName = `${randomUUID()}${fileExtension}`;
+          const storagePath = type === "image" 
+            ? `images/${uniqueFileName}`
+            : `games/${uniqueFileName}`;
+
+          console.log(`Iniciando upload para Firebase Storage (Client SDK): ${storagePath}, tamanho: ${file.size} bytes`);
+
+          const storageRef = ref(storage, storagePath);
+          const bytes = await file.arrayBuffer();
+          const blob = new Blob([bytes], { type: file.type });
+
+          await uploadBytes(storageRef, blob);
+          const url = await getDownloadURL(storageRef);
+
+          return NextResponse.json({
+            success: true,
+            url: url,
+            path: storagePath,
+            fileName: uniqueFileName,
+          });
         }
-
-        // Gerar caminho único
-        const uniqueFileName = `${randomUUID()}${fileExtension}`;
-        const storagePath = type === "image" 
-          ? `images/${uniqueFileName}`
-          : `games/${uniqueFileName}`;
-
-        console.log(`Iniciando upload para Firebase Storage: ${storagePath}, tamanho: ${file.size} bytes`);
-
-        const storageRef = ref(storage, storagePath);
-
-        // Converter File para Blob
-        const bytes = await file.arrayBuffer();
-        const blob = new Blob([bytes], { type: file.type });
-
-        // Fazer upload
-        console.log(`Fazendo upload de ${file.size} bytes para ${storagePath}...`);
-        await uploadBytes(storageRef, blob);
-        console.log(`Upload concluído para ${storagePath}`);
-
-        // Obter URL pública
-        const url = await getDownloadURL(storageRef);
-        console.log(`URL obtida: ${url}`);
 
         return NextResponse.json({
           success: true,
