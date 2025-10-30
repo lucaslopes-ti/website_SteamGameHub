@@ -74,70 +74,96 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        // Importar Firebase Admin SDK dinamicamente para upload no servidor
-        const admin = await import("firebase-admin");
-        
-        // Verificar se Firebase Admin já foi inicializado
-        let adminApp;
-        try {
-          if (admin.apps.length === 0) {
-            // Tentar inicializar com service account (se disponível)
-            const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
-            if (serviceAccountKey) {
+        // Gerar caminho único
+        const uniqueFileName = `${randomUUID()}${fileExtension}`;
+        const storagePath = type === "image" 
+          ? `images/${uniqueFileName}`
+          : `games/${uniqueFileName}`;
+
+        console.log(`Iniciando upload para Firebase Storage: ${storagePath}, tamanho: ${file.size} bytes`);
+
+        // Tentar usar Firebase Admin SDK primeiro (se tiver Service Account)
+        const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+        if (serviceAccountKey) {
+          try {
+            const admin = await import("firebase-admin");
+            
+            // Inicializar Admin SDK se necessário
+            if (admin.apps.length === 0) {
               try {
                 const serviceAccount = JSON.parse(serviceAccountKey);
-                adminApp = admin.initializeApp({
+                admin.initializeApp({
                   credential: admin.credential.cert(serviceAccount),
                   storageBucket: storageBucket,
                 });
               } catch (parseError) {
-                console.error("Erro ao fazer parse do service account:", parseError);
-                // Continuar sem service account
+                throw new Error("Erro ao fazer parse do service account");
               }
             }
+
+            const bucket = admin.storage().bucket();
+            const fileRef = bucket.file(storagePath);
+            const bytes = await file.arrayBuffer();
+            const buffer = Buffer.from(bytes);
+
+            await fileRef.save(buffer, {
+              contentType: file.type || "application/octet-stream",
+              metadata: {
+                contentType: file.type || "application/octet-stream",
+              },
+            });
+
+            await fileRef.makePublic();
+            const url = `https://storage.googleapis.com/${storageBucket}/${storagePath}`;
             
-            // Se não inicializou com service account, tentar com credenciais padrão
-            if (!adminApp) {
-              adminApp = admin.initializeApp({
-                storageBucket: storageBucket,
-              });
-            }
-          } else {
-            adminApp = admin.apps[0];
+            console.log(`Upload concluído via Admin SDK: ${url}`);
+            
+            return NextResponse.json({
+              success: true,
+              url: url,
+              path: storagePath,
+              fileName: uniqueFileName,
+            });
+          } catch (adminError: any) {
+            console.warn("Admin SDK falhou, tentando REST API:", adminError?.message);
+            // Continuar para tentar REST API
           }
+        }
 
-          // Usar Admin SDK para upload
-          const bucket = admin.storage().bucket();
-
-          // Gerar caminho único
-          const uniqueFileName = `${randomUUID()}${fileExtension}`;
-          const storagePath = type === "image" 
-            ? `images/${uniqueFileName}`
-            : `games/${uniqueFileName}`;
-
-          console.log(`Iniciando upload para Firebase Storage (Admin SDK): ${storagePath}, tamanho: ${file.size} bytes`);
-
-          // Converter File para Buffer
+        // Fallback: usar Firebase Storage REST API diretamente
+        // Como as regras permitem uploads não autenticados, podemos fazer upload direto
+        try {
           const bytes = await file.arrayBuffer();
           const buffer = Buffer.from(bytes);
+          
+          // URL do Firebase Storage REST API
+          const encodedPath = encodeURIComponent(storagePath);
+          const uploadUrl = `https://firebasestorage.googleapis.com/v0/b/${storageBucket}/o?name=${encodedPath}`;
+          
+          console.log(`Fazendo upload via REST API para: ${uploadUrl}`);
 
-          // Criar referência do arquivo no bucket
-          const fileRef = bucket.file(storagePath);
-
-          // Fazer upload usando Admin SDK
-          await fileRef.save(buffer, {
-            contentType: file.type || "application/octet-stream",
-            metadata: {
-              contentType: file.type || "application/octet-stream",
+          const uploadResponse = await fetch(uploadUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': file.type || 'application/octet-stream',
             },
+            body: buffer,
           });
 
-          // Tornar o arquivo público
-          await fileRef.makePublic();
+          if (!uploadResponse.ok) {
+            const errorText = await uploadResponse.text();
+            console.error("Erro na resposta do REST API:", uploadResponse.status, errorText);
+            throw new Error(`Upload falhou: ${uploadResponse.status} - ${errorText}`);
+          }
 
-          // Obter URL pública
-          const url = `https://storage.googleapis.com/${storageBucket}/${storagePath}`;
-          console.log(`Upload concluído para ${storagePath}, URL: ${url}`);
+          const uploadResult = await uploadResponse.json();
+          console.log("Resultado do upload:", uploadResult);
+
+          // Obter URL pública do arquivo
+          const downloadToken = uploadResult.downloadTokens?.[0] || '';
+          const url = `https://firebasestorage.googleapis.com/v0/b/${storageBucket}/o/${encodedPath}?alt=media${downloadToken ? `&token=${downloadToken}` : ''}`;
+          
+          console.log(`Upload concluído via REST API: ${url}`);
 
           return NextResponse.json({
             success: true,
@@ -145,74 +171,17 @@ export async function POST(request: NextRequest) {
             path: storagePath,
             fileName: uniqueFileName,
           });
-        } catch (adminError: any) {
-          console.error("Erro ao usar Firebase Admin SDK:", {
-            message: adminError?.message,
-            code: adminError?.code,
-            stack: adminError?.stack,
-          });
-          
-          // Informar ao usuário sobre a necessidade de configurar
-          const errorDetails = adminError?.message || "Erro desconhecido";
-          const needsConfig = errorDetails.includes("credential") || 
-                            errorDetails.includes("service account") ||
-                            !process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
-          
-          if (needsConfig) {
-            console.warn("Firebase Admin SDK precisa de Service Account configurada no Vercel");
-            return NextResponse.json(
-              { 
-                error: "Firebase Storage não configurado corretamente",
-                details: "É necessário configurar FIREBASE_SERVICE_ACCOUNT_KEY no Vercel ou ajustar as regras do Firebase Storage para permitir uploads não autenticados.",
-                code: "CONFIG_REQUIRED"
-              },
-              { status: 500 }
-            );
-          }
-          
-          // Fallback: usar Client SDK apenas se Admin SDK falhou por outro motivo
-          console.log("Tentando fallback para Client SDK...");
-          
-          try {
-            const { storage } = await import("@/lib/firebase/config");
-            const { ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
-            
-            if (!storage) {
-              throw new Error("Firebase Storage não foi inicializado");
-            }
-
-            const uniqueFileName = `${randomUUID()}${fileExtension}`;
-            const storagePath = type === "image" 
-              ? `images/${uniqueFileName}`
-              : `games/${uniqueFileName}`;
-
-            console.log(`Iniciando upload para Firebase Storage (Client SDK): ${storagePath}, tamanho: ${file.size} bytes`);
-
-            const storageRef = ref(storage, storagePath);
-            const bytes = await file.arrayBuffer();
-            const blob = new Blob([bytes], { type: file.type });
-
-            await uploadBytes(storageRef, blob);
-            const url = await getDownloadURL(storageRef);
-
-            return NextResponse.json({
-              success: true,
-              url: url,
-              path: storagePath,
-              fileName: uniqueFileName,
-            });
-          } catch (clientError: any) {
-            console.error("Erro ao usar Client SDK também:", clientError);
-            return NextResponse.json(
-              { 
-                error: "Erro ao fazer upload no Firebase Storage",
-                details: clientError?.message || adminError?.message || "Erro desconhecido",
-                code: clientError?.code || "UPLOAD_FAILED",
-                suggestion: "Verifique as regras do Firebase Storage ou configure a Service Account"
-              },
-              { status: 500 }
-            );
-          }
+        } catch (restError: any) {
+          console.error("Erro ao usar REST API:", restError);
+          return NextResponse.json(
+            { 
+              error: "Erro ao fazer upload no Firebase Storage",
+              details: restError?.message || "Erro desconhecido",
+              code: "UPLOAD_FAILED",
+              suggestion: "Verifique as regras do Firebase Storage. As regras devem permitir uploads não autenticados para /images/ e /games/"
+            },
+            { status: 500 }
+          );
         }
       } catch (firebaseError: any) {
         console.error("Erro no Firebase Storage:", {
