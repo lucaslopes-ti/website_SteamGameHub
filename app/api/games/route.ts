@@ -6,6 +6,10 @@ import { randomUUID } from "crypto";
 import { Game } from "@/lib/games";
 import { useLocalDatabase } from "@/lib/config";
 
+// Garantir que esta rota não seja pré-renderizada/cachê estático
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 const GAMES_FILE = path.join(process.cwd(), "data", "games.json");
 
 // Funções locais para backup/fallback

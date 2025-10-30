@@ -1,5 +1,8 @@
 "use client";
 
+// Garantir que a página não use conteúdo estático antigo
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from "react";
 import { Game } from "@/lib/games";
 import { 
