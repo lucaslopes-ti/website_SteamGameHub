@@ -5,6 +5,16 @@ import path from "path";
 import { randomUUID } from "crypto";
 import { Game } from "@/lib/games";
 import { useLocalDatabase } from "@/lib/config";
+import {
+  isValidEmail,
+  isValidDownloadUrl,
+  isValidVideoUrl,
+  validateGameTitle,
+  validateGameDescription,
+  validateAuthorName,
+  validateGameArrays,
+  sanitizeText,
+} from "@/lib/validations";
 
 // Garantir que esta rota não seja pré-renderizada/cachê estático
 export const runtime = 'nodejs';
@@ -35,41 +45,34 @@ async function saveGamesToFile(games: Game[]) {
   await writeFile(GAMES_FILE, JSON.stringify(games, null, 2));
 }
 
+// Função helper para buscar jogos do Firestore
+async function getGamesFromFirestore(approved?: boolean): Promise<Game[]> {
+  const { db } = await import("@/lib/firebase/config");
+  const { collection, query, where, getDocs } = await import("firebase/firestore");
+
+  const gamesRef = collection(db, "games");
+  let q = approved !== undefined 
+    ? query(gamesRef, where("approved", "==", approved === true))
+    : query(gamesRef);
+
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((doc) => ({ 
+    id: doc.id, 
+    ...doc.data() 
+  } as Game));
+}
+
 // Função para buscar jogos (Firestore ou Local)
 async function getGames(approved?: boolean): Promise<Game[]> {
   // Em produção (Vercel), sempre usar Firestore (sistema de arquivos é read-only)
   if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
-    const { db } = await import("@/lib/firebase/config");
-    const { collection, query, where, getDocs } = await import("firebase/firestore");
-
-    const gamesRef = collection(db, "games");
-    let q = approved !== undefined 
-      ? query(gamesRef, where("approved", "==", approved === true))
-      : query(gamesRef);
-
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => ({ 
-      id: doc.id, 
-      ...doc.data() 
-    } as Game));
+    return await getGamesFromFirestore(approved);
   }
 
   // Desenvolvimento local
   if (!useLocalDatabase()) {
     try {
-      const { db } = await import("@/lib/firebase/config");
-      const { collection, query, where, getDocs } = await import("firebase/firestore");
-
-      const gamesRef = collection(db, "games");
-      let q = approved !== undefined 
-        ? query(gamesRef, where("approved", "==", approved === true))
-        : query(gamesRef);
-
-      const snapshot = await getDocs(q);
-      return snapshot.docs.map((doc) => ({ 
-        id: doc.id, 
-        ...doc.data() 
-      } as Game));
+      return await getGamesFromFirestore(approved);
     } catch (error) {
       console.error("Erro ao buscar do Firestore:", error);
       throw error; // Não fazer fallback em produção
@@ -101,47 +104,37 @@ function removeUndefinedFields<T extends Record<string, any>>(obj: T): Partial<T
   return cleaned;
 }
 
+// Função helper para criar jogo no Firestore
+async function createGameInFirestore(gameData: Omit<Game, "id">): Promise<Game> {
+  const { db } = await import("@/lib/firebase/config");
+  const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
+
+  // Remover campos undefined antes de salvar no Firestore
+  const cleanedData = removeUndefinedFields(gameData);
+
+  const gamesRef = collection(db, "games");
+  const docRef = await addDoc(gamesRef, {
+    ...cleanedData,
+    createdAt: serverTimestamp(),
+  });
+
+  return {
+    id: docRef.id,
+    ...gameData,
+  } as Game;
+}
+
 // Função para criar jogo (Firestore ou Local)
 async function createGame(gameData: Omit<Game, "id">): Promise<Game> {
   // Em produção (Vercel), sempre usar Firestore (sistema de arquivos é read-only)
   if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
-    const { db } = await import("@/lib/firebase/config");
-    const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
-
-    // Remover campos undefined antes de salvar no Firestore
-    const cleanedData = removeUndefinedFields(gameData);
-
-    const gamesRef = collection(db, "games");
-    const docRef = await addDoc(gamesRef, {
-      ...cleanedData,
-      createdAt: serverTimestamp(),
-    });
-
-    return {
-      id: docRef.id,
-      ...gameData,
-    } as Game;
+    return await createGameInFirestore(gameData);
   }
 
   // Desenvolvimento local
   if (!useLocalDatabase()) {
     try {
-      const { db } = await import("@/lib/firebase/config");
-      const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
-
-      // Remover campos undefined antes de salvar no Firestore
-      const cleanedData = removeUndefinedFields(gameData);
-
-      const gamesRef = collection(db, "games");
-      const docRef = await addDoc(gamesRef, {
-        ...cleanedData,
-        createdAt: serverTimestamp(),
-      });
-
-      return {
-        id: docRef.id,
-        ...gameData,
-      } as Game;
+      return await createGameInFirestore(gameData);
     } catch (error) {
       console.error("Erro ao criar no Firestore:", error);
       throw error; // Não fazer fallback em produção
@@ -177,10 +170,43 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     
-    // Validar campos obrigatórios
-    if (!body.title || !body.description || !body.author || !body.authorEmail) {
+    // Validar campos obrigatórios com validações detalhadas
+    const titleValidation = validateGameTitle(body.title);
+    if (!titleValidation.valid) {
       return NextResponse.json(
-        { error: "Campos obrigatórios faltando: title, description, author, authorEmail" },
+        { error: titleValidation.error },
+        { status: 400 }
+      );
+    }
+
+    const descriptionValidation = validateGameDescription(body.description);
+    if (!descriptionValidation.valid) {
+      return NextResponse.json(
+        { error: descriptionValidation.error },
+        { status: 400 }
+      );
+    }
+
+    const authorValidation = validateAuthorName(body.author);
+    if (!authorValidation.valid) {
+      return NextResponse.json(
+        { error: authorValidation.error },
+        { status: 400 }
+      );
+    }
+
+    if (!isValidEmail(body.authorEmail)) {
+      return NextResponse.json(
+        { error: "E-mail do autor inválido" },
+        { status: 400 }
+      );
+    }
+
+    // Validar arrays de gêneros e tecnologias
+    const arraysValidation = validateGameArrays(body.genres, body.technologies);
+    if (!arraysValidation.valid) {
+      return NextResponse.json(
+        { error: arraysValidation.error },
         { status: 400 }
       );
     }
@@ -193,19 +219,50 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validar URL de download se fornecida
+    if (body.downloadLink && !isValidDownloadUrl(body.downloadLink)) {
+      return NextResponse.json(
+        { error: "Link de download inválido. Use Google Drive, OneDrive, Dropbox ou MEGA." },
+        { status: 400 }
+      );
+    }
+
+    // Validar URL de trailer se fornecida
+    if (body.trailerUrl && !isValidVideoUrl(body.trailerUrl)) {
+      return NextResponse.json(
+        { error: "Link do trailer inválido. Use YouTube ou Vimeo." },
+        { status: 400 }
+      );
+    }
+
+    // Sanitizar e normalizar dados
+    const sanitizedTitle = sanitizeText(body.title, 100);
+    const sanitizedDescription = sanitizeText(body.description, 2000);
+    const sanitizedAuthor = sanitizeText(body.author, 100);
+    const sanitizedAuthorEmail = body.authorEmail.trim().toLowerCase();
+
     // Normalizar URLs de imagem: converter strings vazias para undefined
     const imageUrl = body.image && body.image.trim() !== "" ? body.image.trim() : undefined;
     const screenshots = body.screenshots && Array.isArray(body.screenshots) && body.screenshots.length > 0
       ? body.screenshots.filter((url: string) => url && url.trim() !== "")
       : undefined;
 
+    // Sanitizar arrays
+    const sanitizedGenres = (body.genres || [])
+      .filter((g: string) => typeof g === 'string' && g.trim().length > 0)
+      .map((g: string) => sanitizeText(g, 50));
+    
+    const sanitizedTechnologies = (body.technologies || [])
+      .filter((t: string) => typeof t === 'string' && t.trim().length > 0)
+      .map((t: string) => sanitizeText(t, 50));
+
     const newGameData: Omit<Game, "id"> = {
-      title: body.title,
-      description: body.description,
-      author: body.author,
-      authorEmail: body.authorEmail,
-      genres: body.genres || [],
-      technologies: body.technologies || [],
+      title: sanitizedTitle,
+      description: sanitizedDescription,
+      author: sanitizedAuthor,
+      authorEmail: sanitizedAuthorEmail,
+      genres: sanitizedGenres,
+      technologies: sanitizedTechnologies,
       releaseDate: new Date().toISOString().split("T")[0],
       image: imageUrl, // URL normalizada (undefined se vazia)
       trailerUrl: body.trailerUrl && body.trailerUrl.trim() !== "" ? body.trailerUrl.trim() : undefined,

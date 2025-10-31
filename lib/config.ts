@@ -10,11 +10,17 @@ export const isProduction = () => {
   );
 };
 
-export const useLocalStorage = () => {
+export const shouldUseLocalStorage = () => {
   return process.env.ENABLE_LOCAL_STORAGE === "true" || !process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
 };
 
-export const useLocalDatabase = () => {
+// Manter compatibilidade com código existente
+export const useLocalStorage = shouldUseLocalStorage;
+
+export const shouldUseLocalDatabase = () => {
   return process.env.ENABLE_LOCAL_STORAGE === "true" || !process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
 };
+
+// Manter compatibilidade com código existente
+export const useLocalDatabase = shouldUseLocalDatabase;
 

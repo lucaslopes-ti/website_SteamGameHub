@@ -5,11 +5,21 @@ import Hero from "@/components/Hero";
 import GameCarousel from "@/components/GameCarousel";
 import GameGrid from "@/components/GameGrid";
 import { GameGridSkeleton } from "@/components/SkeletonLoader";
+import StatsCards from "@/components/StatsCards";
+import PopularGenres from "@/components/PopularGenres";
+import AboutSection from "@/components/AboutSection";
+import TopRatedGames from "@/components/TopRatedGames";
 import { Game } from "@/lib/games";
 
 export default function Home() {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<{
+    totalViews: number;
+    totalDownloads: number;
+    viewsByGame: Record<string, number>;
+    downloadsByGame: Record<string, number>;
+  } | null>(null);
   const [query, setQuery] = useState("");
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedTechs, setSelectedTechs] = useState<string[]>([]);
@@ -34,13 +44,22 @@ export default function Home() {
 
   const loadGames = async () => {
     try {
-      const response = await fetch("/api/games?approved=true");
-      if (response.ok) {
-        const data = await response.json();
+      const [gamesResponse, statsResponse] = await Promise.all([
+        fetch("/api/games?approved=true"),
+        fetch("/api/stats"),
+      ]);
+
+      if (gamesResponse.ok) {
+        const data = await gamesResponse.json();
         setGames(data);
       }
+
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json();
+        setStats(statsData);
+      }
     } catch (error) {
-      console.error("Erro ao carregar jogos:", error);
+      console.error("Erro ao carregar dados:", error);
     } finally {
       setLoading(false);
     }
@@ -113,6 +132,26 @@ export default function Home() {
               <GameCarousel games={featuredGames} />
             </section>
           )}
+
+          {/* Estatísticas */}
+          {stats && (
+            <section className="container mx-auto px-4">
+              <StatsCards games={games} stats={stats} />
+            </section>
+          )}
+
+          {/* Jogos Melhor Avaliados */}
+          <TopRatedGames games={games} />
+
+          {/* Gêneros Populares */}
+          <section className="container mx-auto px-4">
+            <PopularGenres games={games} />
+          </section>
+
+          {/* Seção Sobre */}
+          <AboutSection />
+
+          {/* Seção de Filtros e Busca */}
           <section className="container mx-auto px-4">
             <div className="bg-steam-dark border border-steam-blue rounded-lg p-4 mb-6">
               <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-end">

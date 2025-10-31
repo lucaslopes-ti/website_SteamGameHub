@@ -96,8 +96,9 @@ export async function POST(request: NextRequest) {
                   credential: admin.credential.cert(serviceAccount),
                   storageBucket: storageBucket,
                 });
-              } catch (parseError) {
-                throw new Error("Erro ao fazer parse do service account");
+              } catch (parseError: any) {
+                console.error("Erro ao fazer parse do service account:", parseError?.message);
+                throw new Error(`Erro ao fazer parse do service account: ${parseError?.message || "Formato JSON inválido"}`);
               }
             }
 
@@ -202,7 +203,7 @@ export async function POST(request: NextRequest) {
             { status: 500 }
           );
         }
-        // Em desenvolvimento, tentar fallback local apenas se não estiver em produção
+        // Em desenvolvimento, tentar fallback local (ver linha 211)
         console.warn("Erro no Firebase Storage, tentando local:", firebaseError);
       }
     }
