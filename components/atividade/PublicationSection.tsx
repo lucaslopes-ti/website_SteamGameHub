@@ -8,6 +8,7 @@ interface PublicationSectionProps {
   onComplete: () => void;
   addXP: (amount: number) => void;
   unlocked: boolean;
+  totalXP?: number;
 }
 
 export default function PublicationSection({
