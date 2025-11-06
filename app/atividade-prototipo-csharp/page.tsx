@@ -168,9 +168,29 @@ export default function AtividadePrototipoCSharpPage() {
 
   const activePhase = phases[currentPhase];
 
+  // Obter data atual formatada
+  const today = new Date();
+  const day = today.getDate().toString().padStart(2, '0');
+  const month = (today.getMonth() + 1).toString().padStart(2, '0');
+  const activityDate = `Atividade ${day}/${month}`;
+
   return (
     <div className="min-h-screen bg-steam-dark">
       <div className="container mx-auto px-4 py-8">
+        {/* Banner com Data */}
+        <div className="mb-4 animate-pulse">
+          <div className="bg-gradient-to-r from-yellow-400 via-orange-400 to-red-500 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow">
+            <div className="flex items-center justify-center gap-3">
+              <div className="bg-white/20 backdrop-blur-sm rounded-full p-2">
+                <Trophy className="w-6 h-6 text-white" />
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">
+                {activityDate}
+              </h2>
+            </div>
+          </div>
+        </div>
+
         {/* Header da Atividade */}
         <div className="bg-gradient-to-r from-steam-blue via-steam-blueLight to-steam-green rounded-lg p-6 mb-6 text-white">
           <h1 className="text-4xl font-bold mb-2">Missão: Protótipo Codificado</h1>
