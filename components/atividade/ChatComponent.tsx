@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Send, MessageSquare } from "lucide-react";
-import { useAuth } from "@/components/AuthProvider";
+import { getLocalUserId, getLocalUserName } from "@/lib/local-user";
 
 interface ChatMessage {
   id: string;
@@ -17,7 +17,8 @@ interface ChatComponentProps {
 }
 
 export default function ChatComponent({ activityId }: ChatComponentProps) {
-  const { user } = useAuth();
+  const userId = getLocalUserId();
+  const userName = getLocalUserName();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
@@ -53,7 +54,7 @@ export default function ChatComponent({ activityId }: ChatComponentProps) {
   };
 
   const handleSend = async () => {
-    if (!newMessage.trim() || !user) return;
+    if (!newMessage.trim()) return;
 
     try {
       const response = await fetch("/api/atividades/chat", {
@@ -61,8 +62,8 @@ export default function ChatComponent({ activityId }: ChatComponentProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           activityId,
-          userId: user.email,
-          userName: user.name || user.email.split("@")[0],
+          userId,
+          userName,
           message: newMessage.trim(),
         }),
       });
@@ -93,7 +94,7 @@ export default function ChatComponent({ activityId }: ChatComponentProps) {
           </div>
         ) : (
           messages.map((msg) => {
-            const isOwn = msg.userId === user?.email;
+            const isOwn = msg.userId === userId;
             return (
               <div
                 key={msg.id}
@@ -131,11 +132,10 @@ export default function ChatComponent({ activityId }: ChatComponentProps) {
           onKeyPress={(e) => e.key === "Enter" && handleSend()}
           placeholder="Digite sua mensagem..."
           className="flex-1 bg-steam-dark border border-steam-blue rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight"
-          disabled={!user}
         />
         <button
           onClick={handleSend}
-          disabled={!newMessage.trim() || !user}
+          disabled={!newMessage.trim()}
           className="px-6 py-2 bg-steam-blueLight hover:bg-steam-blue text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
           <Send className="w-5 h-5" />

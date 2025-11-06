@@ -7,9 +7,16 @@ import QuizComponent from "./QuizComponent";
 interface BriefingSectionProps {
   onComplete: () => void;
   addXP: (amount: number) => void;
+  userId: string;
+  userName: string;
 }
 
-export default function BriefingSection({ onComplete, addXP }: BriefingSectionProps) {
+export default function BriefingSection({
+  onComplete,
+  addXP,
+  userId,
+  userName,
+}: BriefingSectionProps) {
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [videoWatched, setVideoWatched] = useState(false);
   const [teamFormed, setTeamFormed] = useState(false);

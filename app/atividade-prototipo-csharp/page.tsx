@@ -1,17 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAuth } from "@/components/AuthProvider";
-import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ToastProvider";
 import ActivityProgress from "@/components/gamification/ActivityProgress";
 import BriefingSection from "@/components/atividade/BriefingSection";
 import CSharpPracticeSection from "@/components/atividade/CSharpPracticeSection";
 import BlenderSection from "@/components/atividade/BlenderSection";
 import PublicationSection from "@/components/atividade/PublicationSection";
-import Leaderboard from "@/components/gamification/Leaderboard";
 import ActivityTimer from "@/components/atividade/ActivityTimer";
 import { Trophy, BookOpen, Code, Boxes, Upload } from "lucide-react";
+import { getLocalUserId, getLocalUserName, setLocalUserName } from "@/lib/local-user";
 
 export interface ActivityPhase {
   id: string;
@@ -23,10 +21,12 @@ export interface ActivityPhase {
 }
 
 export default function AtividadePrototipoCSharpPage() {
-  const { user, isAuthenticated } = useAuth();
-  const router = useRouter();
   const { showToast } = useToast();
 
+  const [userId] = useState(() => getLocalUserId());
+  const [userName, setUserNameState] = useState(() => getLocalUserName());
+  const [showNameInput, setShowNameInput] = useState(false);
+  const [nameInput, setNameInput] = useState("");
   const [currentPhase, setCurrentPhase] = useState(0);
   const [totalXP, setTotalXP] = useState(0);
   const [phases, setPhases] = useState<ActivityPhase[]>([
@@ -65,35 +65,43 @@ export default function AtividadePrototipoCSharpPage() {
   ]);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      showToast("Faça login para acessar a atividade", "info");
-      router.push("/login");
-      return;
-    }
-
-    // Carregar progresso salvo do Firebase
+    // Carregar progresso salvo (localStorage ou Firebase)
     loadProgress();
-  }, [isAuthenticated, user]);
+  }, [userId]);
 
   const loadProgress = async () => {
-    if (!user) return;
+    // Primeiro tentar carregar de localStorage (mais rápido e não requer conexão)
+    const savedProgress = localStorage.getItem(`activity_progress_${userId}`);
+    if (savedProgress) {
+      try {
+        const data = JSON.parse(savedProgress);
+        if (data.phases) setPhases(data.phases);
+        if (data.totalXP !== undefined) setTotalXP(data.totalXP);
+        if (data.currentPhase !== undefined) setCurrentPhase(data.currentPhase);
+      } catch (error) {
+        console.error("Erro ao carregar progresso do localStorage:", error);
+      }
+    }
 
+    // Também tentar carregar do Firebase (sincronização opcional)
     try {
-      const response = await fetch(`/api/atividades/progresso?userId=${user.email}`);
+      const response = await fetch(`/api/atividades/progresso?userId=${userId}`);
       if (response.ok) {
         const data = await response.json();
-        if (data.phases) {
+        if (data.phases && data.phases.length > 0) {
           setPhases(data.phases);
         }
-        if (data.totalXP) {
+        if (data.totalXP !== undefined) {
           setTotalXP(data.totalXP);
         }
         if (data.currentPhase !== undefined) {
           setCurrentPhase(data.currentPhase);
         }
+        // Salvar também no localStorage
+        localStorage.setItem(`activity_progress_${userId}`, JSON.stringify(data));
       }
     } catch (error) {
-      console.error("Erro ao carregar progresso:", error);
+      console.error("Erro ao carregar progresso do Firebase:", error);
     }
   };
 
@@ -130,27 +138,33 @@ export default function AtividadePrototipoCSharpPage() {
   };
 
   const saveProgress = async (xp?: number) => {
-    if (!user) return;
+    const progressData = {
+      userId,
+      userName,
+      phases,
+      totalXP: xp || totalXP,
+      currentPhase,
+    };
 
+    // Salvar no localStorage (sempre funciona)
+    try {
+      localStorage.setItem(`activity_progress_${userId}`, JSON.stringify(progressData));
+    } catch (error) {
+      console.error("Erro ao salvar progresso no localStorage:", error);
+    }
+
+    // Tentar salvar no Firebase também (opcional)
     try {
       await fetch("/api/atividades/progresso", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: user.email,
-          phases,
-          totalXP: xp || totalXP,
-          currentPhase,
-        }),
+        body: JSON.stringify(progressData),
       });
     } catch (error) {
-      console.error("Erro ao salvar progresso:", error);
+      console.error("Erro ao salvar progresso no Firebase:", error);
+      // Não é crítico, localStorage já salvou
     }
   };
-
-  if (!isAuthenticated || !user) {
-    return null;
-  }
 
   const activePhase = phases[currentPhase];
 
@@ -172,7 +186,73 @@ export default function AtividadePrototipoCSharpPage() {
           </div>
           <div>
             <ActivityTimer />
-            <Leaderboard activityId="prototipo-csharp" className="mt-4" />
+            <div className="mt-4 bg-steam-dark border border-steam-blue rounded-lg p-4">
+              {showNameInput ? (
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    value={nameInput}
+                    onChange={(e) => setNameInput(e.target.value)}
+                    placeholder="Digite seu nome"
+                    className="w-full bg-steam-darker border border-steam-blue rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight text-sm"
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter" && nameInput.trim()) {
+                        const newName = nameInput.trim();
+                        setUserNameState(newName);
+                        setLocalUserName(newName);
+                        setShowNameInput(false);
+                        setNameInput("");
+                      }
+                    }}
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        if (nameInput.trim()) {
+                          const newName = nameInput.trim();
+                          setUserNameState(newName);
+                          setLocalUserName(newName);
+                          setShowNameInput(false);
+                          setNameInput("");
+                        }
+                      }}
+                      className="flex-1 px-3 py-1 bg-steam-green hover:bg-steam-green/80 text-white rounded text-sm transition-colors"
+                    >
+                      Salvar
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowNameInput(false);
+                        setNameInput("");
+                      }}
+                      className="px-3 py-1 bg-steam-darker border border-steam-blue text-gray-300 rounded text-sm hover:bg-steam-dark transition-colors"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-sm text-gray-400">
+                      <strong className="text-steam-blueLight">Você:</strong> {userName}
+                    </p>
+                    <button
+                      onClick={() => {
+                        setNameInput(userName);
+                        setShowNameInput(true);
+                      }}
+                      className="text-xs text-steam-blueLight hover:text-steam-green transition-colors"
+                    >
+                      Editar
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    ID: {userId.slice(-12)}
+                  </p>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
@@ -212,7 +292,12 @@ export default function AtividadePrototipoCSharpPage() {
         {/* Conteúdo da Fase Ativa */}
         <div className="bg-steam-dark border border-steam-blue rounded-lg p-6">
           {activePhase.id === "briefing" && (
-            <BriefingSection onComplete={() => unlockNextPhase("briefing")} addXP={addXP} />
+            <BriefingSection
+              onComplete={() => unlockNextPhase("briefing")}
+              addXP={addXP}
+              userId={userId}
+              userName={userName}
+            />
           )}
           {activePhase.id === "csharp" && (
             <CSharpPracticeSection
