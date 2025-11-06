@@ -132,14 +132,16 @@ const TheoryContent2 = () => (
       <h4 className="text-lg font-bold text-steam-blueLight mb-2">Exemplo prático</h4>
       <div className="bg-steam-dark rounded-lg p-4">
         <code className="block bg-steam-darker p-3 rounded text-sm font-mono">
-          <span className="text-steam-blueLight">int</span> score = <span className="text-yellow-400">100</span>;<br />
+          <span className="text-steam-blueLight">int</span> pontos = <span className="text-yellow-400">150</span>;<br />
           <br />
-          <span className="text-steam-blueLight">if</span> (score &gt;= <span className="text-yellow-400">100</span>) {'{'}<br />
-          &nbsp;&nbsp;<span className="text-steam-blueLight">Console</span>.<span className="text-steam-green">WriteLine</span>(<span className="text-yellow-400">"Você ganhou!"</span>);<br />
+          <span className="text-steam-blueLight">if</span> (pontos &gt;= <span className="text-yellow-400">100</span>) {'{'}<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">Console</span>.<span className="text-steam-green">WriteLine</span>(<span className="text-yellow-400">"Parabéns! Você venceu!"</span>);<br />
           {'}'}
         </code>
         <p className="text-gray-400 text-sm mt-2">
-          Este código verifica se score é maior ou igual a 100. Se for, imprime "Você ganhou!".
+          Este exemplo mostra como verificar se a variável 'pontos' é maior ou igual a 100. 
+          Se a condição for verdadeira, imprime uma mensagem de vitória. 
+          <strong className="text-steam-green"> No seu exercício, você usará 'score' ao invés de 'pontos'.</strong>
         </p>
       </div>
     </div>
@@ -199,17 +201,17 @@ const TheoryContent3 = () => (
     <div>
       <h4 className="text-lg font-bold text-steam-blueLight mb-2">Exemplo prático</h4>
       <div className="bg-steam-dark rounded-lg p-4">
-        <p className="text-gray-300 mb-2">Função que adiciona pontos ao score:</p>
+        <p className="text-gray-300 mb-2">Função que incrementa a pontuação:</p>
         <code className="block bg-steam-darker p-3 rounded text-sm font-mono">
-          <span className="text-steam-blueLight">int</span> score = <span className="text-yellow-400">0</span>;<br />
+          <span className="text-steam-blueLight">int</span> pontuacao = <span className="text-yellow-400">50</span>;<br />
           <br />
-          <span className="text-steam-blueLight">void</span> <span className="text-steam-green">AddScore</span>(<span className="text-steam-blueLight">int</span> points) {'{'}<br />
-          &nbsp;&nbsp;score = score + points;<br />
+          <span className="text-steam-blueLight">void</span> <span className="text-steam-green">IncrementarPontos</span>(<span className="text-steam-blueLight">int</span> valor) {'{'}<br />
+          &nbsp;&nbsp;pontuacao += valor;<br />
           {'}'}
         </code>
         <p className="text-gray-400 text-sm mt-2">
-          Esta função recebe um número inteiro (points) e adiciona ao score. 
-          Note que usamos score = score + points para somar os valores.
+          Este exemplo mostra uma função que recebe um valor inteiro e adiciona à pontuação usando o operador +=. 
+          <strong className="text-steam-green"> No seu exercício, você criará uma função 'AddScore' que recebe 'points' e modifica 'score'.</strong>
         </p>
       </div>
     </div>
@@ -406,15 +408,16 @@ const TheoryContent7 = () => (
       <h4 className="text-lg font-bold text-steam-blueLight mb-2">Exemplo prático</h4>
       <div className="bg-steam-dark rounded-lg p-4">
         <code className="block bg-steam-darker p-3 rounded text-sm font-mono">
-          <span className="text-steam-blueLight">int</span> score = <span className="text-yellow-400">150</span>;<br />
-          <span className="text-steam-blueLight">bool</span> hasPowerUp = <span className="text-yellow-400">true</span>;<br />
+          <span className="text-steam-blueLight">int</span> nivel = <span className="text-yellow-400">5</span>;<br />
+          <span className="text-steam-blueLight">bool</span> temItem = <span className="text-yellow-400">true</span>;<br />
           <br />
-          <span className="text-steam-blueLight">if</span> (score &gt;= <span className="text-yellow-400">100</span> && hasPowerUp) {'{'}<br />
-          &nbsp;&nbsp;<span className="text-steam-blueLight">Console</span>.<span className="text-steam-green">WriteLine</span>(<span className="text-yellow-400">"Você ganhou!"</span>);<br />
+          <span className="text-steam-blueLight">if</span> (nivel &gt;= <span className="text-yellow-400">3</span> && temItem) {'{'}<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">Console</span>.<span className="text-steam-green">WriteLine</span>(<span className="text-yellow-400">"Acesso liberado!"</span>);<br />
           {'}'}
         </code>
         <p className="text-gray-400 text-sm mt-2">
-          Este código só executa se score for maior ou igual a 100 E hasPowerUp for true.
+          Este exemplo combina duas condições usando &&: verifica se o nível é suficiente E se tem um item. 
+          <strong className="text-steam-green"> No seu exercício, você verificará se score >= 100 E hasPowerUp == true.</strong>
         </p>
       </div>
     </div>
@@ -1295,9 +1298,25 @@ export default function CSharpPracticeSection({
           <Code className="w-8 h-8" />
           Prática C# Guiada
         </h2>
-        <p className="text-gray-300">
+        <p className="text-gray-300 mb-3">
           Complete os exercícios sequenciais para aprender C# passo a passo.
         </p>
+        <div className="bg-gradient-to-r from-steam-blue/20 to-steam-green/20 border border-steam-blueLight rounded-lg p-4 mb-4">
+          <div className="flex items-start gap-3">
+            <span className="text-yellow-400 font-bold text-lg">🎯</span>
+            <div>
+              <p className="text-steam-blueLight font-semibold mb-2">Objetivo desta seção:</p>
+              <p className="text-gray-300 text-sm mb-2">
+                Os exercícios de código C# que você desenvolver aqui são para <strong className="text-steam-green">treinar e preparar você para a próxima unidade</strong>. 
+                Eles ensinam conceitos fundamentais de programação que serão essenciais nas próximas aulas.
+              </p>
+              <p className="text-gray-300 text-sm">
+                <strong className="text-steam-blueLight">Lembre-se:</strong> O código que você criar aqui será usado como base para entender os conceitos que virão depois. 
+                Não é apenas para esta atividade, mas para seu aprendizado contínuo!
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Progresso */}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Upload, FileText, MessageSquare, CheckCircle, Download, Trophy, Camera, Sparkles } from "lucide-react";
 import ChatComponent from "./ChatComponent";
 
@@ -17,12 +17,43 @@ export default function PublicationSection({
   unlocked,
   totalXP = 0,
 }: PublicationSectionProps) {
+  // Carregar dados salvos do localStorage ao montar o componente
+  const loadSavedData = () => {
+    try {
+      const savedCodeFile = localStorage.getItem('publication_codeFile');
+      const savedCoverFile = localStorage.getItem('publication_coverFile');
+      const savedGddFile = localStorage.getItem('publication_gddFile');
+      const savedReflection = localStorage.getItem('publication_reflection');
+      const savedAllUploaded = localStorage.getItem('publication_allUploaded');
+      const savedReflectionCompleted = localStorage.getItem('publication_reflectionCompleted');
+
+      if (savedReflection) {
+        setReflectionText(savedReflection);
+      }
+      if (savedAllUploaded === 'true') {
+        setAllUploaded(true);
+      }
+      if (savedReflectionCompleted === 'true') {
+        setReflectionCompleted(true);
+      }
+      // Nota: Arquivos File não podem ser salvos diretamente no localStorage
+      // Mas podemos salvar os nomes para indicar que foram selecionados
+    } catch (error) {
+      console.error("Erro ao carregar dados salvos:", error);
+    }
+  };
+
   const [codeFile, setCodeFile] = useState<File | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [gddFile, setGddFile] = useState<File | null>(null);
   const [reflectionText, setReflectionText] = useState("");
   const [allUploaded, setAllUploaded] = useState(false);
   const [reflectionCompleted, setReflectionCompleted] = useState(false);
+
+  // Carregar dados salvos quando o componente monta
+  useEffect(() => {
+    loadSavedData();
+  }, []);
 
   const handleFileSelect = (
     type: "code" | "cover" | "gdd",
@@ -35,6 +66,8 @@ export default function PublicationSection({
       case "code":
         if (file.name.endsWith(".cs")) {
           setCodeFile(file);
+          // Salvar nome do arquivo no localStorage
+          localStorage.setItem('publication_codeFile', file.name);
         } else {
           alert("Por favor, selecione um arquivo .cs");
         }
@@ -42,12 +75,16 @@ export default function PublicationSection({
       case "cover":
         if (file.type.startsWith("image/")) {
           setCoverFile(file);
+          // Salvar nome do arquivo no localStorage
+          localStorage.setItem('publication_coverFile', file.name);
         } else {
           alert("Por favor, selecione uma imagem");
         }
         break;
       case "gdd":
         setGddFile(file);
+        // Salvar nome do arquivo no localStorage
+        localStorage.setItem('publication_gddFile', file.name);
         break;
     }
   };
@@ -82,6 +119,8 @@ export default function PublicationSection({
       // Considerar sucesso mesmo se houver erros (para não bloquear a experiência)
       // Os arquivos podem ser salvos localmente ou o erro pode ser tratado depois
       setAllUploaded(true);
+      // Salvar estado no localStorage
+      localStorage.setItem('publication_allUploaded', 'true');
       addXP(200);
       
       // Tentar mostrar mensagem de sucesso mesmo com erros parciais
@@ -94,6 +133,7 @@ export default function PublicationSection({
       console.error("Erro ao fazer upload:", error);
       // Mesmo com erro, marcar como completo para não bloquear o usuário
       setAllUploaded(true);
+      localStorage.setItem('publication_allUploaded', 'true');
       addXP(200);
     }
   };
@@ -104,8 +144,18 @@ export default function PublicationSection({
       return;
     }
     setReflectionCompleted(true);
+    // Salvar reflexão no localStorage
+    localStorage.setItem('publication_reflection', reflectionText);
+    localStorage.setItem('publication_reflectionCompleted', 'true');
     addXP(50);
   };
+
+  // Salvar reflexão sempre que mudar
+  useEffect(() => {
+    if (reflectionText) {
+      localStorage.setItem('publication_reflection', reflectionText);
+    }
+  }, [reflectionText]);
 
   const handleGenerateReport = () => {
     const reportContent = `# Relatório de Atividade - Protótipo Codificado
@@ -153,9 +203,30 @@ Atividade completada com sucesso!
           <Upload className="w-8 h-8" />
           Publicação e Reflexão
         </h2>
-        <p className="text-gray-300">
+        <p className="text-gray-300 mb-3">
           Envie todos os arquivos finais e compartilhe sua reflexão sobre a atividade.
         </p>
+        <div className="bg-gradient-to-r from-steam-blue/20 to-steam-green/20 border border-steam-blueLight rounded-lg p-4 mb-4">
+          <div className="flex items-start gap-3">
+            <span className="text-yellow-400 font-bold text-lg">🎯</span>
+            <div>
+              <p className="text-steam-blueLight font-semibold mb-2">Objetivo desta seção:</p>
+              <p className="text-gray-300 text-sm mb-2">
+                Esta seção é para <strong className="text-steam-green">publicar e documentar o trabalho desta unidade</strong>. 
+                Aqui você anexará:
+              </p>
+              <ul className="text-gray-300 text-sm list-disc list-inside space-y-1 ml-4 mb-2">
+                <li><strong>Código C#:</strong> Os exercícios que você desenvolveu (para treinar para a próxima unidade)</li>
+                <li><strong>Capa 3D:</strong> A imagem renderizada do Blender (revisão de modelagem para esta unidade)</li>
+                <li><strong>GDD Mini:</strong> Documentação do projeto desta unidade</li>
+              </ul>
+              <p className="text-gray-300 text-sm">
+                <strong className="text-steam-blueLight">Lembre-se:</strong> Esta publicação representa o trabalho completo desta unidade. 
+                O código é para preparação futura, a capa é para esta unidade, e tudo será avaliado junto!
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Upload de Arquivos */}

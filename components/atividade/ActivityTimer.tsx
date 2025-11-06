@@ -4,16 +4,43 @@ import { useState, useEffect } from "react";
 import { Clock, Pause, Play } from "lucide-react";
 
 export default function ActivityTimer() {
-  const [timeRemaining, setTimeRemaining] = useState(4 * 60 * 60); // 4 horas em segundos
+  // Timer começa às 13:30 e finaliza às 17:20 = 3 horas e 50 minutos = 230 minutos = 13800 segundos
+  const TOTAL_TIME_SECONDS = 3 * 60 * 60 + 50 * 60; // 13800 segundos
+  
+  const [timeRemaining, setTimeRemaining] = useState(TOTAL_TIME_SECONDS);
   const [isPaused, setIsPaused] = useState(false);
-  const [startTime] = useState(Date.now());
+  
+  // Calcular o tempo restante baseado no horário atual
+  const calculateTimeRemaining = () => {
+    const now = new Date();
+    const startTime = new Date();
+    startTime.setHours(13, 30, 0, 0); // 13:30:00
+    const endTime = new Date();
+    endTime.setHours(17, 20, 0, 0); // 17:20:00
+    
+    // Se ainda não chegou às 13:30, mostrar tempo total
+    if (now < startTime) {
+      return TOTAL_TIME_SECONDS;
+    }
+    
+    // Se já passou das 17:20, mostrar 0
+    if (now >= endTime) {
+      return 0;
+    }
+    
+    // Calcular tempo restante até 17:20
+    const remainingMs = endTime.getTime() - now.getTime();
+    return Math.max(0, Math.floor(remainingMs / 1000));
+  };
 
   useEffect(() => {
+    // Atualizar tempo restante inicial
+    setTimeRemaining(calculateTimeRemaining());
+
     if (isPaused) return;
 
     const interval = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - startTime) / 1000);
-      const remaining = Math.max(0, 4 * 60 * 60 - elapsed);
+      const remaining = calculateTimeRemaining();
       setTimeRemaining(remaining);
 
       if (remaining === 0) {
@@ -22,7 +49,7 @@ export default function ActivityTimer() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isPaused, startTime]);
+  }, [isPaused]);
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
@@ -31,7 +58,7 @@ export default function ActivityTimer() {
     return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const percentage = ((4 * 60 * 60 - timeRemaining) / (4 * 60 * 60)) * 100;
+  const percentage = ((TOTAL_TIME_SECONDS - timeRemaining) / TOTAL_TIME_SECONDS) * 100;
   const isUrgent = timeRemaining < 30 * 60; // Menos de 30 minutos
 
   return (
@@ -62,7 +89,7 @@ export default function ActivityTimer() {
           {formatTime(timeRemaining)}
         </div>
         <p className="text-sm text-gray-400">
-          {isPaused ? "Timer pausado" : "Tempo restante"}
+          {isPaused ? "Timer pausado" : "Tempo restante (13:30 - 17:20)"}
         </p>
       </div>
 

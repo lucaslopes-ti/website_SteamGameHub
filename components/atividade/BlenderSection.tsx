@@ -147,9 +147,25 @@ Esta capa representa visualmente o protótipo codificado em C#, mostrando os obj
           <Boxes className="w-8 h-8" />
           Modelagem Blender
         </h2>
-        <p className="text-gray-300">
+        <p className="text-gray-300 mb-3">
           Crie uma capa 3D para seu protótipo usando Blender. Tempo sugerido: 45 minutos.
         </p>
+        <div className="bg-gradient-to-r from-steam-blue/20 to-steam-green/20 border border-steam-blueLight rounded-lg p-4 mb-4">
+          <div className="flex items-start gap-3">
+            <span className="text-yellow-400 font-bold text-lg">🎯</span>
+            <div>
+              <p className="text-steam-blueLight font-semibold mb-2">Objetivo desta seção:</p>
+              <p className="text-gray-300 text-sm mb-2">
+                A capa 3D que você criar no Blender é para <strong className="text-steam-green">revisar conceitos de modelagem e criar a capa visual</strong> do seu projeto. 
+                Esta capa será usada na seção de Publicação para representar visualmente o trabalho desenvolvido.
+              </p>
+              <p className="text-gray-300 text-sm">
+                <strong className="text-steam-blueLight">Lembre-se:</strong> A capa deve representar visualmente os objetos que você programou em C# (Player, Enemy, etc.). 
+                Ela será anexada junto com o código na publicação final desta unidade.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Timer */}
