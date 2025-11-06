@@ -417,7 +417,7 @@ const TheoryContent7 = () => (
         </code>
         <p className="text-gray-400 text-sm mt-2">
           Este exemplo combina duas condições usando &&: verifica se o nível é suficiente E se tem um item. 
-          <strong className="text-steam-green"> No seu exercício, você verificará se score >= 100 E hasPowerUp == true.</strong>
+          <strong className="text-steam-green"> No seu exercício, você verificará se score {'>='} 100 E hasPowerUp == true.</strong>
         </p>
       </div>
     </div>
