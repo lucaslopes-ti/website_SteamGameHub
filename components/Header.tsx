@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Search, User, Gamepad2, LogOut, Heart, Info, Menu, X } from "lucide-react";
+import { Search, User, Gamepad2, LogOut, Heart, Info, Menu, X, Trophy } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "./AuthProvider";
 
