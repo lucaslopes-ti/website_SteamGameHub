@@ -297,6 +297,11 @@ export default function AtividadePrototipoCSharpPage() {
 
         {/* Navegação por Fases */}
         <div className="bg-steam-darker border border-steam-blue rounded-lg p-4 mb-6">
+          <div className="mb-3">
+            <p className="text-sm text-gray-400 mb-2">
+              <strong className="text-steam-blueLight">Sistema de Desbloqueio:</strong> Cada fase só é liberada após completar a anterior
+            </p>
+          </div>
           <div className="flex flex-wrap gap-2">
             {phases.map((phase, index) => {
               const Icon = getIconComponent(phase.iconName);
@@ -317,11 +322,15 @@ export default function AtividadePrototipoCSharpPage() {
                       ? "bg-steam-dark text-gray-300 hover:bg-steam-blue border border-steam-blue"
                       : "bg-steam-darker text-gray-500 border border-steam-darker cursor-not-allowed opacity-50"
                   }`}
+                  title={!canAccess ? `Complete a fase anterior para desbloquear esta fase (+${phase.xp} XP)` : `+${phase.xp} XP`}
                 >
                   <Icon className="w-5 h-5" />
                   <span className="font-medium">{phase.title}</span>
+                  {!canAccess && <span className="text-xs ml-1">🔒</span>}
                   {phase.completed && <Trophy className="w-4 h-4" />}
-                  {phase.completed && <span className="text-xs">+{phase.xp} XP</span>}
+                  <span className={`text-xs ${phase.completed ? 'text-yellow-400' : canAccess ? 'text-steam-blueLight' : 'text-gray-500'}`}>
+                    +{phase.xp} XP
+                  </span>
                 </button>
               );
             })}

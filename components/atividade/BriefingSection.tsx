@@ -68,8 +68,33 @@ export default function BriefingSection({
             <li>Criar capa 3D no Blender</li>
             <li>Publicar e documentar no portfólio</li>
           </ul>
+          <div className="mt-4 bg-gradient-to-r from-steam-blue/20 to-steam-green/20 border border-steam-blueLight rounded-lg p-4">
+            <p className="font-semibold text-steam-blueLight mb-3">Sistema de Fases e XP:</p>
+            <div className="space-y-2 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-300">📚 Briefing e Treinamento</span>
+                <span className="text-yellow-400 font-bold">+50 XP</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-300">💻 Prática C# Guiada</span>
+                <span className="text-yellow-400 font-bold">+100 XP</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-300">🎨 Modelagem Blender</span>
+                <span className="text-yellow-400 font-bold">+150 XP</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-300">📤 Publicação e Reflexão</span>
+                <span className="text-yellow-400 font-bold">+200 XP</span>
+              </div>
+            </div>
+            <p className="mt-3 text-xs text-gray-400 border-t border-steam-blue pt-3">
+              ⚠️ <strong>Importante:</strong> Cada seção só será liberada quando você completar a anterior. 
+              Complete esta fase (Briefing e Treinamento) para desbloquear a Prática C# Guiada!
+            </p>
+          </div>
           <p className="mt-4 font-semibold text-steam-green">
-            Tempo total: 4 horas | XP Total: 500 pontos
+            Tempo total: 13:30 - 17:20 | XP Total: 500 pontos
           </p>
         </div>
       </div>
