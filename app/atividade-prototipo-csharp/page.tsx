@@ -357,6 +357,7 @@ export default function AtividadePrototipoCSharpPage() {
               onComplete={() => unlockNextPhase("publication")}
               addXP={addXP}
               unlocked={activePhase.unlocked}
+              totalXP={totalXP}
             />
           )}
         </div>

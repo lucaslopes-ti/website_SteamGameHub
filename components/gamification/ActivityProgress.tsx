@@ -23,7 +23,8 @@ export default function ActivityProgress({
   totalXP,
 }: ActivityProgressProps) {
   const totalPossibleXP = phases.reduce((sum, phase) => sum + phase.xp, 0);
-  const progressPercentage = (totalXP / totalPossibleXP) * 100;
+  // Limitar progresso a no máximo 100%
+  const progressPercentage = Math.min((totalXP / totalPossibleXP) * 100, 100);
   const completedPhases = phases.filter((p) => p.completed).length;
 
   const getIconComponent = (iconName: string) => {
