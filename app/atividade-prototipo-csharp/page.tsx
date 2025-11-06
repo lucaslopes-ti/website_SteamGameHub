@@ -11,7 +11,7 @@ import BlenderSection from "@/components/atividade/BlenderSection";
 import PublicationSection from "@/components/atividade/PublicationSection";
 import Leaderboard from "@/components/gamification/Leaderboard";
 import ActivityTimer from "@/components/atividade/ActivityTimer";
-import { Trophy, BookOpen, Code, Cube, Upload } from "lucide-react";
+import { Trophy, BookOpen, Code, Boxes, Upload } from "lucide-react";
 
 export interface ActivityPhase {
   id: string;
@@ -49,7 +49,7 @@ export default function AtividadePrototipoCSharpPage() {
     {
       id: "blender",
       title: "Modelagem Blender",
-      icon: Cube,
+      icon: Boxes,
       completed: false,
       xp: 150,
       unlocked: false,

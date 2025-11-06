@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Cube, Upload, Image as ImageIcon, Clock, CheckCircle, Download } from "lucide-react";
+import { Boxes, Upload, Image as ImageIcon, Clock, CheckCircle, Download } from "lucide-react";
 
 interface BlenderSectionProps {
   onComplete: () => void;
@@ -116,7 +116,7 @@ ${new Date().toLocaleDateString("pt-BR")}
   if (!unlocked) {
     return (
       <div className="text-center py-12 text-gray-400">
-        <Cube className="w-16 h-16 mx-auto mb-4 opacity-50" />
+        <Boxes className="w-16 h-16 mx-auto mb-4 opacity-50" />
         <p className="text-lg">Complete a fase anterior para desbloquear esta seção.</p>
       </div>
     );
@@ -126,7 +126,7 @@ ${new Date().toLocaleDateString("pt-BR")}
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold text-steam-blueLight mb-2 flex items-center gap-3">
-          <Cube className="w-8 h-8" />
+          <Boxes className="w-8 h-8" />
           Modelagem Blender
         </h2>
         <p className="text-gray-300">
