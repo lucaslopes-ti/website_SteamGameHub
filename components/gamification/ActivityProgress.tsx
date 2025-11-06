@@ -1,7 +1,15 @@
 "use client";
 
 import { ActivityPhase } from "@/app/atividade-prototipo-csharp/page";
-import { Trophy, Star } from "lucide-react";
+import { Trophy, Star, BookOpen, Code, Boxes, Upload } from "lucide-react";
+
+const iconMap: Record<string, typeof Trophy> = {
+  Trophy,
+  BookOpen,
+  Code,
+  Boxes,
+  Upload,
+};
 
 interface ActivityProgressProps {
   phases: ActivityPhase[];
@@ -17,6 +25,10 @@ export default function ActivityProgress({
   const totalPossibleXP = phases.reduce((sum, phase) => sum + phase.xp, 0);
   const progressPercentage = (totalXP / totalPossibleXP) * 100;
   const completedPhases = phases.filter((p) => p.completed).length;
+
+  const getIconComponent = (iconName: string) => {
+    return iconMap[iconName] || Trophy;
+  };
 
   return (
     <div className="bg-steam-dark border border-steam-blue rounded-lg p-6">
@@ -46,7 +58,7 @@ export default function ActivityProgress({
       {/* Fases */}
       <div className="space-y-3">
         {phases.map((phase, index) => {
-          const Icon = phase.icon;
+          const Icon = getIconComponent(phase.iconName);
           const isCurrent = index === currentPhase;
           const isCompleted = phase.completed;
           const isLocked = !phase.unlocked;

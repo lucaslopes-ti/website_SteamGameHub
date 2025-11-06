@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { Code, CheckCircle, Download, Play, XCircle, BookOpen, Lightbulb } from "lucide-react";
 import CodeEditor from "./CodeEditor";
 
@@ -10,6 +10,223 @@ interface CSharpPracticeSectionProps {
   unlocked: boolean;
 }
 
+// Componentes de teoria como funções (evita problemas de serialização)
+const TheoryContent1 = () => (
+  <div className="space-y-4">
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">O que são variáveis?</h4>
+      <p className="text-gray-300">
+        Variáveis são espaços na memória do computador onde você pode armazenar dados. 
+        Em C#, toda variável precisa ter um <strong>tipo</strong> e um <strong>nome</strong>.
+      </p>
+    </div>
+    
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Tipos Básicos em C#</h4>
+      <div className="bg-steam-dark rounded-lg p-4 space-y-2">
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">int</code>
+          <p className="text-gray-300 text-sm">Armazena números inteiros (ex: 0, 100, -50)</p>
+        </div>
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">string</code>
+          <p className="text-gray-300 text-sm">Armazena texto entre aspas (ex: "Jogador", "Hello")</p>
+        </div>
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">bool</code>
+          <p className="text-gray-300 text-sm">Armazena verdadeiro ou falso (true/false)</p>
+        </div>
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">float</code>
+          <p className="text-gray-300 text-sm">Armazena números decimais (ex: 3.14, 2.5)</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Como declarar variáveis</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <p className="text-gray-300 mb-2">Sintaxe básica:</p>
+        <code className="block bg-steam-darker p-3 rounded text-steam-green font-mono text-sm mb-2">
+          tipo nomeDaVariavel = valor;
+        </code>
+        <p className="text-gray-400 text-sm mb-3">Exemplos:</p>
+        <div className="space-y-2 font-mono text-sm">
+          <div className="bg-steam-darker p-2 rounded">
+            <span className="text-steam-blueLight">int</span>{" "}
+            <span className="text-white">score</span> = <span className="text-yellow-400">0</span>;
+          </div>
+          <div className="bg-steam-darker p-2 rounded">
+            <span className="text-steam-blueLight">string</span>{" "}
+            <span className="text-white">playerName</span> = <span className="text-yellow-400">"Jogador"</span>;
+          </div>
+          <div className="bg-steam-darker p-2 rounded">
+            <span className="text-steam-blueLight">bool</span>{" "}
+            <span className="text-white">isAlive</span> = <span className="text-yellow-400">true</span>;
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Dicas importantes</h4>
+      <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
+        <li>Nomes de variáveis devem começar com letra minúscula</li>
+        <li>Use nomes descritivos (score, playerName são melhores que x, y)</li>
+        <li>Strings sempre ficam entre aspas duplas: "texto"</li>
+        <li>Números inteiros não precisam de aspas: 100</li>
+        <li>Não esqueça o ponto e vírgula (;) no final!</li>
+      </ul>
+    </div>
+  </div>
+);
+
+const TheoryContent2 = () => (
+  <div className="space-y-4">
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">O que são condicionais?</h4>
+      <p className="text-gray-300">
+        Condicionais permitem que o programa tome decisões baseadas em condições. 
+        O código só executa se a condição for verdadeira (true).
+      </p>
+    </div>
+    
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Sintaxe do if</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <code className="block bg-steam-darker p-3 rounded text-steam-green font-mono text-sm">
+          if (condição) {'{'}<br />
+          &nbsp;&nbsp;// código que executa se condição for verdadeira<br />
+          {'}'}
+        </code>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Operadores de Comparação</h4>
+      <div className="bg-steam-dark rounded-lg p-4 space-y-2">
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">==</code>
+          <p className="text-gray-300 text-sm">Igual a (ex: score == 100)</p>
+        </div>
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">&gt;=</code>
+          <p className="text-gray-300 text-sm">Maior ou igual a (ex: score &gt;= 100)</p>
+        </div>
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">&lt;=</code>
+          <p className="text-gray-300 text-sm">Menor ou igual a (ex: score &lt;= 50)</p>
+        </div>
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">&gt;</code>
+          <p className="text-gray-300 text-sm">Maior que (ex: score &gt; 0)</p>
+        </div>
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">&lt;</code>
+          <p className="text-gray-300 text-sm">Menor que (ex: score &lt; 0)</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Exemplo prático</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <code className="block bg-steam-darker p-3 rounded text-sm font-mono">
+          <span className="text-steam-blueLight">int</span> score = <span className="text-yellow-400">100</span>;<br />
+          <br />
+          <span className="text-steam-blueLight">if</span> (score &gt;= <span className="text-yellow-400">100</span>) {'{'}<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">Console</span>.<span className="text-steam-green">WriteLine</span>(<span className="text-yellow-400">"Você ganhou!"</span>);<br />
+          {'}'}
+        </code>
+        <p className="text-gray-400 text-sm mt-2">
+          Este código verifica se score é maior ou igual a 100. Se for, imprime "Você ganhou!".
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Dicas</h4>
+      <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
+        <li>Use chaves {'{}'} para delimitar o bloco de código do if</li>
+        <li>A condição sempre fica entre parênteses ()</li>
+        <li>Use == para comparar igualdade (não = que é para atribuir valor)</li>
+        <li>Console.WriteLine() imprime texto na tela</li>
+      </ul>
+    </div>
+  </div>
+);
+
+const TheoryContent3 = () => (
+  <div className="space-y-4">
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">O que são funções?</h4>
+      <p className="text-gray-300">
+        Funções são blocos de código reutilizáveis que realizam uma tarefa específica. 
+        Elas podem receber dados (parâmetros) e retornar resultados.
+      </p>
+    </div>
+    
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Sintaxe básica</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <code className="block bg-steam-darker p-3 rounded text-steam-green font-mono text-sm">
+          tipoRetorno NomeDaFuncao(tipoParametro nomeParametro) {'{'}<br />
+          &nbsp;&nbsp;// código da função<br />
+          &nbsp;&nbsp;return valor; // se não for void<br />
+          {'}'}
+        </code>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Tipos de retorno</h4>
+      <div className="bg-steam-dark rounded-lg p-4 space-y-2">
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">void</code>
+          <p className="text-gray-300 text-sm">Função que não retorna nada (apenas executa código)</p>
+        </div>
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">int</code>
+          <p className="text-gray-300 text-sm">Função que retorna um número inteiro</p>
+        </div>
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">string</code>
+          <p className="text-gray-300 text-sm">Função que retorna texto</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Exemplo prático</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <p className="text-gray-300 mb-2">Função que adiciona pontos ao score:</p>
+        <code className="block bg-steam-darker p-3 rounded text-sm font-mono">
+          <span className="text-steam-blueLight">int</span> score = <span className="text-yellow-400">0</span>;<br />
+          <br />
+          <span className="text-steam-blueLight">void</span> <span className="text-steam-green">AddScore</span>(<span className="text-steam-blueLight">int</span> points) {'{'}<br />
+          &nbsp;&nbsp;score = score + points;<br />
+          {'}'}
+        </code>
+        <p className="text-gray-400 text-sm mt-2">
+          Esta função recebe um número inteiro (points) e adiciona ao score. 
+          Note que usamos score = score + points para somar os valores.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Dicas</h4>
+      <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
+        <li>void significa que a função não retorna valor</li>
+        <li>Parâmetros ficam entre parênteses: (tipo nome)</li>
+        <li>Use nomes descritivos para funções (AddScore é melhor que func1)</li>
+        <li>score = score + points pode ser escrito como score += points</li>
+        <li>Variáveis declaradas dentro da função só existem dentro dela</li>
+      </ul>
+    </div>
+  </div>
+);
+
 const exercises = [
   {
     id: "1",
@@ -17,75 +234,7 @@ const exercises = [
     description: "Crie variáveis para armazenar a pontuação do jogador e o nome do jogador.",
     theory: {
       title: "Variáveis e Tipos de Dados em C#",
-      content: (
-        <div className="space-y-4">
-          <div>
-            <h4 className="text-lg font-bold text-steam-blueLight mb-2">O que são variáveis?</h4>
-            <p className="text-gray-300">
-              Variáveis são espaços na memória do computador onde você pode armazenar dados. 
-              Em C#, toda variável precisa ter um <strong>tipo</strong> e um <strong>nome</strong>.
-            </p>
-          </div>
-          
-          <div>
-            <h4 className="text-lg font-bold text-steam-blueLight mb-2">Tipos Básicos em C#</h4>
-            <div className="bg-steam-dark rounded-lg p-4 space-y-2">
-              <div className="flex items-start gap-3">
-                <code className="text-steam-green font-mono text-sm">int</code>
-                <p className="text-gray-300 text-sm">Armazena números inteiros (ex: 0, 100, -50)</p>
-              </div>
-              <div className="flex items-start gap-3">
-                <code className="text-steam-green font-mono text-sm">string</code>
-                <p className="text-gray-300 text-sm">Armazena texto entre aspas (ex: "Jogador", "Hello")</p>
-              </div>
-              <div className="flex items-start gap-3">
-                <code className="text-steam-green font-mono text-sm">bool</code>
-                <p className="text-gray-300 text-sm">Armazena verdadeiro ou falso (true/false)</p>
-              </div>
-              <div className="flex items-start gap-3">
-                <code className="text-steam-green font-mono text-sm">float</code>
-                <p className="text-gray-300 text-sm">Armazena números decimais (ex: 3.14, 2.5)</p>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="text-lg font-bold text-steam-blueLight mb-2">Como declarar variáveis</h4>
-            <div className="bg-steam-dark rounded-lg p-4">
-              <p className="text-gray-300 mb-2">Sintaxe básica:</p>
-              <code className="block bg-steam-darker p-3 rounded text-steam-green font-mono text-sm mb-2">
-                tipo nomeDaVariavel = valor;
-              </code>
-              <p className="text-gray-400 text-sm mb-3">Exemplos:</p>
-              <div className="space-y-2 font-mono text-sm">
-                <div className="bg-steam-darker p-2 rounded">
-                  <span className="text-steam-blueLight">int</span>{" "}
-                  <span className="text-white">score</span> = <span className="text-yellow-400">0</span>;
-                </div>
-                <div className="bg-steam-darker p-2 rounded">
-                  <span className="text-steam-blueLight">string</span>{" "}
-                  <span className="text-white">playerName</span> = <span className="text-yellow-400">"Jogador"</span>;
-                </div>
-                <div className="bg-steam-darker p-2 rounded">
-                  <span className="text-steam-blueLight">bool</span>{" "}
-                  <span className="text-white">isAlive</span> = <span className="text-yellow-400">true</span>;
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="text-lg font-bold text-steam-blueLight mb-2">Dicas importantes</h4>
-            <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
-              <li>Nomes de variáveis devem começar com letra minúscula</li>
-              <li>Use nomes descritivos (score, playerName são melhores que x, y)</li>
-              <li>Strings sempre ficam entre aspas duplas: "texto"</li>
-              <li>Números inteiros não precisam de aspas: 100</li>
-              <li>Não esqueça o ponto e vírgula (;) no final!</li>
-            </ul>
-          </div>
-        </div>
-      ),
+      content: TheoryContent1,
     },
     template: `// Exercício 1: Criar variáveis
 // Tarefa: Crie uma variável 'score' do tipo int com valor 0
@@ -103,80 +252,7 @@ const exercises = [
     description: "Crie uma estrutura if para verificar se o jogador ganhou (score >= 100).",
     theory: {
       title: "Estruturas Condicionais (if)",
-      content: (
-        <div className="space-y-4">
-          <div>
-            <h4 className="text-lg font-bold text-steam-blueLight mb-2">O que são condicionais?</h4>
-            <p className="text-gray-300">
-              Condicionais permitem que o programa tome decisões baseadas em condições. 
-              O código só executa se a condição for verdadeira (true).
-            </p>
-          </div>
-          
-          <div>
-            <h4 className="text-lg font-bold text-steam-blueLight mb-2">Sintaxe do if</h4>
-            <div className="bg-steam-dark rounded-lg p-4">
-              <code className="block bg-steam-darker p-3 rounded text-steam-green font-mono text-sm">
-                if (condição) {'{'}<br />
-                &nbsp;&nbsp;// código que executa se condição for verdadeira<br />
-                {'}'}
-              </code>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="text-lg font-bold text-steam-blueLight mb-2">Operadores de Comparação</h4>
-            <div className="bg-steam-dark rounded-lg p-4 space-y-2">
-              <div className="flex items-start gap-3">
-                <code className="text-steam-green font-mono text-sm">==</code>
-                <p className="text-gray-300 text-sm">Igual a (ex: score == 100)</p>
-              </div>
-              <div className="flex items-start gap-3">
-                <code className="text-steam-green font-mono text-sm">&gt;=</code>
-                <p className="text-gray-300 text-sm">Maior ou igual a (ex: score &gt;= 100)</p>
-              </div>
-              <div className="flex items-start gap-3">
-                <code className="text-steam-green font-mono text-sm">&lt;=</code>
-                <p className="text-gray-300 text-sm">Menor ou igual a (ex: score &lt;= 50)</p>
-              </div>
-              <div className="flex items-start gap-3">
-                <code className="text-steam-green font-mono text-sm">&gt;</code>
-                <p className="text-gray-300 text-sm">Maior que (ex: score &gt; 0)</p>
-              </div>
-              <div className="flex items-start gap-3">
-                <code className="text-steam-green font-mono text-sm">&lt;</code>
-                <p className="text-gray-300 text-sm">Menor que (ex: score &lt; 0)</p>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="text-lg font-bold text-steam-blueLight mb-2">Exemplo prático</h4>
-            <div className="bg-steam-dark rounded-lg p-4">
-              <code className="block bg-steam-darker p-3 rounded text-sm font-mono">
-                <span className="text-steam-blueLight">int</span> score = <span className="text-yellow-400">100</span>;<br />
-                <br />
-                <span className="text-steam-blueLight">if</span> (score &gt;= <span className="text-yellow-400">100</span>) {'{'}<br />
-                &nbsp;&nbsp;<span className="text-steam-blueLight">Console</span>.<span className="text-steam-green">WriteLine</span>(<span className="text-yellow-400">"Você ganhou!"</span>);<br />
-                {'}'}
-              </code>
-              <p className="text-gray-400 text-sm mt-2">
-                Este código verifica se score é maior ou igual a 100. Se for, imprime "Você ganhou!".
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="text-lg font-bold text-steam-blueLight mb-2">Dicas</h4>
-            <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
-              <li>Use chaves {'{}'} para delimitar o bloco de código do if</li>
-              <li>A condição sempre fica entre parênteses ()</li>
-              <li>Use == para comparar igualdade (não = que é para atribuir valor)</li>
-              <li>Console.WriteLine() imprime texto na tela</li>
-            </ul>
-          </div>
-        </div>
-      ),
+      content: TheoryContent2,
     },
     template: `// Exercício 2: Estrutura condicional
 // Tarefa: Crie um if que verifica se score >= 100
@@ -196,76 +272,7 @@ int score = 100;
     description: "Crie uma função chamada 'AddScore' que adiciona pontos à pontuação.",
     theory: {
       title: "Funções em C#",
-      content: (
-        <div className="space-y-4">
-          <div>
-            <h4 className="text-lg font-bold text-steam-blueLight mb-2">O que são funções?</h4>
-            <p className="text-gray-300">
-              Funções são blocos de código reutilizáveis que realizam uma tarefa específica. 
-              Elas podem receber dados (parâmetros) e retornar resultados.
-            </p>
-          </div>
-          
-          <div>
-            <h4 className="text-lg font-bold text-steam-blueLight mb-2">Sintaxe básica</h4>
-            <div className="bg-steam-dark rounded-lg p-4">
-              <code className="block bg-steam-darker p-3 rounded text-steam-green font-mono text-sm">
-                tipoRetorno NomeDaFuncao(tipoParametro nomeParametro) {'{'}<br />
-                &nbsp;&nbsp;// código da função<br />
-                &nbsp;&nbsp;return valor; // se não for void<br />
-                {'}'}
-              </code>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="text-lg font-bold text-steam-blueLight mb-2">Tipos de retorno</h4>
-            <div className="bg-steam-dark rounded-lg p-4 space-y-2">
-              <div className="flex items-start gap-3">
-                <code className="text-steam-green font-mono text-sm">void</code>
-                <p className="text-gray-300 text-sm">Função que não retorna nada (apenas executa código)</p>
-              </div>
-              <div className="flex items-start gap-3">
-                <code className="text-steam-green font-mono text-sm">int</code>
-                <p className="text-gray-300 text-sm">Função que retorna um número inteiro</p>
-              </div>
-              <div className="flex items-start gap-3">
-                <code className="text-steam-green font-mono text-sm">string</code>
-                <p className="text-gray-300 text-sm">Função que retorna texto</p>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="text-lg font-bold text-steam-blueLight mb-2">Exemplo prático</h4>
-            <div className="bg-steam-dark rounded-lg p-4">
-              <p className="text-gray-300 mb-2">Função que adiciona pontos ao score:</p>
-              <code className="block bg-steam-darker p-3 rounded text-sm font-mono">
-                <span className="text-steam-blueLight">int</span> score = <span className="text-yellow-400">0</span>;<br />
-                <br />
-                <span className="text-steam-blueLight">void</span> <span className="text-steam-green">AddScore</span>(<span className="text-steam-blueLight">int</span> points) {'{'}<br />
-                &nbsp;&nbsp;score = score + points;<br />
-                {'}'}
-              </code>
-              <p className="text-gray-400 text-sm mt-2">
-                Esta função recebe um número inteiro (points) e adiciona ao score. 
-                Note que usamos score = score + points para somar os valores.
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="text-lg font-bold text-steam-blueLight mb-2">Dicas</h4>
-            <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
-              <li>void significa que a função não retorna valor</li>
-              <li>Parâmetros ficam entre parênteses: (tipo nome)</li>
-              <li>Use nomes descritivos para funções (AddScore é melhor que func1)</li>
-              <li>score = score + points pode ser escrito como score += points</li>
-              <li>Variáveis declaradas dentro da função só existem dentro dela</li>
-            </ul>
-          </div>
-        </div>
-      ),
+      content: TheoryContent3,
     },
     template: `// Exercício 3: Criar função
 // Tarefa: Crie uma função AddScore que recebe um int 'points' e retorna void
@@ -412,7 +419,9 @@ export default function CSharpPracticeSection({
               <BookOpen className="w-6 h-6 text-steam-blueLight" />
               <h4 className="text-2xl font-bold text-steam-blueLight">{exercise.theory.title}</h4>
             </div>
-            <div className="text-gray-200 mb-6">{exercise.theory.content}</div>
+            <div className="text-gray-200 mb-6">
+              {exercise.theory.content && React.createElement(exercise.theory.content)}
+            </div>
             <div className="bg-steam-dark/50 rounded-lg p-4 border border-steam-blue">
               <div className="flex items-center gap-2 mb-3">
                 <Lightbulb className="w-5 h-5 text-yellow-400" />
