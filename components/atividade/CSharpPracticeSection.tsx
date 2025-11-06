@@ -227,6 +227,388 @@ const TheoryContent3 = () => (
   </div>
 );
 
+const TheoryContent4 = () => (
+  <div className="space-y-4">
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">O que são loops for?</h4>
+      <p className="text-gray-300">
+        O loop <code className="text-steam-green">for</code> repete um bloco de código um número específico de vezes. 
+        É perfeito quando você sabe quantas vezes quer repetir algo.
+      </p>
+    </div>
+    
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Sintaxe do for</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <code className="block bg-steam-darker p-3 rounded text-steam-green font-mono text-sm">
+          for (inicialização; condição; incremento) {'{'}<br />
+          &nbsp;&nbsp;// código que repete<br />
+          {'}'}
+        </code>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Exemplo prático</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <code className="block bg-steam-darker p-3 rounded text-sm font-mono">
+          <span className="text-steam-blueLight">for</span> (<span className="text-steam-blueLight">int</span> i = <span className="text-yellow-400">0</span>; i &lt; <span className="text-yellow-400">10</span>; i++) {'{'}<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">Console</span>.<span className="text-steam-green">WriteLine</span>(i);<br />
+          {'}'}
+        </code>
+        <p className="text-gray-400 text-sm mt-2">
+          Este loop imprime números de 0 a 9. A variável i começa em 0, continua enquanto i &lt; 10, e incrementa i++ a cada repetição.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Dicas</h4>
+      <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
+        <li>i++ é o mesmo que i = i + 1</li>
+        <li>i-- decrementa (diminui) o valor</li>
+        <li>Use i, j, k como nomes comuns para variáveis de loop</li>
+        <li>Cuidado com loops infinitos! Sempre tenha uma condição que eventualmente seja falsa</li>
+      </ul>
+    </div>
+  </div>
+);
+
+const TheoryContent5 = () => (
+  <div className="space-y-4">
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">O que são loops while?</h4>
+      <p className="text-gray-300">
+        O loop <code className="text-steam-green">while</code> repete um bloco de código enquanto uma condição for verdadeira. 
+        É útil quando você não sabe quantas vezes precisa repetir.
+      </p>
+    </div>
+    
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Sintaxe do while</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <code className="block bg-steam-darker p-3 rounded text-steam-green font-mono text-sm">
+          while (condição) {'{'}<br />
+          &nbsp;&nbsp;// código que repete enquanto condição for true<br />
+          {'}'}
+        </code>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Exemplo prático</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <code className="block bg-steam-darker p-3 rounded text-sm font-mono">
+          <span className="text-steam-blueLight">int</span> count = <span className="text-yellow-400">0</span>;<br />
+          <span className="text-steam-blueLight">while</span> (count &lt; <span className="text-yellow-400">5</span>) {'{'}<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">Console</span>.<span className="text-steam-green">WriteLine</span>(<span className="text-yellow-400">"Contagem: "</span> + count);<br />
+          &nbsp;&nbsp;count++;<br />
+          {'}'}
+        </code>
+        <p className="text-gray-400 text-sm mt-2">
+          Este loop imprime "Contagem: 0" até "Contagem: 4". Importante: sempre incremente a variável dentro do loop!
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Dicas</h4>
+      <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
+        <li>Certifique-se de que a condição eventualmente se torne falsa</li>
+        <li>Se não, você terá um loop infinito!</li>
+        <li>Use while quando não souber quantas vezes repetir</li>
+        <li>Use for quando souber o número exato de repetições</li>
+      </ul>
+    </div>
+  </div>
+);
+
+const TheoryContent6 = () => (
+  <div className="space-y-4">
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">O que são arrays?</h4>
+      <p className="text-gray-300">
+        Arrays são coleções de elementos do mesmo tipo armazenados em sequência. 
+        Cada elemento tem um índice (posição) começando em 0.
+      </p>
+    </div>
+    
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Como declarar arrays</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <code className="block bg-steam-darker p-3 rounded text-steam-green font-mono text-sm mb-2">
+          tipo[] nomeDoArray = new tipo[tamanho];
+        </code>
+        <p className="text-gray-400 text-sm mb-3">Ou inicializar diretamente:</p>
+        <code className="block bg-steam-darker p-3 rounded text-steam-green font-mono text-sm">
+          tipo[] nomeDoArray = {'{'}valor1, valor2, valor3{'}'};
+        </code>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Exemplo prático</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <code className="block bg-steam-darker p-3 rounded text-sm font-mono">
+          <span className="text-steam-blueLight">int</span>[] scores = <span className="text-steam-blueLight">new</span> <span className="text-steam-blueLight">int</span>[<span className="text-yellow-400">5</span>];<br />
+          scores[<span className="text-yellow-400">0</span>] = <span className="text-yellow-400">100</span>;<br />
+          scores[<span className="text-yellow-400">1</span>] = <span className="text-yellow-400">200</span>;<br />
+          <br />
+          <span className="text-gray-500">// Ou inicializar diretamente:</span><br />
+          <span className="text-steam-blueLight">int</span>[] scores = {'{'}<span className="text-yellow-400">100</span>, <span className="text-yellow-400">200</span>, <span className="text-yellow-400">150</span>{'}'};
+        </code>
+        <p className="text-gray-400 text-sm mt-2">
+          O primeiro elemento está no índice 0, o segundo no índice 1, e assim por diante.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Dicas</h4>
+      <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
+        <li>Índices sempre começam em 0, não em 1!</li>
+        <li>Use scores.Length para obter o tamanho do array</li>
+        <li>Cuidado com índices fora dos limites (erro comum!)</li>
+        <li>Arrays têm tamanho fixo após criação</li>
+      </ul>
+    </div>
+  </div>
+);
+
+const TheoryContent7 = () => (
+  <div className="space-y-4">
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Operadores Lógicos</h4>
+      <p className="text-gray-300">
+        Operadores lógicos permitem combinar múltiplas condições em uma única expressão.
+      </p>
+    </div>
+    
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Operadores principais</h4>
+      <div className="bg-steam-dark rounded-lg p-4 space-y-2">
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">&&</code>
+          <p className="text-gray-300 text-sm">E (AND) - ambas condições devem ser verdadeiras</p>
+        </div>
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">||</code>
+          <p className="text-gray-300 text-sm">OU (OR) - pelo menos uma condição deve ser verdadeira</p>
+        </div>
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">!</code>
+          <p className="text-gray-300 text-sm">NÃO (NOT) - inverte o valor booleano</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Exemplo prático</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <code className="block bg-steam-darker p-3 rounded text-sm font-mono">
+          <span className="text-steam-blueLight">int</span> score = <span className="text-yellow-400">150</span>;<br />
+          <span className="text-steam-blueLight">bool</span> hasPowerUp = <span className="text-yellow-400">true</span>;<br />
+          <br />
+          <span className="text-steam-blueLight">if</span> (score &gt;= <span className="text-yellow-400">100</span> && hasPowerUp) {'{'}<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">Console</span>.<span className="text-steam-green">WriteLine</span>(<span className="text-yellow-400">"Você ganhou!"</span>);<br />
+          {'}'}
+        </code>
+        <p className="text-gray-400 text-sm mt-2">
+          Este código só executa se score for maior ou igual a 100 E hasPowerUp for true.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Dicas</h4>
+      <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
+        <li>&& significa "e" - ambas condições precisam ser verdadeiras</li>
+        <li>|| significa "ou" - pelo menos uma precisa ser verdadeira</li>
+        <li>! inverte: !true = false, !false = true</li>
+        <li>Use parênteses para agrupar condições complexas</li>
+      </ul>
+    </div>
+  </div>
+);
+
+const TheoryContent8 = () => (
+  <div className="space-y-4">
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">O que é switch/case?</h4>
+      <p className="text-gray-300">
+        O <code className="text-steam-green">switch</code> é uma alternativa ao if/else quando você precisa verificar múltiplos valores da mesma variável.
+      </p>
+    </div>
+    
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Sintaxe do switch</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <code className="block bg-steam-darker p-3 rounded text-steam-green font-mono text-sm">
+          switch (variável) {'{'}<br />
+          &nbsp;&nbsp;case valor1:<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;// código<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;break;<br />
+          &nbsp;&nbsp;case valor2:<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;// código<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;break;<br />
+          &nbsp;&nbsp;default:<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;// código padrão<br />
+          {'}'}
+        </code>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Exemplo prático</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <code className="block bg-steam-darker p-3 rounded text-sm font-mono">
+          <span className="text-steam-blueLight">int</span> level = <span className="text-yellow-400">2</span>;<br />
+          <span className="text-steam-blueLight">switch</span> (level) {'{'}<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">case</span> <span className="text-yellow-400">1</span>:<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-steam-blueLight">Console</span>.<span className="text-steam-green">WriteLine</span>(<span className="text-yellow-400">"Nível 1"</span>);<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-steam-blueLight">break</span>;<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">case</span> <span className="text-yellow-400">2</span>:<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-steam-blueLight">Console</span>.<span className="text-steam-green">WriteLine</span>(<span className="text-yellow-400">"Nível 2"</span>);<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-steam-blueLight">break</span>;<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">default</span>:<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-steam-blueLight">Console</span>.<span className="text-steam-green">WriteLine</span>(<span className="text-yellow-400">"Outro nível"</span>);<br />
+          {'}'}
+        </code>
+        <p className="text-gray-400 text-sm mt-2">
+          O switch verifica o valor de level e executa o código correspondente. O default é executado se nenhum case corresponder.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Dicas</h4>
+      <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
+        <li>Sempre use break após cada case (exceto em casos especiais)</li>
+        <li>default é opcional mas recomendado</li>
+        <li>Use switch quando tiver muitas condições para a mesma variável</li>
+        <li>Mais legível que múltiplos if/else aninhados</li>
+      </ul>
+    </div>
+  </div>
+);
+
+const TheoryContent9 = () => (
+  <div className="space-y-4">
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">O que são classes?</h4>
+      <p className="text-gray-300">
+        Classes são modelos (templates) para criar objetos. Elas definem propriedades (variáveis) e métodos (funções) que os objetos terão.
+      </p>
+    </div>
+    
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Sintaxe básica</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <code className="block bg-steam-darker p-3 rounded text-steam-green font-mono text-sm">
+          <span className="text-steam-blueLight">class</span> NomeDaClasse {'{'}<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">public</span> tipo propriedade;<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">public</span> tipoRetorno Metodo() {'{'}<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;// código<br />
+          &nbsp;&nbsp;{'}'}<br />
+          {'}'}
+        </code>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Exemplo prático</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <code className="block bg-steam-darker p-3 rounded text-sm font-mono">
+          <span className="text-steam-blueLight">class</span> <span className="text-steam-green">Player</span> {'{'}<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">public</span> <span className="text-steam-blueLight">string</span> name;<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">public</span> <span className="text-steam-blueLight">int</span> score;<br />
+          <br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">public</span> <span className="text-steam-blueLight">void</span> <span className="text-steam-green">AddScore</span>(<span className="text-steam-blueLight">int</span> points) {'{'}<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;score += points;<br />
+          &nbsp;&nbsp;{'}'}<br />
+          {'}'}
+        </code>
+        <p className="text-gray-400 text-sm mt-2">
+          Esta classe Player tem duas propriedades (name e score) e um método (AddScore). Você pode criar objetos Player usando: Player p = new Player();
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Dicas</h4>
+      <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
+        <li>public significa que pode ser acessado de fora da classe</li>
+        <li>Use new para criar objetos: Player p = new Player();</li>
+        <li>Classes são a base da programação orientada a objetos</li>
+        <li>Propriedades armazenam dados, métodos fazem ações</li>
+      </ul>
+    </div>
+  </div>
+);
+
+const TheoryContent10 = () => (
+  <div className="space-y-4">
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Métodos de String</h4>
+      <p className="text-gray-300">
+        Strings em C# têm muitos métodos úteis para manipular texto. Você pode concatenar, converter, verificar tamanho e muito mais.
+      </p>
+    </div>
+    
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Métodos comuns</h4>
+      <div className="bg-steam-dark rounded-lg p-4 space-y-2">
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">.Length</code>
+          <p className="text-gray-300 text-sm">Retorna o tamanho da string</p>
+        </div>
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">.ToUpper()</code>
+          <p className="text-gray-300 text-sm">Converte para maiúsculas</p>
+        </div>
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">.ToLower()</code>
+          <p className="text-gray-300 text-sm">Converte para minúsculas</p>
+        </div>
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">.Contains()</code>
+          <p className="text-gray-300 text-sm">Verifica se contém um texto</p>
+        </div>
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">+</code>
+          <p className="text-gray-300 text-sm">Concatena strings</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Exemplo prático</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <code className="block bg-steam-darker p-3 rounded text-sm font-mono">
+          <span className="text-steam-blueLight">string</span> name = <span className="text-yellow-400">"Jogador"</span>;<br />
+          <span className="text-steam-blueLight">string</span> upper = name.<span className="text-steam-green">ToUpper</span>(); <span className="text-gray-500">// "JOGADOR"</span><br />
+          <span className="text-steam-blueLight">int</span> length = name.<span className="text-steam-green">Length</span>; <span className="text-gray-500">// 7</span><br />
+          <span className="text-steam-blueLight">bool</span> hasJ = name.<span className="text-steam-green">Contains</span>(<span className="text-yellow-400">"J"</span>); <span className="text-gray-500">// true</span><br />
+          <span className="text-steam-blueLight">string</span> full = name + <span className="text-yellow-400">" #1"</span>; <span className="text-gray-500">// "Jogador #1"</span>
+        </code>
+        <p className="text-gray-400 text-sm mt-2">
+          Métodos de string retornam novos valores sem modificar a string original (strings são imutáveis).
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Dicas</h4>
+      <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
+        <li>Use + para juntar strings: "Olá" + " " + "Mundo"</li>
+        <li>Length não tem parênteses (é uma propriedade, não método)</li>
+        <li>ToUpper() e ToLower() retornam novas strings</li>
+        <li>Contains() retorna true ou false</li>
+      </ul>
+    </div>
+  </div>
+);
+
 const exercises = [
   {
     id: "1",
@@ -287,6 +669,141 @@ int score = 0;
       );
     },
     xp: 50,
+  },
+  {
+    id: "4",
+    title: "Loop For",
+    description: "Use um loop for para imprimir números de 0 a 9.",
+    theory: {
+      title: "Loops For em C#",
+      content: TheoryContent4,
+    },
+    template: `// Exercício 4: Loop for
+// Tarefa: Crie um loop for que imprime números de 0 a 9
+// Use Console.WriteLine(i) dentro do loop
+
+`,
+    tests: (code: string) => {
+      return code.includes("for") && code.includes("int") && (code.includes("i++") || code.includes("i = i + 1"));
+    },
+    xp: 30,
+  },
+  {
+    id: "5",
+    title: "Loop While",
+    description: "Use um loop while para contar de 0 a 4.",
+    theory: {
+      title: "Loops While em C#",
+      content: TheoryContent5,
+    },
+    template: `// Exercício 5: Loop while
+// Tarefa: Crie um loop while que conta de 0 a 4
+// Use uma variável count e incremente dentro do loop
+
+int count = 0;
+
+`,
+    tests: (code: string) => {
+      return code.includes("while") && code.includes("count") && (code.includes("count++") || code.includes("count = count + 1"));
+    },
+    xp: 30,
+  },
+  {
+    id: "6",
+    title: "Arrays",
+    description: "Crie um array de inteiros com 3 elementos e acesse o primeiro elemento.",
+    theory: {
+      title: "Arrays em C#",
+      content: TheoryContent6,
+    },
+    template: `// Exercício 6: Arrays
+// Tarefa: Crie um array de int chamado 'scores' com 3 elementos
+// Atribua valores aos elementos e acesse scores[0]
+
+`,
+    tests: (code: string) => {
+      return code.includes("int[]") && code.includes("scores") && code.includes("[0]");
+    },
+    xp: 40,
+  },
+  {
+    id: "7",
+    title: "Operadores Lógicos",
+    description: "Use operadores lógicos (&& ou ||) para combinar duas condições.",
+    theory: {
+      title: "Operadores Lógicos em C#",
+      content: TheoryContent7,
+    },
+    template: `// Exercício 7: Operadores lógicos
+// Tarefa: Crie um if que verifica se score >= 100 E hasPowerUp == true
+// Use o operador && para combinar as condições
+
+int score = 150;
+bool hasPowerUp = true;
+
+`,
+    tests: (code: string) => {
+      return code.includes("if") && (code.includes("&&") || code.includes("||")) && code.includes("score");
+    },
+    xp: 35,
+  },
+  {
+    id: "8",
+    title: "Switch/Case",
+    description: "Use switch/case para verificar o valor de uma variável level.",
+    theory: {
+      title: "Switch/Case em C#",
+      content: TheoryContent8,
+    },
+    template: `// Exercício 8: Switch/Case
+// Tarefa: Crie um switch que verifica o valor de 'level'
+// Adicione cases para valores 1, 2 e um default
+
+int level = 2;
+
+`,
+    tests: (code: string) => {
+      return code.includes("switch") && code.includes("case") && code.includes("break");
+    },
+    xp: 40,
+  },
+  {
+    id: "9",
+    title: "Classes Básicas",
+    description: "Crie uma classe Player com uma propriedade 'name' do tipo string.",
+    theory: {
+      title: "Classes em C#",
+      content: TheoryContent9,
+    },
+    template: `// Exercício 9: Classes
+// Tarefa: Crie uma classe chamada 'Player'
+// Adicione uma propriedade pública 'name' do tipo string
+
+`,
+    tests: (code: string) => {
+      return code.includes("class") && code.includes("Player") && code.includes("public") && code.includes("string");
+    },
+    xp: 50,
+  },
+  {
+    id: "10",
+    title: "Métodos de String",
+    description: "Use métodos de string como ToUpper() ou Length em uma variável string.",
+    theory: {
+      title: "Métodos de String em C#",
+      content: TheoryContent10,
+    },
+    template: `// Exercício 10: Métodos de String
+// Tarefa: Crie uma string 'name' e use um método como ToUpper() ou Length
+// Exemplo: string upper = name.ToUpper();
+
+string name = "Jogador";
+
+`,
+    tests: (code: string) => {
+      return code.includes("string") && (code.includes("ToUpper") || code.includes("ToLower") || code.includes("Length") || code.includes("Contains"));
+    },
+    xp: 35,
   },
 ];
 
