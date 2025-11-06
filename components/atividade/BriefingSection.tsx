@@ -99,29 +99,6 @@ export default function BriefingSection({
         </div>
       </div>
 
-      {/* Quiz sobre UC */}
-      <div className="bg-steam-darker border border-steam-blue rounded-lg p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <CheckSquare className="w-6 h-6 text-steam-blueLight" />
-            <h3 className="text-xl font-bold text-white">Quiz: Conhecimento sobre UC</h3>
-          </div>
-          {quizCompleted && (
-            <div className="flex items-center gap-2 text-steam-green">
-              <CheckCircle className="w-5 h-5" />
-              <span className="font-medium">Completo +50 XP</span>
-            </div>
-          )}
-        </div>
-        {!quizCompleted ? (
-          <QuizComponent onComplete={handleQuizComplete} />
-        ) : (
-          <div className="text-center py-4 text-gray-400">
-            Quiz completado com sucesso! ✅
-          </div>
-        )}
-      </div>
-
       {/* Vídeo Tutorial C# */}
       <div className="bg-steam-darker border border-steam-blue rounded-lg p-6">
         <div className="flex items-center justify-between mb-4">
@@ -136,6 +113,29 @@ export default function BriefingSection({
             </div>
           )}
         </div>
+        
+        {/* Aviso Importante sobre o Vídeo */}
+        <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-2 border-yellow-500 rounded-lg p-4 mb-4">
+          <div className="flex items-start gap-3">
+            <span className="text-yellow-400 font-bold text-2xl">⚠️</span>
+            <div className="flex-1">
+              <p className="text-yellow-400 font-bold text-lg mb-2">ATENÇÃO: Assista ao vídeo ANTES do quiz!</p>
+              <p className="text-white text-sm mb-2">
+                Este vídeo tutorial é <strong className="text-yellow-400">ESSENCIAL</strong> para seu aprendizado. 
+                Ele apresenta os conceitos fundamentais de C# que você precisará dominar para completar os exercícios práticos.
+              </p>
+              <p className="text-white text-sm mb-2">
+                <strong className="text-yellow-400">Recomendação:</strong> Se possível, replique os códigos mostrados no vídeo 
+                em um editor de código para fixar melhor o aprendizado. Isso ajudará muito na prática guiada!
+              </p>
+              <p className="text-white text-sm">
+                O quiz contém perguntas sobre o conteúdo apresentado neste vídeo. 
+                <strong className="text-yellow-400"> Assista completamente antes de responder o quiz!</strong>
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="aspect-video bg-black rounded-lg overflow-hidden mb-4">
           <iframe
             width="100%"
@@ -148,16 +148,65 @@ export default function BriefingSection({
             className="w-full h-full"
           />
         </div>
-        <p className="text-sm text-gray-400 mb-4">
-          <strong>Conteúdo:</strong> Tipos de dados, funções, variáveis, estruturas condicionais
-        </p>
+        <div className="bg-steam-dark rounded-lg p-4 mb-4">
+          <p className="text-sm text-gray-300 mb-2">
+            <strong className="text-steam-blueLight">Conteúdo do vídeo:</strong>
+          </p>
+          <ul className="text-sm text-gray-400 list-disc list-inside space-y-1 ml-2">
+            <li>Tipos de dados básicos (int, string, bool, float)</li>
+            <li>Declaração e uso de variáveis</li>
+            <li>Funções e métodos</li>
+            <li>Estruturas condicionais (if/else)</li>
+            <li>Loops (for, while)</li>
+            <li>Arrays e coleções</li>
+            <li>Conceitos de programação orientada a objetos</li>
+          </ul>
+        </div>
         {!videoWatched && (
           <button
             onClick={handleVideoWatch}
-            className="px-4 py-2 bg-steam-blueLight hover:bg-steam-blue text-white rounded-lg transition-colors"
+            className="px-6 py-3 bg-steam-blueLight hover:bg-steam-blue text-white rounded-lg font-semibold transition-colors"
           >
-            Marcar como assistido
+            ✓ Marcar como assistido
           </button>
+        )}
+        {videoWatched && (
+          <div className="bg-steam-green/20 border border-steam-green rounded-lg p-3">
+            <p className="text-steam-green font-medium text-sm">
+              ✅ Vídeo assistido! Agora você pode fazer o quiz com conhecimento do conteúdo.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Quiz sobre UC e Conteúdo do Vídeo */}
+      <div className="bg-steam-darker border border-steam-blue rounded-lg p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <CheckSquare className="w-6 h-6 text-steam-blueLight" />
+            <h3 className="text-xl font-bold text-white">Quiz: Conhecimento sobre UC e C#</h3>
+          </div>
+          {quizCompleted && (
+            <div className="flex items-center gap-2 text-steam-green">
+              <CheckCircle className="w-5 h-5" />
+              <span className="font-medium">Completo +50 XP</span>
+            </div>
+          )}
+        </div>
+        {!videoWatched && (
+          <div className="bg-yellow-500/20 border border-yellow-500 rounded-lg p-4 mb-4">
+            <p className="text-yellow-400 font-medium text-sm">
+              ⚠️ <strong>Recomendação:</strong> Assista ao vídeo tutorial acima antes de fazer o quiz. 
+              O quiz contém perguntas sobre o conteúdo do vídeo!
+            </p>
+          </div>
+        )}
+        {!quizCompleted ? (
+          <QuizComponent onComplete={handleQuizComplete} />
+        ) : (
+          <div className="text-center py-4 text-gray-400">
+            Quiz completado com sucesso! ✅
+          </div>
         )}
       </div>
 
