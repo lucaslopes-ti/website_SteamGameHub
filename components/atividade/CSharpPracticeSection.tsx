@@ -609,6 +609,282 @@ const TheoryContent10 = () => (
   </div>
 );
 
+const TheoryContent11 = () => (
+  <div className="space-y-4">
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Posicionamento em Jogos</h4>
+      <p className="text-gray-300">
+        Em jogos digitais, precisamos rastrear a posição dos objetos na tela usando coordenadas X e Y. 
+        Essas coordenadas representam a posição horizontal (X) e vertical (Y) do objeto.
+      </p>
+    </div>
+    
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Sistema de Coordenadas</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <p className="text-gray-300 mb-2">Em jogos 2D:</p>
+        <ul className="list-disc list-inside space-y-1 text-gray-300 ml-4 mb-3">
+          <li>X aumenta da esquerda para a direita</li>
+          <li>Y aumenta de cima para baixo (ou de baixo para cima, dependendo do sistema)</li>
+          <li>Posição (0, 0) geralmente é o canto superior esquerdo</li>
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Exemplo prático</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <code className="block bg-steam-darker p-3 rounded text-sm font-mono">
+          <span className="text-steam-blueLight">class</span> <span className="text-steam-green">Player</span> {'{'}<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">public</span> <span className="text-steam-blueLight">float</span> x; <span className="text-gray-500">// Posição horizontal</span><br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">public</span> <span className="text-steam-blueLight">float</span> y; <span className="text-gray-500">// Posição vertical</span><br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">public</span> <span className="text-steam-blueLight">string</span> name;<br />
+          {'}'}
+        </code>
+        <p className="text-gray-400 text-sm mt-2">
+          Use float para posições porque permite movimentação suave com valores decimais (ex: 10.5, 23.7).
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Dicas</h4>
+      <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
+        <li>float permite valores decimais (ex: 10.5f)</li>
+        <li>Use nomes descritivos: x, y são padrão para coordenadas</li>
+        <li>Inicialize posições com valores como 0.0f ou 100.0f</li>
+        <li>Em C#, números float precisam do sufixo 'f': 10.5f</li>
+      </ul>
+    </div>
+  </div>
+);
+
+const TheoryContent12 = () => (
+  <div className="space-y-4">
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Movimentação de Personagem</h4>
+      <p className="text-gray-300">
+        Para mover um personagem em um jogo, você precisa atualizar suas coordenadas X e Y. 
+        Isso é feito através de métodos que modificam essas posições baseado em direção e velocidade.
+      </p>
+    </div>
+    
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Conceitos Importantes</h4>
+      <div className="bg-steam-dark rounded-lg p-4 space-y-2">
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">Velocidade</code>
+          <p className="text-gray-300 text-sm">Quanto o objeto se move por frame/segundo</p>
+        </div>
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">Direção</code>
+          <p className="text-gray-300 text-sm">Para onde o objeto está se movendo (cima, baixo, esquerda, direita)</p>
+        </div>
+        <div className="flex items-start gap-3">
+          <code className="text-steam-green font-mono text-sm">Atualização</code>
+          <p className="text-gray-300 text-sm">Modificar x e y a cada frame do jogo</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Exemplo prático</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <code className="block bg-steam-darker p-3 rounded text-sm font-mono">
+          <span className="text-steam-blueLight">class</span> <span className="text-steam-green">Player</span> {'{'}<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">public</span> <span className="text-steam-blueLight">float</span> x = <span className="text-yellow-400">0</span>;<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">public</span> <span className="text-steam-blueLight">float</span> y = <span className="text-yellow-400">0</span>;<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">public</span> <span className="text-steam-blueLight">float</span> speed = <span className="text-yellow-400">5.0f</span>;<br />
+          <br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">public</span> <span className="text-steam-blueLight">void</span> <span className="text-steam-green">Move</span>(<span className="text-steam-blueLight">float</span> deltaX, <span className="text-steam-blueLight">float</span> deltaY) {'{'}<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;x += deltaX * speed;<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;y += deltaY * speed;<br />
+          &nbsp;&nbsp;{'}'}<br />
+          {'}'}
+        </code>
+        <p className="text-gray-400 text-sm mt-2">
+          O método Move recebe deltaX e deltaY (direção) e multiplica pela velocidade para atualizar a posição.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Dicas</h4>
+      <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
+        <li>x += valor é o mesmo que x = x + valor</li>
+        <li>deltaX positivo move para direita, negativo para esquerda</li>
+        <li>deltaY positivo move para baixo, negativo para cima</li>
+        <li>Multiplique pela velocidade para controlar a rapidez do movimento</li>
+      </ul>
+    </div>
+  </div>
+);
+
+const TheoryContent13 = () => (
+  <div className="space-y-4">
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Objetos em Movimento</h4>
+      <p className="text-gray-300">
+        Em jogos, muitos objetos se movem automaticamente: inimigos, projéteis, power-ups, etc. 
+        Esses objetos precisam atualizar sua posição continuamente usando um método Update().
+      </p>
+    </div>
+    
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Padrão Update</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <p className="text-gray-300 mb-2">
+          Objetos em movimento geralmente têm um método Update() que é chamado a cada frame do jogo 
+          para atualizar sua posição automaticamente.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Exemplo prático</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <code className="block bg-steam-darker p-3 rounded text-sm font-mono">
+          <span className="text-steam-blueLight">class</span> <span className="text-steam-green">Enemy</span> {'{'}<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">public</span> <span className="text-steam-blueLight">float</span> x, y;<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">public</span> <span className="text-steam-blueLight">float</span> speed = <span className="text-yellow-400">2.0f</span>;<br />
+          <br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">public</span> <span className="text-steam-blueLight">void</span> <span className="text-steam-green">Update</span>() {'{'}<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;x += speed; <span className="text-gray-500">// Move para a direita</span><br />
+          &nbsp;&nbsp;{'}'}<br />
+          {'}'}
+        </code>
+        <p className="text-gray-400 text-sm mt-2">
+          O método Update() é chamado a cada frame, fazendo o inimigo se mover automaticamente para a direita.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Dicas</h4>
+      <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
+        <li>Update() é chamado continuamente durante o jogo</li>
+        <li>Use para movimentação automática de objetos</li>
+        <li>Pode mover em qualquer direção: x += speed, y += speed, etc.</li>
+        <li>Velocidade negativa move na direção oposta</li>
+      </ul>
+    </div>
+  </div>
+);
+
+const TheoryContent14 = () => (
+  <div className="space-y-4">
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Herança em C#</h4>
+      <p className="text-gray-300">
+        Herança permite criar uma classe base (pai) com propriedades e métodos comuns, 
+        e classes filhas que herdam essas características. Isso evita repetição de código.
+      </p>
+    </div>
+    
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Sintaxe de Herança</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <code className="block bg-steam-darker p-3 rounded text-steam-green font-mono text-sm">
+          <span className="text-steam-blueLight">class</span> ClasseBase {'{'}<br />
+          &nbsp;&nbsp;<span className="text-gray-500">// propriedades e métodos comuns</span><br />
+          {'}'}<br />
+          <br />
+          <span className="text-steam-blueLight">class</span> ClasseFilha : ClasseBase {'{'}<br />
+          &nbsp;&nbsp;<span className="text-gray-500">// propriedades e métodos específicos</span><br />
+          {'}'}
+        </code>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Exemplo prático</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <code className="block bg-steam-darker p-3 rounded text-sm font-mono">
+          <span className="text-steam-blueLight">class</span> <span className="text-steam-green">GameObject</span> {'{'}<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">public</span> <span className="text-steam-blueLight">float</span> x, y;<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">public</span> <span className="text-steam-blueLight">float</span> speed;<br />
+          {'}'}<br />
+          <br />
+          <span className="text-steam-blueLight">class</span> <span className="text-steam-green">Player</span> : <span className="text-steam-green">GameObject</span> {'{'}<br />
+          &nbsp;&nbsp;<span className="text-gray-500">// Herda x, y, speed automaticamente</span><br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">public</span> <span className="text-steam-blueLight">string</span> name;<br />
+          {'}'}<br />
+          <br />
+          <span className="text-steam-blueLight">class</span> <span className="text-steam-green">Enemy</span> : <span className="text-steam-green">GameObject</span> {'{'}<br />
+          &nbsp;&nbsp;<span className="text-gray-500">// Também herda x, y, speed</span><br />
+          {'}'}
+        </code>
+        <p className="text-gray-400 text-sm mt-2">
+          Player e Enemy herdam x, y e speed de GameObject, evitando repetir código comum.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Dicas</h4>
+      <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
+        <li>Use : para indicar herança: class Filha : Pai</li>
+        <li>Classes filhas herdam todas as propriedades e métodos públicos</li>
+        <li>Herança evita repetição de código comum</li>
+        <li>GameObject é um nome comum para classe base em jogos</li>
+      </ul>
+    </div>
+  </div>
+);
+
+const TheoryContent15 = () => (
+  <div className="space-y-4">
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Colisão em Jogos</h4>
+      <p className="text-gray-300">
+        Detectar colisão é essencial em jogos: quando o jogador coleta um item, quando um projétil acerta um inimigo, etc. 
+        Uma forma simples é verificar se dois objetos estão próximos o suficiente.
+      </p>
+    </div>
+    
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Detecção de Colisão Simples</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <p className="text-gray-300 mb-2">
+          Para detectar colisão, comparamos as posições dos objetos. 
+          Se estiverem muito próximos (dentro de uma distância mínima), há colisão.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Exemplo prático</h4>
+      <div className="bg-steam-dark rounded-lg p-4">
+        <code className="block bg-steam-darker p-3 rounded text-sm font-mono">
+          <span className="text-steam-blueLight">class</span> <span className="text-steam-green">Player</span> {'{'}<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">public</span> <span className="text-steam-blueLight">float</span> x, y;<br />
+          {'}'}<br />
+          <br />
+          <span className="text-steam-blueLight">bool</span> <span className="text-steam-green">CheckCollision</span>(<span className="text-steam-green">Player</span> p, <span className="text-steam-green">Enemy</span> e) {'{'}<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">float</span> distanceX = p.x - e.x;<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">float</span> distanceY = p.y - e.y;<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">float</span> distance = <span className="text-steam-blueLight">Math</span>.<span className="text-steam-green">Sqrt</span>(distanceX * distanceX + distanceY * distanceY);<br />
+          &nbsp;&nbsp;<span className="text-steam-blueLight">return</span> distance &lt; <span className="text-yellow-400">10.0f</span>; <span className="text-gray-500">// Colisão se distância menor que 10</span><br />
+          {'}'}
+        </code>
+        <p className="text-gray-400 text-sm mt-2">
+          Calcula a distância entre dois objetos e retorna true se estiverem muito próximos (distância menor que 10).
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-lg font-bold text-steam-blueLight mb-2">Dicas</h4>
+      <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
+        <li>Math.Sqrt() calcula a raiz quadrada (precisa de using System;)</li>
+        <li>Distância = √((x1-x2)² + (y1-y2)²) - fórmula matemática</li>
+        <li>Compare a distância com um valor limite (ex: 10.0f)</li>
+        <li>Retorna true se colidindo, false caso contrário</li>
+      </ul>
+    </div>
+  </div>
+);
+
 const exercises = [
   {
     id: "1",
@@ -804,6 +1080,126 @@ string name = "Jogador";
       return code.includes("string") && (code.includes("ToUpper") || code.includes("ToLower") || code.includes("Length") || code.includes("Contains"));
     },
     xp: 35,
+  },
+  {
+    id: "11",
+    title: "Classe Player com Posição",
+    description: "Crie uma classe Player com propriedades x e y do tipo float para representar a posição do jogador.",
+    theory: {
+      title: "Posicionamento em Jogos Digitais",
+      content: TheoryContent11,
+    },
+    template: `// Exercício 11: Classe Player com Posição
+// Tarefa: Crie uma classe Player com propriedades públicas:
+// - x (float) - posição horizontal
+// - y (float) - posição vertical
+// - name (string) - nome do jogador
+
+`,
+    tests: (code: string) => {
+      return code.includes("class") && code.includes("Player") && code.includes("float") && code.includes("x") && code.includes("y");
+    },
+    xp: 60,
+  },
+  {
+    id: "12",
+    title: "Movimentação do Personagem",
+    description: "Adicione um método Move() na classe Player que recebe deltaX e deltaY e atualiza a posição multiplicando pela velocidade.",
+    theory: {
+      title: "Movimentação de Personagem em Jogos",
+      content: TheoryContent12,
+    },
+    template: `// Exercício 12: Movimentação do Personagem
+// Tarefa: Na classe Player, adicione:
+// - Uma propriedade speed (float) com valor 5.0f
+// - Um método Move(float deltaX, float deltaY) que atualiza x e y
+// Use: x += deltaX * speed; e y += deltaY * speed;
+
+class Player {
+    public float x = 0;
+    public float y = 0;
+    
+    // Adicione speed e método Move aqui
+    
+}
+
+`,
+    tests: (code: string) => {
+      return code.includes("Move") && code.includes("speed") && (code.includes("x +=") || code.includes("x = x +")) && (code.includes("y +=") || code.includes("y = y +"));
+    },
+    xp: 70,
+  },
+  {
+    id: "13",
+    title: "Objetos em Movimento Automático",
+    description: "Crie uma classe Enemy com propriedades x, y, speed e um método Update() que move o inimigo automaticamente para a direita.",
+    theory: {
+      title: "Objetos em Movimento em Jogos",
+      content: TheoryContent13,
+    },
+    template: `// Exercício 13: Objetos em Movimento Automático
+// Tarefa: Crie uma classe Enemy com:
+// - Propriedades públicas: x (float), y (float), speed (float = 2.0f)
+// - Método Update() que atualiza x: x += speed;
+
+`,
+    tests: (code: string) => {
+      return code.includes("class") && code.includes("Enemy") && code.includes("Update") && code.includes("speed") && (code.includes("x +=") || code.includes("x = x +"));
+    },
+    xp: 65,
+  },
+  {
+    id: "14",
+    title: "Herança - Classe Base GameObject",
+    description: "Crie uma classe base GameObject com x, y, speed. Depois crie uma classe Player que herda de GameObject.",
+    theory: {
+      title: "Herança em Programação Orientada a Objetos",
+      content: TheoryContent14,
+    },
+    template: `// Exercício 14: Herança - Classe Base GameObject
+// Tarefa: 
+// 1. Crie uma classe GameObject com propriedades públicas: x (float), y (float), speed (float)
+// 2. Crie uma classe Player que herda de GameObject usando ':'
+// Exemplo: class Player : GameObject { }
+
+`,
+    tests: (code: string) => {
+      return code.includes("class") && code.includes("GameObject") && code.includes("class") && code.includes("Player") && code.includes(":") && code.includes("GameObject");
+    },
+    xp: 80,
+  },
+  {
+    id: "15",
+    title: "Sistema de Colisão Básico",
+    description: "Crie uma função CheckCollision que recebe dois objetos Player e Enemy e retorna true se a distância entre eles for menor que 10.0f.",
+    theory: {
+      title: "Detecção de Colisão em Jogos",
+      content: TheoryContent15,
+    },
+    template: `// Exercício 15: Sistema de Colisão Básico
+// Tarefa: Crie uma função CheckCollision que:
+// - Recebe Player p e Enemy e como parâmetros
+// - Calcula a distância entre eles usando: Math.Sqrt((p.x - e.x) * (p.x - e.x) + (p.y - e.y) * (p.y - e.y))
+// - Retorna true se a distância for menor que 10.0f
+// Use: using System; no início do código
+
+using System;
+
+class Player {
+    public float x, y;
+}
+
+class Enemy {
+    public float x, y;
+}
+
+// Crie a função CheckCollision aqui
+
+`,
+    tests: (code: string) => {
+      return code.includes("CheckCollision") && code.includes("bool") && code.includes("Math.Sqrt") && code.includes("return") && code.includes("10.0f");
+    },
+    xp: 75,
   },
 ];
 

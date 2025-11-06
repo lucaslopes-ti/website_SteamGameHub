@@ -45,20 +45,38 @@ Página interativa gamificada para atividade de 4 horas sobre desenvolvimento de
 
 #### 2. Prática C# Guiada (`CSharpPracticeSection.tsx`)
 - ✅ Editor de código integrado
-- ✅ 3 exercícios sequenciais:
-  - Variáveis e Tipos (20 XP)
-  - Estrutura Condicional (30 XP)
-  - Funções (50 XP)
+- ✅ 15 exercícios sequenciais progressivos:
+  - **Básicos (1-10):**
+    - Variáveis e Tipos (20 XP)
+    - Estrutura Condicional (30 XP)
+    - Funções (50 XP)
+    - Loop For (30 XP)
+    - Loop While (30 XP)
+    - Arrays (40 XP)
+    - Operadores Lógicos (35 XP)
+    - Switch/Case (40 XP)
+    - Classes Básicas (50 XP)
+    - Métodos de String (35 XP)
+  - **Jogos Digitais (11-15):**
+    - Classe Player com Posição (60 XP)
+    - Movimentação do Personagem (70 XP)
+    - Objetos em Movimento Automático (65 XP)
+    - Herança - Classe Base GameObject (80 XP)
+    - Sistema de Colisão Básico (75 XP)
 - ✅ Validação automática de código
 - ✅ Download de arquivos .cs
+- ✅ Teoria contextualizada para cada exercício
 
-**Total:** 100 XP
+**Total:** 700 XP
 
 #### 3. Modelagem Blender (`BlenderSection.tsx`)
-- ✅ Guia passo a passo
+- ✅ Guia passo a passo detalhado e específico
+- ✅ Instruções ligadas aos exercícios de C# (Player, Enemy, GameObject)
+- ✅ Orientação para modelar objetos que serão controlados pelo código
 - ✅ Timer de 45 minutos
 - ✅ Upload de capa 3D (150 XP)
-- ✅ GDD Mini com descrição (50 XP)
+- ✅ GDD Mini com descrição ligada ao código C# (50 XP)
+- ✅ Seção explicando relação entre objetos 3D e classes C#
 
 **Total:** 200 XP
 
@@ -71,7 +89,7 @@ Página interativa gamificada para atividade de 4 horas sobre desenvolvimento de
 
 **Total:** 250 XP
 
-**XP Total da Atividade:** 500 pontos
+**XP Total da Atividade:** 1100 pontos
 
 ## APIs Criadas
 
@@ -160,6 +178,19 @@ Editar `components/atividade/QuizComponent.tsx`, array `questions`
 
 ### Adicionar Novos Exercícios C#
 Editar `components/atividade/CSharpPracticeSection.tsx`, array `exercises`
+
+**Exercícios Atuais (15 total):**
+- Exercícios 1-10: Fundamentos de C# (variáveis, loops, arrays, classes básicas)
+- Exercícios 11-15: Específicos para jogos digitais (movimentação, OOP avançada, colisão)
+
+**Para adicionar novo exercício:**
+1. Criar componente de teoria (TheoryContentN)
+2. Adicionar objeto ao array `exercises` com:
+   - id, title, description
+   - theory (title e content)
+   - template (código inicial)
+   - tests (função de validação)
+   - xp (pontos de experiência)
 
 ### Ajustar XP das Fases
 Editar `app/atividade-prototipo-csharp/page.tsx`, array `phases`
