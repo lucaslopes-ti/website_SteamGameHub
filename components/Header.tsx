@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Search, User, Gamepad2, LogOut, Heart, Info, Menu, X, Trophy } from "lucide-react";
+import { Search, User, Gamepad2, LogOut, Heart, Info, Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "./AuthProvider";
 
@@ -92,16 +92,6 @@ export default function Header() {
             role="navigation" 
             aria-label="Navegação principal"
           >
-            {/* Botão Atividade de Hoje */}
-            <Link
-              href="/atividade-prototipo-csharp"
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-yellow-400 via-orange-400 to-red-500 text-white font-bold hover:from-yellow-300 hover:via-orange-300 hover:to-red-400 transition-all duration-200 shadow-lg hover:shadow-xl animate-pulse hover:animate-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-yellow-400 focus-visible:outline-offset-2 group"
-              aria-label="Acessar atividade de hoje"
-            >
-              <Trophy className="w-4 h-4 group-hover:scale-110 transition-transform" aria-hidden="true" />
-              <span>Atividade de Hoje</span>
-            </Link>
-            
             <Link
               href="/games"
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-300 hover:text-steam-blueLight hover:bg-steam-dark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 group"
@@ -237,17 +227,6 @@ export default function Header() {
             aria-label="Menu de navegação mobile"
           >
             <div className="flex flex-col gap-2">
-              {/* Botão Atividade de Hoje - Mobile */}
-              <Link
-                href="/atividade-prototipo-csharp"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg bg-gradient-to-r from-yellow-400 via-orange-400 to-red-500 text-white font-bold hover:from-yellow-300 hover:via-orange-300 hover:to-red-400 transition-all duration-200 shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-yellow-400 focus-visible:outline-offset-2"
-                aria-label="Acessar atividade de hoje"
-              >
-                <Trophy className="w-5 h-5" aria-hidden="true" />
-                <span>Atividade de Hoje</span>
-              </Link>
-              
               <Link
                 href="/games"
                 onClick={() => setIsMobileMenuOpen(false)}
