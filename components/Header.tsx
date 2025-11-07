@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Search, User, Gamepad2, LogOut, Heart, Info, Menu, X } from "lucide-react";
+import { Search, User, Gamepad2, LogOut, Heart, Info, Menu, X, BookOpen } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "./AuthProvider";
 
@@ -116,6 +116,15 @@ export default function Header() {
               aria-label="Ver estatísticas do site"
             >
               <span className="font-medium">Stats</span>
+            </Link>
+            
+            <Link
+              href="/atividade-mathquest"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-yellow-400/10 via-orange-400/10 to-red-500/10 hover:from-yellow-400/20 hover:via-orange-400/20 hover:to-red-500/20 text-yellow-400 border border-yellow-400/30 hover:border-yellow-400/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-yellow-400 focus-visible:outline-offset-2 group font-medium"
+              aria-label="Acessar atividade EAD MathQuest"
+            >
+              <BookOpen className="w-4 h-4 group-hover:scale-110 transition-transform" aria-hidden="true" />
+              <span className="font-medium">EAD</span>
             </Link>
             
             {isAuthenticated && (
@@ -254,6 +263,16 @@ export default function Header() {
                 aria-label="Ver estatísticas do site"
               >
                 <span className="font-medium">Estatísticas</span>
+              </Link>
+              
+              <Link
+                href="/atividade-mathquest"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg bg-gradient-to-r from-yellow-400/10 via-orange-400/10 to-red-500/10 hover:from-yellow-400/20 hover:via-orange-400/20 hover:to-red-500/20 text-yellow-400 border border-yellow-400/30 hover:border-yellow-400/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-yellow-400 focus-visible:outline-offset-2 font-medium"
+                aria-label="Acessar atividade EAD MathQuest"
+              >
+                <BookOpen className="w-5 h-5" aria-hidden="true" />
+                <span className="font-medium">Atividade EAD</span>
               </Link>
               
               {isAuthenticated && (

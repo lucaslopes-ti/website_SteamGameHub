@@ -31,6 +31,11 @@ export async function POST(request: NextRequest) {
       allowedExtensions = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
       maxSize = 10 * 1024 * 1024; // 10MB
       uploadDir = path.join(process.cwd(), "public", "uploads", "images");
+    } else if (type === "document") {
+      // Upload de documento
+      allowedExtensions = [".pdf", ".doc", ".docx", ".txt"];
+      maxSize = 50 * 1024 * 1024; // 50MB
+      uploadDir = path.join(process.cwd(), "public", "uploads", "documents");
     } else {
       // Upload de executável
       allowedExtensions = [".exe", ".zip", ".rar", ".7z", ".app", ".dmg"];
@@ -78,6 +83,8 @@ export async function POST(request: NextRequest) {
         const uniqueFileName = `${randomUUID()}${fileExtension}`;
         const storagePath = type === "image" 
           ? `images/${uniqueFileName}`
+          : type === "document"
+          ? `documents/${uniqueFileName}`
           : `games/${uniqueFileName}`;
 
         console.log(`Iniciando upload para Firebase Storage: ${storagePath}, tamanho: ${file.size} bytes`);
@@ -228,6 +235,8 @@ export async function POST(request: NextRequest) {
         // Retornar caminho relativo para acesso público
         const publicPath = type === "image"
           ? `/uploads/images/${uniqueFileName}`
+          : type === "document"
+          ? `/uploads/documents/${uniqueFileName}`
           : `/uploads/games/${uniqueFileName}`;
 
         return NextResponse.json({
