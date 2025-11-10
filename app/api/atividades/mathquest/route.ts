@@ -152,13 +152,14 @@ async function getSubmissionsFromFirestore(userId?: string) {
         }
 
         const db = admin.firestore();
-        let query = db.collection("atividades_mathquest");
+        const submissionsRef = db.collection("atividades_mathquest");
         
+        let snapshot;
         if (userId) {
-          query = query.where("userId", "==", userId);
+          snapshot = await submissionsRef.where("userId", "==", userId).get();
+        } else {
+          snapshot = await submissionsRef.get();
         }
-        
-        const snapshot = await query.get();
         const submissions = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
