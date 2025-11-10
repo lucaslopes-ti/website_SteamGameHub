@@ -17,6 +17,48 @@ interface MathQuestSubmission {
   submittedAt: string;
 }
 
+// Função helper para normalizar a chave privada do service account
+// Corrige problemas comuns de formatação ao colar na Vercel
+function normalizeServiceAccount(serviceAccount: any): any {
+  if (!serviceAccount.private_key) {
+    return serviceAccount;
+  }
+
+  let privateKey = serviceAccount.private_key;
+
+  // Normalizar quebras de linha: substituir \\n por \n
+  // Isso acontece quando o JSON é colado e as quebras são escapadas duplamente
+  privateKey = privateKey.replace(/\\n/g, "\n");
+
+  // Se ainda não tiver quebras de linha reais, tentar adicionar baseado no padrão
+  if (!privateKey.includes("\n") && privateKey.includes("BEGIN PRIVATE KEY")) {
+    // Tentar adicionar quebras de linha baseado no padrão PEM
+    privateKey = privateKey.replace(/-----BEGIN PRIVATE KEY-----/, "-----BEGIN PRIVATE KEY-----\n");
+    privateKey = privateKey.replace(/-----END PRIVATE KEY-----/, "\n-----END PRIVATE KEY-----");
+  }
+
+  // Validar que a chave tem o formato básico correto
+  if (!privateKey.includes("BEGIN") || !privateKey.includes("END")) {
+    console.error("⚠️ Chave privada parece estar corrompida ou mal formatada");
+    console.error("Tamanho da chave:", privateKey.length, "caracteres");
+    console.error("Primeiros 100 caracteres:", privateKey.substring(0, 100));
+    console.error("Últimos 100 caracteres:", privateKey.substring(Math.max(0, privateKey.length - 100)));
+    throw new Error("Chave privada do service account está mal formatada ou corrompida. Verifique se FIREBASE_SERVICE_ACCOUNT_KEY contém o JSON completo. A chave privada deve começar com '-----BEGIN PRIVATE KEY-----' e terminar com '-----END PRIVATE KEY-----'.");
+  }
+
+  // Validar que a chave não está truncada (deve ter pelo menos 1000 caracteres)
+  if (privateKey.length < 1000) {
+    console.error("⚠️ Chave privada parece estar truncada (muito curta)");
+    console.error("Tamanho da chave:", privateKey.length, "caracteres (esperado: ~2000+)");
+    throw new Error("Chave privada do service account parece estar truncada. Verifique se o JSON completo foi copiado na variável FIREBASE_SERVICE_ACCOUNT_KEY na Vercel.");
+  }
+
+  return {
+    ...serviceAccount,
+    private_key: privateKey,
+  };
+}
+
 async function saveSubmissionToFirestore(submission: MathQuestSubmission) {
   try {
     console.log("Iniciando salvamento no Firestore...");
@@ -48,6 +90,10 @@ async function saveSubmissionToFirestore(submission: MathQuestSubmission) {
             if (!serviceAccount.project_id || !serviceAccount.private_key || !serviceAccount.client_email) {
               throw new Error("Service account JSON inválido. Campos obrigatórios: project_id, private_key, client_email");
             }
+            
+            // Normalizar a chave privada (corrigir problemas de formatação)
+            // A função normalizeServiceAccount já valida o formato
+            serviceAccount = normalizeServiceAccount(serviceAccount);
             
             admin.initializeApp({
               credential: admin.credential.cert(serviceAccount),
@@ -215,7 +261,9 @@ async function getSubmissionsFromFirestore(userId?: string) {
         const admin = await import("firebase-admin");
         
         if (admin.apps.length === 0) {
-          const serviceAccount = JSON.parse(serviceAccountKey);
+          let serviceAccount = JSON.parse(serviceAccountKey);
+          // Normalizar a chave privada (corrigir problemas de formatação)
+          serviceAccount = normalizeServiceAccount(serviceAccount);
           admin.initializeApp({
             credential: admin.credential.cert(serviceAccount),
           });

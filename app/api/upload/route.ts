@@ -98,7 +98,22 @@ export async function POST(request: NextRequest) {
             // Inicializar Admin SDK se necessário
             if (admin.apps.length === 0) {
               try {
-                const serviceAccount = JSON.parse(serviceAccountKey);
+                let serviceAccount = JSON.parse(serviceAccountKey);
+                
+                // Normalizar a chave privada (corrigir problemas de formatação)
+                // Função helper inline para normalizar quebras de linha
+                if (serviceAccount.private_key) {
+                  let privateKey = serviceAccount.private_key;
+                  // Normalizar quebras de linha: substituir \\n por \n
+                  privateKey = privateKey.replace(/\\n/g, "\n");
+                  // Se ainda não tiver quebras de linha reais, tentar adicionar baseado no padrão
+                  if (!privateKey.includes("\n") && privateKey.includes("BEGIN PRIVATE KEY")) {
+                    privateKey = privateKey.replace(/-----BEGIN PRIVATE KEY-----/, "-----BEGIN PRIVATE KEY-----\n");
+                    privateKey = privateKey.replace(/-----END PRIVATE KEY-----/, "\n-----END PRIVATE KEY-----");
+                  }
+                  serviceAccount.private_key = privateKey;
+                }
+                
                 admin.initializeApp({
                   credential: admin.credential.cert(serviceAccount),
                   storageBucket: storageBucket,
