@@ -183,18 +183,26 @@ export default function AtividadeMathQuestPage() {
         }
       }
 
+      // Validar que temos pelo menos um método de GDD
+      const validGddLink = formData.gddLink && formData.gddLink.trim() !== "" ? formData.gddLink.trim() : null;
+      const validGddFileUrl = gddFileUrl && gddFileUrl.trim() !== "" ? gddFileUrl.trim() : null;
+      
+      if (!validGddLink && !validGddFileUrl) {
+        throw new Error("É necessário fornecer um link do GDD ou fazer upload do arquivo GDD");
+      }
+
       // Salvar submissão
       const submissionData = {
         userId,
         userName,
-        projectTitle: formData.projectTitle,
-        description: formData.description,
-        characterArtUrl,
-        scenarioArtUrl,
-        prototypeLink: formData.prototypeLink || null,
-        gddLink: formData.gddLink || gddFileUrl || null,
-        gddFileUrl: gddFileUrl || null,
-        comments: formData.comments || null,
+        projectTitle: formData.projectTitle.trim(),
+        description: formData.description.trim(),
+        characterArtUrl: characterArtUrl.trim(),
+        scenarioArtUrl: scenarioArtUrl.trim(),
+        prototypeLink: formData.prototypeLink && formData.prototypeLink.trim() !== "" ? formData.prototypeLink.trim() : null,
+        gddLink: validGddLink,
+        gddFileUrl: validGddFileUrl,
+        comments: formData.comments && formData.comments.trim() !== "" ? formData.comments.trim() : null,
         submittedAt: new Date().toISOString(),
       };
 
@@ -207,8 +215,17 @@ export default function AtividadeMathQuestPage() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Erro ao salvar submissão");
+        let errorMessage = "Erro ao salvar submissão";
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorData.details || errorMessage;
+          if (errorData.suggestion) {
+            errorMessage += ` (${errorData.suggestion})`;
+          }
+        } catch (parseError) {
+          errorMessage = `Erro ${response.status}: ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
       }
 
       setSubmitted(true);

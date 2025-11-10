@@ -18,61 +18,114 @@ interface MathQuestSubmission {
 }
 
 async function saveSubmissionToFirestore(submission: MathQuestSubmission) {
-  const { db } = await import("@/lib/firebase/config");
-  const { collection, addDoc, query, where, getDocs, serverTimestamp } =
-    await import("firebase/firestore");
+  try {
+    const { db } = await import("@/lib/firebase/config");
+    const { collection, addDoc, query, where, getDocs, serverTimestamp } =
+      await import("firebase/firestore");
 
-  const submissionsRef = collection(db, "atividades_mathquest");
+    const submissionsRef = collection(db, "atividades_mathquest");
 
-  // Verificar se já existe uma submissão deste usuário
-  const q = query(submissionsRef, where("userId", "==", submission.userId));
-  const snapshot = await getDocs(q);
+    // Verificar se já existe uma submissão deste usuário
+    const q = query(submissionsRef, where("userId", "==", submission.userId));
+    const snapshot = await getDocs(q);
 
-  const submissionData = {
-    ...submission,
-    updatedAt: serverTimestamp(),
-  };
+    const submissionData = {
+      ...submission,
+      updatedAt: serverTimestamp(),
+    };
 
-  if (snapshot.empty) {
-    // Primeira submissão
-    const docRef = await addDoc(submissionsRef, {
-      ...submissionData,
-      createdAt: serverTimestamp(),
+    if (snapshot.empty) {
+      // Primeira submissão
+      const docRef = await addDoc(submissionsRef, {
+        ...submissionData,
+        createdAt: serverTimestamp(),
+      });
+      return { id: docRef.id, ...submission };
+    } else {
+      // Atualizar submissão existente
+      const { doc, updateDoc } = await import("firebase/firestore");
+      const existingDoc = snapshot.docs[0];
+      const docRef = doc(db, "atividades_mathquest", existingDoc.id);
+      await updateDoc(docRef, submissionData);
+      return { id: existingDoc.id, ...submission };
+    }
+  } catch (error: any) {
+    console.error("Erro detalhado ao salvar no Firestore:", {
+      message: error?.message,
+      code: error?.code,
+      stack: error?.stack,
+      submission: {
+        userId: submission.userId,
+        projectTitle: submission.projectTitle,
+      },
     });
-    return { id: docRef.id, ...submission };
-  } else {
-    // Atualizar submissão existente
-    const { doc, updateDoc } = await import("firebase/firestore");
-    const existingDoc = snapshot.docs[0];
-    const docRef = doc(db, "atividades_mathquest", existingDoc.id);
-    await updateDoc(docRef, submissionData);
-    return { id: existingDoc.id, ...submission };
+    throw new Error(`Erro ao salvar no Firestore: ${error?.message || "Erro desconhecido"}`);
   }
 }
 
 async function getSubmissionsFromFirestore(userId?: string) {
-  const { db } = await import("@/lib/firebase/config");
-  const { collection, query, where, getDocs, orderBy } =
-    await import("firebase/firestore");
+  try {
+    const { db } = await import("@/lib/firebase/config");
+    const { collection, query, where, getDocs, orderBy } =
+      await import("firebase/firestore");
 
-  const submissionsRef = collection(db, "atividades_mathquest");
-  let q;
+    const submissionsRef = collection(db, "atividades_mathquest");
+    let q;
+    let useOrderBy = true;
 
-  if (userId) {
-    q = query(
-      submissionsRef,
-      where("userId", "==", userId),
-      orderBy("submittedAt", "desc")
-    );
-  } else {
-    q = query(submissionsRef, orderBy("submittedAt", "desc"));
+    if (userId) {
+      // Tentar criar query com orderBy
+      q = query(
+        submissionsRef,
+        where("userId", "==", userId),
+        orderBy("submittedAt", "desc")
+      );
+    } else {
+      q = query(submissionsRef, orderBy("submittedAt", "desc"));
+    }
+
+    let snapshot;
+    try {
+      snapshot = await getDocs(q);
+    } catch (queryError: any) {
+      // Se a query falhar (provavelmente por falta de índice), tentar sem orderBy
+      if (queryError?.code === "failed-precondition" || queryError?.message?.includes("index")) {
+        console.warn("orderBy falhou (índice não existe), buscando sem ordenação:", queryError?.message);
+        useOrderBy = false;
+        if (userId) {
+          q = query(submissionsRef, where("userId", "==", userId));
+        } else {
+          q = query(submissionsRef);
+        }
+        snapshot = await getDocs(q);
+      } else {
+        throw queryError;
+      }
+    }
+
+    const submissions = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    // Ordenar manualmente se orderBy não foi usado ou falhou
+    if (!useOrderBy && submissions.length > 0) {
+      submissions.sort((a: any, b: any) => {
+        const dateA = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
+        const dateB = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
+        return dateB - dateA; // Descendente
+      });
+    }
+
+    return submissions;
+  } catch (error: any) {
+    console.error("Erro ao buscar submissões do Firestore:", {
+      message: error?.message,
+      code: error?.code,
+      userId,
+    });
+    throw error;
   }
-
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
 }
 
 export async function POST(request: NextRequest) {
@@ -115,7 +168,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Validar que pelo menos um método de GDD foi fornecido
-    if (!gddLink && !gddFileUrl) {
+    // Permitir strings vazias como null
+    const validGddLink = gddLink && gddLink.trim() !== "" ? gddLink.trim() : null;
+    const validGddFileUrl = gddFileUrl && gddFileUrl.trim() !== "" ? gddFileUrl.trim() : null;
+    
+    if (!validGddLink && !validGddFileUrl) {
       return NextResponse.json(
         { error: "É necessário fornecer gddLink ou gddFileUrl" },
         { status: 400 }
@@ -123,16 +180,16 @@ export async function POST(request: NextRequest) {
     }
 
     const submission: MathQuestSubmission = {
-      userId,
-      userName,
-      projectTitle,
-      description,
-      characterArtUrl,
-      scenarioArtUrl,
-      prototypeLink: prototypeLink || null,
-      gddLink: gddLink || null,
-      gddFileUrl: gddFileUrl || null,
-      comments: comments || null,
+      userId: userId.trim(),
+      userName: userName.trim(),
+      projectTitle: projectTitle.trim(),
+      description: description.trim(),
+      characterArtUrl: characterArtUrl.trim(),
+      scenarioArtUrl: scenarioArtUrl.trim(),
+      prototypeLink: prototypeLink && prototypeLink.trim() !== "" ? prototypeLink.trim() : null,
+      gddLink: validGddLink,
+      gddFileUrl: validGddFileUrl,
+      comments: comments && comments.trim() !== "" ? comments.trim() : null,
       submittedAt: submittedAt || new Date().toISOString(),
     };
 
@@ -161,9 +218,28 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error: any) {
-    console.error("Erro ao salvar submissão MathQuest:", error);
+    console.error("Erro ao salvar submissão MathQuest:", {
+      message: error?.message,
+      code: error?.code,
+      stack: error?.stack,
+      name: error?.name,
+    });
+    
+    // Retornar mensagem de erro mais detalhada
+    const errorMessage = error?.message || "Erro desconhecido ao salvar submissão";
+    const errorCode = error?.code || "UNKNOWN_ERROR";
+    
     return NextResponse.json(
-      { error: "Erro ao salvar submissão", details: error?.message },
+      { 
+        error: "Erro ao salvar submissão", 
+        details: errorMessage,
+        code: errorCode,
+        suggestion: errorCode === "permission-denied" 
+          ? "Verifique as regras de segurança do Firestore"
+          : errorCode === "unavailable"
+          ? "Firestore temporariamente indisponível. Tente novamente."
+          : "Verifique os logs do servidor para mais detalhes"
+      },
       { status: 500 }
     );
   }
