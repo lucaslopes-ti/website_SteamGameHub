@@ -20,6 +20,11 @@ interface MathQuestSubmission {
 async function saveSubmissionToFirestore(submission: MathQuestSubmission) {
   try {
     console.log("Iniciando salvamento no Firestore...");
+    console.log("Variáveis de ambiente disponíveis:", {
+      hasServiceAccount: !!process.env.FIREBASE_SERVICE_ACCOUNT_KEY,
+      hasProjectId: !!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+      hasApiKey: !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    });
     
     // Tentar usar Admin SDK primeiro (melhor para servidor)
     const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
@@ -30,14 +35,27 @@ async function saveSubmissionToFirestore(submission: MathQuestSubmission) {
         // Inicializar Admin SDK se necessário
         if (admin.apps.length === 0) {
           try {
-            const serviceAccount = JSON.parse(serviceAccountKey);
+            let serviceAccount;
+            try {
+              serviceAccount = JSON.parse(serviceAccountKey);
+            } catch (parseError: any) {
+              console.error("Erro ao fazer parse do service account:", parseError?.message);
+              console.error("Primeiros 100 caracteres da chave:", serviceAccountKey.substring(0, 100));
+              throw new Error(`Erro ao fazer parse do service account: ${parseError?.message || "Formato JSON inválido"}. Verifique se FIREBASE_SERVICE_ACCOUNT_KEY contém um JSON válido.`);
+            }
+            
+            // Validar campos obrigatórios do service account
+            if (!serviceAccount.project_id || !serviceAccount.private_key || !serviceAccount.client_email) {
+              throw new Error("Service account JSON inválido. Campos obrigatórios: project_id, private_key, client_email");
+            }
+            
             admin.initializeApp({
               credential: admin.credential.cert(serviceAccount),
             });
-            console.log("Admin SDK inicializado");
+            console.log("Admin SDK inicializado com sucesso");
           } catch (parseError: any) {
-            console.error("Erro ao fazer parse do service account:", parseError?.message);
-            throw new Error(`Erro ao fazer parse do service account: ${parseError?.message || "Formato JSON inválido"}`);
+            console.error("Erro ao inicializar Admin SDK:", parseError?.message);
+            throw parseError;
           }
         }
 
@@ -87,11 +105,26 @@ async function saveSubmissionToFirestore(submission: MathQuestSubmission) {
     }
 
     // Fallback: usar Client SDK (pode não funcionar bem em serverless)
-    console.log("Tentando usar Client SDK...");
+    console.log("⚠️ Service account não configurado. Tentando usar Client SDK (não recomendado para produção)...");
     const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+    const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+    
     if (!projectId) {
-      throw new Error("NEXT_PUBLIC_FIREBASE_PROJECT_ID não está configurado. Configure também FIREBASE_SERVICE_ACCOUNT_KEY para usar Admin SDK.");
+      throw new Error(
+        "NEXT_PUBLIC_FIREBASE_PROJECT_ID não está configurado. " +
+        "Configure FIREBASE_SERVICE_ACCOUNT_KEY na Vercel para usar Admin SDK (recomendado). " +
+        "Veja docs/CONFIGURACAO_VERCEL_FIREBASE.md para mais detalhes."
+      );
     }
+    
+    if (!apiKey) {
+      throw new Error(
+        "NEXT_PUBLIC_FIREBASE_API_KEY não está configurado. " +
+        "Configure todas as variáveis NEXT_PUBLIC_FIREBASE_* na Vercel. " +
+        "Veja docs/CONFIGURACAO_VERCEL_FIREBASE.md para mais detalhes."
+      );
+    }
+    
     console.log("Firebase Project ID:", projectId);
 
     try {
@@ -138,8 +171,26 @@ async function saveSubmissionToFirestore(submission: MathQuestSubmission) {
       console.error("Client SDK também falhou:", {
         message: clientError?.message,
         code: clientError?.code,
+        stack: clientError?.stack,
       });
-      throw new Error(`Erro ao salvar no Firestore. Client SDK falhou: ${clientError?.message || "Erro desconhecido"}. Configure FIREBASE_SERVICE_ACCOUNT_KEY para usar Admin SDK.`);
+      
+      const errorMessage = clientError?.message || "Erro desconhecido";
+      const errorCode = clientError?.code || "UNKNOWN_ERROR";
+      
+      // Mensagens mais específicas baseadas no código de erro
+      let suggestion = "Configure FIREBASE_SERVICE_ACCOUNT_KEY na Vercel para usar Admin SDK (recomendado). Veja docs/CONFIGURACAO_VERCEL_FIREBASE.md";
+      
+      if (errorCode === "permission-denied") {
+        suggestion = "Verifique as regras de segurança do Firestore. A coleção 'atividades_mathquest' precisa ter permissão de escrita.";
+      } else if (errorCode === "unavailable") {
+        suggestion = "Firestore temporariamente indisponível. Tente novamente em alguns segundos.";
+      } else if (errorCode === "failed-precondition") {
+        suggestion = "Índice do Firestore não existe. Siga o link fornecido pelo Firebase para criar o índice necessário.";
+      } else if (errorMessage.includes("auth") || errorMessage.includes("permission")) {
+        suggestion = "Problema de autenticação ou permissão. Configure FIREBASE_SERVICE_ACCOUNT_KEY para usar Admin SDK.";
+      }
+      
+      throw new Error(`Erro ao salvar no Firestore. Client SDK falhou: ${errorMessage}. ${suggestion}`);
     }
   } catch (error: any) {
     console.error("Erro detalhado ao salvar no Firestore:", {
@@ -409,22 +460,41 @@ export async function POST(request: NextRequest) {
       console.error("Resposta do servidor:", error.serverResponse);
     }
     
+    // Verificar variáveis de ambiente para diagnóstico
+    console.error("Diagnóstico de variáveis de ambiente:", {
+      hasServiceAccount: !!process.env.FIREBASE_SERVICE_ACCOUNT_KEY,
+      hasProjectId: !!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+      hasApiKey: !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+      nodeEnv: process.env.NODE_ENV,
+      isVercel: !!process.env.VERCEL,
+    });
+    
     // Retornar mensagem de erro mais detalhada
     const errorMessage = error?.message || "Erro desconhecido ao salvar submissão";
     const errorCode = error?.code || "UNKNOWN_ERROR";
+    
+    // Sugestões baseadas no tipo de erro
+    let suggestion = "Verifique os logs do servidor na Vercel para mais detalhes. Veja docs/CONFIGURACAO_VERCEL_FIREBASE.md";
+    
+    if (errorMessage.includes("FIREBASE_SERVICE_ACCOUNT_KEY") || errorMessage.includes("Service account")) {
+      suggestion = "Configure FIREBASE_SERVICE_ACCOUNT_KEY na Vercel. Veja docs/CONFIGURACAO_VERCEL_FIREBASE.md para instruções.";
+    } else if (errorMessage.includes("NEXT_PUBLIC_FIREBASE")) {
+      suggestion = "Configure todas as variáveis NEXT_PUBLIC_FIREBASE_* na Vercel. Veja docs/CONFIGURACAO_VERCEL_FIREBASE.md";
+    } else if (errorCode === "permission-denied") {
+      suggestion = "Verifique as regras de segurança do Firestore. A coleção 'atividades_mathquest' precisa ter permissão de escrita.";
+    } else if (errorCode === "unavailable") {
+      suggestion = "Firestore temporariamente indisponível. Tente novamente em alguns segundos.";
+    } else if (errorCode === "failed-precondition") {
+      suggestion = "Índice do Firestore não existe. Siga o link fornecido pelo Firebase para criar o índice necessário.";
+    }
     
     return NextResponse.json(
       { 
         error: "Erro ao salvar submissão", 
         details: errorMessage,
         code: errorCode,
-        suggestion: errorCode === "permission-denied" 
-          ? "Verifique as regras de segurança do Firestore"
-          : errorCode === "unavailable"
-          ? "Firestore temporariamente indisponível. Tente novamente."
-          : errorCode === "failed-precondition"
-          ? "Índice do Firestore não existe. Crie o índice necessário."
-          : "Verifique os logs do servidor para mais detalhes"
+        suggestion,
+        documentation: "Veja docs/CONFIGURACAO_VERCEL_FIREBASE.md para instruções de configuração"
       },
       { status: 500 }
     );
