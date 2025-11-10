@@ -19,15 +19,29 @@ interface MathQuestSubmission {
 
 async function saveSubmissionToFirestore(submission: MathQuestSubmission) {
   try {
+    console.log("Iniciando salvamento no Firestore...");
+    
+    // Verificar variáveis de ambiente
+    const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+    if (!projectId) {
+      throw new Error("NEXT_PUBLIC_FIREBASE_PROJECT_ID não está configurado");
+    }
+    console.log("Firebase Project ID:", projectId);
+
     const { db } = await import("@/lib/firebase/config");
+    console.log("Firestore db obtido:", !!db);
+    
     const { collection, addDoc, query, where, getDocs, serverTimestamp } =
       await import("firebase/firestore");
 
     const submissionsRef = collection(db, "atividades_mathquest");
+    console.log("Collection reference criada");
 
     // Verificar se já existe uma submissão deste usuário
+    console.log("Buscando submissões existentes para userId:", submission.userId);
     const q = query(submissionsRef, where("userId", "==", submission.userId));
     const snapshot = await getDocs(q);
+    console.log("Snapshot obtido, empty:", snapshot.empty);
 
     const submissionData = {
       ...submission,
@@ -36,17 +50,21 @@ async function saveSubmissionToFirestore(submission: MathQuestSubmission) {
 
     if (snapshot.empty) {
       // Primeira submissão
+      console.log("Criando nova submissão...");
       const docRef = await addDoc(submissionsRef, {
         ...submissionData,
         createdAt: serverTimestamp(),
       });
+      console.log("Submissão criada com ID:", docRef.id);
       return { id: docRef.id, ...submission };
     } else {
       // Atualizar submissão existente
+      console.log("Atualizando submissão existente...");
       const { doc, updateDoc } = await import("firebase/firestore");
       const existingDoc = snapshot.docs[0];
       const docRef = doc(db, "atividades_mathquest", existingDoc.id);
       await updateDoc(docRef, submissionData);
+      console.log("Submissão atualizada com ID:", existingDoc.id);
       return { id: existingDoc.id, ...submission };
     }
   } catch (error: any) {
@@ -129,8 +147,18 @@ async function getSubmissionsFromFirestore(userId?: string) {
 }
 
 export async function POST(request: NextRequest) {
+  console.log("=== POST /api/atividades/mathquest ===");
   try {
     const body = await request.json();
+    console.log("Body recebido:", {
+      userId: body.userId,
+      userName: body.userName,
+      projectTitle: body.projectTitle,
+      hasCharacterArtUrl: !!body.characterArtUrl,
+      hasScenarioArtUrl: !!body.scenarioArtUrl,
+      hasGddLink: !!body.gddLink,
+      hasGddFileUrl: !!body.gddFileUrl,
+    });
     const {
       userId,
       userName,
@@ -194,8 +222,17 @@ export async function POST(request: NextRequest) {
     };
 
     // Em produção, sempre usar Firestore
-    if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
+    const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL;
+    console.log("Ambiente:", {
+      NODE_ENV: process.env.NODE_ENV,
+      VERCEL: process.env.VERCEL,
+      isProduction,
+    });
+
+    if (isProduction) {
+      console.log("Usando Firestore (produção)...");
       const savedSubmission = await saveSubmissionToFirestore(submission);
+      console.log("Submissão salva com sucesso!");
       return NextResponse.json(
         { success: true, submission: savedSubmission },
         { status: 201 }
@@ -204,8 +241,13 @@ export async function POST(request: NextRequest) {
 
     // Desenvolvimento local
     const { useLocalDatabase } = await import("@/lib/config");
-    if (!useLocalDatabase()) {
+    const useLocal = useLocalDatabase();
+    console.log("useLocalDatabase:", useLocal);
+    
+    if (!useLocal) {
+      console.log("Usando Firestore (desenvolvimento)...");
       const savedSubmission = await saveSubmissionToFirestore(submission);
+      console.log("Submissão salva com sucesso!");
       return NextResponse.json(
         { success: true, submission: savedSubmission },
         { status: 201 }
@@ -218,12 +260,20 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error: any) {
-    console.error("Erro ao salvar submissão MathQuest:", {
-      message: error?.message,
-      code: error?.code,
-      stack: error?.stack,
-      name: error?.name,
-    });
+    console.error("=== ERRO AO SALVAR SUBMISSÃO MATHQUEST ===");
+    console.error("Tipo do erro:", error?.constructor?.name);
+    console.error("Mensagem:", error?.message);
+    console.error("Código:", error?.code);
+    console.error("Nome:", error?.name);
+    console.error("Stack:", error?.stack);
+    
+    // Log adicional para erros do Firebase
+    if (error?.code) {
+      console.error("Código de erro do Firebase:", error.code);
+    }
+    if (error?.serverResponse) {
+      console.error("Resposta do servidor:", error.serverResponse);
+    }
     
     // Retornar mensagem de erro mais detalhada
     const errorMessage = error?.message || "Erro desconhecido ao salvar submissão";
@@ -238,6 +288,8 @@ export async function POST(request: NextRequest) {
           ? "Verifique as regras de segurança do Firestore"
           : errorCode === "unavailable"
           ? "Firestore temporariamente indisponível. Tente novamente."
+          : errorCode === "failed-precondition"
+          ? "Índice do Firestore não existe. Crie o índice necessário."
           : "Verifique os logs do servidor para mais detalhes"
       },
       { status: 500 }

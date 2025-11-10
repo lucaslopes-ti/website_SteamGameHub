@@ -39,14 +39,24 @@ if (typeof window !== "undefined") {
   auth = getAuth(app);
 } else {
   // Servidor - inicializar se necessário
-  if (!getApps().length) {
-    app = initializeApp(firebaseConfig);
-  } else {
-    app = getApps()[0];
+  try {
+    if (!getApps().length) {
+      // Verificar se todas as variáveis necessárias estão configuradas
+      if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+        console.warn("⚠️ Firebase config incompleto no servidor. Verifique as variáveis de ambiente.");
+      }
+      app = initializeApp(firebaseConfig);
+    } else {
+      app = getApps()[0];
+    }
+    storage = getStorage(app);
+    db = getFirestore(app);
+    auth = getAuth(app);
+  } catch (error: any) {
+    console.error("Erro ao inicializar Firebase no servidor:", error?.message);
+    // Em caso de erro, ainda tentar exportar (pode ser usado apenas no cliente)
+    throw error;
   }
-  storage = getStorage(app);
-  db = getFirestore(app);
-  auth = getAuth(app);
 }
 
 export { app, storage, db, auth };
