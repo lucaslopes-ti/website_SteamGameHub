@@ -21,7 +21,62 @@ async function saveSubmissionToFirestore(submission: MathQuestSubmission) {
   try {
     console.log("Iniciando salvamento no Firestore...");
     
-    // Verificar variáveis de ambiente
+    // Tentar usar Admin SDK primeiro (melhor para servidor)
+    const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+    if (serviceAccountKey) {
+      try {
+        const admin = await import("firebase-admin");
+        
+        // Inicializar Admin SDK se necessário
+        if (admin.apps.length === 0) {
+          try {
+            const serviceAccount = JSON.parse(serviceAccountKey);
+            admin.initializeApp({
+              credential: admin.credential.cert(serviceAccount),
+            });
+            console.log("Admin SDK inicializado");
+          } catch (parseError: any) {
+            console.error("Erro ao fazer parse do service account:", parseError?.message);
+            throw new Error(`Erro ao fazer parse do service account: ${parseError?.message || "Formato JSON inválido"}`);
+          }
+        }
+
+        const db = admin.firestore();
+        const submissionsRef = db.collection("atividades_mathquest");
+        
+        // Verificar se já existe uma submissão deste usuário
+        console.log("Buscando submissões existentes para userId:", submission.userId);
+        const existingDocs = await submissionsRef.where("userId", "==", submission.userId).get();
+        
+        const submissionData = {
+          ...submission,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        };
+
+        if (existingDocs.empty) {
+          // Primeira submissão
+          console.log("Criando nova submissão...");
+          const docRef = await submissionsRef.add({
+            ...submissionData,
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          });
+          console.log("Submissão criada com ID:", docRef.id);
+          return { id: docRef.id, ...submission };
+        } else {
+          // Atualizar submissão existente
+          console.log("Atualizando submissão existente...");
+          const existingDoc = existingDocs.docs[0];
+          await existingDoc.ref.update(submissionData);
+          console.log("Submissão atualizada com ID:", existingDoc.id);
+          return { id: existingDoc.id, ...submission };
+        }
+      } catch (adminError: any) {
+        console.warn("Admin SDK falhou, tentando Client SDK:", adminError?.message);
+        // Continuar para tentar Client SDK
+      }
+    }
+
+    // Fallback: usar Client SDK
     const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
     if (!projectId) {
       throw new Error("NEXT_PUBLIC_FIREBASE_PROJECT_ID não está configurado");
@@ -83,6 +138,49 @@ async function saveSubmissionToFirestore(submission: MathQuestSubmission) {
 
 async function getSubmissionsFromFirestore(userId?: string) {
   try {
+    // Tentar usar Admin SDK primeiro
+    const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+    if (serviceAccountKey) {
+      try {
+        const admin = await import("firebase-admin");
+        
+        if (admin.apps.length === 0) {
+          const serviceAccount = JSON.parse(serviceAccountKey);
+          admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount),
+          });
+        }
+
+        const db = admin.firestore();
+        let query = db.collection("atividades_mathquest");
+        
+        if (userId) {
+          query = query.where("userId", "==", userId);
+        }
+        
+        const snapshot = await query.get();
+        const submissions = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        // Ordenar manualmente
+        if (submissions.length > 0) {
+          submissions.sort((a: any, b: any) => {
+            const dateA = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
+            const dateB = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
+            return dateB - dateA; // Descendente
+          });
+        }
+
+        return submissions;
+      } catch (adminError: any) {
+        console.warn("Admin SDK falhou, tentando Client SDK:", adminError?.message);
+        // Continuar para tentar Client SDK
+      }
+    }
+
+    // Fallback: usar Client SDK
     const { db } = await import("@/lib/firebase/config");
     const { collection, query, where, getDocs, orderBy } =
       await import("firebase/firestore");
