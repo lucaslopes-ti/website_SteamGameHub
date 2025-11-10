@@ -358,7 +358,6 @@ export default function AtividadeMathQuestPage() {
                     accept="image/*"
                     onChange={(e) => handleImageChange("character", e)}
                     className="hidden"
-                    required
                   />
                   <label
                     htmlFor="characterArt"
@@ -409,7 +408,6 @@ export default function AtividadeMathQuestPage() {
                     accept="image/*"
                     onChange={(e) => handleImageChange("scenario", e)}
                     className="hidden"
-                    required
                   />
                   <label
                     htmlFor="scenarioArt"
