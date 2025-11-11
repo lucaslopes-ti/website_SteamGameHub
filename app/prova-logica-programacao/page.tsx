@@ -545,6 +545,7 @@ export default function ProvaLogicaProgramacaoPage() {
   const [provaVersion, setProvaVersion] = useState<number | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [hasInteracted, setHasInteracted] = useState<Record<string, boolean>>({});
   const [violations, setViolations] = useState<string[]>([]);
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -925,18 +926,38 @@ export default function ProvaLogicaProgramacaoPage() {
               </div>
               <div className="flex-1 overflow-hidden">
                 <CodeEditor
-                  value={answers[currentQ.id] || currentQ.template}
+                  value={
+                    // Se já interagiu com esta questão, usar a resposta (mesmo que vazia)
+                    // Caso contrário, mostrar o template inicial
+                    hasInteracted[currentQ.id] 
+                      ? (answers[currentQ.id] ?? "") 
+                      : (answers[currentQ.id] || currentQ.template)
+                  }
                   onChange={(code) => {
-                    // Se o código for diferente do template ou já houver resposta, salvar
-                    if (code !== currentQ.template || answers[currentQ.id]) {
-                      handleAnswerChange(currentQ.id, code);
-                    } else {
-                      // Se apagou tudo e voltou ao template, remover da lista de respostas
+                    const questionId = currentQ.id;
+                    // Marcar que o aluno interagiu com esta questão
+                    if (!hasInteracted[questionId]) {
+                      setHasInteracted((prev) => ({
+                        ...prev,
+                        [questionId]: true,
+                      }));
+                    }
+
+                    // Sempre salvar o código atual (mesmo que vazio)
+                    // Se for igual ao template e não houver resposta anterior, não salvar como resposta válida
+                    if (code.trim() === currentQ.template.trim() && !answers[questionId]) {
+                      // Não salvar template como resposta
                       setAnswers((prev) => {
                         const newAnswers = { ...prev };
-                        delete newAnswers[currentQ.id];
+                        delete newAnswers[questionId];
                         return newAnswers;
                       });
+                    } else {
+                      // Salvar a resposta (pode ser vazia se o aluno apagou tudo)
+                      setAnswers((prev) => ({
+                        ...prev,
+                        [questionId]: code,
+                      }));
                     }
                   }}
                   language="csharp"
