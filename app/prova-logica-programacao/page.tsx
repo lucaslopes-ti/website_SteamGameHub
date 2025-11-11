@@ -586,6 +586,22 @@ export default function ProvaLogicaProgramacaoPage() {
   };
 
   const handleAnswerChange = (questionId: string, code: string) => {
+    if (!provaVersion) return;
+    
+    // Não salvar se for apenas o template (sem modificações do aluno)
+    const questions = provaVersions[provaVersion];
+    const currentQ = questions.find(q => q.id === questionId);
+    
+    if (currentQ && code.trim() === currentQ.template.trim()) {
+      // Se o código for igual ao template, não salvar como resposta
+      setAnswers((prev) => {
+        const newAnswers = { ...prev };
+        delete newAnswers[questionId];
+        return newAnswers;
+      });
+      return;
+    }
+    
     setAnswers((prev) => ({
       ...prev,
       [questionId]: code,
@@ -635,7 +651,16 @@ export default function ProvaLogicaProgramacaoPage() {
     if (!provaVersion) return;
 
     const questions = provaVersions[provaVersion];
-    const unansweredQuestions = questions.filter((q) => !answers[q.id] || answers[q.id].trim() === "");
+    // Filtrar respostas que são apenas o template (não consideradas respostas válidas)
+    const validAnswers = Object.entries(answers).filter(([qId, code]) => {
+      const question = questions.find(q => q.id === qId);
+      return question && code && code.trim() !== "" && code.trim() !== question.template.trim();
+    });
+    
+    const unansweredQuestions = questions.filter((q) => {
+      const answer = answers[q.id];
+      return !answer || answer.trim() === "" || answer.trim() === q.template.trim();
+    });
 
     if (unansweredQuestions.length > 0) {
       const confirmSubmit = confirm(
@@ -809,7 +834,11 @@ export default function ProvaLogicaProgramacaoPage() {
           </div>
           <div className="flex flex-wrap gap-2">
             {questions.map((q, index) => {
-              const hasAnswer = answers[q.id] && answers[q.id].trim() !== "";
+              const answer = answers[q.id];
+              // Verificar se há resposta válida (diferente do template)
+              const hasValidAnswer = answer && 
+                                    answer.trim() !== "" && 
+                                    answer.trim() !== q.template.trim();
               return (
                 <button
                   key={q.id}
@@ -817,13 +846,13 @@ export default function ProvaLogicaProgramacaoPage() {
                   className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
                     index === currentQuestion
                       ? "bg-steam-blueLight text-white"
-                      : hasAnswer
+                      : hasValidAnswer
                       ? "bg-steam-green/20 text-steam-green border border-steam-green"
                       : "bg-steam-dark text-gray-300 border border-steam-blue hover:bg-steam-blue"
                   }`}
-                  title={`Questão ${q.id} - ${hasAnswer ? "Respondida" : "Não respondida"}`}
+                  title={`Questão ${q.id} - ${hasValidAnswer ? "Respondida" : "Não respondida"}`}
                 >
-                  {q.id} {hasAnswer && "✓"}
+                  {q.id} {hasValidAnswer && "✓"}
                 </button>
               );
             })}
@@ -881,17 +910,35 @@ export default function ProvaLogicaProgramacaoPage() {
                   <BookOpen className="w-4 h-4" />
                   Seu Código C#:
                 </label>
-                {answers[currentQ.id] && answers[currentQ.id].trim() !== "" && (
-                  <span className="text-xs text-steam-green flex items-center gap-1">
-                    <CheckCircle className="w-3 h-3" />
-                    Respondida
-                  </span>
-                )}
+                {(() => {
+                  const answer = answers[currentQ.id];
+                  const hasValidAnswer = answer && 
+                                        answer.trim() !== "" && 
+                                        answer.trim() !== currentQ.template.trim();
+                  return hasValidAnswer && (
+                    <span className="text-xs text-steam-green flex items-center gap-1">
+                      <CheckCircle className="w-3 h-3" />
+                      Respondida
+                    </span>
+                  );
+                })()}
               </div>
               <div className="flex-1 overflow-hidden">
                 <CodeEditor
                   value={answers[currentQ.id] || currentQ.template}
-                  onChange={(code) => handleAnswerChange(currentQ.id, code)}
+                  onChange={(code) => {
+                    // Se o código for diferente do template ou já houver resposta, salvar
+                    if (code !== currentQ.template || answers[currentQ.id]) {
+                      handleAnswerChange(currentQ.id, code);
+                    } else {
+                      // Se apagou tudo e voltou ao template, remover da lista de respostas
+                      setAnswers((prev) => {
+                        const newAnswers = { ...prev };
+                        delete newAnswers[currentQ.id];
+                        return newAnswers;
+                      });
+                    }
+                  }}
                   language="csharp"
                 />
               </div>

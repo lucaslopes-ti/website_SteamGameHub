@@ -131,15 +131,34 @@ export default function AntiCheatProtection({ onViolation, enabled = true }: Ant
 
     // Detectar clique com botão direito (menu de contexto)
     const handleContextMenu = (e: MouseEvent) => {
-      e.preventDefault();
-      handleViolation("menu_contexto");
+      // Permitir menu de contexto em elementos de código (para funcionalidades do navegador)
+      const target = e.target as HTMLElement;
+      const isCodeElement = target.closest('.code-editor-textarea') || 
+                           target.closest('.code-editor-highlight') ||
+                           target.closest('textarea') ||
+                           target.closest('input') ||
+                           target.tagName === "TEXTAREA" || 
+                           target.tagName === "INPUT";
+      
+      if (!isCodeElement) {
+        e.preventDefault();
+        handleViolation("menu_contexto");
+      }
     };
 
     // Detectar seleção de texto (tentativa de copiar)
     const handleSelectStart = (e: Event) => {
-      // Permitir seleção dentro de textareas e inputs, mas alertar sobre seleção fora
+      // Permitir seleção dentro de textareas, inputs e elementos de código
       const target = e.target as HTMLElement;
-      if (target.tagName !== "TEXTAREA" && target.tagName !== "INPUT") {
+      const isCodeElement = target.closest('.code-editor-textarea') || 
+                           target.closest('.code-editor-highlight') ||
+                           target.closest('textarea') ||
+                           target.closest('input') ||
+                           target.tagName === "TEXTAREA" || 
+                           target.tagName === "INPUT";
+      
+      if (!isCodeElement) {
+        e.preventDefault();
         handleViolation("selecao_texto");
       }
     };
@@ -227,6 +246,13 @@ export default function AntiCheatProtection({ onViolation, enabled = true }: Ant
   }, [enabled, isFullscreen]);
 
   const handleViolation = (type: string) => {
+    // Ignorar violações relacionadas a interações normais no editor
+    const ignoredTypes = ["selecao_texto"]; // Seleção de texto no editor é permitida
+    
+    if (ignoredTypes.includes(type)) {
+      return; // Não registrar violação para tipos ignorados
+    }
+    
     setViolationCount((prev) => {
       const newCount = prev + 1;
       
