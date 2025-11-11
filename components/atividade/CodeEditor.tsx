@@ -8,8 +8,30 @@ interface CodeEditorProps {
   language?: string;
 }
 
+// Função para escapar HTML (funciona no cliente e servidor)
+function escapeHtml(text: string): string {
+  if (typeof window === 'undefined') {
+    // Servidor: usar replace simples
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+  // Cliente: usar DOM
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Função simples de syntax highlighting para C#
 function highlightCSharp(code: string): string {
+  if (!code || code.trim() === "") return "";
+  
+  // Escapar HTML primeiro para evitar problemas
+  let highlighted = escapeHtml(code);
+
   // Palavras-chave C#
   const keywords = [
     "using", "namespace", "class", "static", "void", "Main", "int", "double", "float",
@@ -31,58 +53,56 @@ function highlightCSharp(code: string): string {
     "IndexOf", "Replace", "Split", "Join", "Trim", "ToUpper", "ToLower"
   ];
 
-  let highlighted = code;
-
-  // Destacar strings (entre aspas)
-  highlighted = highlighted.replace(
-    /"([^"\\]|\\.)*"/g,
-    '<span class="text-[#ce9178]">$&</span>'
-  );
-
-  // Destacar números
-  highlighted = highlighted.replace(
-    /\b(\d+\.?\d*)\b/g,
-    '<span class="text-[#b5cea8]">$1</span>'
-  );
-
-  // Destacar comentários de linha
-  highlighted = highlighted.replace(
-    /\/\/.*$/gm,
-    '<span class="text-[#6a9955]">$&</span>'
-  );
-
-  // Destacar comentários de bloco
-  highlighted = highlighted.replace(
-    /\/\*[\s\S]*?\*\//g,
-    '<span class="text-[#6a9955]">$&</span>'
-  );
-
-  // Destacar palavras-chave
+  // Destacar palavras-chave primeiro (antes de outras substituições)
   keywords.forEach((keyword) => {
-    const regex = new RegExp(`\\b${keyword}\\b`, "g");
+    const regex = new RegExp(`\\b${escapeHtml(keyword)}\\b`, "g");
     highlighted = highlighted.replace(
       regex,
-      `<span class="text-[#569cd6]">${keyword}</span>`
+      `<span style="color: #569cd6;">${escapeHtml(keyword)}</span>`
     );
   });
 
   // Destacar tipos
   types.forEach((type) => {
-    const regex = new RegExp(`\\b${type}\\b`, "g");
+    const regex = new RegExp(`\\b${escapeHtml(type)}\\b`, "g");
     highlighted = highlighted.replace(
       regex,
-      `<span class="text-[#4ec9b0]">${type}</span>`
+      `<span style="color: #4ec9b0;">${escapeHtml(type)}</span>`
     );
   });
 
   // Destacar métodos
   methods.forEach((method) => {
-    const regex = new RegExp(`\\.${method}\\b`, "g");
+    const regex = new RegExp(`\\.${escapeHtml(method)}\\b`, "g");
     highlighted = highlighted.replace(
       regex,
-      `<span class="text-[#dcdcaa]">.${method}</span>`
+      `<span style="color: #dcdcaa;">.${escapeHtml(method)}</span>`
     );
   });
+
+  // Destacar strings (entre aspas) - depois das palavras-chave para evitar conflitos
+  highlighted = highlighted.replace(
+    /&quot;([^&quot;\\]|\\.)*&quot;/g,
+    '<span style="color: #ce9178;">$&</span>'
+  );
+
+  // Destacar números
+  highlighted = highlighted.replace(
+    /\b(\d+\.?\d*)\b/g,
+    '<span style="color: #b5cea8;">$1</span>'
+  );
+
+  // Destacar comentários de linha
+  highlighted = highlighted.replace(
+    /\/\/.*$/gm,
+    '<span style="color: #6a9955;">$&</span>'
+  );
+
+  // Destacar comentários de bloco
+  highlighted = highlighted.replace(
+    /\/\*[\s\S]*?\*\//g,
+    '<span style="color: #6a9955;">$&</span>'
+  );
 
   return highlighted;
 }
@@ -97,10 +117,13 @@ export default function CodeEditor({
   const [highlightedCode, setHighlightedCode] = useState("");
 
   useEffect(() => {
-    if (language === "csharp") {
-      setHighlightedCode(highlightCSharp(value));
+    if (language === "csharp" && value) {
+      // Apenas destacar se houver conteúdo
+      const highlighted = highlightCSharp(value);
+      setHighlightedCode(highlighted);
     } else {
-      setHighlightedCode(value);
+      // Para outras linguagens ou valor vazio, usar texto puro (escapado)
+      setHighlightedCode(value || "");
     }
   }, [value, language]);
 
@@ -167,13 +190,13 @@ export default function CodeEditor({
           fontFamily: "Consolas, 'Courier New', monospace",
           lineHeight: "1.5",
         }}
-        dangerouslySetInnerHTML={{ __html: highlightedCode || value }}
+        dangerouslySetInnerHTML={{ __html: highlightedCode || "" }}
       />
 
-      {/* Textarea transparente (sobreposto) */}
+      {/* Textarea transparente (sobreposto) - sempre recebe texto puro */}
       <textarea
         ref={textareaRef}
-        value={value}
+        value={typeof value === 'string' ? value : ''}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         className="code-editor-textarea relative w-full h-full bg-transparent border-none rounded-lg p-4 font-mono text-sm text-transparent caret-[#d4d4d4] focus:outline-none resize-none overflow-auto whitespace-pre-wrap break-words"
