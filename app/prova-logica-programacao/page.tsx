@@ -1,0 +1,931 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useToast } from "@/components/ToastProvider";
+import CodeEditor from "@/components/atividade/CodeEditor";
+import AntiCheatProtection from "@/components/atividade/AntiCheatProtection";
+import { 
+  BookOpen, 
+  CheckCircle, 
+  AlertCircle, 
+  Save, 
+  Send,
+  Eye,
+  EyeOff,
+  Lock,
+  Clock
+} from "lucide-react";
+import { getLocalUserId, getLocalUserName, setLocalUserName } from "@/lib/local-user";
+
+// Tipos de questões
+interface Question {
+  id: string;
+  part: string;
+  partTitle: string;
+  title: string;
+  description: string;
+  examples: Array<{
+    input: string;
+    output: string;
+  }>;
+  template: string;
+  expectedOutput?: string; // Para validação automática (opcional)
+}
+
+// Versões da prova (3 versões diferentes)
+const provaVersions: Record<number, Question[]> = {
+  1: [
+    // PARTE 1: ESTRUTURA SEQUENCIAL
+    {
+      id: "1.1",
+      part: "PARTE 1",
+      partTitle: "ESTRUTURA SEQUENCIAL",
+      title: "Exercício 1.1: Cálculo de Valor a Pagar",
+      description: `Fazer um programa para ler o código de uma peça 1, o número de peças 1, o valor unitário de cada peça 1, o código de uma peça 2, o número de peças 2 e o valor unitário de cada peça 2. Calcule e mostre o valor a ser pago.`,
+      examples: [
+        { input: "12 1 5.30\n16 2 5.10", output: "VALOR A PAGAR: R$ 15.50" },
+        { input: "13 2 15.30\n161 4 5.20", output: "VALOR A PAGAR: R$ 51.40" },
+        { input: "1 1 15.10\n2 1 15.10", output: "VALOR A PAGAR: R$ 30.20" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "1.2",
+      part: "PARTE 1",
+      partTitle: "ESTRUTURA SEQUENCIAL",
+      title: "Exercício 1.2: Área do Círculo",
+      description: `Faça um programa para ler o valor do raio de um círculo, e depois mostrar o valor da área deste círculo com quatro casas decimais conforme exemplos.\n\nFórmula: A = π * r²\n\nConsidere o valor de π = 3.14159`,
+      examples: [
+        { input: "2.00", output: "A=12.5664" },
+        { input: "100.64", output: "A=31819.3103" },
+        { input: "150.00", output: "A=70685.7750" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "1.3",
+      part: "PARTE 1",
+      partTitle: "ESTRUTURA SEQUENCIAL",
+      title: "Exercício 1.3: Média Ponderada",
+      description: `Leia três valores (A, B e C) e calcule a média ponderada onde A tem peso 2, B tem peso 3 e C tem peso 5. Mostre o resultado com 1 casa decimal.`,
+      examples: [
+        { input: "5.0\n6.0\n7.0", output: "MEDIA = 6.3" },
+        { input: "10.0\n10.0\n5.0", output: "MEDIA = 8.3" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    // PARTE 2: ESTRUTURA CONDICIONAL
+    {
+      id: "2.1",
+      part: "PARTE 2",
+      partTitle: "ESTRUTURA CONDICIONAL",
+      title: "Exercício 2.1: Lanchonete",
+      description: `Com base na tabela de preços abaixo, faça um programa que leia o código de um item e a quantidade deste item. A seguir, calcule e mostre o valor da conta a pagar.\n\nTabela:\n1 - Cachorro Quente - R$ 4.00\n2 - X-Salada - R$ 4.50\n3 - X-Bacon - R$ 5.00\n4 - Torrada simples - R$ 2.00\n5 - Refrigerante - R$ 1.50`,
+      examples: [
+        { input: "3 2", output: "Total: R$ 10.00" },
+        { input: "2 3", output: "Total: R$ 13.50" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "2.2",
+      part: "PARTE 2",
+      partTitle: "ESTRUTURA CONDICIONAL",
+      title: "Exercício 2.2: Fórmula de Bhaskara",
+      description: `Ler os valores dos três coeficientes "a", "b" e "c" de uma equação do segundo grau (ax² + bx + c = 0). Em seguida, mostrar os valores das raízes da equação, conforme exemplos, usando a fórmula de Bhaskara. Se a equação não possuir raízes (o valor de "a" não pode ser zero, e o valor de "delta" não pode ser negativo), mostrar uma mensagem "Impossivel calcular".\n\nFórmula: x = (-b ± √Δ) / 2a onde: Δ = b² - 4ac`,
+      examples: [
+        { input: "10.0 20.1 5.1", output: "X1 = -0.29788\nX2 = -1.71212" },
+        { input: "0.0 20.0 5.0", output: "Impossivel calcular" },
+        { input: "10.3 203.0 5.0", output: "X1 = -0.02466\nX2 = -19.68408" },
+        { input: "10.0 3.0 5.0", output: "Impossivel calcular" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "2.3",
+      part: "PARTE 2",
+      partTitle: "ESTRUTURA CONDICIONAL",
+      title: "Exercício 2.3: Classificação de Idade",
+      description: `Leia a idade de uma pessoa e classifique-a como:\n- Criança: 0 a 12 anos\n- Adolescente: 13 a 17 anos\n- Adulto: 18 a 64 anos\n- Idoso: 65 anos ou mais\n\nMostre a classificação correspondente.`,
+      examples: [
+        { input: "10", output: "Crianca" },
+        { input: "15", output: "Adolescente" },
+        { input: "30", output: "Adulto" },
+        { input: "70", output: "Idoso" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    // PARTE 3: ESTRUTURAS REPETITIVAS
+    {
+      id: "3.1",
+      part: "PARTE 3",
+      partTitle: "ESTRUTURAS REPETITIVAS",
+      title: "Exercício 3.1: Validação de Senha",
+      description: `Escreva um programa que repita a leitura de uma senha até que ela seja válida. Para cada leitura de senha incorreta informada, escrever a mensagem "Senha Invalida". Quando a senha for informada corretamente deve ser impressa a mensagem "Acesso Permitido" e o algoritmo encerrado. Considere que a senha correta é o valor 2002.`,
+      examples: [
+        { input: "2200\n1020\n2022\n2002", output: "Senha Invalida\nSenha Invalida\nSenha Invalida\nAcesso Permitido" },
+        { input: "2020\n1031\n2002", output: "Senha Invalida\nSenha Invalida\nAcesso Permitido" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "3.2",
+      part: "PARTE 3",
+      partTitle: "ESTRUTURAS REPETITIVAS",
+      title: "Exercício 3.2: Valores no Intervalo",
+      description: `Leia um valor inteiro N. Este valor será a quantidade de valores inteiros X que serão lidos em seguida. Mostre quantos destes valores X estão dentro do intervalo [10,20] e quantos estão fora do intervalo, mostrando essas informações conforme exemplo (use a palavra "in" para dentro do intervalo, e "out" para fora do intervalo).`,
+      examples: [
+        { input: "5\n14\n123\n10\n-25\n32", output: "2 in\n3 out" },
+        { input: "4\n86\n35\n20\n7", output: "1 in\n3 out" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "3.3",
+      part: "PARTE 3",
+      partTitle: "ESTRUTURAS REPETITIVAS",
+      title: "Exercício 3.3: Soma de Números Pares",
+      description: `Leia um valor inteiro N. Em seguida, calcule e mostre a soma de todos os números pares de 1 até N (inclusive). Se N for menor que 2, mostre 0.`,
+      examples: [
+        { input: "10", output: "30" },
+        { input: "5", output: "6" },
+        { input: "1", output: "0" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    }
+  ],
+  2: [
+    // Versão 2 - Mesmas questões mas com valores diferentes
+    {
+      id: "1.1",
+      part: "PARTE 1",
+      partTitle: "ESTRUTURA SEQUENCIAL",
+      title: "Exercício 1.1: Cálculo de Valor a Pagar",
+      description: `Fazer um programa para ler o código de uma peça 1, o número de peças 1, o valor unitário de cada peça 1, o código de uma peça 2, o número de peças 2 e o valor unitário de cada peça 2. Calcule e mostre o valor a ser pago.`,
+      examples: [
+        { input: "10 2 3.50\n20 3 4.20", output: "VALOR A PAGAR: R$ 19.60" },
+        { input: "5 1 10.00\n15 2 8.50", output: "VALOR A PAGAR: R$ 27.00" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "1.2",
+      part: "PARTE 1",
+      partTitle: "ESTRUTURA SEQUENCIAL",
+      title: "Exercício 1.2: Área do Círculo",
+      description: `Faça um programa para ler o valor do raio de um círculo, e depois mostrar o valor da área deste círculo com quatro casas decimais conforme exemplos.\n\nFórmula: A = π * r²\n\nConsidere o valor de π = 3.14159`,
+      examples: [
+        { input: "3.50", output: "A=38.4845" },
+        { input: "50.25", output: "A=7927.7859" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "1.3",
+      part: "PARTE 1",
+      partTitle: "ESTRUTURA SEQUENCIAL",
+      title: "Exercício 1.3: Média Ponderada",
+      description: `Leia três valores (A, B e C) e calcule a média ponderada onde A tem peso 2, B tem peso 3 e C tem peso 5. Mostre o resultado com 1 casa decimal.`,
+      examples: [
+        { input: "7.5\n8.0\n6.5", output: "MEDIA = 7.3" },
+        { input: "9.0\n9.5\n8.0", output: "MEDIA = 8.8" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "2.1",
+      part: "PARTE 2",
+      partTitle: "ESTRUTURA CONDICIONAL",
+      title: "Exercício 2.1: Lanchonete",
+      description: `Com base na tabela de preços abaixo, faça um programa que leia o código de um item e a quantidade deste item. A seguir, calcule e mostre o valor da conta a pagar.\n\nTabela:\n1 - Cachorro Quente - R$ 4.00\n2 - X-Salada - R$ 4.50\n3 - X-Bacon - R$ 5.00\n4 - Torrada simples - R$ 2.00\n5 - Refrigerante - R$ 1.50`,
+      examples: [
+        { input: "1 4", output: "Total: R$ 16.00" },
+        { input: "5 5", output: "Total: R$ 7.50" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "2.2",
+      part: "PARTE 2",
+      partTitle: "ESTRUTURA CONDICIONAL",
+      title: "Exercício 2.2: Fórmula de Bhaskara",
+      description: `Ler os valores dos três coeficientes "a", "b" e "c" de uma equação do segundo grau (ax² + bx + c = 0). Em seguida, mostrar os valores das raízes da equação, conforme exemplos, usando a fórmula de Bhaskara. Se a equação não possuir raízes (o valor de "a" não pode ser zero, e o valor de "delta" não pode ser negativo), mostrar uma mensagem "Impossivel calcular".\n\nFórmula: x = (-b ± √Δ) / 2a onde: Δ = b² - 4ac`,
+      examples: [
+        { input: "5.0 10.0 2.0", output: "X1 = -0.22543\nX2 = -1.77457" },
+        { input: "0.0 5.0 3.0", output: "Impossivel calcular" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "2.3",
+      part: "PARTE 2",
+      partTitle: "ESTRUTURA CONDICIONAL",
+      title: "Exercício 2.3: Classificação de Idade",
+      description: `Leia a idade de uma pessoa e classifique-a como:\n- Criança: 0 a 12 anos\n- Adolescente: 13 a 17 anos\n- Adulto: 18 a 64 anos\n- Idoso: 65 anos ou mais\n\nMostre a classificação correspondente.`,
+      examples: [
+        { input: "8", output: "Crianca" },
+        { input: "16", output: "Adolescente" },
+        { input: "25", output: "Adulto" },
+        { input: "68", output: "Idoso" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "3.1",
+      part: "PARTE 3",
+      partTitle: "ESTRUTURAS REPETITIVAS",
+      title: "Exercício 3.1: Validação de Senha",
+      description: `Escreva um programa que repita a leitura de uma senha até que ela seja válida. Para cada leitura de senha incorreta informada, escrever a mensagem "Senha Invalida". Quando a senha for informada corretamente deve ser impressa a mensagem "Acesso Permitido" e o algoritmo encerrado. Considere que a senha correta é o valor 2002.`,
+      examples: [
+        { input: "1234\n5678\n2002", output: "Senha Invalida\nSenha Invalida\nAcesso Permitido" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "3.2",
+      part: "PARTE 3",
+      partTitle: "ESTRUTURAS REPETITIVAS",
+      title: "Exercício 3.2: Valores no Intervalo",
+      description: `Leia um valor inteiro N. Este valor será a quantidade de valores inteiros X que serão lidos em seguida. Mostre quantos destes valores X estão dentro do intervalo [10,20] e quantos estão fora do intervalo, mostrando essas informações conforme exemplo (use a palavra "in" para dentro do intervalo, e "out" para fora do intervalo).`,
+      examples: [
+        { input: "3\n15\n25\n5", output: "1 in\n2 out" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "3.3",
+      part: "PARTE 3",
+      partTitle: "ESTRUTURAS REPETITIVAS",
+      title: "Exercício 3.3: Soma de Números Pares",
+      description: `Leia um valor inteiro N. Em seguida, calcule e mostre a soma de todos os números pares de 1 até N (inclusive). Se N for menor que 2, mostre 0.`,
+      examples: [
+        { input: "8", output: "20" },
+        { input: "15", output: "56" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    }
+  ],
+  3: [
+    // Versão 3 - Mesmas questões mas com valores diferentes
+    {
+      id: "1.1",
+      part: "PARTE 1",
+      partTitle: "ESTRUTURA SEQUENCIAL",
+      title: "Exercício 1.1: Cálculo de Valor a Pagar",
+      description: `Fazer um programa para ler o código de uma peça 1, o número de peças 1, o valor unitário de cada peça 1, o código de uma peça 2, o número de peças 2 e o valor unitário de cada peça 2. Calcule e mostre o valor a ser pago.`,
+      examples: [
+        { input: "25 3 2.50\n30 1 6.00", output: "VALOR A PAGAR: R$ 13.50" },
+        { input: "8 4 1.25\n12 2 3.75", output: "VALOR A PAGAR: R$ 12.50" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "1.2",
+      part: "PARTE 1",
+      partTitle: "ESTRUTURA SEQUENCIAL",
+      title: "Exercício 1.2: Área do Círculo",
+      description: `Faça um programa para ler o valor do raio de um círculo, e depois mostrar o valor da área deste círculo com quatro casas decimais conforme exemplos.\n\nFórmula: A = π * r²\n\nConsidere o valor de π = 3.14159`,
+      examples: [
+        { input: "4.50", output: "A=63.6173" },
+        { input: "75.30", output: "A=17801.2800" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "1.3",
+      part: "PARTE 1",
+      partTitle: "ESTRUTURA SEQUENCIAL",
+      title: "Exercício 1.3: Média Ponderada",
+      description: `Leia três valores (A, B e C) e calcule a média ponderada onde A tem peso 2, B tem peso 3 e C tem peso 5. Mostre o resultado com 1 casa decimal.`,
+      examples: [
+        { input: "8.0\n7.5\n9.0", output: "MEDIA = 8.3" },
+        { input: "6.5\n7.0\n8.5", output: "MEDIA = 7.6" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "2.1",
+      part: "PARTE 2",
+      partTitle: "ESTRUTURA CONDICIONAL",
+      title: "Exercício 2.1: Lanchonete",
+      description: `Com base na tabela de preços abaixo, faça um programa que leia o código de um item e a quantidade deste item. A seguir, calcule e mostre o valor da conta a pagar.\n\nTabela:\n1 - Cachorro Quente - R$ 4.00\n2 - X-Salada - R$ 4.50\n3 - X-Bacon - R$ 5.00\n4 - Torrada simples - R$ 2.00\n5 - Refrigerante - R$ 1.50`,
+      examples: [
+        { input: "4 6", output: "Total: R$ 12.00" },
+        { input: "3 1", output: "Total: R$ 5.00" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "2.2",
+      part: "PARTE 2",
+      partTitle: "ESTRUTURA CONDICIONAL",
+      title: "Exercício 2.2: Fórmula de Bhaskara",
+      description: `Ler os valores dos três coeficientes "a", "b" e "c" de uma equação do segundo grau (ax² + bx + c = 0). Em seguida, mostrar os valores das raízes da equação, conforme exemplos, usando a fórmula de Bhaskara. Se a equação não possuir raízes (o valor de "a" não pode ser zero, e o valor de "delta" não pode ser negativo), mostrar uma mensagem "Impossivel calcular".\n\nFórmula: x = (-b ± √Δ) / 2a onde: Δ = b² - 4ac`,
+      examples: [
+        { input: "2.0 8.0 3.0", output: "X1 = -0.41886\nX2 = -3.58114" },
+        { input: "1.0 2.0 5.0", output: "Impossivel calcular" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "2.3",
+      part: "PARTE 2",
+      partTitle: "ESTRUTURA CONDICIONAL",
+      title: "Exercício 2.3: Classificação de Idade",
+      description: `Leia a idade de uma pessoa e classifique-a como:\n- Criança: 0 a 12 anos\n- Adolescente: 13 a 17 anos\n- Adulto: 18 a 64 anos\n- Idoso: 65 anos ou mais\n\nMostre a classificação correspondente.`,
+      examples: [
+        { input: "5", output: "Crianca" },
+        { input: "14", output: "Adolescente" },
+        { input: "40", output: "Adulto" },
+        { input: "75", output: "Idoso" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "3.1",
+      part: "PARTE 3",
+      partTitle: "ESTRUTURAS REPETITIVAS",
+      title: "Exercício 3.1: Validação de Senha",
+      description: `Escreva um programa que repita a leitura de uma senha até que ela seja válida. Para cada leitura de senha incorreta informada, escrever a mensagem "Senha Invalida". Quando a senha for informada corretamente deve ser impressa a mensagem "Acesso Permitido" e o algoritmo encerrado. Considere que a senha correta é o valor 2002.`,
+      examples: [
+        { input: "1111\n2222\n3333\n2002", output: "Senha Invalida\nSenha Invalida\nSenha Invalida\nAcesso Permitido" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "3.2",
+      part: "PARTE 3",
+      partTitle: "ESTRUTURAS REPETITIVAS",
+      title: "Exercício 3.2: Valores no Intervalo",
+      description: `Leia um valor inteiro N. Este valor será a quantidade de valores inteiros X que serão lidos em seguida. Mostre quantos destes valores X estão dentro do intervalo [10,20] e quantos estão fora do intervalo, mostrando essas informações conforme exemplo (use a palavra "in" para dentro do intervalo, e "out" para fora do intervalo).`,
+      examples: [
+        { input: "6\n12\n18\n25\n30\n5\n15", output: "3 in\n3 out" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    },
+    {
+      id: "3.3",
+      part: "PARTE 3",
+      partTitle: "ESTRUTURAS REPETITIVAS",
+      title: "Exercício 3.3: Soma de Números Pares",
+      description: `Leia um valor inteiro N. Em seguida, calcule e mostre a soma de todos os números pares de 1 até N (inclusive). Se N for menor que 2, mostre 0.`,
+      examples: [
+        { input: "12", output: "42" },
+        { input: "20", output: "110" }
+      ],
+      template: `using System;
+
+class Program {
+    static void Main() {
+        // Seu código aqui
+    }
+}`
+    }
+  ]
+};
+
+export default function ProvaLogicaProgramacaoPage() {
+  const { showToast } = useToast();
+  const [userId] = useState(() => getLocalUserId());
+  const [userName, setUserName] = useState(() => getLocalUserName());
+  const [studentId, setStudentId] = useState("");
+  const [showIdentification, setShowIdentification] = useState(true);
+  const [provaVersion, setProvaVersion] = useState<number | null>(null);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [violations, setViolations] = useState<string[]>([]);
+  const [startTime, setStartTime] = useState<Date | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
+
+  // Selecionar versão aleatória da prova baseada no ID do aluno
+  useEffect(() => {
+    if (studentId && !provaVersion) {
+      // Usar hash simples do studentId para determinar versão (1, 2 ou 3)
+      const hash = studentId.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      const version = (hash % 3) + 1;
+      setProvaVersion(version);
+    }
+  }, [studentId, provaVersion]);
+
+  // Auto-salvar respostas periodicamente
+  useEffect(() => {
+    if (!autoSaveEnabled || !provaVersion || Object.keys(answers).length === 0) return;
+
+    const autoSaveInterval = setInterval(() => {
+      saveAnswers(false);
+    }, 30000); // Salvar a cada 30 segundos
+
+    return () => clearInterval(autoSaveInterval);
+  }, [answers, provaVersion, autoSaveEnabled]);
+
+  const handleIdentificationSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!studentId.trim()) {
+      showToast("Por favor, informe sua identificação", "warning");
+      return;
+    }
+    setShowIdentification(false);
+    setStartTime(new Date());
+    setLocalUserName(studentId.trim());
+    setUserName(studentId.trim());
+    showToast("Prova iniciada! Boa sorte!", "success");
+  };
+
+  const handleAnswerChange = (questionId: string, code: string) => {
+    setAnswers((prev) => ({
+      ...prev,
+      [questionId]: code,
+    }));
+  };
+
+  const handleViolation = (type: string) => {
+    setViolations((prev) => {
+      if (!prev.includes(type)) {
+        return [...prev, type];
+      }
+      return prev;
+    });
+  };
+
+  const saveAnswers = async (showMessage = true) => {
+    if (!provaVersion) return;
+
+    try {
+      const response = await fetch("/api/prova-logica-programacao", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          studentId,
+          userName,
+          provaVersion,
+          answers,
+          violations,
+          startTime: startTime?.toISOString(),
+          lastSaved: new Date().toISOString(),
+        }),
+      });
+
+      if (response.ok && showMessage) {
+        showToast("Respostas salvas automaticamente", "success");
+      }
+    } catch (error) {
+      console.error("Erro ao salvar respostas:", error);
+      if (showMessage) {
+        showToast("Erro ao salvar respostas", "error");
+      }
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!provaVersion) return;
+
+    const questions = provaVersions[provaVersion];
+    const unansweredQuestions = questions.filter((q) => !answers[q.id] || answers[q.id].trim() === "");
+
+    if (unansweredQuestions.length > 0) {
+      const confirmSubmit = confirm(
+        `Você ainda não respondeu ${unansweredQuestions.length} questão(ões). Deseja enviar mesmo assim?`
+      );
+      if (!confirmSubmit) return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const endTime = new Date();
+      const response = await fetch("/api/prova-logica-programacao", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          studentId,
+          userName,
+          provaVersion,
+          answers,
+          violations,
+          startTime: startTime?.toISOString(),
+          endTime: endTime.toISOString(),
+          submitted: true,
+        }),
+      });
+
+      if (response.ok) {
+        setSubmitted(true);
+        showToast("Prova enviada com sucesso! 🎉", "success");
+      } else {
+        throw new Error("Erro ao enviar prova");
+      }
+    } catch (error) {
+      console.error("Erro ao enviar prova:", error);
+      showToast("Erro ao enviar prova. Tente novamente.", "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const questions = provaVersion ? provaVersions[provaVersion] : [];
+  const currentQ = questions[currentQuestion];
+
+  if (showIdentification) {
+    return (
+      <div className="min-h-screen bg-steam-dark flex items-center justify-center p-4">
+        <div className="bg-steam-darker border border-steam-blue rounded-lg p-8 max-w-md w-full">
+          <div className="text-center mb-6">
+            <BookOpen className="w-16 h-16 text-steam-blueLight mx-auto mb-4" />
+            <h1 className="text-3xl font-bold text-white mb-2">Prova de Lógica de Programação</h1>
+            <p className="text-gray-300">Avaliação de Conhecimentos em C#</p>
+          </div>
+
+          <div className="bg-yellow-900/20 border border-yellow-600 rounded-lg p-4 mb-6">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-yellow-200">
+                <p className="font-semibold mb-1">Instruções Importantes:</p>
+                <ul className="list-disc list-inside space-y-1 text-yellow-100">
+                  <li>Esta prova serve para avaliar se você precisa fazer um curso de Lógica de Programação</li>
+                  <li>Você receberá uma versão única da prova</li>
+                  <li>O sistema detecta tentativas de cola</li>
+                  <li>As respostas são salvas automaticamente</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <form onSubmit={handleIdentificationSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="studentId" className="block text-sm font-semibold text-white mb-2">
+                Identificação do Aluno <span className="text-red-400">*</span>
+              </label>
+              <input
+                type="text"
+                id="studentId"
+                value={studentId}
+                onChange={(e) => setStudentId(e.target.value)}
+                placeholder="Digite seu nome ou número de matrícula"
+                className="w-full bg-steam-dark border border-steam-blue rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight"
+                required
+                autoFocus
+              />
+              <p className="text-xs text-gray-400 mt-1">
+                Use seu nome completo ou número de matrícula para identificação
+              </p>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-steam-blueLight to-steam-green text-white rounded-lg px-6 py-3 font-semibold hover:shadow-lg transition-all"
+            >
+              Iniciar Prova
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  if (submitted) {
+    return (
+      <div className="min-h-screen bg-steam-dark flex items-center justify-center p-4">
+        <div className="bg-steam-darker border-2 border-steam-green rounded-lg p-8 max-w-md w-full text-center">
+          <CheckCircle className="w-16 h-16 text-steam-green mx-auto mb-4" />
+          <h2 className="text-3xl font-bold text-white mb-2">Prova Enviada com Sucesso! 🎉</h2>
+          <p className="text-gray-300 mb-6">
+            Suas respostas foram salvas e serão avaliadas pelo professor.
+          </p>
+          <div className="bg-steam-dark rounded-lg p-4 mb-6">
+            <p className="text-sm text-gray-400">
+              <strong className="text-steam-blueLight">Aluno:</strong> {studentId}
+            </p>
+            <p className="text-sm text-gray-400 mt-2">
+              <strong className="text-steam-blueLight">Versão da Prova:</strong> {provaVersion}
+            </p>
+            {violations.length > 0 && (
+              <p className="text-sm text-yellow-400 mt-2">
+                <strong>Avisos de Segurança:</strong> {violations.length} evento(s) registrado(s)
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-steam-dark">
+      <AntiCheatProtection onViolation={handleViolation} enabled={true} />
+
+      <div className="container mx-auto px-4 py-6">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-steam-blue via-steam-blueLight to-steam-green rounded-lg p-4 mb-4 text-white">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div>
+              <h1 className="text-2xl font-bold">Prova de Lógica de Programação</h1>
+              <p className="text-sm text-gray-200">
+                Aluno: <strong>{studentId}</strong> | Versão: <strong>{provaVersion}</strong>
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              {violations.length > 0 && (
+                <div className="flex items-center gap-2 text-yellow-300">
+                  <AlertCircle className="w-5 h-5" />
+                  <span className="text-sm">{violations.length} aviso(s)</span>
+                </div>
+              )}
+              <button
+                onClick={() => saveAnswers(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-steam-blue hover:bg-steam-blueLight rounded-lg transition-colors"
+              >
+                <Save className="w-4 h-4" />
+                <span className="text-sm">Salvar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Navegação de Questões */}
+        <div className="bg-steam-darker border border-steam-blue rounded-lg p-4 mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-lg font-semibold text-white">Questões</h2>
+            <div className="flex items-center gap-2 text-sm text-gray-400">
+              <Clock className="w-4 h-4" />
+              {startTime && (
+                <span>
+                  Tempo: {Math.floor((Date.now() - startTime.getTime()) / 60000)} min
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {questions.map((q, index) => {
+              const hasAnswer = answers[q.id] && answers[q.id].trim() !== "";
+              return (
+                <button
+                  key={q.id}
+                  onClick={() => setCurrentQuestion(index)}
+                  className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                    index === currentQuestion
+                      ? "bg-steam-blueLight text-white"
+                      : hasAnswer
+                      ? "bg-steam-green/20 text-steam-green border border-steam-green"
+                      : "bg-steam-dark text-gray-300 border border-steam-blue hover:bg-steam-blue"
+                  }`}
+                >
+                  {q.id} {hasAnswer && "✓"}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Questão Atual */}
+        {currentQ && (
+          <div className="bg-steam-darker border border-steam-blue rounded-lg p-6 mb-4">
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="px-3 py-1 bg-steam-blue text-white rounded-lg text-sm font-semibold">
+                  {currentQ.part}
+                </span>
+                <span className="text-sm text-gray-400">{currentQ.partTitle}</span>
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">{currentQ.title}</h3>
+              <p className="text-gray-300 whitespace-pre-line mb-4">{currentQ.description}</p>
+
+              {/* Exemplos */}
+              <div className="bg-steam-dark rounded-lg p-4 mb-4">
+                <h4 className="text-sm font-semibold text-steam-blueLight mb-2">Exemplos:</h4>
+                <div className="space-y-3">
+                  {currentQ.examples.map((ex, idx) => (
+                    <div key={idx} className="border-l-2 border-steam-blue pl-3">
+                      <p className="text-xs text-gray-400 mb-1">
+                        <strong>Entrada:</strong>
+                      </p>
+                      <pre className="text-sm text-gray-300 bg-steam-darker p-2 rounded mb-2">
+                        {ex.input}
+                      </pre>
+                      <p className="text-xs text-gray-400 mb-1">
+                        <strong>Saída:</strong>
+                      </p>
+                      <pre className="text-sm text-steam-green bg-steam-darker p-2 rounded">
+                        {ex.output}
+                      </pre>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Editor de Código */}
+            <div>
+              <label className="block text-sm font-semibold text-white mb-2">
+                Seu Código C#:
+              </label>
+              <CodeEditor
+                value={answers[currentQ.id] || currentQ.template}
+                onChange={(code) => handleAnswerChange(currentQ.id, code)}
+                language="csharp"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Botões de Navegação e Envio */}
+        <div className="flex items-center justify-between">
+          <div className="flex gap-2">
+            <button
+              onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}
+              disabled={currentQuestion === 0}
+              className="px-4 py-2 bg-steam-dark border border-steam-blue text-white rounded-lg hover:bg-steam-blue disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Anterior
+            </button>
+            <button
+              onClick={() => setCurrentQuestion(Math.min(questions.length - 1, currentQuestion + 1))}
+              disabled={currentQuestion === questions.length - 1}
+              className="px-4 py-2 bg-steam-dark border border-steam-blue text-white rounded-lg hover:bg-steam-blue disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Próxima
+            </button>
+          </div>
+
+          <button
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-steam-green to-steam-blueLight text-white rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSubmitting ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>Enviando...</span>
+              </>
+            ) : (
+              <>
+                <Send className="w-5 h-5" />
+                <span>Enviar Prova</span>
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
