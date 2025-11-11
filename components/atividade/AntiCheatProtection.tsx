@@ -144,21 +144,34 @@ export default function AntiCheatProtection({ onViolation, enabled = true }: Ant
       }
     };
 
-    // Detectar tentativa de copiar (Ctrl+C fora de campos de texto)
+    // Bloquear completamente Ctrl+C e Ctrl+V (mesmo em campos de texto)
     const handleCopy = (e: ClipboardEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.tagName !== "TEXTAREA" && target.tagName !== "INPUT") {
-        e.preventDefault();
-        handleViolation("tentativa_copia");
-      }
+      e.preventDefault();
+      handleViolation("tentativa_copia");
     };
 
-    // Detectar tentativa de colar (Ctrl+V fora de campos de texto)
+    // Bloquear completamente Ctrl+C e Ctrl+V (mesmo em campos de texto)
     const handlePaste = (e: ClipboardEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.tagName !== "TEXTAREA" && target.tagName !== "INPUT") {
+      e.preventDefault();
+      handleViolation("tentativa_cola");
+    };
+
+    // Bloquear Ctrl+C e Ctrl+V via teclado também
+    const handleCopyPasteKeys = (e: KeyboardEvent) => {
+      // Ctrl+C ou Cmd+C
+      if ((e.ctrlKey || e.metaKey) && e.key === "c") {
         e.preventDefault();
-        handleViolation("tentativa_cola");
+        handleViolation("ctrl_c");
+      }
+      // Ctrl+V ou Cmd+V
+      if ((e.ctrlKey || e.metaKey) && e.key === "v") {
+        e.preventDefault();
+        handleViolation("ctrl_v");
+      }
+      // Ctrl+X ou Cmd+X (cortar)
+      if ((e.ctrlKey || e.metaKey) && e.key === "x") {
+        e.preventDefault();
+        handleViolation("ctrl_x");
       }
     };
 
@@ -172,10 +185,12 @@ export default function AntiCheatProtection({ onViolation, enabled = true }: Ant
     document.addEventListener("MSFullscreenChange", handleFullscreenChange);
     document.addEventListener("keydown", handleKeyDown);
     document.addEventListener("keydown", handleDevTools);
+    document.addEventListener("keydown", handleCopyPasteKeys);
     document.addEventListener("contextmenu", handleContextMenu);
     document.addEventListener("selectstart", handleSelectStart);
     document.addEventListener("copy", handleCopy);
     document.addEventListener("paste", handlePaste);
+    document.addEventListener("cut", handleCopy); // Bloquear cortar também
 
     // Verificar periodicamente se a aba está visível
     const visibilityCheckInterval = setInterval(() => {
@@ -198,10 +213,12 @@ export default function AntiCheatProtection({ onViolation, enabled = true }: Ant
       document.removeEventListener("MSFullscreenChange", handleFullscreenChange);
       document.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("keydown", handleDevTools);
+      document.removeEventListener("keydown", handleCopyPasteKeys);
       document.removeEventListener("contextmenu", handleContextMenu);
       document.removeEventListener("selectstart", handleSelectStart);
       document.removeEventListener("copy", handleCopy);
       document.removeEventListener("paste", handlePaste);
+      document.removeEventListener("cut", handleCopy);
       clearInterval(visibilityCheckInterval);
       if (violationTimeoutRef.current) {
         clearTimeout(violationTimeoutRef.current);

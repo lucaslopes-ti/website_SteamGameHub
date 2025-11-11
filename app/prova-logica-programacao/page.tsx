@@ -9,11 +9,7 @@ import {
   CheckCircle, 
   AlertCircle, 
   Save, 
-  Send,
-  Eye,
-  EyeOff,
-  Lock,
-  Clock
+  Send
 } from "lucide-react";
 import { getLocalUserId, getLocalUserName, setLocalUserName } from "@/lib/local-user";
 
@@ -703,8 +699,10 @@ export default function ProvaLogicaProgramacaoPage() {
                 <ul className="list-disc list-inside space-y-1 text-yellow-100">
                   <li>Esta prova serve para avaliar se você precisa fazer um curso de Lógica de Programação</li>
                   <li>Você receberá uma versão única da prova</li>
+                  <li>Você pode navegar livremente entre as questões - não há limite de tempo</li>
                   <li>O sistema detecta tentativas de cola</li>
                   <li>As respostas são salvas automaticamente</li>
+                  <li><strong className="text-red-300">ATENÇÃO:</strong> Ctrl+C, Ctrl+V e Ctrl+X estão bloqueados durante a prova</li>
                 </ul>
               </div>
             </div>
@@ -805,14 +803,9 @@ export default function ProvaLogicaProgramacaoPage() {
         <div className="bg-steam-darker border border-steam-blue rounded-lg p-4 mb-4">
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-lg font-semibold text-white">Questões</h2>
-            <div className="flex items-center gap-2 text-sm text-gray-400">
-              <Clock className="w-4 h-4" />
-              {startTime && (
-                <span>
-                  Tempo: {Math.floor((Date.now() - startTime.getTime()) / 60000)} min
-                </span>
-              )}
-            </div>
+            <p className="text-xs text-gray-400">
+              Você pode navegar livremente entre as questões
+            </p>
           </div>
           <div className="flex flex-wrap gap-2">
             {questions.map((q, index) => {
@@ -828,6 +821,7 @@ export default function ProvaLogicaProgramacaoPage() {
                       ? "bg-steam-green/20 text-steam-green border border-steam-green"
                       : "bg-steam-dark text-gray-300 border border-steam-blue hover:bg-steam-blue"
                   }`}
+                  title={`Questão ${q.id} - ${hasAnswer ? "Respondida" : "Não respondida"}`}
                 >
                   {q.id} {hasAnswer && "✓"}
                 </button>
@@ -836,35 +830,42 @@ export default function ProvaLogicaProgramacaoPage() {
           </div>
         </div>
 
-        {/* Questão Atual */}
+        {/* Questão Atual - Layout Lado a Lado */}
         {currentQ && (
-          <div className="bg-steam-darker border border-steam-blue rounded-lg p-6 mb-4">
-            <div className="mb-4">
-              <div className="flex items-center gap-2 mb-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 h-[calc(100vh-300px)]">
+            {/* Coluna Esquerda: Enunciado da Questão */}
+            <div className="bg-steam-darker border border-steam-blue rounded-lg p-6 overflow-y-auto">
+              <div className="flex items-center gap-2 mb-3">
                 <span className="px-3 py-1 bg-steam-blue text-white rounded-lg text-sm font-semibold">
                   {currentQ.part}
                 </span>
                 <span className="text-sm text-gray-400">{currentQ.partTitle}</span>
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">{currentQ.title}</h3>
-              <p className="text-gray-300 whitespace-pre-line mb-4">{currentQ.description}</p>
+              <h3 className="text-xl font-bold text-white mb-3">{currentQ.title}</h3>
+              <p className="text-gray-300 whitespace-pre-line mb-4 leading-relaxed">{currentQ.description}</p>
 
               {/* Exemplos */}
-              <div className="bg-steam-dark rounded-lg p-4 mb-4">
-                <h4 className="text-sm font-semibold text-steam-blueLight mb-2">Exemplos:</h4>
+              <div className="bg-steam-dark rounded-lg p-4">
+                <h4 className="text-sm font-semibold text-steam-blueLight mb-3 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4" />
+                  Exemplos:
+                </h4>
                 <div className="space-y-3">
                   {currentQ.examples.map((ex, idx) => (
                     <div key={idx} className="border-l-2 border-steam-blue pl-3">
+                      <p className="text-xs text-gray-400 mb-1 font-semibold">
+                        Exemplo {idx + 1}:
+                      </p>
                       <p className="text-xs text-gray-400 mb-1">
                         <strong>Entrada:</strong>
                       </p>
-                      <pre className="text-sm text-gray-300 bg-steam-darker p-2 rounded mb-2">
+                      <pre className="text-xs text-gray-300 bg-steam-darker p-2 rounded mb-2 font-mono overflow-x-auto">
                         {ex.input}
                       </pre>
                       <p className="text-xs text-gray-400 mb-1">
                         <strong>Saída:</strong>
                       </p>
-                      <pre className="text-sm text-steam-green bg-steam-darker p-2 rounded">
+                      <pre className="text-xs text-steam-green bg-steam-darker p-2 rounded font-mono overflow-x-auto">
                         {ex.output}
                       </pre>
                     </div>
@@ -873,16 +874,27 @@ export default function ProvaLogicaProgramacaoPage() {
               </div>
             </div>
 
-            {/* Editor de Código */}
-            <div>
-              <label className="block text-sm font-semibold text-white mb-2">
-                Seu Código C#:
-              </label>
-              <CodeEditor
-                value={answers[currentQ.id] || currentQ.template}
-                onChange={(code) => handleAnswerChange(currentQ.id, code)}
-                language="csharp"
-              />
+            {/* Coluna Direita: Editor de Código (Maior) */}
+            <div className="bg-steam-darker border border-steam-blue rounded-lg p-4 flex flex-col overflow-hidden">
+              <div className="flex items-center justify-between mb-3">
+                <label className="text-sm font-semibold text-white flex items-center gap-2">
+                  <BookOpen className="w-4 h-4" />
+                  Seu Código C#:
+                </label>
+                {answers[currentQ.id] && answers[currentQ.id].trim() !== "" && (
+                  <span className="text-xs text-steam-green flex items-center gap-1">
+                    <CheckCircle className="w-3 h-3" />
+                    Respondida
+                  </span>
+                )}
+              </div>
+              <div className="flex-1 overflow-hidden">
+                <CodeEditor
+                  value={answers[currentQ.id] || currentQ.template}
+                  onChange={(code) => handleAnswerChange(currentQ.id, code)}
+                  language="csharp"
+                />
+              </div>
             </div>
           </div>
         )}
