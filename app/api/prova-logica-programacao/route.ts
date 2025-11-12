@@ -110,8 +110,13 @@ async function saveSubmissionToFirestore(submission: ProvaSubmission) {
           throw queryError;
         }
         
+        // Remover campos undefined (Firestore não aceita undefined)
+        const cleanSubmission = Object.fromEntries(
+          Object.entries(submission).filter(([_, value]) => value !== undefined)
+        );
+        
         const submissionData = {
-          ...submission,
+          ...cleanSubmission,
           updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         };
 
@@ -198,8 +203,13 @@ async function saveSubmissionToFirestore(submission: ProvaSubmission) {
       const q = query(submissionsRef, where("studentId", "==", submission.studentId));
       const snapshot = await getDocs(q);
 
+      // Remover campos undefined (Firestore não aceita undefined)
+      const cleanSubmission = Object.fromEntries(
+        Object.entries(submission).filter(([_, value]) => value !== undefined)
+      );
+      
       const submissionData = {
-        ...submission,
+        ...cleanSubmission,
         updatedAt: serverTimestamp(),
       };
 
