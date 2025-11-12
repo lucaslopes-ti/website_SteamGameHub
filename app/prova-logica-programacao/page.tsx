@@ -9,7 +9,10 @@ import {
   CheckCircle, 
   AlertCircle, 
   Save, 
-  Send
+  Send,
+  Clock,
+  FileText,
+  X
 } from "lucide-react";
 import { getLocalUserId, getLocalUserName, setLocalUserName } from "@/lib/local-user";
 
@@ -551,6 +554,9 @@ export default function ProvaLogicaProgramacaoPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [elapsedTime, setElapsedTime] = useState(0);
 
   // Selecionar versão aleatória da prova baseada no ID do aluno
   useEffect(() => {
@@ -566,12 +572,40 @@ export default function ProvaLogicaProgramacaoPage() {
   useEffect(() => {
     if (!autoSaveEnabled || !provaVersion || Object.keys(answers).length === 0) return;
 
-    const autoSaveInterval = setInterval(() => {
-      saveAnswers(false);
+    const autoSaveInterval = setInterval(async () => {
+      await saveAnswers(false);
+      setLastSaved(new Date());
     }, 30000); // Salvar a cada 30 segundos
 
     return () => clearInterval(autoSaveInterval);
   }, [answers, provaVersion, autoSaveEnabled]);
+
+  // Contador de tempo decorrido
+  useEffect(() => {
+    if (!startTime || submitted) return;
+
+    const timeInterval = setInterval(() => {
+      if (startTime) {
+        const elapsed = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+        setElapsedTime(elapsed);
+      }
+    }, 1000);
+
+    return () => clearInterval(timeInterval);
+  }, [startTime, submitted]);
+
+  // Prevenir saída acidental da página
+  useEffect(() => {
+    if (submitted || showIdentification) return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [submitted, showIdentification]);
 
   const handleIdentificationSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -639,6 +673,7 @@ export default function ProvaLogicaProgramacaoPage() {
 
       if (response.ok) {
         const data = await response.json();
+        setLastSaved(new Date());
         if (showMessage) {
           if (data.warning) {
             // Não mostrar aviso para auto-salvamento, apenas para envio final
@@ -676,12 +711,16 @@ export default function ProvaLogicaProgramacaoPage() {
     });
 
     if (unansweredQuestions.length > 0) {
-      const confirmSubmit = confirm(
-        `Você ainda não respondeu ${unansweredQuestions.length} questão(ões). Deseja enviar mesmo assim?`
-      );
-      if (!confirmSubmit) return;
+      setShowConfirmModal(true);
+      return;
     }
 
+    handleFinalSubmit();
+  };
+
+  const handleFinalSubmit = async () => {
+    if (!provaVersion) return;
+    setShowConfirmModal(false);
     setIsSubmitting(true);
 
     try {
@@ -728,6 +767,35 @@ export default function ProvaLogicaProgramacaoPage() {
 
   const questions = provaVersion ? provaVersions[provaVersion] : [];
   const currentQ = questions[currentQuestion];
+  
+  // Calcular progresso
+  const answeredCount = questions.filter((q) => {
+    const answer = answers[q.id];
+    return answer && answer.trim() !== "" && answer.trim() !== q.template.trim();
+  }).length;
+  
+  const progressPercentage = questions.length > 0 ? (answeredCount / questions.length) * 100 : 0;
+  
+  // Formatar tempo decorrido
+  const formatTime = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    if (hours > 0) {
+      return `${hours}:${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+    }
+    return `${minutes}:${secs.toString().padStart(2, "0")}`;
+  };
+  
+  // Formatar última vez salvo
+  const formatLastSaved = () => {
+    if (!lastSaved) return null;
+    const now = new Date();
+    const diff = Math.floor((now.getTime() - lastSaved.getTime()) / 1000);
+    if (diff < 60) return "agora mesmo";
+    if (diff < 3600) return `há ${Math.floor(diff / 60)} min`;
+    return `há ${Math.floor(diff / 3600)} h`;
+  };
 
   if (showIdentification) {
     return (
@@ -745,7 +813,6 @@ export default function ProvaLogicaProgramacaoPage() {
               <div className="text-sm text-yellow-200">
                 <p className="font-semibold mb-1">Instruções Importantes:</p>
                 <ul className="list-disc list-inside space-y-1 text-yellow-100">
-                  <li>Esta prova serve para avaliar se você precisa fazer um curso de Lógica de Programação</li>
                   <li>Você receberá uma versão única da prova</li>
                   <li>Você pode navegar livremente entre as questões - não há limite de tempo</li>
                   <li>O sistema detecta tentativas de cola</li>
@@ -829,7 +896,20 @@ export default function ProvaLogicaProgramacaoPage() {
                 Aluno: <strong>{studentId}</strong> | Versão: <strong>{provaVersion}</strong>
               </p>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 flex-wrap">
+              <div className="flex items-center gap-2 text-white/90">
+                <Clock className="w-4 h-4" />
+                <span className="text-sm">{formatTime(elapsedTime)}</span>
+              </div>
+              <div className="flex items-center gap-2 text-white/90">
+                <FileText className="w-4 h-4" />
+                <span className="text-sm">{answeredCount}/{questions.length} respondidas</span>
+              </div>
+              {lastSaved && (
+                <div className="text-xs text-white/70">
+                  Salvo {formatLastSaved()}
+                </div>
+              )}
               {violations.length > 0 && (
                 <div className="flex items-center gap-2 text-yellow-300">
                   <AlertCircle className="w-5 h-5" />
@@ -843,6 +923,20 @@ export default function ProvaLogicaProgramacaoPage() {
                 <Save className="w-4 h-4" />
                 <span className="text-sm">Salvar</span>
               </button>
+            </div>
+          </div>
+          
+          {/* Barra de Progresso */}
+          <div className="mt-3">
+            <div className="flex items-center justify-between text-xs text-white/80 mb-1">
+              <span>Progresso: {answeredCount} de {questions.length} questões</span>
+              <span>{Math.round(progressPercentage)}%</span>
+            </div>
+            <div className="w-full bg-steam-dark/50 rounded-full h-2">
+              <div
+                className="bg-white rounded-full h-2 transition-all duration-300"
+                style={{ width: `${progressPercentage}%` }}
+              />
             </div>
           </div>
         </div>
@@ -1027,6 +1121,47 @@ export default function ProvaLogicaProgramacaoPage() {
           </button>
         </div>
       </div>
+
+      {/* Modal de Confirmação */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-steam-darker border-2 border-yellow-600 rounded-lg p-6 max-w-md w-full">
+            <div className="flex items-start gap-3 mb-4">
+              <AlertCircle className="w-6 h-6 text-yellow-400 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-white mb-2">Confirmar Envio</h3>
+                <p className="text-gray-300 mb-4">
+                  Você ainda não respondeu {questions.filter((q) => {
+                    const answer = answers[q.id];
+                    return !answer || answer.trim() === "" || answer.trim() === q.template.trim();
+                  }).length} questão(ões). Deseja enviar mesmo assim?
+                </p>
+              </div>
+              <button
+                onClick={() => setShowConfirmModal(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowConfirmModal(false)}
+                className="flex-1 px-4 py-2 bg-steam-dark border border-steam-blue text-white rounded-lg hover:bg-steam-blue transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleFinalSubmit}
+                disabled={isSubmitting}
+                className="flex-1 px-4 py-2 bg-gradient-to-r from-steam-green to-steam-blueLight text-white rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? "Enviando..." : "Sim, Enviar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
