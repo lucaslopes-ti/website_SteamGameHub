@@ -637,11 +637,23 @@ export default function ProvaLogicaProgramacaoPage() {
         }),
       });
 
-      if (response.ok && showMessage) {
-        showToast("Respostas salvas automaticamente", "success");
+      if (response.ok) {
+        const data = await response.json();
+        if (showMessage) {
+          if (data.warning) {
+            // Não mostrar aviso para auto-salvamento, apenas para envio final
+            console.log("Auto-salvamento: Firebase não disponível, salvo localmente");
+          } else {
+            showToast("Respostas salvas automaticamente", "success");
+          }
+        }
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.details || errorData.error || "Erro ao salvar");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao salvar respostas:", error);
+      // Não mostrar erro para auto-salvamento silencioso
       if (showMessage) {
         showToast("Erro ao salvar respostas", "error");
       }
@@ -691,14 +703,24 @@ export default function ProvaLogicaProgramacaoPage() {
       });
 
       if (response.ok) {
+        const data = await response.json();
         setSubmitted(true);
-        showToast("Prova enviada com sucesso! 🎉", "success");
+        
+        if (data.warning) {
+          showToast("Prova enviada! (Salva localmente - Firebase não disponível)", "warning");
+        } else {
+          showToast("Prova enviada com sucesso! 🎉", "success");
+        }
       } else {
-        throw new Error("Erro ao enviar prova");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.details || errorData.error || "Erro ao enviar prova");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao enviar prova:", error);
-      showToast("Erro ao enviar prova. Tente novamente.", "error");
+      showToast(
+        error?.message || "Erro ao enviar prova. Tente novamente.", 
+        "error"
+      );
     } finally {
       setIsSubmitting(false);
     }

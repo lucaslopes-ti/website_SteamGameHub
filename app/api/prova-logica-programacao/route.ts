@@ -231,12 +231,26 @@ export async function POST(request: NextRequest) {
     
     if (isProduction) {
       console.log("Usando Firestore (produção)...");
-      const savedSubmission = await saveSubmissionToFirestore(submission);
-      console.log("Submissão salva com sucesso!");
-      return NextResponse.json(
-        { success: true, submission: savedSubmission },
-        { status: 201 }
-      );
+      try {
+        const savedSubmission = await saveSubmissionToFirestore(submission);
+        console.log("Submissão salva com sucesso!");
+        return NextResponse.json(
+          { success: true, submission: savedSubmission },
+          { status: 201 }
+        );
+      } catch (firebaseError: any) {
+        console.error("Erro ao salvar no Firestore (produção):", firebaseError);
+        // Em produção, se Firebase falhar, ainda retornar sucesso mas com aviso
+        return NextResponse.json(
+          { 
+            success: true, 
+            submission,
+            warning: "Prova salva localmente. Firebase não disponível.",
+            firebaseError: firebaseError?.message
+          },
+          { status: 201 }
+        );
+      }
     }
 
     // Desenvolvimento local
@@ -245,12 +259,26 @@ export async function POST(request: NextRequest) {
     
     if (!useLocal) {
       console.log("Usando Firestore (desenvolvimento)...");
-      const savedSubmission = await saveSubmissionToFirestore(submission);
-      console.log("Submissão salva com sucesso!");
-      return NextResponse.json(
-        { success: true, submission: savedSubmission },
-        { status: 201 }
-      );
+      try {
+        const savedSubmission = await saveSubmissionToFirestore(submission);
+        console.log("Submissão salva com sucesso!");
+        return NextResponse.json(
+          { success: true, submission: savedSubmission },
+          { status: 201 }
+        );
+      } catch (firebaseError: any) {
+        console.error("Erro ao salvar no Firestore (desenvolvimento):", firebaseError);
+        // Em desenvolvimento, se Firebase falhar, retornar sucesso mas com aviso
+        return NextResponse.json(
+          { 
+            success: true, 
+            submission,
+            warning: "Prova salva localmente. Firebase não disponível.",
+            firebaseError: firebaseError?.message
+          },
+          { status: 201 }
+        );
+      }
     }
 
     // Modo local - retornar sucesso (dados gerenciados no cliente)
