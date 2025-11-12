@@ -49,20 +49,37 @@ function normalizeServiceAccount(serviceAccount: any): any {
 async function saveSubmissionToFirestore(submission: ProvaSubmission) {
   try {
     console.log("Iniciando salvamento da prova no Firestore...");
+    console.log("Variáveis de ambiente disponíveis:", {
+      hasServiceAccount: !!process.env.FIREBASE_SERVICE_ACCOUNT_KEY,
+      hasProjectId: !!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+      hasApiKey: !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    });
     
+    // Tentar usar Admin SDK primeiro (melhor para servidor)
     const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
     if (serviceAccountKey) {
       try {
         const admin = await import("firebase-admin");
         
+        // Inicializar Admin SDK se necessário
         if (admin.apps.length === 0) {
           try {
-            let serviceAccount = JSON.parse(serviceAccountKey);
-            serviceAccount = normalizeServiceAccount(serviceAccount);
-            
-            if (!serviceAccount.project_id || !serviceAccount.private_key || !serviceAccount.client_email) {
-              throw new Error("Service account JSON inválido.");
+            let serviceAccount;
+            try {
+              serviceAccount = JSON.parse(serviceAccountKey);
+            } catch (parseError: any) {
+              console.error("Erro ao fazer parse do service account:", parseError?.message);
+              console.error("Primeiros 100 caracteres da chave:", serviceAccountKey.substring(0, 100));
+              throw new Error(`Erro ao fazer parse do service account: ${parseError?.message || "Formato JSON inválido"}. Verifique se FIREBASE_SERVICE_ACCOUNT_KEY contém um JSON válido.`);
             }
+            
+            // Validar campos obrigatórios do service account
+            if (!serviceAccount.project_id || !serviceAccount.private_key || !serviceAccount.client_email) {
+              throw new Error("Service account JSON inválido. Campos obrigatórios: project_id, private_key, client_email");
+            }
+            
+            // Normalizar a chave privada (corrigir problemas de formatação)
+            serviceAccount = normalizeServiceAccount(serviceAccount);
             
             admin.initializeApp({
               credential: admin.credential.cert(serviceAccount),
@@ -79,7 +96,19 @@ async function saveSubmissionToFirestore(submission: ProvaSubmission) {
         
         // Verificar se já existe uma submissão deste aluno
         console.log("Buscando submissões existentes para studentId:", submission.studentId);
-        const existingDocs = await submissionsRef.where("studentId", "==", submission.studentId).get();
+        console.log("Coleção:", "prova_logica_programacao");
+        
+        let existingDocs;
+        try {
+          existingDocs = await submissionsRef.where("studentId", "==", submission.studentId).get();
+          console.log("Query executada com sucesso. Documentos encontrados:", existingDocs.size);
+        } catch (queryError: any) {
+          console.error("Erro ao executar query:", {
+            message: queryError?.message,
+            code: queryError?.code,
+          });
+          throw queryError;
+        }
         
         const submissionData = {
           ...submission,
@@ -89,39 +118,72 @@ async function saveSubmissionToFirestore(submission: ProvaSubmission) {
         if (existingDocs.empty) {
           // Primeira submissão
           console.log("Criando nova submissão...");
-          const docRef = await submissionsRef.add({
-            ...submissionData,
-            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          console.log("Dados a serem salvos:", {
+            studentId: submission.studentId,
+            provaVersion: submission.provaVersion,
+            answersCount: Object.keys(submission.answers).length,
+            submitted: submission.submitted,
           });
-          console.log("Submissão criada com ID:", docRef.id);
-          return { id: docRef.id, ...submission };
+          
+          let docRef;
+          try {
+            docRef = await submissionsRef.add({
+              ...submissionData,
+              createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            });
+            console.log("✅ Submissão criada com sucesso! ID:", docRef.id);
+            return { id: docRef.id, ...submission };
+          } catch (addError: any) {
+            console.error("❌ Erro ao criar documento:", {
+              message: addError?.message,
+              code: addError?.code,
+              stack: addError?.stack,
+            });
+            throw addError;
+          }
         } else {
           // Atualizar submissão existente
           console.log("Atualizando submissão existente...");
           const existingDoc = existingDocs.docs[0];
-          await existingDoc.ref.update(submissionData);
-          console.log("Submissão atualizada com ID:", existingDoc.id);
-          return { id: existingDoc.id, ...submission };
+          console.log("Documento existente ID:", existingDoc.id);
+          
+          try {
+            await existingDoc.ref.update(submissionData);
+            console.log("✅ Submissão atualizada com sucesso! ID:", existingDoc.id);
+            return { id: existingDoc.id, ...submission };
+          } catch (updateError: any) {
+            console.error("❌ Erro ao atualizar documento:", {
+              message: updateError?.message,
+              code: updateError?.code,
+              stack: updateError?.stack,
+            });
+            throw updateError;
+          }
         }
       } catch (adminError: any) {
         console.error("Admin SDK falhou:", {
           message: adminError?.message,
           code: adminError?.code,
+          stack: adminError?.stack,
         });
-        if (serviceAccountKey) {
+        // Se não tiver service account, continuar para Client SDK
+        if (!serviceAccountKey) {
+          console.log("Service account não configurado, tentando Client SDK...");
+        } else {
+          // Se tiver service account mas falhou, relançar o erro
           throw new Error(`Erro no Admin SDK: ${adminError?.message || "Erro desconhecido"}`);
         }
       }
     }
 
-    // Fallback: usar Client SDK
-    console.log("⚠️ Tentando usar Client SDK...");
+    // Fallback: usar Client SDK (pode não funcionar bem em serverless)
+    console.log("⚠️ Service account não configurado. Tentando usar Client SDK (não recomendado para produção)...");
     const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
     const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
     
-    if (!projectId || !apiKey) {
+    if (!projectId) {
       throw new Error(
-        "Firebase não está configurado. Configure FIREBASE_SERVICE_ACCOUNT_KEY ou NEXT_PUBLIC_FIREBASE_*"
+        "Firebase não está configurado. Configure FIREBASE_SERVICE_ACCOUNT_KEY ou NEXT_PUBLIC_FIREBASE_PROJECT_ID"
       );
     }
 
@@ -226,66 +288,49 @@ export async function POST(request: NextRequest) {
       submitted: submitted || false,
     };
 
-    // Em produção, sempre usar Firestore
-    const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL;
-    
-    if (isProduction) {
-      console.log("Usando Firestore (produção)...");
-      try {
-        const savedSubmission = await saveSubmissionToFirestore(submission);
-        console.log("Submissão salva com sucesso!");
+    // Sempre tentar salvar no Firebase primeiro
+    console.log("Tentando salvar no Firestore...");
+    try {
+      const savedSubmission = await saveSubmissionToFirestore(submission);
+      console.log("✅ Submissão salva com sucesso no Firestore! ID:", savedSubmission.id);
+      return NextResponse.json(
+        { success: true, submission: savedSubmission },
+        { status: 201 }
+      );
+    } catch (firebaseError: any) {
+      console.error("❌ Erro ao salvar no Firestore:", firebaseError);
+      console.error("Detalhes do erro:", {
+        message: firebaseError?.message,
+        code: firebaseError?.code,
+        stack: firebaseError?.stack,
+      });
+      
+      // Se o erro for de configuração, retornar erro para o usuário corrigir
+      if (
+        firebaseError?.message?.includes("não está configurado") ||
+        firebaseError?.message?.includes("Service account") ||
+        firebaseError?.message?.includes("FIREBASE_SERVICE_ACCOUNT_KEY")
+      ) {
         return NextResponse.json(
-          { success: true, submission: savedSubmission },
-          { status: 201 }
-        );
-      } catch (firebaseError: any) {
-        console.error("Erro ao salvar no Firestore (produção):", firebaseError);
-        // Em produção, se Firebase falhar, ainda retornar sucesso mas com aviso
-        return NextResponse.json(
-          { 
-            success: true, 
-            submission,
-            warning: "Prova salva localmente. Firebase não disponível.",
-            firebaseError: firebaseError?.message
+          {
+            error: "Firebase não configurado",
+            details: firebaseError?.message || "Configure FIREBASE_SERVICE_ACCOUNT_KEY ou NEXT_PUBLIC_FIREBASE_*",
+            suggestion: "Verifique a documentação em docs/CONFIGURACAO_FIREBASE.md",
           },
-          { status: 201 }
+          { status: 500 }
         );
       }
+      
+      // Para outros erros, retornar erro também (não salvar "localmente" que não existe)
+      return NextResponse.json(
+        {
+          error: "Erro ao salvar no Firebase",
+          details: firebaseError?.message || "Erro desconhecido",
+          suggestion: "Verifique os logs do servidor e a configuração do Firebase",
+        },
+        { status: 500 }
+      );
     }
-
-    // Desenvolvimento local
-    const { useLocalDatabase } = await import("@/lib/config");
-    const useLocal = useLocalDatabase();
-    
-    if (!useLocal) {
-      console.log("Usando Firestore (desenvolvimento)...");
-      try {
-        const savedSubmission = await saveSubmissionToFirestore(submission);
-        console.log("Submissão salva com sucesso!");
-        return NextResponse.json(
-          { success: true, submission: savedSubmission },
-          { status: 201 }
-        );
-      } catch (firebaseError: any) {
-        console.error("Erro ao salvar no Firestore (desenvolvimento):", firebaseError);
-        // Em desenvolvimento, se Firebase falhar, retornar sucesso mas com aviso
-        return NextResponse.json(
-          { 
-            success: true, 
-            submission,
-            warning: "Prova salva localmente. Firebase não disponível.",
-            firebaseError: firebaseError?.message
-          },
-          { status: 201 }
-        );
-      }
-    }
-
-    // Modo local - retornar sucesso (dados gerenciados no cliente)
-    return NextResponse.json(
-      { success: true, submission },
-      { status: 201 }
-    );
   } catch (error: any) {
     console.error("=== ERRO AO SALVAR PROVA ===");
     console.error("Erro:", error);

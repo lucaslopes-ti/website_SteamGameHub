@@ -744,15 +744,30 @@ export default function ProvaLogicaProgramacaoPage() {
       if (response.ok) {
         const data = await response.json();
         setSubmitted(true);
-        
-        if (data.warning) {
-          showToast("Prova enviada! (Salva localmente - Firebase não disponível)", "warning");
-        } else {
-          showToast("Prova enviada com sucesso! 🎉", "success");
-        }
+        showToast("Prova enviada com sucesso! 🎉", "success");
       } else {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.details || errorData.error || "Erro ao enviar prova");
+        const errorMessage = errorData.details || errorData.error || "Erro ao enviar prova";
+        const suggestion = errorData.suggestion || "";
+        
+        // Se for erro de configuração do Firebase, mostrar mensagem mais clara
+        if (errorMessage.includes("Firebase não configurado") || errorMessage.includes("FIREBASE_SERVICE_ACCOUNT_KEY")) {
+          showToast(
+            "Erro: Firebase não está configurado. Verifique a configuração.",
+            "error"
+          );
+          console.error("Erro de configuração do Firebase:", errorMessage);
+          console.error("Sugestão:", suggestion);
+          alert(
+            "⚠️ Firebase não está configurado!\n\n" +
+            "Para salvar as provas no Firebase, você precisa:\n\n" +
+            "1. Configurar FIREBASE_SERVICE_ACCOUNT_KEY nas variáveis de ambiente\n" +
+            "2. Ou configurar NEXT_PUBLIC_FIREBASE_* para usar Client SDK\n\n" +
+            "Veja a documentação em: docs/CONFIGURACAO_FIREBASE.md"
+          );
+        } else {
+          throw new Error(errorMessage);
+        }
       }
     } catch (error: any) {
       console.error("Erro ao enviar prova:", error);
