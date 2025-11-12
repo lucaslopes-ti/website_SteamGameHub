@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
 import Hero from "@/components/Hero";
 import GameCarousel from "@/components/GameCarousel";
 import GameGrid from "@/components/GameGrid";
@@ -10,6 +11,7 @@ import PopularGenres from "@/components/PopularGenres";
 import AboutSection from "@/components/AboutSection";
 import TopRatedGames from "@/components/TopRatedGames";
 import { Game } from "@/lib/games";
+import { BookOpen, ArrowRight, AlertCircle } from "lucide-react";
 
 export default function Home() {
   const [games, setGames] = useState<Game[]>([]);
@@ -118,6 +120,46 @@ export default function Home() {
   return (
     <div className="space-y-12 pb-12">
       <Hero />
+      
+      {/* Seção de Prova de Lógica de Programação */}
+      <section className="container mx-auto px-4">
+        <div className="bg-gradient-to-r from-yellow-600/20 via-yellow-500/20 to-yellow-600/20 border-2 border-yellow-500 rounded-lg p-6 md:p-8 relative overflow-hidden">
+          {/* Efeito de brilho animado */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/10 to-transparent animate-pulse" />
+          
+          <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
+            <div className="flex-shrink-0">
+              <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-lg">
+                <BookOpen className="w-8 h-8 text-white" />
+              </div>
+            </div>
+            
+            <div className="flex-1 text-center md:text-left">
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                Prova de Lógica de Programação
+              </h2>
+              <p className="text-gray-200 mb-4">
+                Avalie seus conhecimentos em C# e descubra se você precisa fazer um curso de Lógica de Programação.
+              </p>
+              <div className="flex flex-wrap items-center gap-2 text-sm text-yellow-200 mb-4">
+                <AlertCircle className="w-4 h-4" />
+                <span>Sem limite de tempo • Navegação livre entre questões • Respostas salvas automaticamente</span>
+              </div>
+            </div>
+            
+            <div className="flex-shrink-0">
+              <Link
+                href="/prova-logica-programacao"
+                className="group inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+              >
+                <span>Fazer Prova</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       {loading ? (
         <section className="container mx-auto px-4">
           <GameGridSkeleton count={4} />
