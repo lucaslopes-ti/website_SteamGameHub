@@ -185,10 +185,12 @@ export default function CodeEditor({
       {/* Editor com syntax highlighting (fundo) */}
       <div
         ref={highlightRef}
-        className="code-editor-highlight absolute inset-0 w-full h-full bg-[#1e1e1e] border border-[#3e3e42] rounded-lg p-4 font-mono text-sm text-[#d4d4d4] overflow-auto whitespace-pre-wrap break-words pointer-events-none"
+        className="code-editor-highlight absolute inset-0 w-full h-full bg-[#1e1e1e] border border-[#3e3e42] rounded-lg p-4 font-mono text-sm text-[#d4d4d4] overflow-auto whitespace-pre-wrap pointer-events-none"
         style={{
           fontFamily: "Consolas, 'Courier New', monospace",
           lineHeight: "1.5",
+          wordBreak: "normal",
+          overflowWrap: "normal",
         }}
         dangerouslySetInnerHTML={{ __html: highlightedCode || "" }}
       />
@@ -199,11 +201,13 @@ export default function CodeEditor({
         value={typeof value === 'string' ? value : ''}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        className="code-editor-textarea relative w-full h-full bg-transparent border-none rounded-lg p-4 font-mono text-sm text-transparent caret-[#d4d4d4] focus:outline-none resize-none overflow-auto whitespace-pre-wrap break-words"
+        className="code-editor-textarea relative w-full h-full bg-transparent border-none rounded-lg p-4 font-mono text-sm text-transparent caret-[#d4d4d4] focus:outline-none resize-none overflow-auto whitespace-pre-wrap"
         style={{
           fontFamily: "Consolas, 'Courier New', monospace",
           lineHeight: "1.5",
           tabSize: 4,
+          wordBreak: "normal",
+          overflowWrap: "normal",
         }}
         placeholder="Digite seu código C# aqui..."
         spellCheck={false}
