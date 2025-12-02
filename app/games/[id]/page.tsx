@@ -14,6 +14,7 @@ import ShareButton from "@/components/ShareButton";
 import { GameDetailSkeleton } from "@/components/SkeletonLoader";
 import { useAuth } from "@/components/AuthProvider";
 import { Loader2, Image as ImageIcon, X } from "lucide-react";
+import DownloadInstructionsModal from "@/components/DownloadInstructionsModal";
 
 export default function GameDetailPage() {
   const params = useParams();
@@ -23,11 +24,29 @@ export default function GameDetailPage() {
   const [selectedScreenshot, setSelectedScreenshot] = useState<string | null>(null);
   const [views, setViews] = useState(0);
   const [imageError, setImageError] = useState(false);
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
 
   useEffect(() => {
     loadGame();
     registerView();
   }, [params.id]);
+
+  // Mostrar modal de instruções na primeira vez que acessar a página
+  useEffect(() => {
+    if (!game || loading) return;
+    
+    // Verificar se já mostrou o modal para este jogo
+    const hasSeenModal = localStorage.getItem(`download-modal-${game.id}`);
+    
+    // Mostrar apenas se tiver link de download e não tiver visto antes
+    if ((game.downloadLink || game.executableFile) && !hasSeenModal) {
+      // Pequeno delay para melhor UX
+      const timer = setTimeout(() => {
+        setShowDownloadModal(true);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [game, loading]);
 
   const registerView = async () => {
     try {
@@ -97,8 +116,23 @@ export default function GameDetailPage() {
     notFound();
   }
 
+  const handleCloseModal = () => {
+    setShowDownloadModal(false);
+    if (game) {
+      localStorage.setItem(`download-modal-${game.id}`, "true");
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Modal de Instruções de Download */}
+      {showDownloadModal && game && (
+        <DownloadInstructionsModal
+          gameTitle={game.title}
+          downloadLink={game.downloadLink || undefined}
+          onClose={handleCloseModal}
+        />
+      )}
       <div className="mb-8">
         <div className="relative h-64 md:h-96 bg-steam-blue rounded-lg overflow-hidden mb-6">
           {game.image && game.image.trim() !== "" && (game.image.startsWith("http") || game.image.startsWith("/")) && !imageError ? (
