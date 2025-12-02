@@ -3,39 +3,6 @@
 import { useState, useEffect } from "react";
 import { X, Download, FileArchive, FolderOpen, Play, ExternalLink, Terminal } from "lucide-react";
 
-// Funções helper para classes CSS (Tailwind não suporta classes dinâmicas)
-function getActiveStepClass(color: string): string {
-  if (color.includes("blue")) return "bg-blue-500/20 border-blue-500/50";
-  if (color.includes("green")) return "bg-green-500/20 border-green-500/50";
-  if (color.includes("purple")) return "bg-purple-500/20 border-purple-500/50";
-  if (color.includes("orange")) return "bg-orange-500/20 border-orange-500/50";
-  return "bg-steam-green/20 border-steam-green/50";
-}
-
-function getIconBgClass(color: string): string {
-  if (color.includes("blue")) return "bg-blue-500/20";
-  if (color.includes("green")) return "bg-green-500/20";
-  if (color.includes("purple")) return "bg-purple-500/20";
-  if (color.includes("orange")) return "bg-orange-500/20";
-  return "bg-steam-green/20";
-}
-
-function getIconBorderClass(color: string): string {
-  if (color.includes("blue")) return "border border-blue-500/30";
-  if (color.includes("green")) return "border border-green-500/30";
-  if (color.includes("purple")) return "border border-purple-500/30";
-  if (color.includes("orange")) return "border border-orange-500/30";
-  return "border border-steam-green/30";
-}
-
-function getIconColorClass(color: string): string {
-  if (color.includes("blue")) return "w-5 h-5 text-blue-500";
-  if (color.includes("green")) return "w-5 h-5 text-green-500";
-  if (color.includes("purple")) return "w-5 h-5 text-purple-500";
-  if (color.includes("orange")) return "w-5 h-5 text-orange-500";
-  return "w-5 h-5 text-steam-green";
-}
-
 interface DownloadInstructionsModalProps {
   gameTitle: string;
   downloadLink?: string;
@@ -48,6 +15,39 @@ export default function DownloadInstructionsModal({
   onClose,
 }: DownloadInstructionsModalProps) {
   const [step, setStep] = useState(0);
+
+  // Funções helper para classes CSS (Tailwind não suporta classes dinâmicas)
+  const getActiveStepClass = (color: string): string => {
+    if (color.includes("blue")) return "bg-blue-500/20 border-blue-500/50";
+    if (color.includes("green")) return "bg-green-500/20 border-green-500/50";
+    if (color.includes("purple")) return "bg-purple-500/20 border-purple-500/50";
+    if (color.includes("orange")) return "bg-orange-500/20 border-orange-500/50";
+    return "bg-steam-green/20 border-steam-green/50";
+  };
+
+  const getIconBgClass = (color: string): string => {
+    if (color.includes("blue")) return "bg-blue-500/20";
+    if (color.includes("green")) return "bg-green-500/20";
+    if (color.includes("purple")) return "bg-purple-500/20";
+    if (color.includes("orange")) return "bg-orange-500/20";
+    return "bg-steam-green/20";
+  };
+
+  const getIconBorderClass = (color: string): string => {
+    if (color.includes("blue")) return "border border-blue-500/30";
+    if (color.includes("green")) return "border border-green-500/30";
+    if (color.includes("purple")) return "border border-purple-500/30";
+    if (color.includes("orange")) return "border border-orange-500/30";
+    return "border border-steam-green/30";
+  };
+
+  const getIconColorClass = (color: string): string => {
+    if (color.includes("blue")) return "w-5 h-5 text-blue-500";
+    if (color.includes("green")) return "w-5 h-5 text-green-500";
+    if (color.includes("purple")) return "w-5 h-5 text-purple-500";
+    if (color.includes("orange")) return "w-5 h-5 text-orange-500";
+    return "w-5 h-5 text-steam-green";
+  };
 
   // Animações de entrada
   useEffect(() => {
@@ -226,4 +226,3 @@ export default function DownloadInstructionsModal({
     </div>
   );
 }
-
