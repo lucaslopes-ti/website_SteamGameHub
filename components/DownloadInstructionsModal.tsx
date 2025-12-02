@@ -100,7 +100,7 @@ export default function DownloadInstructionsModal({
         className="relative bg-gradient-to-br from-steam-dark via-steam-darker to-steam-dark border-2 border-steam-blueLight rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
         style={{
-          animation: "slideIn 0.3s ease-out",
+          animation: "slideInModal 0.3s ease-out",
         }}
       >
         {/* Header com efeito tecnológico */}
@@ -223,19 +223,6 @@ export default function DownloadInstructionsModal({
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-steam-blueLight to-transparent animate-pulse" />
         <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-steam-green to-transparent animate-pulse" style={{ animationDelay: "0.5s" }} />
       </div>
-
-      <style jsx>{`
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateY(-20px) scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-        }
-      `}</style>
     </div>
   );
 }
