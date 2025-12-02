@@ -33,19 +33,28 @@ export default function GameDetailPage() {
 
   // Mostrar modal de instruções na primeira vez que acessar a página
   useEffect(() => {
-    if (!game || loading) return;
+    // Inicializar timer como null para garantir cleanup consistente
+    let timer: NodeJS.Timeout | null = null;
     
-    // Verificar se já mostrou o modal para este jogo
-    const hasSeenModal = localStorage.getItem(`download-modal-${game.id}`);
-    
-    // Mostrar apenas se tiver link de download e não tiver visto antes
-    if ((game.downloadLink || game.executableFile) && !hasSeenModal) {
-      // Pequeno delay para melhor UX
-      const timer = setTimeout(() => {
-        setShowDownloadModal(true);
-      }, 500);
-      return () => clearTimeout(timer);
+    if (game && !loading) {
+      // Verificar se já mostrou o modal para este jogo
+      const hasSeenModal = localStorage.getItem(`download-modal-${game.id}`);
+      
+      // Mostrar apenas se tiver link de download e não tiver visto antes
+      if ((game.downloadLink || game.executableFile) && !hasSeenModal) {
+        // Pequeno delay para melhor UX
+        timer = setTimeout(() => {
+          setShowDownloadModal(true);
+        }, 500);
+      }
     }
+    
+    // Sempre retornar função de cleanup no mesmo nível
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
   }, [game, loading]);
 
   const registerView = async () => {
