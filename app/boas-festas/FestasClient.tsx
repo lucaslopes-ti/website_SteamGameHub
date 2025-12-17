@@ -188,13 +188,16 @@ export default function FestasClient() {
                   type="button"
                   onClick={() => {
                     setRgbGlow(true);
-                    setTimeout(() => setRgbGlow(false), 1800);
+                    setTimeout(() => setRgbGlow(false), 2000);
                   }}
-                  className={`font-bold underline underline-offset-4 ${
+                  className={`relative inline-flex items-center gap-1 rounded-full border border-steam-blue/60 bg-gradient-to-r from-red-500 via-green-400 to-blue-500 px-3 py-1 text-white shadow-lg transition hover:scale-105 ${
                     rgbGlow ? "rgb-blink" : ""
                   }`}
+                  title="Clique para acender o RGB"
                 >
-                  RGB
+                  <span className="h-2 w-2 rounded-full bg-white/80 animate-pulse" />
+                  RGB turbo
+                  <span className="h-2 w-2 rounded-full bg-white/80 animate-pulse" />
                 </button>
                 !
               </p>
@@ -204,9 +207,6 @@ export default function FestasClient() {
                 </span>
                 <span className="rounded-full border border-steam-blue/70 bg-steam-darker px-4 py-2 text-sm text-steam-blueLight">
                   Retorno: 12/01 para fechar a trajetória do curso
-                </span>
-                <span className="rounded-full border border-steam-blue/70 bg-steam-darker px-4 py-2 text-sm text-steam-blueLight">
-                  Modo: console hacker + neve pixelada
                 </span>
               </div>
             </div>
