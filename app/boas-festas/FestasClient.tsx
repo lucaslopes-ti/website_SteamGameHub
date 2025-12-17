@@ -190,14 +190,17 @@ export default function FestasClient() {
                     setRgbGlow(true);
                     setTimeout(() => setRgbGlow(false), 2000);
                   }}
-                  className={`relative inline-flex items-center gap-1 rounded-full border border-steam-blue/60 bg-gradient-to-r from-red-500 via-green-400 to-blue-500 px-3 py-1 text-white shadow-lg transition hover:scale-105 ${
-                    rgbGlow ? "rgb-blink" : ""
+                  className={`relative inline-flex items-center gap-1 px-1 text-steam-blueLight/60 underline decoration-dotted decoration-steam-blue ${
+                    rgbGlow ? "rgb-blink" : "hover:text-steam-blueLight"
                   }`}
-                  title="Clique para acender o RGB"
+                  title="(psst) clica aqui"
                 >
-                  <span className="h-2 w-2 rounded-full bg-white/80 animate-pulse" />
-                  RGB turbo
-                  <span className="h-2 w-2 rounded-full bg-white/80 animate-pulse" />
+                  <span className="relative">
+                    RGB
+                    {rgbGlow && (
+                      <span className="absolute inset-0 -m-1 rounded-full bg-gradient-to-r from-red-500 via-green-400 to-blue-500 blur-sm opacity-70" />
+                    )}
+                  </span>
                 </button>
                 !
               </p>
