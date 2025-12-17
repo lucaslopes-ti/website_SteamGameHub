@@ -44,6 +44,7 @@ export default function FestasClient() {
   const [testShift, setTestShift] = useState(1);
   const [showHints, setShowHints] = useState(false);
   const [showPlanB, setShowPlanB] = useState(false);
+  const [rgbGlow, setRgbGlow] = useState(false);
   const snowFlakes = useMemo(
     () =>
       Array.from({ length: 60 }).map((_, i) => ({
@@ -111,8 +112,23 @@ export default function FestasClient() {
     setTerminalOutput(output);
   };
 
+  const rgbGlowStyle = `
+    .rgb-blink {
+      animation: rgbBlink 1.2s ease-in-out 0s 1 forwards;
+      text-shadow: 0 0 8px #f00, 0 0 12px #0f0, 0 0 16px #00f;
+    }
+    @keyframes rgbBlink {
+      0% { color: #f00; }
+      33% { color: #0f0; }
+      66% { color: #00f; }
+      100% { color: #fff; text-shadow: 0 0 0 transparent; }
+    }
+  `;
+
   return (
-    <div className="relative overflow-hidden pb-16">
+    <>
+      <style jsx>{rgbGlowStyle}</style>
+      <div className="relative overflow-hidden pb-16">
       <div className="absolute inset-0 bg-gradient-to-b from-steam-dark via-steam-darker to-black opacity-80 -z-10" />
       <div className="absolute -left-32 -top-32 h-72 w-72 rounded-full bg-steam-blue/30 blur-3xl" />
       <div className="absolute right-0 top-10 h-64 w-64 rounded-full bg-steam-green/25 blur-3xl" />
@@ -157,16 +173,30 @@ export default function FestasClient() {
           <div className="mt-4 grid gap-6 lg:grid-cols-[2fr,1fr]">
             <div className="space-y-4">
               <h1 className="text-4xl font-bold text-white leading-tight">
-                Boas festas, turma do SENAI Dr. Celso Charuri!
+                Boas festas, turma!
               </h1>
               <p className="text-lg text-gray-300 leading-relaxed">
-                Vocês encerram mais um ciclo cheio de protótipos, playtests e
-                resiliência. Antes do recesso, deixei uma carta escondida para
-                quem topar decifrar uma Cifra de César. Bora liberar a mensagem
-                e começar 2026 com curiosidade no nível máximo?
+                Vocês encerram mais um ciclo cheio de protótipos, playtests e resiliência.
+                Antes do recesso, deixei uma carta escondida para quem topar decifrar uma
+                Cifra de César. Bora liberar a mensagem e começar 2026 com curiosidade no
+                nível máximo?
               </p>
-              <p className="text-sm text-steam-blueLight font-semibold">
-                Desejo que sua árvore tenha mais luzes que seu PC tem LEDs RGB!
+              <p className="text-sm text-steam-blueLight font-semibold flex flex-wrap gap-2 items-center">
+                Desejo um Feliz Natal e Próspero Ano Novo. Desejo que sua árvore tenha mais
+                luzes que seu PC tem LEDs{" "}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRgbGlow(true);
+                    setTimeout(() => setRgbGlow(false), 1800);
+                  }}
+                  className={`font-bold underline underline-offset-4 ${
+                    rgbGlow ? "rgb-blink" : ""
+                  }`}
+                >
+                  RGB
+                </button>
+                !
               </p>
               <div className="flex flex-wrap gap-3">
                 <span className="rounded-full border border-steam-blue/70 bg-steam-darker px-4 py-2 text-sm text-steam-blueLight">
@@ -549,7 +579,8 @@ export default function FestasClient() {
           )}
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 }
 
