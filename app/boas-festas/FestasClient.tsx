@@ -43,6 +43,7 @@ export default function FestasClient() {
   const [status, setStatus] = useState<"idle" | "ok" | "error">("idle");
   const [testShift, setTestShift] = useState(1);
   const [showHints, setShowHints] = useState(false);
+  const [showPlanB, setShowPlanB] = useState(false);
   const snowFlakes = useMemo(
     () =>
       Array.from({ length: 60 }).map((_, i) => ({
@@ -331,11 +332,21 @@ export default function FestasClient() {
                 </p>
               </div>
             )}
-            <p className="text-xs text-gray-400">
-              Plano B: se pintar dúvida, responda só a SECRET_KEY (“bugfreechristmas”)
-              ou o resultado de CBRT(8316073576) → 2026. Sabia que um dia usaríamos
-              raiz cúbica para algo importante! :)
-            </p>
+            <div className="text-xs text-gray-400 flex flex-col sm:flex-row sm:items-center sm:gap-2">
+              <button
+                onClick={() => setShowPlanB((prev) => !prev)}
+                className="w-fit rounded border border-steam-blue/60 bg-steam-darker px-3 py-1 text-steam-blueLight hover:border-steam-blueLight transition"
+              >
+                {showPlanB ? "Ocultar plano B" : "Mostrar plano B"}
+              </button>
+              {showPlanB && (
+                <span>
+                  Plano B: se pintar dúvida, responda só a SECRET_KEY
+                  (“bugfreechristmas”) ou o resultado de CBRT(8316073576) → 2026.
+                  Sabia que um dia usaríamos raiz cúbica para algo importante! :)
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
