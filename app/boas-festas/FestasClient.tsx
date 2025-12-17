@@ -16,18 +16,7 @@ import {
   Cpu,
 } from "lucide-react";
 
-const SECRET_PHRASE = [
-  "CODIGO ESCONDIDO NO COMENTARIO",
-  "PYTHON MODE",
-  "# TODO: REFACTORAR ALEGRIA PARA OTIMIZAR FIM DE ANO",
-  "# FIXME: CORRIGIR BUG DE SONO ACUMULADO",
-  "# SECRET_KEY = BUGFREECHRISTMAS",
-  'print(\"Feliz Natal, devs!\")',
-  "> DICA: O VALOR DA VARIAVEL SECRETA E O OPOSTO DE UM BUG QUE FAZ SORRIR.",
-  "> IMPORTAR MATH",
-  "> CBRT(8316073576) == ?",
-  "> SE DER BRANCO, RESPONDA A CHAVE OU O NUMERO.",
-].join("\n");
+const SECRET_PHRASE = "BUGFREECHRISTMAS";
 const SHIFT = 7;
 
 function normalizeInput(value: string) {
@@ -52,7 +41,7 @@ export default function FestasClient() {
   const cipherText = useMemo(() => caesarShift(SECRET_PHRASE, SHIFT), []);
   const [answer, setAnswer] = useState("");
   const [status, setStatus] = useState<"idle" | "ok" | "error">("idle");
-  const [testShift, setTestShift] = useState(7);
+  const [testShift, setTestShift] = useState(1);
   const [showHints, setShowHints] = useState(false);
   const snowFlakes = useMemo(
     () =>
@@ -66,6 +55,8 @@ export default function FestasClient() {
       })),
     []
   );
+  const [terminalOutput, setTerminalOutput] = useState<string[]>([]);
+  const [copyStatus, setCopyStatus] = useState<"idle" | "ok" | "err">("idle");
 
   const solved = status === "ok";
 
@@ -89,6 +80,34 @@ export default function FestasClient() {
     } else {
       setStatus("error");
     }
+  };
+
+  const handleCopyCipher = async () => {
+    try {
+      await navigator?.clipboard?.writeText(cipherText);
+      setCopyStatus("ok");
+      setTimeout(() => setCopyStatus("idle"), 2000);
+    } catch {
+      setCopyStatus("err");
+    }
+  };
+
+  const runFestiveConsole = () => {
+    const leds = 64 + Math.floor(Math.random() * 64);
+    const output = [
+      "> python terminal.py",
+      "# TODO: Refatorar alegria para otimizar fim de ano",
+      "# FIXME: Corrigir bug de sono acumulado",
+      "# SECRET_KEY = ?",
+      "import math",
+      "print('Feliz Natal, devs!')",
+      "cbrt = lambda x: round(x ** (1/3))",
+      `cbrt(8316073576) -> 2026`,
+      `leds_rgb_detectados = ${leds}`,
+      "compilando rootJoy... ok",
+      "SECRET_KEY encontrada: BUGFREECHRISTMAS",
+    ];
+    setTerminalOutput(output);
   };
 
   return (
@@ -244,20 +263,35 @@ export default function FestasClient() {
             </div>
             <div className="mt-3 text-steam-blueLight">
               Dica do terminal: “O valor da variável secreta é o oposto de um bug que faz sorrir.”
+              Descubra a SECRET_KEY e decifre a cifra abaixo.
             </div>
           </div>
 
           <div className="mt-6 space-y-3 rounded-xl border border-steam-blue/40 bg-steam-darker p-4">
-            <p className="text-xs uppercase tracking-wide text-gray-400">
-              Texto cifrado
-            </p>
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-xs uppercase tracking-wide text-gray-400">
+                Texto cifrado
+              </p>
+              <button
+                onClick={handleCopyCipher}
+                className="text-xs rounded border border-steam-blue/60 bg-steam-dark px-3 py-1 text-steam-blueLight hover:border-steam-blueLight transition"
+                title="Copiar texto cifrado"
+              >
+                Copiar cifra
+              </button>
+            </div>
             <div className="font-mono text-lg text-white tracking-wider bg-steam-dark rounded-lg p-4 border border-steam-blue/40 whitespace-pre-wrap">
               {cipherText}
             </div>
+            {copyStatus === "ok" && (
+              <p className="text-xs text-green-300">Copiado!</p>
+            )}
+            {copyStatus === "err" && (
+              <p className="text-xs text-red-300">Não foi possível copiar.</p>
+            )}
             <p className="text-sm text-gray-400">
-              Dica: é um comentário .py cheio de TODO/FIXME e uma SECRET_KEY
-              cifrada; pense em deslocamento 7 e numa chave que é o oposto de um
-              bug que faz sorrir.
+              Dica: é só a SECRET_KEY cifrada com deslocamento 7 (oposto de um bug
+              que faz sorrir). O comentário acima entrega o contexto.
             </p>
           </div>
 
@@ -374,6 +408,36 @@ export default function FestasClient() {
               <div className="rounded-lg border border-steam-blue/40 bg-steam-darker px-3 py-2 font-mono text-sm text-white whitespace-pre-wrap">
                 {decodedPreview}
               </div>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-steam-blue/60 bg-steam-dark/80 p-6 shadow-lg">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 text-steam-blueLight">
+                <Monitor className="h-5 w-5" />
+                <span className="font-semibold text-white">Console festivo</span>
+              </div>
+              <button
+                onClick={runFestiveConsole}
+                className="rounded bg-steam-blue px-3 py-2 text-sm font-semibold text-white hover:bg-steam-blueLight transition focus:outline-none focus:ring-2 focus:ring-steam-blueLight focus:ring-offset-2 focus:ring-offset-steam-dark"
+              >
+                Rodar script
+              </button>
+            </div>
+            <p className="mt-2 text-sm text-gray-300">
+              Rode o script e veja o terminal revelar a SECRET_KEY e a raiz cúbica
+              que libera a carta.
+            </p>
+            <div className="mt-3 rounded-lg border border-steam-blue/50 bg-black/60 p-3 font-mono text-sm text-gray-200 min-h-[140px]">
+              {terminalOutput.length === 0 ? (
+                <p className="text-gray-500">Aguardando comando...</p>
+              ) : (
+                terminalOutput.map((line, idx) => (
+                  <div key={idx} className="whitespace-pre-wrap">
+                    {line}
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
