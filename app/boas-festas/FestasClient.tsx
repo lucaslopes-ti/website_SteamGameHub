@@ -600,9 +600,9 @@ export default function FestasClient() {
                     <span className="font-semibold text-white">Para levar na vida</span>
                   </div>
                   <ul className="mt-3 space-y-2 text-sm text-gray-300">
-                    <li>Criatividade com pés no chão.</li>
-                    <li>Feedback como combustível, não como ataque.</li>
-                    <li>Time acima do ego: é assim que shipamos.</li>
+                    <li>Criatividade com pés no chão</li>
+                    <li>Coloque a positividade em prática</li>
+                    <li>Aproveite a vida afora</li>
                   </ul>
                 </div>
               </div>
