@@ -558,8 +558,9 @@ select:focus-visible {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 5;
+  z-index: 60;
   mix-blend-mode: screen;
+  opacity: 0.9;
 }
 
 .pixel-snowflake {
@@ -570,6 +571,8 @@ select:focus-visible {
   animation-name: pixelSnow;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
+  filter: drop-shadow(0 0 4px rgba(179, 229, 252, 0.4));
+  will-change: transform;
 }
 
 @keyframes pixelSnow {
@@ -578,6 +581,17 @@ select:focus-visible {
   }
   to {
     transform: translate3d(0, 110vh, 0);
+  }
+}
+
+@media (max-width: 768px) {
+  .pixel-snow {
+    mix-blend-mode: normal;
+    opacity: 0.9;
+  }
+
+  .pixel-snowflake {
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.5));
   }
 }
 

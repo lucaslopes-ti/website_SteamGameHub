@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   CalendarClock,
   Gift,
@@ -45,22 +45,42 @@ export default function FestasClient() {
   const [showHints, setShowHints] = useState(false);
   const [showPlanB, setShowPlanB] = useState(false);
   const [rgbGlow, setRgbGlow] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [recipientName, setRecipientName] = useState("");
   const snowFlakes = useMemo(
-    () =>
-      Array.from({ length: 60 }).map((_, i) => ({
+    () => {
+      const flakeCount = isMobile ? 90 : 60;
+      const baseSize = isMobile ? 4 : 3;
+      const extraSize = isMobile ? 4 : 3;
+      const minDuration = isMobile ? 9 : 7;
+
+      return Array.from({ length: flakeCount }).map((_, i) => ({
         id: i,
         left: Math.random() * 100,
         delay: Math.random() * 6,
-        duration: 7 + Math.random() * 6,
-        size: 3 + Math.floor(Math.random() * 3),
-        opacity: 0.5 + Math.random() * 0.5,
-      })),
-    []
+        duration: minDuration + Math.random() * 6,
+        size: baseSize + Math.floor(Math.random() * extraSize),
+        opacity: (isMobile ? 0.7 : 0.5) + Math.random() * (isMobile ? 0.25 : 0.5),
+      }));
+    },
+    [isMobile]
   );
   const [terminalOutput, setTerminalOutput] = useState<string[]>([]);
   const [copyStatus, setCopyStatus] = useState<"idle" | "ok" | "err">("idle");
 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
+    const updateIsMobile = (event: MediaQueryListEvent | MediaQueryList) => {
+      setIsMobile(event.matches);
+    };
+
+    updateIsMobile(mediaQuery);
+    mediaQuery.addEventListener("change", updateIsMobile);
+    return () => mediaQuery.removeEventListener("change", updateIsMobile);
+  }, []);
+
   const solved = status === "ok";
+  const displayName = recipientName.trim() || "você";
 
   const decodedPreview = useMemo(
     () => caesarShift(cipherText, -testShift),
@@ -522,17 +542,34 @@ export default function FestasClient() {
 
           {solved ? (
             <div className="relative mt-4 space-y-4 text-gray-200">
+              <div className="rounded-lg border border-steam-blue/40 bg-steam-darker/60 p-4 shadow-inner">
+                <label className="text-sm font-semibold text-gray-300">
+                  Personalize a carta com seu nome
+                </label>
+                <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <input
+                    type="text"
+                    value={recipientName}
+                    onChange={(e) => setRecipientName(e.target.value)}
+                    placeholder="Seu nome aqui"
+                    className="w-full rounded-lg border border-steam-blue/60 bg-steam-dark px-3 py-2 text-sm text-white outline-none ring-0 sm:max-w-xs focus:border-steam-blueLight focus:ring-2 focus:ring-steam-blue/40"
+                  />
+                  <span className="text-xs text-gray-400">
+                    Se deixar em branco, uso “você”.
+                  </span>
+                </div>
+              </div>
               <p className="text-lg leading-relaxed text-white">
-                Feliz Natal e um 2026 cheio de ideias brilhantes para a turma de Programação de Jogos Digitais do SENAI Dr. Celso Charuri!
+                🎄 Feliz Natal e um 2026 cheio de ideias brilhantes pra você, {displayName}!
               </p>
               <p className="text-gray-200 leading-relaxed">
-                Obrigado por cada parceria, cada linha de código, cada modelagem que nasceu entre bugs teimosos e risadas sinceras. Foram muitas telas azuis, cafés e debates sobre gameplay — mas também muitas conquistas e aprendizados que levamos pra vida.
+                Obrigado por cada parceria, cada linha de código e cada modelagem que você ajudou a construir — entre bugs teimosos e boas risadas. Foram muitas telas azuis, cafés e discussões sobre gameplay, mas também muitas conquistas e aprendizados que levamos pra vida.
               </p>
               <p className="text-gray-200 leading-relaxed">
-                Agradeço por cada momento em que embarcaram comigo nessa jornada: dos cálculos com raízes quadradas na lousa (sim, eu vi a reação de vocês!) às manhãs/tarde em que o ar-condicionado desistia de viver enquanto a gente seguia firme codando. Foi intenso, divertido e, acima de tudo, verdadeiro.
+                Valeu por embarcar comigo nessa jornada: dos cálculos com raízes quadradas na lousa (sim, eu vi sua reação!) às manhãs/tardes em que o ar-condicionado desistia de viver enquanto você seguia firme codando. Foi intenso, divertido e, acima de tudo, verdadeiro.
               </p>
               <p className="text-gray-200 leading-relaxed">
-                Que o recesso traga descanso, inspiração e tempo com a família. Em 12/01, voltamos com o teclado iluminado, controle na mão e aquele olhar afiado pra reta final do curso. Vamos lapidar protótipos, fechar builds e mostrar com orgulho o que construímos juntos em 2026 — porque o melhor ainda está por vir.
+                Que o recesso te traga descanso, inspiração e bons momentos com a família. Em <span className="font-semibold text-steam-blueLight">12/01</span>, voltamos com os teclados a postos, o controle na mão e aquele olhar afiado pra reta final do curso. Vamos lapidar protótipos, fechar builds e mostrar com orgulho o que você ajudou a criar — porque o melhor ainda está por vir.
               </p>
               <div className="grid gap-4 md:grid-cols-3">
                 <div className="rounded-xl border border-steam-blue/50 bg-steam-darker/80 p-4">
@@ -570,8 +607,7 @@ export default function FestasClient() {
                 </div>
               </div>
               <p className="text-gray-200 leading-relaxed">
-                Valeu demais, pessoal! Que 2026 venha com ainda mais códigos,
-                desafios e boas risadas. Nos vemos em 12/01!
+                Nos vemos em <span className="font-semibold text-steam-blueLight">12/01</span>!
               </p>
             </div>
           ) : (
