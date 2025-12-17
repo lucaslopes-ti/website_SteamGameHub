@@ -17,12 +17,16 @@ import {
 } from "lucide-react";
 
 const SECRET_PHRASE = [
-  "TEMA DE CONSOLE HACKER",
-  "VERSAO 4 — MANTRA DE TI",
-  "> EXECUTAR FESTIVE_MESSAGE.EXE",
-  "> AUTENTICACAO: TURMA2026",
-  "> DICA: ENCONTRE A VARIAVEL 'ROOTJOY' E COMPILE.",
-  "> LEMBRETE: NAO E BUG, E FEATURE!",
+  "CODIGO ESCONDIDO NO COMENTARIO",
+  "PYTHON MODE",
+  "# TODO: REFACTORAR ALEGRIA PARA OTIMIZAR FIM DE ANO",
+  "# FIXME: CORRIGIR BUG DE SONO ACUMULADO",
+  "# SECRET_KEY = BUGFREECHRISTMAS",
+  'print(\"Feliz Natal, devs!\")',
+  "> DICA: O VALOR DA VARIAVEL SECRETA E O OPOSTO DE UM BUG QUE FAZ SORRIR.",
+  "> IMPORTAR MATH",
+  "> CBRT(8316073576) == ?",
+  "> SE DER BRANCO, RESPONDA A CHAVE OU O NUMERO.",
 ].join("\n");
 const SHIFT = 7;
 
@@ -30,10 +34,8 @@ function normalizeInput(value: string) {
   return value
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-zA-Z0-9 ]/g, " ")
-    .toLowerCase()
-    .replace(/\s+/g, " ")
-    .trim();
+    .replace(/\s+/g, "")
+    .toUpperCase();
 }
 
 function caesarShift(text: string, distance: number) {
@@ -73,7 +75,16 @@ export default function FestasClient() {
   );
 
   const handleCheck = () => {
-    if (normalizeInput(answer) === normalizeInput(SECRET_PHRASE)) {
+    const normalized = normalizeInput(answer);
+    const normalizedSecret = normalizeInput(SECRET_PHRASE);
+    const altNumber = normalizeInput("2026");
+    const altKey = normalizeInput("BUGFREECHRISTMAS");
+
+    if (
+      normalized === normalizedSecret ||
+      normalized === altNumber ||
+      normalized === altKey
+    ) {
       setStatus("ok");
     } else {
       setStatus("error");
@@ -133,6 +144,9 @@ export default function FestasClient() {
                 resiliência. Antes do recesso, deixei uma carta escondida para
                 quem topar decifrar uma Cifra de César. Bora liberar a mensagem
                 e começar 2026 com curiosidade no nível máximo?
+              </p>
+              <p className="text-sm text-steam-blueLight font-semibold">
+                Desejo que sua árvore tenha mais luzes que seu PC tem LEDs RGB!
               </p>
               <div className="flex flex-wrap gap-3">
                 <span className="rounded-full border border-steam-blue/70 bg-steam-darker px-4 py-2 text-sm text-steam-blueLight">
@@ -217,6 +231,22 @@ export default function FestasClient() {
             enigma, digite a resposta (sem acentos) e libere a carta final.
           </p>
 
+          <div className="mt-4 rounded-xl border border-steam-blue/40 bg-black/50 p-4 font-mono text-sm text-gray-200 shadow-inner">
+            <div className="text-steam-blueLight mb-2 flex items-center gap-2">
+              <span className="rounded bg-steam-darker px-2 py-1 text-xs uppercase">terminal.py</span>
+              <span>// comentário suspeito</span>
+            </div>
+            <div className="space-y-1">
+              <div># TODO: Refatorar alegria para otimizar fim de ano</div>
+              <div># FIXME: Corrigir bug de sono acumulado</div>
+              <div># SECRET_KEY = ?</div>
+              <div>print("Feliz Natal, devs!")</div>
+            </div>
+            <div className="mt-3 text-steam-blueLight">
+              Dica do terminal: “O valor da variável secreta é o oposto de um bug que faz sorrir.”
+            </div>
+          </div>
+
           <div className="mt-6 space-y-3 rounded-xl border border-steam-blue/40 bg-steam-darker p-4">
             <p className="text-xs uppercase tracking-wide text-gray-400">
               Texto cifrado
@@ -225,7 +255,9 @@ export default function FestasClient() {
               {cipherText}
             </div>
             <p className="text-sm text-gray-400">
-              Dica: é um prompt hacker com mantra de TI para celebrar 2026.
+              Dica: é um comentário .py cheio de TODO/FIXME e uma SECRET_KEY
+              cifrada; pense em deslocamento 7 e numa chave que é o oposto de um
+              bug que faz sorrir.
             </p>
           </div>
 
@@ -241,7 +273,7 @@ export default function FestasClient() {
                   if (status !== "idle") setStatus("idle");
                 }}
                 rows={5}
-                placeholder={`Ex:\n> EXECUTAR FESTIVE_MESSAGE.EXE\n> AUTENTICACAO: TURMA2026\n> DICA: ENCONTRE A VARIAVEL 'ROOTJOY' E COMPILE.\n> LEMBRETE: NAO E BUG, E FEATURE!`}
+                placeholder={`Ex:\n# TODO: REFACTORAR ALEGRIA PARA OTIMIZAR FIM DE ANO\n# FIXME: CORRIGIR BUG DE SONO ACUMULADO\n# SECRET_KEY = BUGFREECHRISTMAS\nprint("Feliz Natal, devs!")\n> CBRT(8316073576) == ?`}
                 className="w-full rounded-lg border border-steam-blue/60 bg-steam-darker px-4 py-3 font-mono text-sm text-white outline-none ring-0 focus:border-steam-blueLight focus:ring-2 focus:ring-steam-blue/40"
               />
               <button
@@ -265,6 +297,11 @@ export default function FestasClient() {
                 </p>
               </div>
             )}
+            <p className="text-xs text-gray-400">
+              Plano B: se pintar dúvida, responda só a SECRET_KEY (“bugfreechristmas”)
+              ou o resultado de CBRT(8316073576) → 2026. Sabia que um dia usaríamos
+              raiz cúbica para algo importante! :)
+            </p>
           </div>
         </div>
 
@@ -288,16 +325,19 @@ export default function FestasClient() {
                   1. Some os dígitos de 2026. (2 + 0 + 2 + 6 = 10)
                 </li>
                 <li>
-                  2. Conte quantas vogais existem em “SENAI” (são 3) e subtraia
-                  do número anterior.
+                  2. Conte quantas vogais existem em “SENAI” (são 3) e subtraia do
+                  número anterior → deslocamento 7.
                 </li>
                 <li>
-                  3. O resultado é o deslocamento que desfaz a cifra. Aplique nas
-                  letras do texto acima.
+                  3. A SECRET_KEY é o oposto de um bug que faz sorrir (pense em
+                  algo “bugFree” + Natal).
                 </li>
                 <li>
-                  4. A frase decifrada começa com “&gt; EXECUTAR” e fala da variável
-                  “ROOTJOY”.
+                  4. Plano B: o terminal pergunta CBRT(8316073576). Resultado? 2026.
+                </li>
+                <li>
+                  5. Se travar, pode responder só a chave ou apenas “2026” para
+                  liberar a carta.
                 </li>
               </ul>
             ) : (
@@ -384,7 +424,7 @@ export default function FestasClient() {
                 Agradeço por cada momento em que embarcaram comigo nessa jornada: dos cálculos com raízes quadradas na lousa (sim, eu vi a reação de vocês!) às manhãs/tarde em que o ar-condicionado desistia de viver enquanto a gente seguia firme codando. Foi intenso, divertido e, acima de tudo, verdadeiro.
               </p>
               <p className="text-gray-200 leading-relaxed">
-                Que o recesso traga descanso, inspiração e tempo com a família. Em 12/01, voltamos com o teclado iluminado, controle na mão e aquele olhar afiado pra reta final do curso. Vamos lapidar protótipos, fechar builds e mostrar com orgulho o que construímos juntos em 2025 — porque o melhor ainda está por vir.
+                Que o recesso traga descanso, inspiração e tempo com a família. Em 12/01, voltamos com o teclado iluminado, controle na mão e aquele olhar afiado pra reta final do curso. Vamos lapidar protótipos, fechar builds e mostrar com orgulho o que construímos juntos em 2026 — porque o melhor ainda está por vir.
               </p>
               <div className="grid gap-4 md:grid-cols-3">
                 <div className="rounded-xl border border-steam-blue/50 bg-steam-darker/80 p-4">

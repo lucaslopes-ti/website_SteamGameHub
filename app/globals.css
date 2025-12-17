@@ -553,3 +553,31 @@ select:focus-visible {
   transform: rotate(45deg) translate(100%, 100%);
 }
 
+/* Pixel snow overlay */
+.pixel-snow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  mix-blend-mode: screen;
+}
+
+.pixel-snowflake {
+  position: absolute;
+  top: -10px;
+  background: #b3e5fc;
+  image-rendering: pixelated;
+  animation-name: pixelSnow;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes pixelSnow {
+  from {
+    transform: translate3d(0, -5%, 0);
+  }
+  to {
+    transform: translate3d(0, 110vh, 0);
+  }
+}
+
