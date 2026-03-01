@@ -36,7 +36,7 @@ const TECHNOLOGIES = [
 function GamesPageContent() {
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
-  const [selectedGenre, setSelectedGenre] = useState("Todos");
+  const [selectedGenre, setSelectedGenre] = useState(searchParams.get("genre") || "Todos");
   const [selectedTechnology, setSelectedTechnology] = useState("Todos");
   const [selectedAuthor, setSelectedAuthor] = useState("Todos");
   const [showFilters, setShowFilters] = useState(false);

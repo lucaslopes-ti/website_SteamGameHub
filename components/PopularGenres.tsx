@@ -44,15 +44,16 @@ export default function PopularGenres({ games }: PopularGenresProps) {
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         {popularGenres.map(({ genre, count }) => (
-          <div
+          <Link
             key={genre}
-            className="bg-steam-darker border border-steam-blue rounded-lg p-4 text-center hover:border-steam-blueLight transition-all duration-300 hover:bg-steam-dark group cursor-pointer"
+            href={`/games?genre=${encodeURIComponent(genre)}`}
+            className="bg-steam-darker border border-steam-blue rounded-lg p-4 text-center hover:border-steam-blueLight transition-all duration-300 hover:bg-steam-dark group"
           >
             <div className="text-2xl font-bold text-steam-blueLight mb-1 group-hover:text-steam-green transition-colors">
               {count}
             </div>
-            <div className="text-sm text-gray-300">{genre}</div>
-          </div>
+            <div className="text-sm text-gray-300 group-hover:text-white transition-colors">{genre}</div>
+          </Link>
         ))}
       </div>
     </section>

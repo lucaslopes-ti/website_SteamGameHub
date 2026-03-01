@@ -8,6 +8,13 @@ import { Game } from "@/lib/games";
 import FavoriteButton from "@/components/FavoriteButton";
 import type { MouseEvent } from "react";
 
+function isNewGame(releaseDate: string): boolean {
+  const release = new Date(releaseDate);
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  return release >= thirtyDaysAgo;
+}
+
 interface GameCardProps {
   game: Game;
 }
@@ -61,11 +68,18 @@ export default function GameCard({ game }: GameCardProps) {
               <span aria-hidden="true">Sem imagem</span>
             </div>
           )}
-          {game.featured && (
-            <div className="absolute top-2 right-2 bg-steam-green text-white px-2 py-1 rounded text-xs font-bold" aria-label="Jogo em destaque">
-              DESTAQUE
-            </div>
-          )}
+          <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
+            {game.featured && (
+              <span className="bg-steam-green text-white px-2 py-1 rounded text-xs font-bold" aria-label="Jogo em destaque">
+                DESTAQUE
+              </span>
+            )}
+            {!game.featured && isNewGame(game.releaseDate) && (
+              <span className="bg-yellow-500 text-black px-2 py-1 rounded text-xs font-bold" aria-label="Jogo adicionado recentemente">
+                NOVO
+              </span>
+            )}
+          </div>
           <div
             className="absolute top-2 left-2"
             onClick={(e: MouseEvent<HTMLDivElement>) => {
@@ -85,14 +99,16 @@ export default function GameCard({ game }: GameCardProps) {
             {game.description}
           </p>
           <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-1 text-yellow-400" aria-label={`Avaliação: ${game.rating.toFixed(1)} de 5 estrelas`}>
+            <div className="flex items-center gap-1.5 text-yellow-400" aria-label={`Avaliação: ${game.rating.toFixed(1)} de 5 estrelas com ${game.totalRatings} avaliações`}>
               <Star className="w-4 h-4 fill-current" aria-hidden="true" />
-              <span>{game.rating.toFixed(1)}</span>
-              <span className="sr-only">de 5 estrelas</span>
+              <span className="font-semibold">{game.rating.toFixed(1)}</span>
+              {game.totalRatings > 0 && (
+                <span className="text-gray-500 text-xs">({game.totalRatings})</span>
+              )}
             </div>
-            <div className="flex items-center gap-1 text-gray-400" aria-label={`Autor: ${game.author}`}>
-              <User className="w-4 h-4" aria-hidden="true" />
-              <span>{game.author}</span>
+            <div className="flex items-center gap-1 text-gray-400 max-w-[45%]" aria-label={`Autor: ${game.author}`}>
+              <User className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+              <span className="truncate">{game.author}</span>
             </div>
           </div>
           <div className="flex flex-wrap gap-2 mt-3" role="list" aria-label="Gêneros do jogo">

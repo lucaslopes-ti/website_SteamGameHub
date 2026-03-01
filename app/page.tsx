@@ -11,7 +11,7 @@ import PopularGenres from "@/components/PopularGenres";
 import AboutSection from "@/components/AboutSection";
 import TopRatedGames from "@/components/TopRatedGames";
 import { Game } from "@/lib/games";
-import { BookOpen, ArrowRight, AlertCircle } from "lucide-react";
+import { SearchX, SlidersHorizontal } from "lucide-react";
 
 export default function Home() {
   const [games, setGames] = useState<Game[]>([]);
@@ -157,6 +157,25 @@ export default function Home() {
           {/* Seção de Filtros e Busca */}
           <section className="container mx-auto px-4">
             <div className="bg-steam-dark border border-steam-blue rounded-lg p-4 mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2 text-steam-blueLight font-semibold">
+                  <SlidersHorizontal className="w-4 h-4" />
+                  <span>Filtros</span>
+                  {(query || selectedGenres.length > 0 || selectedTechs.length > 0) && (
+                    <span className="bg-steam-blueLight text-steam-darker text-xs font-bold px-2 py-0.5 rounded-full">
+                      {[query ? 1 : 0, selectedGenres.length, selectedTechs.length].reduce((a, b) => a + b, 0)} ativos
+                    </span>
+                  )}
+                </div>
+                {(query || selectedGenres.length > 0 || selectedTechs.length > 0) && (
+                  <button
+                    onClick={() => { setQuery(""); setSelectedGenres([]); setSelectedTechs([]); setSortBy("recent"); }}
+                    className="text-xs text-gray-400 hover:text-red-400 transition-colors"
+                  >
+                    Limpar tudo
+                  </button>
+                )}
+              </div>
               <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-end">
                 <div className="flex-1 w-full">
                   <label className="block text-sm text-gray-400 mb-2">Buscar</label>
@@ -246,31 +265,21 @@ export default function Home() {
                 </div>
               )}
             </div>
-            <h2 className="text-3xl font-bold mb-6 text-steam-blueLight">
-              Jogos Recentes
-            </h2>
-            <div className="text-sm text-gray-400 mb-4">
-              {visibleGames.length} de {filtered.length} resultados
+            <div className="flex items-baseline justify-between mb-6">
+              <h2 className="text-3xl font-bold text-steam-blueLight">
+                {(query || selectedGenres.length > 0 || selectedTechs.length > 0) ? "Resultados" : "Jogos Recentes"}
+              </h2>
+              <span className="text-sm text-gray-400">
+                {filtered.length === 1 ? "1 jogo" : `${filtered.length} jogos`}
+              </span>
             </div>
             {visibleGames.length > 0 ? (
               <GameGrid games={visibleGames} />
             ) : (
-              <div className="text-center py-12 text-gray-400">
-                <p>Nenhum jogo encontrado com os filtros atuais.</p>
-                {(query || selectedGenres.length || selectedTechs.length) && (
-                  <button
-                    className="mt-4 px-4 py-2 rounded border border-steam-blue text-steam-blueLight hover:border-steam-blueLight"
-                    onClick={() => {
-                      setQuery("");
-                      setSelectedGenres([]);
-                      setSelectedTechs([]);
-                      setSortBy("recent");
-                    }}
-                    title="Limpar filtros"
-                  >
-                    Limpar filtros
-                  </button>
-                )}
+              <div className="flex flex-col items-center py-16 text-gray-400 gap-4">
+                <SearchX className="w-14 h-14 text-steam-blue opacity-60" />
+                <p className="text-lg font-medium">Nenhum jogo encontrado</p>
+                <p className="text-sm text-gray-500">Tente ajustar ou limpar os filtros acima.</p>
               </div>
             )}
 

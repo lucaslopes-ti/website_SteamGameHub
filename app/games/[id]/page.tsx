@@ -5,7 +5,7 @@ import { useParams, notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Game } from "@/lib/games";
-import { Star, Play, Download, User, Calendar, Tag, Code, HardDrive, Eye } from "lucide-react";
+import { Star, Play, Download, User, Calendar, Tag, Code, HardDrive, Eye, ChevronDown, HelpCircle, Image as ImageIcon, X, FileArchive, FolderOpen, ExternalLink } from "lucide-react";
 import RatingSection from "@/components/RatingSection";
 import CommentsSection from "@/components/CommentsSection";
 import FavoriteButton from "@/components/FavoriteButton";
@@ -13,8 +13,6 @@ import VideoPlayer from "@/components/VideoPlayer";
 import ShareButton from "@/components/ShareButton";
 import { GameDetailSkeleton } from "@/components/SkeletonLoader";
 import { useAuth } from "@/components/AuthProvider";
-import { Loader2, Image as ImageIcon, X } from "lucide-react";
-import DownloadInstructionsModal from "@/components/DownloadInstructionsModal";
 
 export default function GameDetailPage() {
   const params = useParams();
@@ -24,38 +22,12 @@ export default function GameDetailPage() {
   const [selectedScreenshot, setSelectedScreenshot] = useState<string | null>(null);
   const [views, setViews] = useState(0);
   const [imageError, setImageError] = useState(false);
-  const [showDownloadModal, setShowDownloadModal] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
 
   useEffect(() => {
     loadGame();
     registerView();
   }, [params.id]);
-
-  // Mostrar modal de instruções na primeira vez que acessar a página
-  useEffect(() => {
-    // Inicializar timer como null para garantir cleanup consistente
-    let timer: NodeJS.Timeout | null = null;
-    
-    if (game && !loading) {
-      // Verificar se já mostrou o modal para este jogo
-      const hasSeenModal = localStorage.getItem(`download-modal-${game.id}`);
-      
-      // Mostrar apenas se tiver link de download e não tiver visto antes
-      if ((game.downloadLink || game.executableFile) && !hasSeenModal) {
-        // Pequeno delay para melhor UX
-        timer = setTimeout(() => {
-          setShowDownloadModal(true);
-        }, 500);
-      }
-    }
-    
-    // Sempre retornar função de cleanup no mesmo nível
-    return () => {
-      if (timer) {
-        clearTimeout(timer);
-      }
-    };
-  }, [game, loading]);
 
   const registerView = async () => {
     try {
@@ -125,23 +97,8 @@ export default function GameDetailPage() {
     notFound();
   }
 
-  const handleCloseModal = () => {
-    setShowDownloadModal(false);
-    if (game) {
-      localStorage.setItem(`download-modal-${game.id}`, "true");
-    }
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Modal de Instruções de Download */}
-      {showDownloadModal && game && (
-        <DownloadInstructionsModal
-          gameTitle={game.title}
-          downloadLink={game.downloadLink || undefined}
-          onClose={handleCloseModal}
-        />
-      )}
       <div className="mb-8">
         <div className="relative h-64 md:h-96 bg-steam-blue rounded-lg overflow-hidden mb-6">
           {game.image && game.image.trim() !== "" && (game.image.startsWith("http") || game.image.startsWith("/")) && !imageError ? (
@@ -238,6 +195,75 @@ export default function GameDetailPage() {
                 </Link>
               )}
             </div>
+
+            {/* Tutorial de download */}
+            {(game.downloadLink || game.executableFile) && (
+              <div className="mb-6 border border-steam-blue/30 rounded-lg overflow-hidden">
+                <button
+                  onClick={() => setShowGuide((v: boolean) => !v)}
+                  className="w-full flex items-center justify-between px-4 py-3 bg-steam-dark/60 hover:bg-steam-dark text-steam-blueLight font-semibold transition-colors"
+                >
+                  <span className="flex items-center gap-2">
+                    <HelpCircle className="w-4 h-4" />
+                    Como baixar e executar este jogo?
+                  </span>
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-200 ${showGuide ? "rotate-180" : ""}`}
+                  />
+                </button>
+
+                {showGuide && (
+                  <div className="px-5 py-4 bg-steam-darker space-y-3 text-sm">
+                    {game.executableFile ? (
+                      // Guia para download direto
+                      <ol className="space-y-3 text-gray-300">
+                        <li className="flex items-start gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-steam-green/20 border border-steam-green/40 flex items-center justify-center text-steam-green font-bold text-xs">1</span>
+                          <span>Clique no botão <strong className="text-white">Baixar Jogo</strong> acima — o arquivo será baixado direto para o seu computador.</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-steam-green/20 border border-steam-green/40 flex items-center justify-center text-steam-green font-bold text-xs">2</span>
+                          <span>Aguarde o download terminar e abra o arquivo baixado (normalmente em <strong className="text-white">Downloads</strong>).</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-steam-green/20 border border-steam-green/40 flex items-center justify-center text-steam-green font-bold text-xs">3</span>
+                          <span>Se o Windows exibir um aviso de segurança, clique em <strong className="text-white">Mais informações</strong> e depois em <strong className="text-white">Executar mesmo assim</strong>.</span>
+                        </li>
+                      </ol>
+                    ) : (
+                      // Guia para Google Drive / link externo
+                      <ol className="space-y-3 text-gray-300">
+                        <li className="flex items-start gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-blue-400 font-bold text-xs">1</span>
+                          <span className="flex items-center gap-1.5"><ExternalLink className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" /> Clique em <strong className="text-white">Download</strong> para abrir o Google Drive.</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-blue-400 font-bold text-xs">2</span>
+                          <span className="flex items-center gap-1.5"><Download className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" /> No Google Drive, clique no ícone de <strong className="text-white">download</strong> para salvar o arquivo ZIP.</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-blue-400 font-bold text-xs">3</span>
+                          <span className="flex items-center gap-1.5"><FileArchive className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" /> Localize o arquivo ZIP baixado e <strong className="text-white">extraia</strong> todo o conteúdo para uma pasta.</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-blue-400 font-bold text-xs">4</span>
+                          <span className="flex items-center gap-1.5"><FolderOpen className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" /> Abra a pasta extraída e procure pelo arquivo <strong className="text-white">.exe</strong>.</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-blue-400 font-bold text-xs">5</span>
+                          <span className="flex items-center gap-1.5"><Play className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" /> Dê um duplo clique no <strong className="text-white">.exe</strong> para iniciar o jogo. Se o Windows bloquear, clique em <strong className="text-white">Mais informações → Executar mesmo assim</strong>.</span>
+                        </li>
+                      </ol>
+                    )}
+
+                    <div className="mt-3 pt-3 border-t border-steam-blue/20 text-gray-400 text-xs space-y-1">
+                      <p>Certifique-se de ter espaço suficiente em disco antes de baixar.</p>
+                      <p>Mantenha todos os arquivos na mesma pasta para o jogo funcionar corretamente.</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {game.trailerUrl && (
               <div className="mb-6">

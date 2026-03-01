@@ -1,37 +1,40 @@
 "use client";
 
-import { GraduationCap, Code, Users, Award } from "lucide-react";
+import { GraduationCap, Code, Users, Award, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+
+const features = [
+  {
+    icon: GraduationCap,
+    title: "Curso Técnico",
+    description: "Projetos desenvolvidos por estudantes do curso Técnico em Programação de Jogos Digitais do SENAI",
+    iconBg: "bg-sky-500/10 group-hover:bg-sky-500/20",
+    iconColor: "text-sky-400",
+  },
+  {
+    icon: Code,
+    title: "Tecnologias Diversas",
+    description: "Jogos desenvolvidos com Unity, Unreal Engine, Godot e outras tecnologias modernas",
+    iconBg: "bg-emerald-500/10 group-hover:bg-emerald-500/20",
+    iconColor: "text-emerald-400",
+  },
+  {
+    icon: Users,
+    title: "Comunidade Ativa",
+    description: "Plataforma colaborativa onde estudantes compartilham e descobrem projetos incríveis",
+    iconBg: "bg-yellow-400/10 group-hover:bg-yellow-400/20",
+    iconColor: "text-yellow-400",
+  },
+  {
+    icon: Award,
+    title: "Qualidade Garantida",
+    description: "Todos os jogos passam por revisão antes de serem publicados",
+    iconBg: "bg-purple-500/10 group-hover:bg-purple-500/20",
+    iconColor: "text-purple-400",
+  },
+];
 
 export default function AboutSection() {
-  const features = [
-    {
-      icon: GraduationCap,
-      title: "Curso Técnico",
-      description: "Projetos desenvolvidos por estudantes do curso Técnico em Programação de Jogos Digitais do SENAI",
-      color: "steam-blueLight",
-    },
-    {
-      icon: Code,
-      title: "Tecnologias Diversas",
-      description: "Jogos desenvolvidos com Unity, Unreal Engine, Godot e outras tecnologias modernas",
-      color: "steam-green",
-    },
-    {
-      icon: Users,
-      title: "Comunidade Ativa",
-      description: "Plataforma colaborativa onde estudantes compartilham e descobrem projetos incríveis",
-      color: "yellow-400",
-    },
-    {
-      icon: Award,
-      title: "Qualidade Garantida",
-      description: "Todos os jogos passam por revisão antes de serem publicados",
-      color: "purple-400",
-    },
-  ];
-
   return (
     <section className="bg-gradient-to-b from-steam-dark via-steam-darker to-steam-dark border-t border-b border-steam-blue py-16">
       <div className="container mx-auto px-4">
@@ -40,11 +43,11 @@ export default function AboutSection() {
             Sobre o Projeto
           </h2>
           <p className="text-xl text-gray-300 leading-relaxed mb-6">
-            O SENAI Game HUB é uma plataforma dedicada a expor e celebrar os talentos dos estudantes 
+            O SENAI Game HUB é uma plataforma dedicada a expor e celebrar os talentos dos estudantes
             do curso Técnico em Programação de Jogos Digitais do SENAI Dr. Celso Charuri.
           </p>
           <p className="text-lg text-gray-400 leading-relaxed mb-8">
-            Aqui você encontrará uma coleção crescente de jogos desenvolvidos pelos alunos, 
+            Aqui você encontrará uma coleção crescente de jogos desenvolvidos pelos alunos,
             desde projetos de conclusão até trabalhos práticos e experimentos criativos.
           </p>
           <Link
@@ -64,8 +67,8 @@ export default function AboutSection() {
                 key={index}
                 className="bg-steam-dark border border-steam-blue rounded-lg p-6 hover:border-steam-blueLight transition-all duration-300 hover:shadow-lg hover:shadow-steam-blue/20 group"
               >
-                <div className={`inline-flex p-3 rounded-lg bg-${feature.color}/10 mb-4 group-hover:bg-${feature.color}/20 transition-all`}>
-                  <Icon className={`w-6 h-6 text-${feature.color}`} />
+                <div className={`inline-flex p-3 rounded-lg mb-4 transition-all ${feature.iconBg}`}>
+                  <Icon className={`w-6 h-6 ${feature.iconColor}`} />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
                 <p className="text-gray-400 leading-relaxed">{feature.description}</p>
