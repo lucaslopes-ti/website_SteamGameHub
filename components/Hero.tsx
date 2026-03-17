@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Play, ArrowRight, Gamepad2, Users, Award, ChevronDown, Sparkles } from "lucide-react";
+import { useTheme } from "./ThemeProvider";
 
 function useAnimatedCounter(target: number, duration = 2000, decimals = 0) {
   const [count, setCount] = useState(0);
@@ -31,7 +32,7 @@ function useAnimatedCounter(target: number, duration = 2000, decimals = 0) {
   return count;
 }
 
-function FloatingParticles() {
+function FloatingParticles({ isLight = false }: { isLight?: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -57,11 +58,17 @@ function FloatingParticles() {
       canvas.height = canvas.offsetHeight;
     };
 
-    const colors = [
-      "rgba(102, 192, 244,",
-      "rgba(76, 175, 80,",
-      "rgba(255, 255, 255,",
-    ];
+    const colors = isLight
+      ? [
+          "rgba(37, 99, 235,",
+          "rgba(22, 163, 74,",
+          "rgba(100, 116, 139,",
+        ]
+      : [
+          "rgba(102, 192, 244,",
+          "rgba(76, 175, 80,",
+          "rgba(255, 255, 255,",
+        ];
 
     const initParticles = () => {
       particles.length = 0;
@@ -106,7 +113,9 @@ function FloatingParticles() {
 
           if (dist < 120) {
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(102, 192, 244, ${0.06 * (1 - dist / 120)})`;
+            ctx.strokeStyle = isLight
+              ? `rgba(37, 99, 235, ${0.08 * (1 - dist / 120)})`
+              : `rgba(102, 192, 244, ${0.06 * (1 - dist / 120)})`;
             ctx.lineWidth = 0.5;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
@@ -131,7 +140,7 @@ function FloatingParticles() {
       cancelAnimationFrame(animationId);
       window.removeEventListener("resize", resize);
     };
-  }, []);
+  }, [isLight]);
 
   return (
     <canvas
@@ -143,6 +152,8 @@ function FloatingParticles() {
 }
 
 export default function Hero() {
+  const { theme } = useTheme();
+  const isLight = theme === "light";
   const [stats, setStats] = useState({
     totalGames: 0,
     totalAuthors: 0,
@@ -206,41 +217,56 @@ export default function Hero() {
       ref={heroRef}
       className="relative min-h-[95vh] flex items-center overflow-hidden"
       style={{
-        background: `
-          radial-gradient(ellipse at ${mousePosition.x}% ${mousePosition.y}%, rgba(102, 192, 244, 0.12) 0%, transparent 50%),
-          radial-gradient(ellipse at ${100 - mousePosition.x}% ${100 - mousePosition.y}%, rgba(76, 175, 80, 0.06) 0%, transparent 50%),
-          linear-gradient(135deg, #0a0f1a 0%, #1b2838 40%, #2a475e 100%)
-        `,
+        background: isLight
+          ? `
+            radial-gradient(ellipse at ${mousePosition.x}% ${mousePosition.y}%, rgba(37, 99, 235, 0.08) 0%, transparent 50%),
+            radial-gradient(ellipse at ${100 - mousePosition.x}% ${100 - mousePosition.y}%, rgba(22, 163, 74, 0.05) 0%, transparent 50%),
+            linear-gradient(135deg, #e0e7ff 0%, #dbeafe 40%, #eff6ff 100%)
+          `
+          : `
+            radial-gradient(ellipse at ${mousePosition.x}% ${mousePosition.y}%, rgba(102, 192, 244, 0.12) 0%, transparent 50%),
+            radial-gradient(ellipse at ${100 - mousePosition.x}% ${100 - mousePosition.y}%, rgba(76, 175, 80, 0.06) 0%, transparent 50%),
+            linear-gradient(135deg, #0a0f1a 0%, #1b2838 40%, #2a475e 100%)
+          `,
       }}
     >
       {/* Particles */}
-      <FloatingParticles />
+      <FloatingParticles isLight={isLight} />
 
       {/* Grid overlay */}
-      <div className="absolute inset-0 opacity-[0.03]" aria-hidden="true">
+      <div className={`absolute inset-0 ${isLight ? "opacity-[0.06]" : "opacity-[0.03]"}`} aria-hidden="true">
         <div className="absolute inset-0" style={{
-          backgroundImage: `
-            linear-gradient(rgba(102, 192, 244, 0.5) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(102, 192, 244, 0.5) 1px, transparent 1px)
-          `,
+          backgroundImage: isLight
+            ? `
+              linear-gradient(rgba(37, 99, 235, 0.4) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(37, 99, 235, 0.4) 1px, transparent 1px)
+            `
+            : `
+              linear-gradient(rgba(102, 192, 244, 0.5) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(102, 192, 244, 0.5) 1px, transparent 1px)
+            `,
           backgroundSize: "60px 60px",
         }} />
       </div>
 
       {/* Gradient orbs */}
       <div
-        className="absolute w-[500px] h-[500px] rounded-full opacity-[0.07] blur-[100px] pointer-events-none"
+        className={`absolute w-[500px] h-[500px] rounded-full blur-[100px] pointer-events-none ${isLight ? "opacity-[0.12]" : "opacity-[0.07]"}`}
         style={{
-          background: "radial-gradient(circle, #66c0f4, transparent 70%)",
+          background: isLight
+            ? "radial-gradient(circle, #3b82f6, transparent 70%)"
+            : "radial-gradient(circle, #66c0f4, transparent 70%)",
           top: "10%",
           right: "-5%",
         }}
         aria-hidden="true"
       />
       <div
-        className="absolute w-[400px] h-[400px] rounded-full opacity-[0.05] blur-[80px] pointer-events-none"
+        className={`absolute w-[400px] h-[400px] rounded-full blur-[80px] pointer-events-none ${isLight ? "opacity-[0.10]" : "opacity-[0.05]"}`}
         style={{
-          background: "radial-gradient(circle, #4caf50, transparent 70%)",
+          background: isLight
+            ? "radial-gradient(circle, #16a34a, transparent 70%)"
+            : "radial-gradient(circle, #4caf50, transparent 70%)",
           bottom: "10%",
           left: "-5%",
         }}
@@ -379,18 +405,18 @@ export default function Hero() {
       </button>
 
       {/* Decorative corner accents */}
-      <div className="absolute top-0 right-0 w-64 h-64 opacity-[0.03] pointer-events-none" aria-hidden="true">
+      <div className={`absolute top-0 right-0 w-64 h-64 pointer-events-none ${isLight ? "opacity-[0.08]" : "opacity-[0.03]"}`} aria-hidden="true">
         <svg viewBox="0 0 200 200" className="w-full h-full">
-          <circle cx="150" cy="50" r="80" stroke="#66c0f4" strokeWidth="0.5" fill="none" />
-          <circle cx="150" cy="50" r="60" stroke="#4caf50" strokeWidth="0.3" fill="none" />
-          <circle cx="150" cy="50" r="40" stroke="#66c0f4" strokeWidth="0.2" fill="none" />
+          <circle cx="150" cy="50" r="80" stroke={isLight ? "#3b82f6" : "#66c0f4"} strokeWidth="0.5" fill="none" />
+          <circle cx="150" cy="50" r="60" stroke={isLight ? "#16a34a" : "#4caf50"} strokeWidth="0.3" fill="none" />
+          <circle cx="150" cy="50" r="40" stroke={isLight ? "#3b82f6" : "#66c0f4"} strokeWidth="0.2" fill="none" />
         </svg>
       </div>
 
-      <div className="absolute bottom-0 left-0 w-48 h-48 opacity-[0.03] pointer-events-none" aria-hidden="true">
+      <div className={`absolute bottom-0 left-0 w-48 h-48 pointer-events-none ${isLight ? "opacity-[0.08]" : "opacity-[0.03]"}`} aria-hidden="true">
         <svg viewBox="0 0 200 200" className="w-full h-full">
-          <circle cx="50" cy="150" r="70" stroke="#4caf50" strokeWidth="0.5" fill="none" />
-          <circle cx="50" cy="150" r="50" stroke="#66c0f4" strokeWidth="0.3" fill="none" />
+          <circle cx="50" cy="150" r="70" stroke={isLight ? "#16a34a" : "#4caf50"} strokeWidth="0.5" fill="none" />
+          <circle cx="50" cy="150" r="50" stroke={isLight ? "#3b82f6" : "#66c0f4"} strokeWidth="0.3" fill="none" />
         </svg>
       </div>
     </section>
