@@ -35,8 +35,19 @@ const TECHNOLOGIES = [
 
 function GamesPageContent() {
   const searchParams = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
-  const [selectedGenre, setSelectedGenre] = useState(searchParams.get("genre") || "Todos");
+  const searchFromUrl = searchParams.get("search") || "";
+  const genreFromUrl = searchParams.get("genre") || "Todos";
+  const [searchQuery, setSearchQuery] = useState(searchFromUrl);
+  const [selectedGenre, setSelectedGenre] = useState(genreFromUrl);
+
+  // Sync search query when URL params change (e.g. new search from Header)
+  useEffect(() => {
+    setSearchQuery(searchFromUrl);
+  }, [searchFromUrl]);
+
+  useEffect(() => {
+    setSelectedGenre(genreFromUrl);
+  }, [genreFromUrl]);
   const [selectedTechnology, setSelectedTechnology] = useState("Todos");
   const [selectedAuthor, setSelectedAuthor] = useState("Todos");
   const [showFilters, setShowFilters] = useState(false);

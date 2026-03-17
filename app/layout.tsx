@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/components/AuthProvider";
 import { ToastProvider } from "@/components/ToastProvider";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -63,6 +64,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={inter.className}>
+        <ThemeProvider>
         <AuthProvider>
           <ToastProvider>
             {/* Skip Links para navegação rápida (WCAG 2.4.1) */}
@@ -83,6 +85,7 @@ export default function RootLayout({
             <Footer />
           </ToastProvider>
         </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Search, User, Gamepad2, LogOut, Heart, Info, Menu, X, BookOpen } from "lucide-react";
+import { Search, User, Gamepad2, LogOut, Heart, Info, Menu, X, BookOpen, Sun, Moon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "./AuthProvider";
+import { useTheme } from "./ThemeProvider";
 
 export default function Header() {
   const router = useRouter();
   const { isAuthenticated, user, logout, isTeacher } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -92,6 +94,19 @@ export default function Header() {
             role="navigation" 
             aria-label="Navegação principal"
           >
+            <button
+              onClick={toggleTheme}
+              className="flex items-center justify-center w-9 h-9 rounded-lg text-gray-300 hover:text-steam-blueLight hover:bg-steam-dark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2"
+              aria-label={theme === "dark" ? "Mudar para tema claro" : "Mudar para tema escuro"}
+              title={theme === "dark" ? "Tema claro" : "Tema escuro"}
+            >
+              {theme === "dark" ? (
+                <Sun className="w-5 h-5" aria-hidden="true" />
+              ) : (
+                <Moon className="w-5 h-5" aria-hidden="true" />
+              )}
+            </button>
+
             <Link
               href="/games"
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-300 hover:text-steam-blueLight hover:bg-steam-dark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 group"
@@ -100,7 +115,7 @@ export default function Header() {
               <Gamepad2 className="w-4 h-4 group-hover:scale-110 transition-transform" aria-hidden="true" />
               <span className="font-medium">Jogos</span>
             </Link>
-            
+
             <Link
               href="/about"
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-300 hover:text-steam-blueLight hover:bg-steam-dark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 group"
@@ -227,6 +242,19 @@ export default function Header() {
             aria-label="Menu de navegação mobile"
           >
             <div className="flex flex-col gap-2">
+              <button
+                onClick={toggleTheme}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:text-steam-blueLight hover:bg-steam-dark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 text-left"
+                aria-label={theme === "dark" ? "Mudar para tema claro" : "Mudar para tema escuro"}
+              >
+                {theme === "dark" ? (
+                  <Sun className="w-5 h-5" aria-hidden="true" />
+                ) : (
+                  <Moon className="w-5 h-5" aria-hidden="true" />
+                )}
+                <span className="font-medium">{theme === "dark" ? "Tema Claro" : "Tema Escuro"}</span>
+              </button>
+
               <Link
                 href="/games"
                 onClick={() => setIsMobileMenuOpen(false)}
