@@ -2,15 +2,18 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Search, User, Gamepad2, LogOut, Heart, Info, Menu, X, BookOpen, Sun, Moon } from "lucide-react";
+import { Search, User, Gamepad2, LogOut, Heart, Info, Menu, X, Sun, Moon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "./AuthProvider";
 import { useTheme } from "./ThemeProvider";
+import { useI18n } from "./I18nProvider";
+import LanguageSelector from "./LanguageSelector";
 
 export default function Header() {
   const router = useRouter();
   const { isAuthenticated, user, logout, isTeacher } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { t } = useI18n();
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -47,7 +50,7 @@ export default function Header() {
           <Link 
             href="/" 
             className="flex items-center gap-3 group focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 rounded-lg px-2 py-1 -ml-2"
-            aria-label="Página inicial - SENAI Dr. Celso Charuri Game HUB"
+            aria-label={t("header.home")}
           >
             <div className="relative">
               <div className="absolute inset-0 bg-steam-blueLight/20 rounded-lg blur-lg group-hover:bg-steam-blueLight/30 transition-colors" />
@@ -67,7 +70,7 @@ export default function Header() {
             onSubmit={handleSearch} 
             className="hidden lg:flex flex-1 max-w-md mx-8" 
             role="search" 
-            aria-label="Buscar jogos"
+            aria-label={t("header.searchGames")}
           >
             <div className="relative w-full group">
               <Search 
@@ -76,14 +79,14 @@ export default function Header() {
               />
               <input
                 type="search"
-                placeholder="Buscar jogos, autores..."
+                placeholder={t("header.searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-steam-dark/80 backdrop-blur-sm border border-steam-blue/50 rounded-lg px-10 py-2.5 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight focus:bg-steam-dark focus:ring-2 focus:ring-steam-blueLight/50 transition-all"
-                aria-label="Campo de busca de jogos"
+                aria-label={t("header.searchField")}
                 aria-describedby="search-description"
               />
-              <span id="search-description" className="sr-only">Digite o nome do jogo ou autor para buscar</span>
+              <span id="search-description" className="sr-only">{t("header.searchHelp")}</span>
             </div>
           </form>
 
@@ -92,13 +95,15 @@ export default function Header() {
             id="navigation" 
             className="hidden lg:flex items-center gap-1" 
             role="navigation" 
-            aria-label="Navegação principal"
+            aria-label={t("header.mainNav")}
           >
+            <LanguageSelector />
+
             <button
               onClick={toggleTheme}
               className="flex items-center justify-center w-9 h-9 rounded-lg text-gray-300 hover:text-steam-blueLight hover:bg-steam-dark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2"
-              aria-label={theme === "dark" ? "Mudar para tema claro" : "Mudar para tema escuro"}
-              title={theme === "dark" ? "Tema claro" : "Tema escuro"}
+              aria-label={theme === "dark" ? t("header.switchToLight") : t("header.switchToDark")}
+              title={theme === "dark" ? t("header.themeLight") : t("header.themeDark")}
             >
               {theme === "dark" ? (
                 <Sun className="w-5 h-5" aria-hidden="true" />
@@ -113,7 +118,7 @@ export default function Header() {
               aria-label="Ver todos os jogos disponíveis"
             >
               <Gamepad2 className="w-4 h-4 group-hover:scale-110 transition-transform" aria-hidden="true" />
-              <span className="font-medium">Jogos</span>
+              <span className="font-medium">{t("header.games")}</span>
             </Link>
 
             <Link
@@ -122,7 +127,7 @@ export default function Header() {
               aria-label="Sobre o projeto Game HUB"
             >
               <Info className="w-4 h-4 group-hover:scale-110 transition-transform" aria-hidden="true" />
-              <span className="font-medium">Sobre</span>
+              <span className="font-medium">{t("header.about")}</span>
             </Link>
             
             <Link
@@ -130,7 +135,7 @@ export default function Header() {
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-300 hover:text-steam-blueLight hover:bg-steam-dark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 group"
               aria-label="Ver estatísticas do site"
             >
-              <span className="font-medium">Stats</span>
+              <span className="font-medium">{t("header.stats")}</span>
             </Link>
             
             {isAuthenticated && (
@@ -140,7 +145,7 @@ export default function Header() {
                 aria-label="Ver meus jogos favoritos"
               >
                 <Heart className="w-4 h-4 group-hover:scale-110 transition-transform fill-current" aria-hidden="true" />
-                <span className="font-medium">Favoritos</span>
+                <span className="font-medium">{t("header.favorites")}</span>
               </Link>
             )}
             
@@ -149,7 +154,7 @@ export default function Header() {
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-steam-blueLight/10 hover:bg-steam-blueLight/20 text-steam-blueLight border border-steam-blueLight/30 hover:border-steam-blueLight/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 group font-medium"
               aria-label="Enviar um novo jogo"
             >
-              <span className="group-hover:scale-105 transition-transform">Enviar</span>
+              <span className="group-hover:scale-105 transition-transform">{t("header.upload")}</span>
             </Link>
             {isAuthenticated ? (
               <div className="flex items-center gap-2">
@@ -159,7 +164,7 @@ export default function Header() {
                     className="flex items-center gap-2 px-4 py-2 rounded-lg bg-steam-green/10 hover:bg-steam-green/20 text-steam-green border border-steam-green/30 hover:border-steam-green/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-green focus-visible:outline-offset-2 font-medium"
                     aria-label="Painel administrativo"
                   >
-                    Admin
+                    {t("header.admin")}
                   </Link>
                 )}
                 <Link
@@ -181,7 +186,7 @@ export default function Header() {
                   aria-label="Fazer logout e sair da conta"
                 >
                   <LogOut className="w-4 h-4" aria-hidden="true" />
-                  <span className="hidden xl:inline">Sair</span>
+                  <span className="hidden xl:inline">{t("header.logout")}</span>
                 </button>
               </div>
             ) : (
@@ -191,7 +196,7 @@ export default function Header() {
                 aria-label="Fazer login na plataforma"
               >
                 <User className="w-4 h-4" aria-hidden="true" />
-                <span>Entrar</span>
+                <span>{t("header.login")}</span>
               </Link>
             )}
           </nav>
@@ -200,7 +205,7 @@ export default function Header() {
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="lg:hidden flex items-center justify-center w-10 h-10 rounded-lg bg-steam-dark/50 hover:bg-steam-dark border border-steam-blue/30 text-gray-300 hover:text-steam-blueLight transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2"
-            aria-label="Abrir menu de navegação"
+            aria-label={t("header.openMenu")}
             aria-expanded={isMobileMenuOpen}
           >
             {isMobileMenuOpen ? (
@@ -216,7 +221,7 @@ export default function Header() {
           onSubmit={handleSearch} 
           className="lg:hidden mt-4" 
           role="search" 
-          aria-label="Buscar jogos"
+          aria-label={t("header.searchGames")}
         >
           <div className="relative group">
             <Search 
@@ -225,11 +230,11 @@ export default function Header() {
             />
             <input
               type="search"
-              placeholder="Buscar jogos, autores..."
+              placeholder={t("header.searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-steam-dark/80 backdrop-blur-sm border border-steam-blue/50 rounded-lg px-10 py-2.5 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight focus:bg-steam-dark focus:ring-2 focus:ring-steam-blueLight/50 transition-all"
-              aria-label="Campo de busca de jogos"
+              aria-label={t("header.searchField")}
             />
           </div>
         </form>
@@ -239,20 +244,24 @@ export default function Header() {
           <nav 
             className="lg:hidden mt-4 pb-4 border-t border-steam-blue/30 pt-4 animate-fadeIn"
             role="navigation"
-            aria-label="Menu de navegação mobile"
+            aria-label={t("header.mobileNav")}
           >
             <div className="flex flex-col gap-2">
+              <div className="px-4 py-2">
+                <LanguageSelector compact />
+              </div>
+
               <button
                 onClick={toggleTheme}
                 className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:text-steam-blueLight hover:bg-steam-dark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 text-left"
-                aria-label={theme === "dark" ? "Mudar para tema claro" : "Mudar para tema escuro"}
+                aria-label={theme === "dark" ? t("header.switchToLight") : t("header.switchToDark")}
               >
                 {theme === "dark" ? (
                   <Sun className="w-5 h-5" aria-hidden="true" />
                 ) : (
                   <Moon className="w-5 h-5" aria-hidden="true" />
                 )}
-                <span className="font-medium">{theme === "dark" ? "Tema Claro" : "Tema Escuro"}</span>
+                <span className="font-medium">{theme === "dark" ? t("header.themeLight") : t("header.themeDark")}</span>
               </button>
 
               <Link
@@ -262,7 +271,7 @@ export default function Header() {
                 aria-label="Ver todos os jogos disponíveis"
               >
                 <Gamepad2 className="w-5 h-5" aria-hidden="true" />
-                <span className="font-medium">Todos os Jogos</span>
+                <span className="font-medium">{t("footer.allGames")}</span>
               </Link>
               
               <Link
@@ -272,7 +281,7 @@ export default function Header() {
                 aria-label="Sobre o projeto Game HUB"
               >
                 <Info className="w-5 h-5" aria-hidden="true" />
-                <span className="font-medium">Sobre o Projeto</span>
+                <span className="font-medium">{t("footer.aboutProject")}</span>
               </Link>
               
               <Link
@@ -281,7 +290,7 @@ export default function Header() {
                 className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:text-steam-blueLight hover:bg-steam-dark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2"
                 aria-label="Ver estatísticas do site"
               >
-                <span className="font-medium">Estatísticas</span>
+                <span className="font-medium">{t("header.stats")}</span>
               </Link>
               
               {isAuthenticated && (
@@ -292,7 +301,7 @@ export default function Header() {
                   aria-label="Ver meus jogos favoritos"
                 >
                   <Heart className="w-5 h-5 fill-current" aria-hidden="true" />
-                  <span className="font-medium">Favoritos</span>
+                  <span className="font-medium">{t("header.favorites")}</span>
                 </Link>
               )}
               
@@ -302,7 +311,7 @@ export default function Header() {
                 className="flex items-center gap-3 px-4 py-3 rounded-lg bg-steam-blueLight/10 hover:bg-steam-blueLight/20 text-steam-blueLight border border-steam-blueLight/30 hover:border-steam-blueLight/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 font-medium"
                 aria-label="Enviar um novo jogo"
               >
-                <span>Enviar Jogo</span>
+                <span>{t("header.uploadGame")}</span>
               </Link>
               
               {isAuthenticated && (
@@ -314,7 +323,7 @@ export default function Header() {
                       className="flex items-center gap-3 px-4 py-3 rounded-lg bg-steam-green/10 hover:bg-steam-green/20 text-steam-green border border-steam-green/30 hover:border-steam-green/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-green focus-visible:outline-offset-2 font-medium"
                       aria-label="Painel administrativo"
                     >
-                      <span>Admin</span>
+                      <span>{t("header.admin")}</span>
                     </Link>
                   )}
                   <Link
@@ -324,7 +333,7 @@ export default function Header() {
                     aria-label={`Ver perfil de ${user?.name}`}
                   >
                     <User className="w-5 h-5" aria-hidden="true" />
-                    <span className="font-medium">Meu Perfil</span>
+                    <span className="font-medium">{t("header.myProfile")}</span>
                   </Link>
                   <button
                     onClick={() => {
@@ -336,7 +345,7 @@ export default function Header() {
                     aria-label="Fazer logout e sair da conta"
                   >
                     <LogOut className="w-5 h-5" aria-hidden="true" />
-                    <span>Sair</span>
+                    <span>{t("header.logout")}</span>
                   </button>
                 </>
               )}
@@ -349,7 +358,7 @@ export default function Header() {
                   aria-label="Fazer login na plataforma"
                 >
                   <User className="w-5 h-5" aria-hidden="true" />
-                  <span>Entrar</span>
+                  <span>{t("header.login")}</span>
                 </Link>
               )}
             </div>

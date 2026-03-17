@@ -1,7 +1,12 @@
+"use client";
+
 import Link from "next/link";
-import { Github, Mail } from "lucide-react";
+import { GitHub, Mail } from "lucide-react";
+import { useI18n } from "./I18nProvider";
 
 export default function Footer() {
+  const { t } = useI18n();
+
   return (
     <footer id="footer" className="bg-steam-darker border-t border-steam-blue mt-20" role="contentinfo">
       <div className="container mx-auto px-4 py-8">
@@ -9,53 +14,53 @@ export default function Footer() {
           <div>
             <h3 className="text-steam-blueLight font-bold mb-4">SENAI Dr. Celso Charuri Game HUB</h3>
             <p className="text-gray-400 text-sm">
-              Repositório de jogos desenvolvidos pelos alunos do curso Técnico em Programação de Jogos Digitais do SENAI Dr. Celso Charuri.
+              {t("footer.aboutText")}
             </p>
           </div>
           <div>
-            <h3 className="text-steam-blueLight font-bold mb-4">Links</h3>
-            <ul className="space-y-2 text-gray-400 text-sm" role="list">
-              <li role="listitem">
+            <h3 className="text-steam-blueLight font-bold mb-4">{t("footer.links")}</h3>
+            <ul className="space-y-2 text-gray-400 text-sm">
+              <li>
                 <Link 
                   href="/games" 
                   className="hover:text-steam-blueLight transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 rounded px-1"
                   aria-label="Ver todos os jogos"
                 >
-                  Todos os Jogos
+                  {t("footer.allGames")}
                 </Link>
               </li>
-              <li role="listitem">
+              <li>
                 <Link 
                   href="/upload" 
                   className="hover:text-steam-blueLight transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 rounded px-1"
                   aria-label="Enviar um novo jogo"
                 >
-                  Enviar Jogo
+                  {t("footer.uploadGame")}
                 </Link>
               </li>
-              <li role="listitem">
+              <li>
                 <Link 
                   href="/about" 
                   className="hover:text-steam-blueLight transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 rounded px-1"
                   aria-label="Sobre o projeto Game HUB"
                 >
-                  Sobre o Projeto
+                  {t("footer.aboutProject")}
                 </Link>
               </li>
-              <li role="listitem">
+              <li>
                 <Link 
                   href="/stats" 
                   className="hover:text-steam-blueLight transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 rounded px-1"
                   aria-label="Ver estatísticas do site"
                 >
-                  Estatísticas
+                  {t("footer.stats")}
                 </Link>
               </li>
             </ul>
           </div>
           <div>
-            <h3 className="text-steam-blueLight font-bold mb-4">Contato</h3>
-            <div className="flex gap-4" role="list">
+            <h3 className="text-steam-blueLight font-bold mb-4">{t("footer.contact")}</h3>
+            <div className="flex gap-4">
               <a
                 href="https://github.com/lucaslopes-ti"
                 target="_blank"
@@ -63,7 +68,7 @@ export default function Footer() {
                 className="text-gray-400 hover:text-steam-blueLight transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 rounded p-1"
                 aria-label="Abrir perfil do desenvolvedor no GitHub em nova aba"
               >
-                <Github className="w-5 h-5" aria-hidden="true" />
+                <GitHub className="w-5 h-5" aria-hidden="true" />
                 <span className="sr-only">GitHub - Lucas Lopes</span>
               </a>
               <a
@@ -78,9 +83,9 @@ export default function Footer() {
           </div>
         </div>
         <div className="border-t border-steam-blue mt-8 pt-8 text-center text-gray-400 text-sm">
-          <p>&copy; 2025 SENAI Dr. Celso Charuri Game HUB. Todos os direitos reservados.</p>
+          <p>&copy; 2025 SENAI Dr. Celso Charuri Game HUB. {t("footer.rights")}</p>
           <p className="mt-2 text-xs">
-            Desenvolvido por <span className="text-steam-blueLight font-semibold">Lucas Lopes</span>
+            {t("footer.developedBy")} <span className="text-steam-blueLight font-semibold">Lucas Lopes</span>
           </p>
         </div>
       </div>

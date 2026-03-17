@@ -6,6 +6,9 @@ import Footer from "@/components/Footer";
 import { AuthProvider } from "@/components/AuthProvider";
 import { ToastProvider } from "@/components/ToastProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { I18nProvider } from "@/components/I18nProvider";
+import SkipLinks from "@/components/SkipLinks";
+import VLibrasWidget from "@/components/VLibrasWidget";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -65,26 +68,20 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body className={inter.className}>
         <ThemeProvider>
-        <AuthProvider>
-          <ToastProvider>
-            {/* Skip Links para navegação rápida (WCAG 2.4.1) */}
-            <a href="#main-content" className="skip-link">
-              Ir para o conteúdo principal
-            </a>
-            <a href="#navigation" className="skip-link">
-              Ir para a navegação
-            </a>
-            <a href="#footer" className="skip-link">
-              Ir para o rodapé
-            </a>
-            
-            <Header />
-            <main id="main-content" className="min-h-screen" role="main">
-              {children}
-            </main>
-            <Footer />
-          </ToastProvider>
-        </AuthProvider>
+          <AuthProvider>
+            <ToastProvider>
+              <I18nProvider>
+                <VLibrasWidget />
+                <SkipLinks />
+
+                <Header />
+                <main id="main-content" className="min-h-screen" role="main">
+                  {children}
+                </main>
+                <Footer />
+              </I18nProvider>
+            </ToastProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

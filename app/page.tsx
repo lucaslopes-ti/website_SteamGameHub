@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import Link from "next/link";
 import Hero from "@/components/Hero";
 import GameCarousel from "@/components/GameCarousel";
 import GameGrid from "@/components/GameGrid";
@@ -12,8 +11,10 @@ import AboutSection from "@/components/AboutSection";
 import TopRatedGames from "@/components/TopRatedGames";
 import { Game } from "@/lib/games";
 import { SearchX, SlidersHorizontal } from "lucide-react";
+import { useI18n } from "@/components/I18nProvider";
 
 export default function Home() {
+  const { t } = useI18n();
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<{
@@ -37,10 +38,10 @@ export default function Home() {
     const handleGamesUpdate = () => {
       loadGames();
     };
-    window.addEventListener("gamesUpdated", handleGamesUpdate);
+    globalThis.window.addEventListener("gamesUpdated", handleGamesUpdate);
     
     return () => {
-      window.removeEventListener("gamesUpdated", handleGamesUpdate);
+      globalThis.window.removeEventListener("gamesUpdated", handleGamesUpdate);
     };
   }, []);
 
@@ -69,8 +70,24 @@ export default function Home() {
 
   const featuredGames = games.filter((game) => game.featured).slice(0, 3);
 
-  const uniqueGenres = Array.from(new Set(games.flatMap((g) => g.genres))).sort();
-  const uniqueTechs = Array.from(new Set(games.flatMap((g) => g.technologies))).sort();
+  const uniqueGenres = Array.from(new Set(games.flatMap((g) => g.genres))).sort((a, b) =>
+    a.localeCompare(b, undefined, { sensitivity: "base" })
+  );
+  const uniqueTechs = Array.from(new Set(games.flatMap((g) => g.technologies))).sort((a, b) =>
+    a.localeCompare(b, undefined, { sensitivity: "base" })
+  );
+
+  const toggleGenre = (gen: string) => {
+    setSelectedGenres((prev) =>
+      prev.includes(gen) ? prev.filter((g) => g !== gen) : [...prev, gen]
+    );
+  };
+
+  const toggleTech = (tech: string) => {
+    setSelectedTechs((prev) =>
+      prev.includes(tech) ? prev.filter((t) => t !== tech) : [...prev, tech]
+    );
+  };
 
   const filtered = games.filter((g) => {
     const q = query.trim().toLowerCase();
@@ -130,7 +147,7 @@ export default function Home() {
           {featuredGames.length > 0 && (
             <section className="container mx-auto px-4">
               <h2 className="text-3xl font-bold mb-6 text-steam-blueLight">
-                Destaques
+                {t("home.highlights")}
               </h2>
               <GameCarousel games={featuredGames} />
             </section>
@@ -160,10 +177,10 @@ export default function Home() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2 text-steam-blueLight font-semibold">
                   <SlidersHorizontal className="w-4 h-4" />
-                  <span>Filtros</span>
+                  <span>{t("home.filters")}</span>
                   {(query || selectedGenres.length > 0 || selectedTechs.length > 0) && (
                     <span className="bg-steam-blueLight text-steam-darker text-xs font-bold px-2 py-0.5 rounded-full">
-                      {[query ? 1 : 0, selectedGenres.length, selectedTechs.length].reduce((a, b) => a + b, 0)} ativos
+                      {[query ? 1 : 0, selectedGenres.length, selectedTechs.length].reduce((a, b) => a + b, 0)} {t("home.active")}
                     </span>
                   )}
                 </div>
@@ -172,59 +189,53 @@ export default function Home() {
                     onClick={() => { setQuery(""); setSelectedGenres([]); setSelectedTechs([]); setSortBy("recent"); }}
                     className="text-xs text-gray-400 hover:text-red-400 transition-colors"
                   >
-                    Limpar tudo
+                    {t("home.clearAll")}
                   </button>
                 )}
               </div>
               <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-end">
                 <div className="flex-1 w-full">
-                  <label className="block text-sm text-gray-400 mb-2">Buscar</label>
+                  <label className="block text-sm text-gray-400 mb-2">{t("home.search")}</label>
                   <input
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Busque por título ou autor"
+                    placeholder={t("home.searchBy")}
                     className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight"
                     title="Digite para filtrar por título ou autor"
                   />
                 </div>
                 <div className="w-full lg:w-64">
-                  <label className="block text-sm text-gray-400 mb-2">Ordenar por</label>
+                  <label className="block text-sm text-gray-400 mb-2">{t("home.sortBy")}</label>
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as any)}
                     className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white focus:outline-none focus:border-steam-blueLight"
                     title="Ordene por recentes, nota ou quantidade de avaliações"
                   >
-                    <option value="recent">Mais recentes</option>
-                    <option value="rating">Melhor avaliados</option>
-                    <option value="mostRated">Mais avaliados</option>
+                    <option value="recent">{t("home.sortRecent")}</option>
+                    <option value="rating">{t("home.sortRating")}</option>
+                    <option value="mostRated">{t("home.sortMostRated")}</option>
                   </select>
                 </div>
               </div>
 
               {uniqueGenres.length > 0 && (
                 <div className="mt-4">
-                  <p className="text-sm text-gray-400 mb-2">Gêneros</p>
+                  <p className="text-sm text-gray-400 mb-2">{t("home.genres")}</p>
                   <div className="flex flex-wrap gap-2">
                     {uniqueGenres.map((gen) => {
                       const active = selectedGenres.includes(gen);
                       return (
                         <button
                           key={gen}
-                          onClick={() =>
-                            setSelectedGenres((prev) =>
-                              prev.includes(gen)
-                                ? prev.filter((g) => g !== gen)
-                                : [...prev, gen]
-                            )
-                          }
+                          onClick={() => toggleGenre(gen)}
                           className={`px-3 py-1 rounded text-sm border transition ${
                             active
                               ? "bg-steam-blue text-steam-blueLight border-steam-blueLight"
                               : "bg-steam-darker text-gray-300 border-steam-blue hover:border-steam-blueLight"
                           }`}
-                          title={active ? "Remover gênero do filtro" : "Adicionar gênero ao filtro"}
+                          title={active ? t("home.removeGenre") : t("home.addGenre")}
                         >
                           {gen}
                         </button>
@@ -236,26 +247,20 @@ export default function Home() {
 
               {uniqueTechs.length > 0 && (
                 <div className="mt-4">
-                  <p className="text-sm text-gray-400 mb-2">Tecnologias</p>
+                  <p className="text-sm text-gray-400 mb-2">{t("home.technologies")}</p>
                   <div className="flex flex-wrap gap-2">
                     {uniqueTechs.map((tech) => {
                       const active = selectedTechs.includes(tech);
                       return (
                         <button
                           key={tech}
-                          onClick={() =>
-                            setSelectedTechs((prev) =>
-                              prev.includes(tech)
-                                ? prev.filter((t) => t !== tech)
-                                : [...prev, tech]
-                            )
-                          }
+                          onClick={() => toggleTech(tech)}
                           className={`px-3 py-1 rounded text-sm border transition ${
                             active
                               ? "bg-steam-green text-white border-steam-green"
                               : "bg-steam-darker text-gray-300 border-steam-blue hover:border-steam-blueLight"
                           }`}
-                          title={active ? "Remover tecnologia do filtro" : "Adicionar tecnologia ao filtro"}
+                          title={active ? t("home.removeTech") : t("home.addTech")}
                         >
                           {tech}
                         </button>
@@ -267,10 +272,10 @@ export default function Home() {
             </div>
             <div className="flex items-baseline justify-between mb-6">
               <h2 className="text-3xl font-bold text-steam-blueLight">
-                {(query || selectedGenres.length > 0 || selectedTechs.length > 0) ? "Resultados" : "Jogos Recentes"}
+                {(query || selectedGenres.length > 0 || selectedTechs.length > 0) ? t("home.results") : t("home.recentGames")}
               </h2>
               <span className="text-sm text-gray-400">
-                {filtered.length === 1 ? "1 jogo" : `${filtered.length} jogos`}
+                {filtered.length === 1 ? `1 ${t("home.game")}` : `${filtered.length} ${t("home.games")}`}
               </span>
             </div>
             {visibleGames.length > 0 ? (
@@ -278,8 +283,8 @@ export default function Home() {
             ) : (
               <div className="flex flex-col items-center py-16 text-gray-400 gap-4">
                 <SearchX className="w-14 h-14 text-steam-blue opacity-60" />
-                <p className="text-lg font-medium">Nenhum jogo encontrado</p>
-                <p className="text-sm text-gray-500">Tente ajustar ou limpar os filtros acima.</p>
+                <p className="text-lg font-medium">{t("home.noneFound")}</p>
+                <p className="text-sm text-gray-500">{t("home.adjustFilters")}</p>
               </div>
             )}
 
@@ -289,9 +294,9 @@ export default function Home() {
                 <button
                   onClick={() => setPage((p) => p + 1)}
                   className="px-4 py-2 rounded border border-steam-blue text-steam-blueLight hover:border-steam-blueLight"
-                  title="Carregar mais jogos"
+                  title={t("home.loadMoreTitle")}
                 >
-                  Carregar mais
+                  {t("home.loadMore")}
                 </button>
               </div>
             )}
