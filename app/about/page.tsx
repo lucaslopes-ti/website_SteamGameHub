@@ -106,7 +106,7 @@ export default function AboutPage() {
               <strong className="text-steam-blueLight">{t("aboutPage.developedBy")}</strong> Lucas Lopes
             </p>
             <p className="text-gray-400 text-sm mt-2">
-              © 2025 Lucas Lopes - Todos os direitos reservados
+              {t("aboutPage.rights", { year: new Date().getFullYear() })}
             </p>
           </div>
         </div>

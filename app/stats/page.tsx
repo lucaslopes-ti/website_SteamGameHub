@@ -1,6 +1,5 @@
 "use client";
 
-// Garantir que a página não use conteúdo estático antigo
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from "react";
@@ -48,7 +47,6 @@ export default function StatsPage() {
 
   const loadStats = async () => {
     try {
-      // Buscar jogos e estatísticas em paralelo
       const [allRes, approvedRes, statsRes] = await Promise.all([
         fetch("/api/games"),
         fetch("/api/games?approved=true"),
@@ -62,12 +60,10 @@ export default function StatsPage() {
       let allGames: Game[] = allRes.ok ? await allRes.json() : [];
       const approvedOnly: Game[] = approvedRes.ok ? await approvedRes.json() : [];
 
-      // Fallback: se 'todos' vier vazio mas aprovados tiverem itens, usar aprovados
       if (allGames.length === 0 && approvedOnly.length > 0) {
         allGames = approvedOnly;
       }
 
-      // Estatísticas de views e downloads
       const statsData = statsRes.ok ? await statsRes.json() : { 
         totalViews: 0, 
         totalDownloads: 0, 
@@ -79,7 +75,6 @@ export default function StatsPage() {
       const totalViews = statsData.totalViews || 0;
       const totalDownloads = statsData.totalDownloads || 0;
 
-      // Calcular estatísticas
       const approved = allGames.filter((g) => g.approved);
       const pending = allGames.filter((g) => g.pending && !g.approved);
       const totalRatings = allGames.reduce((sum, g) => sum + (g.totalRatings || 0), 0);
@@ -87,10 +82,8 @@ export default function StatsPage() {
         ? approved.reduce((sum, g) => sum + (g.rating || 0), 0) / approved.length
         : 0;
 
-      // Autores únicos
       const uniqueAuthors = new Set(allGames.map((g) => g.authorEmail));
 
-      // Top jogos
       const topRated = [...approved]
         .sort((a, b) => (b.rating || 0) - (a.rating || 0))
         .slice(0, 5);
@@ -103,7 +96,6 @@ export default function StatsPage() {
         .sort((a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime())
         .slice(0, 5);
 
-      // Estatísticas por gênero
       const gamesByGenre: Record<string, number> = {};
       approved.forEach((game) => {
         (game.genres || []).forEach((genre) => {
@@ -111,7 +103,6 @@ export default function StatsPage() {
         });
       });
 
-      // Estatísticas por tecnologia
       const gamesByTechnology: Record<string, number> = {};
       approved.forEach((game) => {
         (game.technologies || []).forEach((tech) => {
@@ -119,7 +110,6 @@ export default function StatsPage() {
         });
       });
 
-      // Top jogos mais vistos
       const topViewedGames = [...approved]
         .map((game) => ({
           ...game,
@@ -128,7 +118,6 @@ export default function StatsPage() {
         .sort((a, b) => b.views - a.views)
         .slice(0, 5);
 
-      // Top jogos mais baixados
       const topDownloadedGames = [...approved]
         .map((game) => ({
           ...game,
@@ -193,7 +182,6 @@ export default function StatsPage() {
         {t("statsPage.title")}
       </h1>
 
-      {/* Cards de Estatísticas Principais */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="bg-steam-dark rounded-lg p-6 border border-steam-blue">
           <div className="flex items-center justify-between mb-4">
@@ -246,7 +234,6 @@ export default function StatsPage() {
         </div>
       </div>
 
-      {/* Cards de Views e Downloads */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <div className="bg-steam-dark rounded-lg p-6 border border-steam-blue">
           <div className="flex items-center justify-between mb-4">
@@ -274,7 +261,6 @@ export default function StatsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        {/* Top Jogos por Avaliação */}
         <div className="bg-steam-dark rounded-lg p-6 border border-steam-blue">
           <div className="flex items-center gap-2 mb-6">
             <Award className="w-6 h-6 text-yellow-400" />
@@ -313,7 +299,6 @@ export default function StatsPage() {
           </div>
         </div>
 
-        {/* Jogos Mais Avaliados */}
         <div className="bg-steam-dark rounded-lg p-6 border border-steam-blue">
           <div className="flex items-center gap-2 mb-6">
             <Star className="w-6 h-6 text-steam-blueLight" />

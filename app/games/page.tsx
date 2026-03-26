@@ -64,8 +64,7 @@ function GamesPageContent() {
 
   useEffect(() => {
     loadGames();
-    
-    // Listener para atualizar quando jogos forem aprovados
+
     const handleGamesUpdate = () => {
       loadGames();
     };
@@ -77,7 +76,6 @@ function GamesPageContent() {
   }, []);
 
   useEffect(() => {
-    // Indicar que está buscando quando query mudar
     if (debouncedSearchQuery === searchQuery) {
       setSearching(false);
       return;
@@ -126,7 +124,6 @@ function GamesPageContent() {
       filtered = filtered.filter((game) => game.author === selectedAuthor);
     }
 
-    // Ordenação
     filtered = [...filtered].sort((a, b) => {
       switch (sortBy) {
         case "rating":
@@ -149,10 +146,9 @@ function GamesPageContent() {
   );
 
   useEffect(() => {
-    setCurrentPage(1); // Reset para primeira página quando filtros mudarem
+    setCurrentPage(1);
   }, [debouncedSearchQuery, selectedGenre, selectedTechnology, selectedAuthor, sortBy]);
 
-  // Obter lista de autores únicos
   const uniqueAuthors = useMemo(() => {
     const authors = new Set(games.map((g) => g.author));
     return Array.from(authors).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));

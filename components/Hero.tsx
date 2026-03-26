@@ -105,7 +105,6 @@ function FloatingParticles({ isLight = false }: Readonly<{ isLight?: boolean }>)
         if (p.y > canvas.height) p.y = 0;
       });
 
-      // Draw connections
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
@@ -132,14 +131,16 @@ function FloatingParticles({ isLight = false }: Readonly<{ isLight?: boolean }>)
     initParticles();
     drawParticles();
 
-    globalThis.window.addEventListener("resize", () => {
+    const handleResize = () => {
       resize();
       initParticles();
-    });
+    };
+
+    globalThis.window.addEventListener("resize", handleResize);
 
     return () => {
       cancelAnimationFrame(animationId);
-      globalThis.window.removeEventListener("resize", resize);
+      globalThis.window.removeEventListener("resize", handleResize);
     };
   }, [isLight]);
 
@@ -231,10 +232,8 @@ export default function Hero() {
           `,
       }}
     >
-      {/* Particles */}
       <FloatingParticles isLight={isLight} />
 
-      {/* Grid overlay */}
       <div className={`absolute inset-0 ${isLight ? "opacity-[0.06]" : "opacity-[0.03]"}`} aria-hidden="true">
         <div className="absolute inset-0" style={{
           backgroundImage: isLight
@@ -250,7 +249,6 @@ export default function Hero() {
         }} />
       </div>
 
-      {/* Gradient orbs */}
       <div
         className={`absolute w-[500px] h-[500px] rounded-full blur-[100px] pointer-events-none ${isLight ? "opacity-[0.12]" : "opacity-[0.07]"}`}
         style={{
@@ -276,13 +274,11 @@ export default function Hero() {
 
       <div className="container mx-auto px-4 py-16 md:py-20 relative z-10">
         <div className="max-w-5xl mx-auto">
-          {/* Header section */}
           <div
             className={`mb-12 md:mb-16 transition-all duration-1000 ${
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
           >
-            {/* Badge */}
             <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full bg-steam-blueLight/10 border border-steam-blueLight/20">
               <Sparkles className="w-4 h-4 text-steam-blueLight" />
               <span className="text-steam-blueLight text-sm font-medium tracking-wider uppercase">
@@ -308,7 +304,6 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Stats grid */}
           <div
             className={`grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-12 md:mb-16 transition-all duration-1000 delay-300 ${
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
@@ -363,7 +358,6 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* CTA Buttons */}
           <div
             className={`flex flex-col sm:flex-row gap-4 transition-all duration-1000 delay-500 ${
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
@@ -392,7 +386,6 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Scroll indicator */}
       <button
         onClick={scrollToContent}
         className={`absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-400 hover:text-steam-blueLight transition-all duration-500 cursor-pointer group ${
@@ -405,7 +398,6 @@ export default function Hero() {
         <ChevronDown className="w-5 h-5 animate-bounce" />
       </button>
 
-      {/* Decorative corner accents */}
       <div className={`absolute top-0 right-0 w-64 h-64 pointer-events-none ${isLight ? "opacity-[0.08]" : "opacity-[0.03]"}`} aria-hidden="true">
         <svg viewBox="0 0 200 200" className="w-full h-full">
           <circle cx="150" cy="50" r="80" stroke={isLight ? "#3b82f6" : "#66c0f4"} strokeWidth="0.5" fill="none" />

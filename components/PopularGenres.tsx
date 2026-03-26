@@ -12,8 +12,7 @@ interface PopularGenresProps {
 export default function PopularGenres({ games }: Readonly<PopularGenresProps>) {
   const { t } = useI18n();
   const approvedGames = games.filter((g) => g.approved);
-  
-  // Contar jogos por gênero
+
   const genreCounts: Record<string, number> = {};
   approvedGames.forEach((game) => {
     game.genres?.forEach((genre) => {
@@ -21,7 +20,6 @@ export default function PopularGenres({ games }: Readonly<PopularGenresProps>) {
     });
   });
 
-  // Ordenar por quantidade e pegar os top 6
   const popularGenres = Object.entries(genreCounts)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 6)

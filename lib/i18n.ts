@@ -203,6 +203,7 @@ export const translations: Record<Language, TranslationMap> = {
     "aboutPage.techIconsValue": "Lucide React",
     "aboutPage.educationalNotice": "Este é um projeto educacional desenvolvido para fins de aprendizado e demonstração de habilidades dos alunos do SENAI.",
     "aboutPage.developedBy": "Desenvolvido por:",
+    "aboutPage.rights": "© {year} Lucas Lopes - Todos os direitos reservados.",
 
     "login.title": "Entrar",
     "login.subtitle": "Acesso restrito para professores e administradores",
@@ -460,6 +461,7 @@ export const translations: Record<Language, TranslationMap> = {
     "aboutPage.techIconsValue": "Lucide React",
     "aboutPage.educationalNotice": "This is an educational project developed for learning purposes and to demonstrate SENAI students' skills.",
     "aboutPage.developedBy": "Developed by:",
+    "aboutPage.rights": "© {year} Lucas Lopes - All rights reserved.",
 
     "login.title": "Sign in",
     "login.subtitle": "Restricted access for teachers and administrators",

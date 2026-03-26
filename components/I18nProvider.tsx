@@ -12,6 +12,15 @@ interface I18nContextValue {
 
 const STORAGE_KEY = "site-language";
 
+const resolveTemplate = (language: Language, key: string) => {
+  return (
+    translations[language]?.[key]
+    ?? translations.en[key]
+    ?? translations.pt[key]
+    ?? key
+  );
+};
+
 const I18nContext = createContext<I18nContextValue>({
   language: "pt",
   setLanguage: () => {},
@@ -38,7 +47,7 @@ export function I18nProvider({ children }: Readonly<{ children: React.ReactNode 
     language,
     setLanguage,
     t: (key: string, params?: Record<string, string | number>) => {
-      const template = translations[language][key] ?? translations.pt[key] ?? key;
+      const template = resolveTemplate(language, key);
       if (!params) return template;
 
       return Object.entries(params).reduce((acc, [paramKey, value]) => {

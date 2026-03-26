@@ -33,8 +33,7 @@ export default function Home() {
 
   useEffect(() => {
     loadGames();
-    
-    // Listener para atualizar quando jogos forem aprovados
+
     const handleGamesUpdate = () => {
       loadGames();
     };
@@ -109,14 +108,12 @@ export default function Home() {
     return new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
   });
 
-  // Resetar página quando filtros/busca/ordenação mudarem
   useEffect(() => {
     setPage(1);
   }, [query, selectedGenres, selectedTechs, sortBy]);
 
   const visibleGames = sorted.slice(0, page * pageSize);
 
-  // Infinite scroll com IntersectionObserver
   useEffect(() => {
     if (!loaderRef.current) return;
     const el = loaderRef.current;
@@ -153,25 +150,20 @@ export default function Home() {
             </section>
           )}
 
-          {/* Estatísticas */}
           {stats && (
             <section className="container mx-auto px-4">
               <StatsCards games={games} stats={stats} />
             </section>
           )}
 
-          {/* Jogos Melhor Avaliados */}
           <TopRatedGames games={games} />
 
-          {/* Gêneros Populares */}
           <section className="container mx-auto px-4">
             <PopularGenres games={games} />
           </section>
 
-          {/* Seção Sobre */}
           <AboutSection />
 
-          {/* Seção de Filtros e Busca */}
           <section className="container mx-auto px-4">
             <div className="bg-steam-dark border border-steam-blue rounded-lg p-4 mb-6">
               <div className="flex items-center justify-between mb-4">
@@ -288,7 +280,6 @@ export default function Home() {
               </div>
             )}
 
-            {/* Loader e botão Carregar mais */}
             {visibleGames.length < filtered.length && (
               <div className="flex items-center justify-center mt-6">
                 <button
