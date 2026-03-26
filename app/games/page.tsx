@@ -9,9 +9,10 @@ import { GameGridSkeleton } from "@/components/SkeletonLoader";
 import { Game } from "@/lib/games";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Filter, X, ArrowUpDown, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { useI18n } from "@/components/I18nProvider";
 
 const GENRES = [
-  "Todos",
+  "__all__",
   "Aventura",
   "Corrida",
   "Puzzle",
@@ -25,7 +26,7 @@ const GENRES = [
 ];
 
 const TECHNOLOGIES = [
-  "Todos",
+  "__all__",
   "Unity",
   "Unreal Engine",
   "Godot",
@@ -34,9 +35,11 @@ const TECHNOLOGIES = [
 ];
 
 function GamesPageContent() {
+  const { language, t } = useI18n();
   const searchParams = useSearchParams();
   const searchFromUrl = searchParams.get("search") || "";
-  const genreFromUrl = searchParams.get("genre") || "Todos";
+  const genreFromUrlRaw = searchParams.get("genre") || "__all__";
+  const genreFromUrl = genreFromUrlRaw === "Todos" ? "__all__" : genreFromUrlRaw;
   const [searchQuery, setSearchQuery] = useState(searchFromUrl);
   const [selectedGenre, setSelectedGenre] = useState(genreFromUrl);
 
@@ -48,8 +51,8 @@ function GamesPageContent() {
   useEffect(() => {
     setSelectedGenre(genreFromUrl);
   }, [genreFromUrl]);
-  const [selectedTechnology, setSelectedTechnology] = useState("Todos");
-  const [selectedAuthor, setSelectedAuthor] = useState("Todos");
+  const [selectedTechnology, setSelectedTechnology] = useState("__all__");
+  const [selectedAuthor, setSelectedAuthor] = useState("__all__");
   const [showFilters, setShowFilters] = useState(false);
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,20 +69,20 @@ function GamesPageContent() {
     const handleGamesUpdate = () => {
       loadGames();
     };
-    window.addEventListener("gamesUpdated", handleGamesUpdate);
+    globalThis.window.addEventListener("gamesUpdated", handleGamesUpdate);
     
     return () => {
-      window.removeEventListener("gamesUpdated", handleGamesUpdate);
+      globalThis.window.removeEventListener("gamesUpdated", handleGamesUpdate);
     };
   }, []);
 
   useEffect(() => {
     // Indicar que está buscando quando query mudar
-    if (debouncedSearchQuery !== searchQuery) {
-      setSearching(true);
-    } else {
+    if (debouncedSearchQuery === searchQuery) {
       setSearching(false);
+      return;
     }
+    setSearching(true);
   }, [debouncedSearchQuery, searchQuery]);
 
   const loadGames = async () => {
@@ -109,17 +112,17 @@ function GamesPageContent() {
       );
     }
 
-    if (selectedGenre !== "Todos") {
+    if (selectedGenre !== "__all__") {
       filtered = filtered.filter((game) => game.genres.includes(selectedGenre));
     }
 
-    if (selectedTechnology !== "Todos") {
+    if (selectedTechnology !== "__all__") {
       filtered = filtered.filter((game) =>
         game.technologies.includes(selectedTechnology)
       );
     }
 
-    if (selectedAuthor !== "Todos") {
+    if (selectedAuthor !== "__all__") {
       filtered = filtered.filter((game) => game.author === selectedAuthor);
     }
 
@@ -152,25 +155,31 @@ function GamesPageContent() {
   // Obter lista de autores únicos
   const uniqueAuthors = useMemo(() => {
     const authors = new Set(games.map((g) => g.author));
-    return Array.from(authors).sort();
+    return Array.from(authors).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
   }, [games]);
 
   const activeFiltersCount =
-    (selectedGenre !== "Todos" ? 1 : 0) +
-    (selectedTechnology !== "Todos" ? 1 : 0) +
-    (selectedAuthor !== "Todos" ? 1 : 0);
+    (selectedGenre === "__all__" ? 0 : 1) +
+    (selectedTechnology === "__all__" ? 0 : 1) +
+    (selectedAuthor === "__all__" ? 0 : 1);
+
+  const locale = language === "pt" ? "pt-BR" : "en-US";
+  const resultsText = t("games.resultsCount", {
+    count: filteredGames.length,
+    plural: filteredGames.length === 1 ? "" : "s",
+  });
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-4 text-steam-blueLight">
-          Todos os Jogos
+          {t("games.all")}
         </h1>
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
             <input
               type="text"
-              placeholder="Buscar jogos..."
+              placeholder={t("games.searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-steam-dark border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight"
@@ -186,7 +195,7 @@ function GamesPageContent() {
             className="flex items-center gap-2 bg-steam-blue hover:bg-steam-blueLight text-white px-6 py-2 rounded transition relative"
           >
             <Filter className="w-5 h-5" />
-            Filtros
+            {t("games.filters")}
             {activeFiltersCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-steam-green text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 {activeFiltersCount}
@@ -200,9 +209,9 @@ function GamesPageContent() {
               onChange={(e) => setSortBy(e.target.value as "date" | "rating" | "name")}
               className="bg-steam-dark border border-steam-blue rounded px-4 py-2 text-white focus:outline-none focus:border-steam-blueLight"
             >
-              <option value="date">Mais Recentes</option>
-              <option value="rating">Melhor Avaliados</option>
-              <option value="name">Nome A-Z</option>
+              <option value="date">{t("games.sortRecent")}</option>
+              <option value="rating">{t("games.sortTopRated")}</option>
+              <option value="name">{t("games.sortName")}</option>
             </select>
           </div>
         </div>
@@ -212,7 +221,7 @@ function GamesPageContent() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-steam-blueLight mb-2">
-                  Gênero
+                  {t("games.genre")}
                 </label>
                 <select
                   value={selectedGenre}
@@ -221,14 +230,14 @@ function GamesPageContent() {
                 >
                   {GENRES.map((genre) => (
                     <option key={genre} value={genre}>
-                      {genre}
+                      {genre === "__all__" ? t("games.allOption") : genre}
                     </option>
                   ))}
                 </select>
               </div>
               <div>
                 <label className="block text-steam-blueLight mb-2">
-                  Tecnologia
+                  {t("games.technology")}
                 </label>
                 <select
                   value={selectedTechnology}
@@ -237,21 +246,21 @@ function GamesPageContent() {
                 >
                   {TECHNOLOGIES.map((tech) => (
                     <option key={tech} value={tech}>
-                      {tech}
+                      {tech === "__all__" ? t("games.allOption") : tech}
                     </option>
                   ))}
                 </select>
               </div>
               <div>
                 <label className="block text-steam-blueLight mb-2">
-                  Autor
+                  {t("games.author")}
                 </label>
                 <select
                   value={selectedAuthor}
                   onChange={(e) => setSelectedAuthor(e.target.value)}
                   className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white focus:outline-none focus:border-steam-blueLight"
                 >
-                  <option value="Todos">Todos</option>
+                  <option value="__all__">{t("games.allOption")}</option>
                   {uniqueAuthors.map((author) => (
                     <option key={author} value={author}>
                       {author}
@@ -263,14 +272,14 @@ function GamesPageContent() {
             {activeFiltersCount > 0 && (
               <button
                 onClick={() => {
-                  setSelectedGenre("Todos");
-                  setSelectedTechnology("Todos");
-                  setSelectedAuthor("Todos");
+                  setSelectedGenre("__all__");
+                  setSelectedTechnology("__all__");
+                  setSelectedAuthor("__all__");
                 }}
                 className="mt-4 flex items-center gap-2 text-steam-blueLight hover:text-white transition"
               >
                 <X className="w-4 h-4" />
-                Limpar filtros
+                {t("games.clearFilters")}
               </button>
             )}
           </div>
@@ -283,12 +292,14 @@ function GamesPageContent() {
         <>
           <div className="mb-4 flex items-center justify-between">
             <span className="text-gray-400">
-              {filteredGames.length} jogo{filteredGames.length !== 1 ? "s" : ""}{" "}
-              encontrado{filteredGames.length !== 1 ? "s" : ""}
+              {resultsText}
             </span>
             {totalPages > 1 && (
               <span className="text-gray-400 text-sm">
-                Página {currentPage} de {totalPages}
+                {t("games.pageOf", {
+                  current: currentPage.toLocaleString(locale),
+                  total: totalPages.toLocaleString(locale),
+                })}
               </span>
             )}
           </div>
@@ -302,7 +313,7 @@ function GamesPageContent() {
                 className="bg-steam-dark hover:bg-steam-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded transition flex items-center gap-2"
               >
                 <ChevronLeft className="w-4 h-4" />
-                Anterior
+                {t("games.previous")}
               </button>
               <div className="flex gap-2">
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
@@ -336,7 +347,7 @@ function GamesPageContent() {
                 disabled={currentPage === totalPages}
                 className="bg-steam-dark hover:bg-steam-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded transition flex items-center gap-2"
               >
-                Próxima
+                {t("games.next")}
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>

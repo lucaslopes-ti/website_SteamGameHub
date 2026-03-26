@@ -4,12 +4,14 @@ import { Star, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import GameCard from "./GameCard";
 import { Game } from "@/lib/games";
+import { useI18n } from "./I18nProvider";
 
 interface TopRatedGamesProps {
   games: Game[];
 }
 
-export default function TopRatedGames({ games }: TopRatedGamesProps) {
+export default function TopRatedGames({ games }: Readonly<TopRatedGamesProps>) {
+  const { t } = useI18n();
   const approvedGames = games.filter((g) => g.approved && (g.rating || 0) > 0);
   
   // Ordenar por rating e pegar top 4
@@ -30,13 +32,13 @@ export default function TopRatedGames({ games }: TopRatedGamesProps) {
           <div className="p-2 bg-yellow-400/10 rounded-lg">
             <Star className="w-6 h-6 text-yellow-400" />
           </div>
-          <h2 className="text-3xl font-bold text-steam-blueLight">Melhor Avaliados</h2>
+          <h2 className="text-3xl font-bold text-steam-blueLight">{t("topRated.title")}</h2>
         </div>
         <Link
           href="/games?sort=rating"
           className="text-steam-blueLight hover:text-steam-green text-sm font-medium flex items-center gap-1 transition-colors"
         >
-          Ver todos
+          {t("common.seeAll")}
           <TrendingUp className="w-4 h-4" />
         </Link>
       </div>

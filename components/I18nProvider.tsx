@@ -6,7 +6,7 @@ import { Language, htmlLangMap, languageLabels, translations } from "@/lib/i18n"
 interface I18nContextValue {
   language: Language;
   setLanguage: (language: Language) => void;
-  t: (key: string) => string;
+  t: (key: string, params?: Record<string, string | number>) => string;
   languageLabels: Record<Language, string>;
 }
 
@@ -37,8 +37,13 @@ export function I18nProvider({ children }: Readonly<{ children: React.ReactNode 
   const value = useMemo<I18nContextValue>(() => ({
     language,
     setLanguage,
-    t: (key: string) => {
-      return translations[language][key] ?? translations.pt[key] ?? key;
+    t: (key: string, params?: Record<string, string | number>) => {
+      const template = translations[language][key] ?? translations.pt[key] ?? key;
+      if (!params) return template;
+
+      return Object.entries(params).reduce((acc, [paramKey, value]) => {
+        return acc.replaceAll(`{${paramKey}}`, String(value));
+      }, template);
     },
     languageLabels,
   }), [language]);

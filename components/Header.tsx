@@ -115,7 +115,7 @@ export default function Header() {
             <Link
               href="/games"
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-300 hover:text-steam-blueLight hover:bg-steam-dark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 group"
-              aria-label="Ver todos os jogos disponíveis"
+              aria-label={t("header.navGamesAria")}
             >
               <Gamepad2 className="w-4 h-4 group-hover:scale-110 transition-transform" aria-hidden="true" />
               <span className="font-medium">{t("header.games")}</span>
@@ -124,7 +124,7 @@ export default function Header() {
             <Link
               href="/about"
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-300 hover:text-steam-blueLight hover:bg-steam-dark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 group"
-              aria-label="Sobre o projeto Game HUB"
+              aria-label={t("header.navAboutAria")}
             >
               <Info className="w-4 h-4 group-hover:scale-110 transition-transform" aria-hidden="true" />
               <span className="font-medium">{t("header.about")}</span>
@@ -133,7 +133,7 @@ export default function Header() {
             <Link
               href="/stats"
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-300 hover:text-steam-blueLight hover:bg-steam-dark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 group"
-              aria-label="Ver estatísticas do site"
+              aria-label={t("header.navStatsAria")}
             >
               <span className="font-medium">{t("header.stats")}</span>
             </Link>
@@ -142,7 +142,7 @@ export default function Header() {
               <Link
                 href="/favorites"
                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-300 hover:text-red-400 hover:bg-steam-dark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-400 focus-visible:outline-offset-2 group"
-                aria-label="Ver meus jogos favoritos"
+                aria-label={t("header.navFavoritesAria")}
               >
                 <Heart className="w-4 h-4 group-hover:scale-110 transition-transform fill-current" aria-hidden="true" />
                 <span className="font-medium">{t("header.favorites")}</span>
@@ -152,7 +152,7 @@ export default function Header() {
             <Link
               href="/upload"
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-steam-blueLight/10 hover:bg-steam-blueLight/20 text-steam-blueLight border border-steam-blueLight/30 hover:border-steam-blueLight/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 group font-medium"
-              aria-label="Enviar um novo jogo"
+              aria-label={t("header.navUploadAria")}
             >
               <span className="group-hover:scale-105 transition-transform">{t("header.upload")}</span>
             </Link>
@@ -162,7 +162,7 @@ export default function Header() {
                   <Link
                     href="/admin"
                     className="flex items-center gap-2 px-4 py-2 rounded-lg bg-steam-green/10 hover:bg-steam-green/20 text-steam-green border border-steam-green/30 hover:border-steam-green/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-green focus-visible:outline-offset-2 font-medium"
-                    aria-label="Painel administrativo"
+                    aria-label={t("header.navAdminAria")}
                   >
                     {t("header.admin")}
                   </Link>
@@ -170,7 +170,7 @@ export default function Header() {
                 <Link
                   href="/profile"
                   className="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-steam-blueLight hover:bg-steam-dark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 group"
-                  aria-label={`Ver perfil de ${user?.name}`}
+                  aria-label={t("header.navProfileAria", { name: user?.name ?? "" })}
                 >
                   <div className="w-8 h-8 rounded-full bg-steam-blueLight/20 flex items-center justify-center border border-steam-blueLight/30 group-hover:border-steam-blueLight/50 transition-colors">
                     <User className="w-4 h-4 text-steam-blueLight" aria-hidden="true" />
@@ -183,7 +183,7 @@ export default function Header() {
                     router.push("/");
                   }}
                   className="flex items-center gap-2 bg-red-600/10 hover:bg-red-600/20 text-red-400 border border-red-600/30 hover:border-red-600/50 px-4 py-2 rounded-lg transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-400 focus-visible:outline-offset-2 font-medium hover-lift-modern"
-                  aria-label="Fazer logout e sair da conta"
+                  aria-label={t("header.navLogoutAria")}
                 >
                   <LogOut className="w-4 h-4" aria-hidden="true" />
                   <span className="hidden xl:inline">{t("header.logout")}</span>
@@ -193,7 +193,7 @@ export default function Header() {
               <Link
                 href="/login"
                 className="flex items-center gap-2 bg-steam-blueLight hover:bg-steam-blue text-white px-5 py-2.5 rounded-lg transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 font-medium hover-lift-modern ripple-effect shadow-lg shadow-steam-blueLight/20"
-                aria-label="Fazer login na plataforma"
+                aria-label={t("header.navLoginAria")}
               >
                 <User className="w-4 h-4" aria-hidden="true" />
                 <span>{t("header.login")}</span>
@@ -268,7 +268,7 @@ export default function Header() {
                 href="/games"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:text-steam-blueLight hover:bg-steam-dark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2"
-                aria-label="Ver todos os jogos disponíveis"
+                aria-label={t("header.navGamesAria")}
               >
                 <Gamepad2 className="w-5 h-5" aria-hidden="true" />
                 <span className="font-medium">{t("footer.allGames")}</span>
@@ -278,7 +278,7 @@ export default function Header() {
                 href="/about"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:text-steam-blueLight hover:bg-steam-dark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2"
-                aria-label="Sobre o projeto Game HUB"
+                aria-label={t("header.navAboutAria")}
               >
                 <Info className="w-5 h-5" aria-hidden="true" />
                 <span className="font-medium">{t("footer.aboutProject")}</span>
@@ -288,7 +288,7 @@ export default function Header() {
                 href="/stats"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:text-steam-blueLight hover:bg-steam-dark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2"
-                aria-label="Ver estatísticas do site"
+                aria-label={t("header.navStatsAria")}
               >
                 <span className="font-medium">{t("header.stats")}</span>
               </Link>
@@ -298,7 +298,7 @@ export default function Header() {
                   href="/favorites"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:text-red-400 hover:bg-steam-dark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-400 focus-visible:outline-offset-2"
-                  aria-label="Ver meus jogos favoritos"
+                  aria-label={t("header.navFavoritesAria")}
                 >
                   <Heart className="w-5 h-5 fill-current" aria-hidden="true" />
                   <span className="font-medium">{t("header.favorites")}</span>
@@ -309,7 +309,7 @@ export default function Header() {
                 href="/upload"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center gap-3 px-4 py-3 rounded-lg bg-steam-blueLight/10 hover:bg-steam-blueLight/20 text-steam-blueLight border border-steam-blueLight/30 hover:border-steam-blueLight/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 font-medium"
-                aria-label="Enviar um novo jogo"
+                aria-label={t("header.navUploadAria")}
               >
                 <span>{t("header.uploadGame")}</span>
               </Link>
@@ -321,7 +321,7 @@ export default function Header() {
                       href="/admin"
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="flex items-center gap-3 px-4 py-3 rounded-lg bg-steam-green/10 hover:bg-steam-green/20 text-steam-green border border-steam-green/30 hover:border-steam-green/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-green focus-visible:outline-offset-2 font-medium"
-                      aria-label="Painel administrativo"
+                      aria-label={t("header.navAdminAria")}
                     >
                       <span>{t("header.admin")}</span>
                     </Link>
@@ -330,7 +330,7 @@ export default function Header() {
                     href="/profile"
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:text-steam-blueLight hover:bg-steam-dark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2"
-                    aria-label={`Ver perfil de ${user?.name}`}
+                    aria-label={t("header.navProfileAria", { name: user?.name ?? "" })}
                   >
                     <User className="w-5 h-5" aria-hidden="true" />
                     <span className="font-medium">{t("header.myProfile")}</span>
@@ -342,7 +342,7 @@ export default function Header() {
                       setIsMobileMenuOpen(false);
                     }}
                     className="flex items-center gap-3 px-4 py-3 rounded-lg bg-red-600/10 hover:bg-red-600/20 text-red-400 border border-red-600/30 hover:border-red-600/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-400 focus-visible:outline-offset-2 font-medium text-left"
-                    aria-label="Fazer logout e sair da conta"
+                    aria-label={t("header.navLogoutAria")}
                   >
                     <LogOut className="w-5 h-5" aria-hidden="true" />
                     <span>{t("header.logout")}</span>
@@ -355,7 +355,7 @@ export default function Header() {
                   href="/login"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center gap-3 px-4 py-3 rounded-lg bg-steam-blueLight hover:bg-steam-blue text-white transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 font-medium ripple-effect"
-                  aria-label="Fazer login na plataforma"
+                  aria-label={t("header.navLoginAria")}
                 >
                   <User className="w-5 h-5" aria-hidden="true" />
                   <span>{t("header.login")}</span>

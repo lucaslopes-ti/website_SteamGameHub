@@ -202,7 +202,7 @@ export default function Home() {
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder={t("home.searchBy")}
                     className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight"
-                    title="Digite para filtrar por título ou autor"
+                    title={t("home.searchTitle")}
                   />
                 </div>
                 <div className="w-full lg:w-64">
@@ -211,7 +211,7 @@ export default function Home() {
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as any)}
                     className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white focus:outline-none focus:border-steam-blueLight"
-                    title="Ordene por recentes, nota ou quantidade de avaliações"
+                    title={t("home.sortTitle")}
                   >
                     <option value="recent">{t("home.sortRecent")}</option>
                     <option value="rating">{t("home.sortRating")}</option>

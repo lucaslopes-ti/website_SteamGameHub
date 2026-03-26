@@ -3,12 +3,14 @@
 import { Game } from "@/lib/games";
 import Link from "next/link";
 import { ArrowRight, Tag } from "lucide-react";
+import { useI18n } from "./I18nProvider";
 
 interface PopularGenresProps {
   games: Game[];
 }
 
-export default function PopularGenres({ games }: PopularGenresProps) {
+export default function PopularGenres({ games }: Readonly<PopularGenresProps>) {
+  const { t } = useI18n();
   const approvedGames = games.filter((g) => g.approved);
   
   // Contar jogos por gênero
@@ -32,13 +34,13 @@ export default function PopularGenres({ games }: PopularGenresProps) {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <Tag className="w-6 h-6 text-steam-blueLight" />
-          <h3 className="text-2xl font-bold text-white">Gêneros Populares</h3>
+          <h3 className="text-2xl font-bold text-white">{t("genres.popular")}</h3>
         </div>
         <Link
           href="/games"
           className="text-steam-blueLight hover:text-steam-green text-sm font-medium flex items-center gap-1 transition-colors"
         >
-          Ver todos
+          {t("common.seeAll")}
           <ArrowRight className="w-4 h-4" />
         </Link>
       </div>

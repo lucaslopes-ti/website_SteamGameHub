@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Github, Mail } from "lucide-react";
+import { GitHub, Mail } from "lucide-react";
 import { useI18n } from "./I18nProvider";
 
 export default function Footer() {
@@ -24,7 +24,7 @@ export default function Footer() {
                 <Link 
                   href="/games" 
                   className="hover:text-steam-blueLight transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 rounded px-1"
-                  aria-label="Ver todos os jogos"
+                  aria-label={t("footer.allGamesAria")}
                 >
                   {t("footer.allGames")}
                 </Link>
@@ -33,7 +33,7 @@ export default function Footer() {
                 <Link 
                   href="/upload" 
                   className="hover:text-steam-blueLight transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 rounded px-1"
-                  aria-label="Enviar um novo jogo"
+                  aria-label={t("footer.uploadGameAria")}
                 >
                   {t("footer.uploadGame")}
                 </Link>
@@ -42,7 +42,7 @@ export default function Footer() {
                 <Link 
                   href="/about" 
                   className="hover:text-steam-blueLight transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 rounded px-1"
-                  aria-label="Sobre o projeto Game HUB"
+                  aria-label={t("footer.aboutProjectAria")}
                 >
                   {t("footer.aboutProject")}
                 </Link>
@@ -51,7 +51,7 @@ export default function Footer() {
                 <Link 
                   href="/stats" 
                   className="hover:text-steam-blueLight transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 rounded px-1"
-                  aria-label="Ver estatísticas do site"
+                  aria-label={t("footer.statsAria")}
                 >
                   {t("footer.stats")}
                 </Link>
@@ -68,7 +68,7 @@ export default function Footer() {
                 className="text-gray-400 hover:text-steam-blueLight transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 rounded p-1"
                 aria-label="Abrir perfil do desenvolvedor no GitHub em nova aba"
               >
-                <Github className="w-5 h-5" aria-hidden="true" />
+                <GitHub className="w-5 h-5" aria-hidden="true" />
                 <span className="sr-only">GitHub - Lucas Lopes</span>
               </a>
               <a

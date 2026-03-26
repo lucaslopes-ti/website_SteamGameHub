@@ -5,15 +5,17 @@ import type { MouseEvent } from "react";
 import { Heart } from "lucide-react";
 import { useAuth } from "./AuthProvider";
 import { useToast } from "./ToastProvider";
+import { useI18n } from "./I18nProvider";
 
 interface FavoriteButtonProps {
   gameId: string;
   size?: "sm" | "md" | "lg";
 }
 
-export default function FavoriteButton({ gameId, size = "md" }: FavoriteButtonProps) {
+export default function FavoriteButton({ gameId, size = "md" }: Readonly<FavoriteButtonProps>) {
   const { user, isAuthenticated } = useAuth();
   const { showToast } = useToast();
+  const { t } = useI18n();
   const [isFavorite, setIsFavorite] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -38,7 +40,7 @@ export default function FavoriteButton({ gameId, size = "md" }: FavoriteButtonPr
 
   const toggleFavorite = async () => {
     if (!isAuthenticated || !user) {
-      showToast("Faça login para adicionar aos favoritos", "info");
+      showToast(t("favorites.loginRequired"), "info");
       return;
     }
 
@@ -51,9 +53,9 @@ export default function FavoriteButton({ gameId, size = "md" }: FavoriteButtonPr
         );
         if (response.ok) {
           setIsFavorite(false);
-          showToast("Removido dos favoritos", "success");
+          showToast(t("favorites.removed"), "success");
         } else {
-          showToast("Erro ao remover dos favoritos", "error");
+          showToast(t("favorites.removeError"), "error");
         }
       } else {
         const response = await fetch("/api/favorites", {
@@ -63,13 +65,13 @@ export default function FavoriteButton({ gameId, size = "md" }: FavoriteButtonPr
         });
         if (response.ok) {
           setIsFavorite(true);
-          showToast("Adicionado aos favoritos!", "success");
+          showToast(t("favorites.added"), "success");
         } else {
-          showToast("Erro ao adicionar aos favoritos", "error");
+          showToast(t("favorites.addError"), "error");
         }
       }
-    } catch (error) {
-      showToast("Erro ao atualizar favoritos", "error");
+    } catch {
+      showToast(t("favorites.updateError"), "error");
     } finally {
       setLoading(false);
     }
@@ -88,7 +90,7 @@ export default function FavoriteButton({ gameId, size = "md" }: FavoriteButtonPr
         disabled
         aria-disabled="true"
         className={`${sizeClasses[size]} transition-all disabled:opacity-50 text-gray-400`}
-        title="Faça login para favoritar"
+        title={t("favorites.loginToFavorite")}
       >
         <Heart className="w-full h-full" />
       </button>
@@ -104,7 +106,7 @@ export default function FavoriteButton({ gameId, size = "md" }: FavoriteButtonPr
           ? "text-red-500 fill-red-500"
           : "text-gray-400 hover:text-red-400"
       }`}
-      title={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+      title={isFavorite ? t("favorites.removeTitle") : t("favorites.addTitle")}
     >
       <Heart className="w-full h-full" />
     </button>

@@ -17,6 +17,7 @@ import {
   Eye
 } from "lucide-react";
 import Link from "next/link";
+import { useI18n } from "@/components/I18nProvider";
 
 interface Stats {
   totalGames: number;
@@ -37,6 +38,7 @@ interface Stats {
 }
 
 export default function StatsPage() {
+  const { language, t } = useI18n();
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -54,7 +56,7 @@ export default function StatsPage() {
       ]);
 
       if (!allRes.ok && !approvedRes.ok) {
-        throw new Error("Falha ao buscar jogos");
+        throw new Error(t("statsPage.fetchGamesError"));
       }
 
       let allGames: Game[] = allRes.ok ? await allRes.json() : [];
@@ -170,10 +172,12 @@ export default function StatsPage() {
   if (!stats) {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
-        <p className="text-gray-400">Erro ao carregar estatísticas</p>
+        <p className="text-gray-400">{t("statsPage.loadError")}</p>
       </div>
     );
   }
+
+  const locale = language === "pt" ? "pt-BR" : "en-US";
 
   const topGenres = Object.entries(stats.gamesByGenre)
     .sort(([, a], [, b]) => b - a)
@@ -186,7 +190,7 @@ export default function StatsPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-8 text-steam-blueLight">
-        Estatísticas Gerais
+        {t("statsPage.title")}
       </h1>
 
       {/* Cards de Estatísticas Principais */}
@@ -196,10 +200,10 @@ export default function StatsPage() {
             <Gamepad2 className="w-8 h-8 text-steam-blueLight" />
             <TrendingUp className="w-5 h-5 text-green-400" />
           </div>
-          <h3 className="text-gray-400 text-sm mb-1">Total de Jogos</h3>
-          <p className="text-3xl font-bold text-white">{stats.totalGames}</p>
+          <h3 className="text-gray-400 text-sm mb-1">{t("statsPage.totalGames")}</h3>
+          <p className="text-3xl font-bold text-white">{stats.totalGames.toLocaleString(locale)}</p>
           <p className="text-xs text-gray-400 mt-2">
-            {stats.approvedGames} aprovados
+            {t("statsPage.approvedCount", { count: stats.approvedGames.toLocaleString(locale) })}
           </p>
         </div>
 
@@ -208,10 +212,10 @@ export default function StatsPage() {
             <Users className="w-8 h-8 text-steam-green" />
             <TrendingUp className="w-5 h-5 text-green-400" />
           </div>
-          <h3 className="text-gray-400 text-sm mb-1">Autores</h3>
-          <p className="text-3xl font-bold text-white">{stats.totalAuthors}</p>
+          <h3 className="text-gray-400 text-sm mb-1">{t("statsPage.authors")}</h3>
+          <p className="text-3xl font-bold text-white">{stats.totalAuthors.toLocaleString(locale)}</p>
           <p className="text-xs text-gray-400 mt-2">
-            Desenvolvedores únicos
+            {t("statsPage.uniqueDevelopers")}
           </p>
         </div>
 
@@ -220,12 +224,12 @@ export default function StatsPage() {
             <Star className="w-8 h-8 text-yellow-400 fill-yellow-400" />
             <TrendingUp className="w-5 h-5 text-green-400" />
           </div>
-          <h3 className="text-gray-400 text-sm mb-1">Avaliação Média</h3>
+          <h3 className="text-gray-400 text-sm mb-1">{t("statsPage.averageRating")}</h3>
           <p className="text-3xl font-bold text-white">
             {stats.averageRating > 0 ? stats.averageRating.toFixed(1) : "-"}
           </p>
           <p className="text-xs text-gray-400 mt-2">
-            {stats.totalRatings} avaliações
+            {t("statsPage.ratingsCount", { count: stats.totalRatings.toLocaleString(locale) })}
           </p>
         </div>
 
@@ -234,10 +238,10 @@ export default function StatsPage() {
             <Calendar className="w-8 h-8 text-blue-400" />
             <TrendingUp className="w-5 h-5 text-green-400" />
           </div>
-          <h3 className="text-gray-400 text-sm mb-1">Aguardando</h3>
-          <p className="text-3xl font-bold text-white">{stats.pendingGames}</p>
+          <h3 className="text-gray-400 text-sm mb-1">{t("statsPage.pending")}</h3>
+          <p className="text-3xl font-bold text-white">{stats.pendingGames.toLocaleString(locale)}</p>
           <p className="text-xs text-gray-400 mt-2">
-            Jogos pendentes
+            {t("statsPage.pendingGames")}
           </p>
         </div>
       </div>
@@ -249,10 +253,10 @@ export default function StatsPage() {
             <Eye className="w-8 h-8 text-steam-blueLight" />
             <TrendingUp className="w-5 h-5 text-green-400" />
           </div>
-          <h3 className="text-gray-400 text-sm mb-1">Total de Visualizações</h3>
+          <h3 className="text-gray-400 text-sm mb-1">{t("statsPage.totalViews")}</h3>
           <p className="text-3xl font-bold text-white">{stats.totalViews.toLocaleString()}</p>
           <p className="text-xs text-gray-400 mt-2">
-            Páginas de jogos visualizadas
+            {t("statsPage.viewsDescription")}
           </p>
         </div>
 
@@ -261,10 +265,10 @@ export default function StatsPage() {
             <Download className="w-8 h-8 text-steam-green" />
             <TrendingUp className="w-5 h-5 text-green-400" />
           </div>
-          <h3 className="text-gray-400 text-sm mb-1">Total de Downloads</h3>
+          <h3 className="text-gray-400 text-sm mb-1">{t("statsPage.totalDownloads")}</h3>
           <p className="text-3xl font-bold text-white">{stats.totalDownloads.toLocaleString()}</p>
           <p className="text-xs text-gray-400 mt-2">
-            Jogos baixados
+            {t("statsPage.downloadsDescription")}
           </p>
         </div>
       </div>
@@ -274,7 +278,7 @@ export default function StatsPage() {
         <div className="bg-steam-dark rounded-lg p-6 border border-steam-blue">
           <div className="flex items-center gap-2 mb-6">
             <Award className="w-6 h-6 text-yellow-400" />
-            <h2 className="text-2xl font-bold text-white">Melhor Avaliados</h2>
+            <h2 className="text-2xl font-bold text-white">{t("topRated.title")}</h2>
           </div>
           <div className="space-y-4">
             {stats.topRatedGames.length > 0 ? (
@@ -304,7 +308,7 @@ export default function StatsPage() {
                 </Link>
               ))
             ) : (
-              <p className="text-gray-400 text-center py-4">Nenhum jogo ainda</p>
+              <p className="text-gray-400 text-center py-4">{t("statsPage.noGamesYet")}</p>
             )}
           </div>
         </div>
@@ -313,7 +317,7 @@ export default function StatsPage() {
         <div className="bg-steam-dark rounded-lg p-6 border border-steam-blue">
           <div className="flex items-center gap-2 mb-6">
             <Star className="w-6 h-6 text-steam-blueLight" />
-            <h2 className="text-2xl font-bold text-white">Mais Avaliados</h2>
+            <h2 className="text-2xl font-bold text-white">{t("statsPage.mostRated")}</h2>
           </div>
           <div className="space-y-4">
             {stats.mostRatedGames.length > 0 ? (
@@ -339,13 +343,13 @@ export default function StatsPage() {
                       <p className="text-steam-blueLight font-bold">
                         {game.totalRatings}
                       </p>
-                      <p className="text-gray-400 text-xs">avaliações</p>
+                      <p className="text-gray-400 text-xs">{t("statsPage.ratings")}</p>
                     </div>
                   </div>
                 </Link>
               ))
             ) : (
-              <p className="text-gray-400 text-center py-4">Nenhum jogo ainda</p>
+              <p className="text-gray-400 text-center py-4">{t("statsPage.noGamesYet")}</p>
             )}
           </div>
         </div>
@@ -357,7 +361,7 @@ export default function StatsPage() {
         <div className="bg-steam-dark rounded-lg p-6 border border-steam-blue">
           <div className="flex items-center gap-2 mb-6">
             <Eye className="w-6 h-6 text-steam-blueLight" />
-            <h2 className="text-2xl font-bold text-white">Mais Visualizados</h2>
+            <h2 className="text-2xl font-bold text-white">{t("statsPage.mostViewed")}</h2>
           </div>
           <div className="space-y-4">
             {stats.topViewedGames.length > 0 ? (
@@ -383,13 +387,13 @@ export default function StatsPage() {
                       <p className="text-steam-blueLight font-bold">
                         {game.views.toLocaleString()}
                       </p>
-                      <p className="text-gray-400 text-xs">visualizações</p>
+                      <p className="text-gray-400 text-xs">{t("statsPage.views")}</p>
                     </div>
                   </div>
                 </Link>
               ))
             ) : (
-              <p className="text-gray-400 text-center py-4">Nenhum dado ainda</p>
+              <p className="text-gray-400 text-center py-4">{t("statsPage.noDataYet")}</p>
             )}
           </div>
         </div>
@@ -398,7 +402,7 @@ export default function StatsPage() {
         <div className="bg-steam-dark rounded-lg p-6 border border-steam-blue">
           <div className="flex items-center gap-2 mb-6">
             <Download className="w-6 h-6 text-steam-green" />
-            <h2 className="text-2xl font-bold text-white">Mais Baixados</h2>
+            <h2 className="text-2xl font-bold text-white">{t("statsPage.mostDownloaded")}</h2>
           </div>
           <div className="space-y-4">
             {stats.topDownloadedGames.length > 0 ? (
@@ -424,13 +428,13 @@ export default function StatsPage() {
                       <p className="text-steam-green font-bold">
                         {game.downloads.toLocaleString()}
                       </p>
-                      <p className="text-gray-400 text-xs">downloads</p>
+                      <p className="text-gray-400 text-xs">{t("statsPage.downloads")}</p>
                     </div>
                   </div>
                 </Link>
               ))
             ) : (
-              <p className="text-gray-400 text-center py-4">Nenhum dado ainda</p>
+              <p className="text-gray-400 text-center py-4">{t("statsPage.noDataYet")}</p>
             )}
           </div>
         </div>
@@ -439,7 +443,7 @@ export default function StatsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Gêneros Mais Populares */}
         <div className="bg-steam-dark rounded-lg p-6 border border-steam-blue">
-          <h2 className="text-2xl font-bold text-white mb-6">Gêneros Mais Populares</h2>
+          <h2 className="text-2xl font-bold text-white mb-6">{t("genres.popular")}</h2>
           <div className="space-y-3">
             {topGenres.length > 0 ? (
               topGenres.map(([genre, count], index) => (
@@ -466,14 +470,14 @@ export default function StatsPage() {
                 </div>
               ))
             ) : (
-              <p className="text-gray-400 text-center py-4">Nenhum dado disponível</p>
+              <p className="text-gray-400 text-center py-4">{t("statsPage.noDataAvailable")}</p>
             )}
           </div>
         </div>
 
         {/* Tecnologias Mais Usadas */}
         <div className="bg-steam-dark rounded-lg p-6 border border-steam-blue">
-          <h2 className="text-2xl font-bold text-white mb-6">Tecnologias Mais Usadas</h2>
+          <h2 className="text-2xl font-bold text-white mb-6">{t("statsPage.topTechnologies")}</h2>
           <div className="space-y-3">
             {topTechnologies.length > 0 ? (
               topTechnologies.map(([tech, count], index) => (
@@ -500,7 +504,7 @@ export default function StatsPage() {
                 </div>
               ))
             ) : (
-              <p className="text-gray-400 text-center py-4">Nenhum dado disponível</p>
+              <p className="text-gray-400 text-center py-4">{t("statsPage.noDataAvailable")}</p>
             )}
           </div>
         </div>

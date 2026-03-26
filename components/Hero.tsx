@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Play, ArrowRight, Gamepad2, Users, Award, ChevronDown, Sparkles } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
+import { useI18n } from "./I18nProvider";
 
 function useAnimatedCounter(target: number, duration = 2000, decimals = 0) {
   const [count, setCount] = useState(0);
@@ -18,7 +19,7 @@ function useAnimatedCounter(target: number, duration = 2000, decimals = 0) {
       const elapsed = timestamp - startTime.current;
       const progress = Math.min(elapsed / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      setCount(parseFloat((eased * target).toFixed(decimals)));
+      setCount(Number.parseFloat((eased * target).toFixed(decimals)));
 
       if (progress < 1) {
         rafRef.current = requestAnimationFrame(animate);
@@ -32,7 +33,7 @@ function useAnimatedCounter(target: number, duration = 2000, decimals = 0) {
   return count;
 }
 
-function FloatingParticles({ isLight = false }: { isLight?: boolean }) {
+function FloatingParticles({ isLight = false }: Readonly<{ isLight?: boolean }>) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -109,7 +110,7 @@ function FloatingParticles({ isLight = false }: { isLight?: boolean }) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+          const dist = Math.hypot(dx, dy);
 
           if (dist < 120) {
             ctx.beginPath();
@@ -131,14 +132,14 @@ function FloatingParticles({ isLight = false }: { isLight?: boolean }) {
     initParticles();
     drawParticles();
 
-    window.addEventListener("resize", () => {
+    globalThis.window.addEventListener("resize", () => {
       resize();
       initParticles();
     });
 
     return () => {
       cancelAnimationFrame(animationId);
-      window.removeEventListener("resize", resize);
+      globalThis.window.removeEventListener("resize", resize);
     };
   }, [isLight]);
 
@@ -146,13 +147,13 @@ function FloatingParticles({ isLight = false }: { isLight?: boolean }) {
     <canvas
       ref={canvasRef}
       className="absolute inset-0 w-full h-full pointer-events-none"
-      aria-hidden="true"
     />
   );
 }
 
 export default function Hero() {
   const { theme } = useTheme();
+  const { t } = useI18n();
   const isLight = theme === "light";
   const [stats, setStats] = useState({
     totalGames: 0,
@@ -191,13 +192,13 @@ export default function Hero() {
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({
-        x: (e.clientX / window.innerWidth) * 100,
-        y: (e.clientY / window.innerHeight) * 100,
+        x: (e.clientX / globalThis.window.innerWidth) * 100,
+        y: (e.clientY / globalThis.window.innerHeight) * 100,
       });
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    globalThis.window.addEventListener("mousemove", handleMouseMove);
+    return () => globalThis.window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   useEffect(() => {
@@ -298,11 +299,11 @@ export default function Hero() {
 
             <div className="max-w-2xl">
               <p className="text-lg sm:text-xl md:text-2xl text-gray-300 leading-relaxed mb-3 font-light">
-                Repositório de jogos digitais desenvolvidos por estudantes do curso
-                <span className="text-steam-blueLight font-medium"> Técnico em Programação de Jogos Digitais</span>.
+                {t("hero.description1")}
+                <span className="text-steam-blueLight font-medium"> {t("hero.course")}</span>.
               </p>
               <p className="text-base sm:text-lg text-gray-400 leading-relaxed">
-                Criatividade e tecnologia se encontram para criar experiências únicas.
+                {t("hero.description2")}
               </p>
             </div>
           </div>
@@ -323,7 +324,7 @@ export default function Hero() {
                     <div className="text-3xl md:text-4xl font-bold text-white tabular-nums">
                       {animatedGames}
                     </div>
-                    <div className="text-sm text-gray-400 uppercase tracking-wide">Jogos</div>
+                    <div className="text-sm text-gray-400 uppercase tracking-wide">{t("hero.statGames")}</div>
                   </div>
                 </div>
               </div>
@@ -339,7 +340,7 @@ export default function Hero() {
                     <div className="text-3xl md:text-4xl font-bold text-white tabular-nums">
                       {animatedAuthors}
                     </div>
-                    <div className="text-sm text-gray-400 uppercase tracking-wide">Desenvolvedores</div>
+                    <div className="text-sm text-gray-400 uppercase tracking-wide">{t("hero.statAuthors")}</div>
                   </div>
                 </div>
               </div>
@@ -355,7 +356,7 @@ export default function Hero() {
                     <div className="text-3xl md:text-4xl font-bold text-white tabular-nums">
                       {stats.avgRating > 0 ? animatedRating : "-"}
                     </div>
-                    <div className="text-sm text-gray-400 uppercase tracking-wide">Avaliação</div>
+                    <div className="text-sm text-gray-400 uppercase tracking-wide">{t("hero.statAvgRating")}</div>
                   </div>
                 </div>
               </div>
@@ -374,7 +375,7 @@ export default function Hero() {
             >
               <span className="relative z-10 flex items-center gap-3">
                 <Play className="w-5 h-5" />
-                Explorar Jogos
+                {t("hero.ctaExplore")}
               </span>
               <ArrowRight className="w-5 h-5 relative z-10 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
@@ -384,7 +385,7 @@ export default function Hero() {
               href="/upload"
               className="group flex items-center justify-center gap-3 bg-transparent border-2 border-steam-green/40 hover:border-steam-green hover:bg-steam-green/10 text-steam-green px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-steam-green/10"
             >
-              <span>Enviar Seu Jogo</span>
+              <span>{t("hero.ctaUpload")}</span>
               <ArrowRight className="w-5 h-5 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
             </Link>
           </div>
@@ -398,9 +399,9 @@ export default function Hero() {
           isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
         style={{ transitionDelay: "800ms" }}
-        aria-label="Rolar para o conteúdo"
+        aria-label={t("hero.scrollAria")}
       >
-        <span className="text-xs uppercase tracking-widest font-medium">Explorar</span>
+        <span className="text-xs uppercase tracking-widest font-medium">{t("hero.scrollText")}</span>
         <ChevronDown className="w-5 h-5 animate-bounce" />
       </button>
 

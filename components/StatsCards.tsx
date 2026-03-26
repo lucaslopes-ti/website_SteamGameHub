@@ -2,6 +2,7 @@
 
 import { Trophy, Eye, Download, Star } from "lucide-react";
 import { Game } from "@/lib/games";
+import { useI18n } from "./I18nProvider";
 
 interface StatsCardsProps {
   games: Game[];
@@ -20,17 +21,19 @@ const statStyles = [
   { iconBg: "bg-purple-500/10 group-hover:bg-purple-500/20", iconColor: "text-purple-400" },
 ];
 
-export default function StatsCards({ games, stats }: StatsCardsProps) {
+export default function StatsCards({ games, stats }: Readonly<StatsCardsProps>) {
+  const { language, t } = useI18n();
   const approvedGames = games.filter((g) => g.approved);
   const totalRatings = approvedGames.reduce((sum, g) => sum + (g.totalRatings || 0), 0);
   const totalViews = stats?.totalViews || 0;
   const totalDownloads = stats?.totalDownloads || 0;
+  const locale = language === "pt" ? "pt-BR" : "en-US";
 
   const statsItems = [
-    { icon: Trophy, label: "Jogos Publicados", value: approvedGames.length },
-    { icon: Eye, label: "Total de Visualizações", value: totalViews.toLocaleString("pt-BR") },
-    { icon: Download, label: "Total de Downloads", value: totalDownloads.toLocaleString("pt-BR") },
-    { icon: Star, label: "Total de Avaliações", value: totalRatings.toLocaleString("pt-BR") },
+    { icon: Trophy, label: t("stats.publishedGames"), value: approvedGames.length.toLocaleString(locale) },
+    { icon: Eye, label: t("stats.totalViews"), value: totalViews.toLocaleString(locale) },
+    { icon: Download, label: t("stats.totalDownloads"), value: totalDownloads.toLocaleString(locale) },
+    { icon: Star, label: t("stats.totalRatings"), value: totalRatings.toLocaleString(locale) },
   ];
 
   return (
@@ -40,7 +43,7 @@ export default function StatsCards({ games, stats }: StatsCardsProps) {
         const style = statStyles[index];
         return (
           <div
-            key={index}
+            key={stat.label}
             className="bg-steam-dark border border-steam-blue rounded-lg p-6 hover:border-steam-blueLight transition-all duration-300 hover:shadow-lg hover:shadow-steam-blue/20 group"
           >
             <div className="flex items-center justify-between mb-4">
