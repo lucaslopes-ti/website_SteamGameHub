@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Search, User, Gamepad2, LogOut, Heart, Info, Menu, X, Sun, Moon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "./AuthProvider";
@@ -11,6 +11,7 @@ import LanguageSelector from "./LanguageSelector";
 
 export default function Header() {
   const router = useRouter();
+  const pathname = usePathname();
   const { isAuthenticated, user, logout, isTeacher } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { t } = useI18n();
@@ -26,11 +27,14 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(`/games?search=${encodeURIComponent(searchQuery)}`);
-      // Limpar o campo de busca após navegar
       setSearchQuery("");
     }
   };
@@ -46,7 +50,6 @@ export default function Header() {
     >
       <div className="container mx-auto px-4 py-3 md:py-4">
         <div className="flex items-center justify-between gap-4">
-          {/* Logo */}
           <Link 
             href="/" 
             className="flex items-center gap-3 group focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 rounded-lg px-2 py-1 -ml-2"
@@ -65,7 +68,6 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* Search Bar - Desktop */}
           <form 
             onSubmit={handleSearch} 
             className="hidden lg:flex flex-1 max-w-md mx-8" 
@@ -90,7 +92,6 @@ export default function Header() {
             </div>
           </form>
 
-          {/* Desktop Navigation */}
           <nav 
             id="navigation" 
             className="hidden lg:flex items-center gap-1" 
@@ -201,7 +202,6 @@ export default function Header() {
             )}
           </nav>
 
-          {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="lg:hidden flex items-center justify-center w-10 h-10 rounded-lg bg-steam-dark/50 hover:bg-steam-dark border border-steam-blue/30 text-gray-300 hover:text-steam-blueLight transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2"
@@ -216,7 +216,6 @@ export default function Header() {
           </button>
         </div>
 
-        {/* Mobile Search */}
         <form 
           onSubmit={handleSearch} 
           className="lg:hidden mt-4" 
@@ -239,7 +238,6 @@ export default function Header() {
           </div>
         </form>
 
-        {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <nav 
             className="lg:hidden mt-4 pb-4 border-t border-steam-blue/30 pt-4 animate-fadeIn"

@@ -13,6 +13,10 @@ import VLibrasWidget from "@/components/VLibrasWidget";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://senaigamehub.vercel.app"),
+  alternates: {
+    canonical: "/",
+  },
   title: {
     default: "SENAI Dr. Celso Charuri Game HUB",
     template: "%s | SENAI Game HUB"
@@ -42,6 +46,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "SENAI Dr. Celso Charuri Game HUB",
     description: "Vitrine de jogos desenvolvidos pelos alunos do curso Técnico em Programação de Jogos Digitais",
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,
