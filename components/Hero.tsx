@@ -110,8 +110,8 @@ export default function Hero() {
             </span>
           </div>
 
-          <h1 className="text-6xl sm:text-7xl lg:text-8xl font-gaming font-black leading-[0.85] tracking-tighter text-senai-blueDark dark:text-white">
-            <span className="block mb-2">SENAI</span>
+          <h1 className="text-6xl sm:text-7xl lg:text-8xl font-gaming font-black leading-[0.85] tracking-tighter">
+            <span className="block mb-2 text-senai-blueDark dark:text-senai-blueLight drop-shadow-md">SENAI</span>
             <span 
               className="glitch text-transparent bg-clip-text bg-gradient-to-r from-senai-orange via-senai-blueLight to-senai-blue" 
               data-text="Game Hub"
@@ -142,15 +142,15 @@ export default function Hero() {
           {/* Live Stats */}
           <div className="grid grid-cols-3 gap-4 sm:gap-8 pt-10 border-t border-senai-grayLight dark:border-white/10">
             <div>
-              <div className="text-2xl sm:text-3xl font-gaming font-bold text-senai-blueDark dark:text-white">{animatedGames}</div>
+              <div className="text-2xl sm:text-3xl font-gaming font-bold text-senai-blue dark:text-senai-blueLight drop-shadow-sm">{animatedGames}</div>
               <div className="text-gray-500 text-[9px] sm:text-[10px] uppercase tracking-widest mt-1 font-sans">Jogos Publicados</div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-gaming font-bold text-senai-blueLight">{animatedAuthors}</div>
+              <div className="text-2xl sm:text-3xl font-gaming font-bold text-senai-orange drop-shadow-sm">{animatedAuthors}</div>
               <div className="text-gray-500 text-[9px] sm:text-[10px] uppercase tracking-widest mt-1 font-sans">Desenvolvedores</div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-gaming font-bold text-senai-orange">99%</div>
+              <div className="text-2xl sm:text-3xl font-gaming font-bold text-yellow-500 drop-shadow-sm">99%</div>
               <div className="text-gray-500 text-[9px] sm:text-[10px] uppercase tracking-widest mt-1 font-sans">Projetos Ativos</div>
             </div>
           </div>
