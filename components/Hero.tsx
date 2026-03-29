@@ -76,9 +76,21 @@ export default function Hero() {
         });
 
         if (approved.length > 0) {
-          // Obtém o jogo com maior avaliação
+          // Evita que um jogo com 1 avaliação nota 5 ultrapasse jogos populares
+          // Usando uma variação de Média Bayesiana para calcular a relevância
+          const m = 3; // Peso mínimo de votos para relevância
+          const C = avgRating || 0; // Média global do hub
+          
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const sorted = [...approved].sort((a: any, b: any) => (b.rating || 0) - (a.rating || 0));
+          const getScore = (g: any) => {
+            const v = g.totalRatings || 0;
+            const R = g.rating || 0;
+            if (v === 0) return 0;
+            return ((v * R) + (m * C)) / (v + m);
+          };
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const sorted = [...approved].sort((a: any, b: any) => getScore(b) - getScore(a));
           setTopGame(sorted[0]);
         }
       })
