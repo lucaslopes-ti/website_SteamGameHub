@@ -295,19 +295,19 @@ export default function UploadPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-4xl font-bold mb-8 text-steam-blueLight">
+      <h1 className="text-4xl font-bold mb-8 text-senai-orange">
         Enviar Novo Jogo
       </h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-steam-dark rounded-lg p-6">
+        <div className="bg-senai-blueDark rounded-lg p-6">
           <h2 className="text-2xl font-bold mb-4 text-white">
             Informações Básicas
           </h2>
 
           <div className="space-y-4">
             <div>
-                <label htmlFor="game-title" className="block text-steam-blueLight mb-2">
+                <label htmlFor="game-title" className="block text-senai-orange mb-2">
                   Título do Jogo *
                 </label>
                 <input
@@ -318,7 +318,7 @@ export default function UploadPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
                   }
-                  className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight focus-visible:ring-2 focus-visible:ring-steam-blueLight"
+                  className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-senai-orange focus-visible:ring-2 focus-visible:ring-senai-orange"
                   placeholder="Digite o título do seu jogo"
                   aria-describedby="title-description"
                   aria-required="true"
@@ -329,7 +329,7 @@ export default function UploadPage() {
               </div>
 
               <div>
-                <label htmlFor="game-description" className="block text-steam-blueLight mb-2">
+                <label htmlFor="game-description" className="block text-senai-orange mb-2">
                   Descrição *
                 </label>
                 <textarea
@@ -340,7 +340,7 @@ export default function UploadPage() {
                     setFormData({ ...formData, description: e.target.value })
                   }
                   rows={5}
-                  className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight focus-visible:ring-2 focus-visible:ring-steam-blueLight resize-y"
+                  className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-senai-orange focus-visible:ring-2 focus-visible:ring-senai-orange resize-y"
                   placeholder="Descreva seu jogo, mecânicas principais, objetivo, etc."
                   aria-describedby="description-description"
                   aria-required="true"
@@ -352,7 +352,7 @@ export default function UploadPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="author-name" className="block text-steam-blueLight mb-2">
+                <label htmlFor="author-name" className="block text-senai-orange mb-2">
                   Seu Nome *
                 </label>
                 <input
@@ -364,7 +364,7 @@ export default function UploadPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, author: e.target.value })
                   }
-                  className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight focus-visible:ring-2 focus-visible:ring-steam-blueLight"
+                  className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-senai-orange focus-visible:ring-2 focus-visible:ring-senai-orange"
                   placeholder="Seu nome completo"
                   aria-describedby="author-description"
                   aria-required="true"
@@ -375,7 +375,7 @@ export default function UploadPage() {
               </div>
 
               <div>
-                <label htmlFor="author-email" className="block text-steam-blueLight mb-2">
+                <label htmlFor="author-email" className="block text-senai-orange mb-2">
                   E-mail *
                 </label>
                 <input
@@ -387,7 +387,7 @@ export default function UploadPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, authorEmail: e.target.value })
                   }
-                  className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight focus-visible:ring-2 focus-visible:ring-steam-blueLight"
+                  className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-senai-orange focus-visible:ring-2 focus-visible:ring-senai-orange"
                   placeholder="seu@email.com"
                   aria-describedby="email-description"
                   aria-required="true"
@@ -400,7 +400,7 @@ export default function UploadPage() {
           </div>
         </div>
 
-        <div className="bg-steam-dark rounded-lg p-6">
+        <div className="bg-senai-blueDark rounded-lg p-6">
           <h2 className="text-2xl font-bold mb-4 text-white" id="genres-heading">Gêneros *</h2>
           <div 
             className="flex flex-wrap gap-2" 
@@ -424,10 +424,10 @@ export default function UploadPage() {
                 }}
                 aria-pressed={selectedGenres.includes(genre)}
                 aria-label={`${selectedGenres.includes(genre) ? "Selecionado" : "Não selecionado"}: ${genre}`}
-                className={`px-4 py-2 rounded transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 ${
+                className={`px-4 py-2 rounded transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-senai-orange focus-visible:outline-offset-2 ${
                   selectedGenres.includes(genre)
-                    ? "bg-steam-blueLight text-white"
-                    : "bg-steam-darker text-gray-300 hover:bg-steam-blue"
+                    ? "bg-senai-orange text-white"
+                    : "bg-senai-dark text-gray-300 hover:bg-senai-blue"
                 }`}
               >
                 {genre}
@@ -441,7 +441,7 @@ export default function UploadPage() {
           )}
         </div>
 
-        <div className="bg-steam-dark rounded-lg p-6">
+        <div className="bg-senai-blueDark rounded-lg p-6">
           <h2 className="text-2xl font-bold mb-4 text-white" id="technologies-heading">Tecnologias *</h2>
           <div 
             className="flex flex-wrap gap-2" 
@@ -465,10 +465,10 @@ export default function UploadPage() {
                 }}
                 aria-pressed={selectedTechnologies.includes(tech)}
                 aria-label={`${selectedTechnologies.includes(tech) ? "Selecionado" : "Não selecionado"}: ${tech}`}
-                className={`px-4 py-2 rounded transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-green focus-visible:outline-offset-2 ${
+                className={`px-4 py-2 rounded transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-senai-blueLight focus-visible:outline-offset-2 ${
                   selectedTechnologies.includes(tech)
-                    ? "bg-steam-green text-white"
-                    : "bg-steam-darker text-gray-300 hover:bg-steam-blue"
+                    ? "bg-senai-blueLight text-white"
+                    : "bg-senai-dark text-gray-300 hover:bg-senai-blue"
                 }`}
               >
                 {tech}
@@ -482,13 +482,13 @@ export default function UploadPage() {
           )}
         </div>
 
-        <div className="bg-steam-dark rounded-lg p-6">
+        <div className="bg-senai-blueDark rounded-lg p-6">
           <h2 className="text-2xl font-bold mb-4 text-white flex items-center gap-2">
             <FileText className="w-6 h-6" />
             Arquivo Executável do Jogo (temporariamente indisponível)
           </h2>
           <div className="space-y-4">
-            <div className="border-2 border-dashed border-steam-blue rounded p-8 text-center">
+            <div className="border-2 border-dashed border-senai-blue rounded p-8 text-center">
               <input
                 type="file"
                 id="executable-file"
@@ -511,7 +511,7 @@ export default function UploadPage() {
               </label>
             </div>
             {/* Se voltar a habilitar, mostrar o bloco de arquivo selecionado */}
-            <div className="mt-4 pt-4 border-t border-steam-blue">
+            <div className="mt-4 pt-4 border-t border-senai-blue">
               <p className="text-gray-400 text-sm mb-2 text-center">
                 Envie o link do Google Drive/OneDrive/Dropbox do seu jogo (obrigatório)
               </p>
@@ -526,7 +526,7 @@ export default function UploadPage() {
                   setFormData({ ...formData, downloadLink: e.target.value })
                 }
                 placeholder="https://drive.google.com/file/d/..."
-                className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight focus-visible:ring-2 focus-visible:ring-steam-blueLight"
+                className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-senai-orange focus-visible:ring-2 focus-visible:ring-senai-orange"
                 required
                 aria-describedby="download-link-description"
                 aria-required="true"
@@ -538,7 +538,7 @@ export default function UploadPage() {
           </div>
         </div>
 
-        <div className="bg-steam-dark rounded-lg p-6">
+        <div className="bg-senai-blueDark rounded-lg p-6">
           <h2 className="text-2xl font-bold mb-4 text-white flex items-center gap-2">
             <ImageIcon className="w-6 h-6" />
             Imagem de Capa (Opcional)
@@ -549,7 +549,7 @@ export default function UploadPage() {
                 <img
                   src={imagePreview}
                   alt="Preview da imagem de capa"
-                  className="w-full h-64 object-cover rounded-lg border-2 border-steam-blueLight shadow-lg"
+                  className="w-full h-64 object-cover rounded-lg border-2 border-senai-orange shadow-lg"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors rounded-lg" />
                 <button
@@ -570,7 +570,7 @@ export default function UploadPage() {
                 )}
               </div>
             ) : (
-              <div className="border-2 border-dashed border-steam-blue rounded p-8 text-center">
+              <div className="border-2 border-dashed border-senai-blue rounded p-8 text-center">
                 <input
                   type="file"
                   id="image-file"
@@ -593,9 +593,9 @@ export default function UploadPage() {
               </div>
             )}
             {imageFile && !imagePreview && (
-              <div className="bg-steam-darker rounded p-4 flex items-center justify-between">
+              <div className="bg-senai-dark rounded p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-steam-green" />
+                  <CheckCircle className="w-5 h-5 text-senai-blueLight" />
                   <div>
                     <p className="text-white font-semibold">{imageFile.name}</p>
                     <p className="text-gray-400 text-sm">
@@ -618,7 +618,7 @@ export default function UploadPage() {
           </div>
         </div>
 
-        <div className="bg-steam-dark rounded-lg p-6">
+        <div className="bg-senai-blueDark rounded-lg p-6">
           <h2 className="text-2xl font-bold mb-4 text-white flex items-center gap-2">
             <ImageIcon className="w-6 h-6" />
             Screenshots do Jogo (Opcional)
@@ -627,7 +627,7 @@ export default function UploadPage() {
             Adicione até 5 screenshots para mostrar seu jogo em ação
           </p>
           <div className="space-y-4">
-            <div className="border-2 border-dashed border-steam-blue rounded p-8 text-center">
+            <div className="border-2 border-dashed border-senai-blue rounded p-8 text-center">
               <input
                 type="file"
                 id="screenshots-files"
@@ -676,7 +676,7 @@ export default function UploadPage() {
                     <img
                       src={preview}
                       alt={`Screenshot ${index + 1} do jogo`}
-                      className="w-full h-32 object-cover rounded-lg border-2 border-steam-blue shadow-md group-hover:border-steam-blueLight transition-all"
+                      className="w-full h-32 object-cover rounded-lg border-2 border-senai-blue shadow-md group-hover:border-senai-orange transition-all"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors rounded-lg" />
                     <button
@@ -704,7 +704,7 @@ export default function UploadPage() {
           </div>
         </div>
 
-        <div className="bg-steam-dark rounded-lg p-6">
+        <div className="bg-senai-blueDark rounded-lg p-6">
           <h2 className="text-2xl font-bold mb-4 text-white">
             Trailer do Jogo (Opcional)
           </h2>
@@ -715,7 +715,7 @@ export default function UploadPage() {
               setFormData({ ...formData, trailerUrl: e.target.value })
             }
             placeholder="https://www.youtube.com/watch?v=..."
-            className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white focus:outline-none focus:border-steam-blueLight"
+            className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white focus:outline-none focus:border-senai-orange"
           />
           <p className="text-gray-400 text-sm mt-2">
             Cole o link do YouTube ou Vimeo do trailer do seu jogo
@@ -723,14 +723,14 @@ export default function UploadPage() {
         </div>
 
         {loading && (
-          <div className="bg-steam-dark rounded-lg p-6">
+          <div className="bg-senai-blueDark rounded-lg p-6">
             <div className="flex items-center gap-4">
-              <Loader2 className="w-6 h-6 animate-spin text-steam-blueLight" />
+              <Loader2 className="w-6 h-6 animate-spin text-senai-orange" />
               <div className="flex-1">
                 <p className="text-white mb-2">Enviando jogo...</p>
-                <div className="w-full bg-steam-darker rounded-full h-2">
+                <div className="w-full bg-senai-dark rounded-full h-2">
                   <div
-                    className="bg-steam-blueLight h-2 rounded-full transition-all"
+                    className="bg-senai-orange h-2 rounded-full transition-all"
                     style={{ width: `${uploadProgress}%` }}
                   />
                 </div>
@@ -743,7 +743,7 @@ export default function UploadPage() {
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-steam-blueLight hover:bg-steam-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded font-semibold transition flex items-center justify-center gap-2"
+            className="flex-1 bg-senai-orange hover:bg-senai-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded font-semibold transition flex items-center justify-center gap-2"
           >
             {loading ? (
               <>

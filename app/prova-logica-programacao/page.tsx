@@ -814,10 +814,10 @@ export default function ProvaLogicaProgramacaoPage() {
 
   if (showIdentification) {
     return (
-      <div className="min-h-screen bg-steam-dark flex items-center justify-center p-4">
-        <div className="bg-steam-darker border border-steam-blue rounded-lg p-8 max-w-md w-full">
+      <div className="min-h-screen bg-senai-blueDark flex items-center justify-center p-4">
+        <div className="bg-senai-dark border border-senai-blue rounded-lg p-8 max-w-md w-full">
           <div className="text-center mb-6">
-            <BookOpen className="w-16 h-16 text-steam-blueLight mx-auto mb-4" />
+            <BookOpen className="w-16 h-16 text-senai-orange mx-auto mb-4" />
             <h1 className="text-3xl font-bold text-white mb-2">Prova de Lógica de Programação</h1>
             <p className="text-gray-300">Avaliação de Conhecimentos em C#</p>
           </div>
@@ -849,7 +849,7 @@ export default function ProvaLogicaProgramacaoPage() {
                 value={studentId}
                 onChange={(e) => setStudentId(e.target.value)}
                 placeholder="Digite seu nome ou número de matrícula"
-                className="w-full bg-steam-dark border border-steam-blue rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight"
+                className="w-full bg-senai-blueDark border border-senai-blue rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-senai-orange"
                 required
                 autoFocus
               />
@@ -860,7 +860,7 @@ export default function ProvaLogicaProgramacaoPage() {
 
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-steam-blueLight to-steam-green text-white rounded-lg px-6 py-3 font-semibold hover:shadow-lg transition-all"
+              className="w-full bg-gradient-to-r from-senai-orange to-senai-blueLight text-white rounded-lg px-6 py-3 font-semibold hover:shadow-lg transition-all"
             >
               Iniciar Prova
             </button>
@@ -872,19 +872,19 @@ export default function ProvaLogicaProgramacaoPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-steam-dark flex items-center justify-center p-4">
-        <div className="bg-steam-darker border-2 border-steam-green rounded-lg p-8 max-w-md w-full text-center">
-          <CheckCircle className="w-16 h-16 text-steam-green mx-auto mb-4" />
+      <div className="min-h-screen bg-senai-blueDark flex items-center justify-center p-4">
+        <div className="bg-senai-dark border-2 border-senai-blueLight rounded-lg p-8 max-w-md w-full text-center">
+          <CheckCircle className="w-16 h-16 text-senai-blueLight mx-auto mb-4" />
           <h2 className="text-3xl font-bold text-white mb-2">Prova Enviada com Sucesso! 🎉</h2>
           <p className="text-gray-300 mb-6">
             Suas respostas foram salvas e serão avaliadas pelo professor.
           </p>
-          <div className="bg-steam-dark rounded-lg p-4 mb-6">
+          <div className="bg-senai-blueDark rounded-lg p-4 mb-6">
             <p className="text-sm text-gray-400">
-              <strong className="text-steam-blueLight">Aluno:</strong> {studentId}
+              <strong className="text-senai-orange">Aluno:</strong> {studentId}
             </p>
             <p className="text-sm text-gray-400 mt-2">
-              <strong className="text-steam-blueLight">Versão da Prova:</strong> {provaVersion}
+              <strong className="text-senai-orange">Versão da Prova:</strong> {provaVersion}
             </p>
             {violations.length > 0 && (
               <p className="text-sm text-yellow-400 mt-2">
@@ -898,12 +898,12 @@ export default function ProvaLogicaProgramacaoPage() {
   }
 
   return (
-    <div className="min-h-screen bg-steam-dark">
+    <div className="min-h-screen bg-senai-blueDark">
       <AntiCheatProtection onViolation={handleViolation} enabled={true} />
 
       <div className="container mx-auto px-4 py-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-steam-blue via-steam-blueLight to-steam-green rounded-lg p-4 mb-4 text-white">
+        <div className="bg-gradient-to-r from-senai-blue via-senai-orange to-senai-blueLight rounded-lg p-4 mb-4 text-white">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div>
               <h1 className="text-2xl font-bold">Prova de Lógica de Programação</h1>
@@ -933,7 +933,7 @@ export default function ProvaLogicaProgramacaoPage() {
               )}
               <button
                 onClick={() => saveAnswers(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-steam-blue hover:bg-steam-blueLight rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-senai-blue hover:bg-senai-orange rounded-lg transition-colors"
               >
                 <Save className="w-4 h-4" />
                 <span className="text-sm">Salvar</span>
@@ -947,7 +947,7 @@ export default function ProvaLogicaProgramacaoPage() {
               <span>Progresso: {answeredCount} de {questions.length} questões</span>
               <span>{Math.round(progressPercentage)}%</span>
             </div>
-            <div className="w-full bg-steam-dark/50 rounded-full h-2">
+            <div className="w-full bg-senai-blueDark/50 rounded-full h-2">
               <div
                 className="bg-white rounded-full h-2 transition-all duration-300"
                 style={{ width: `${progressPercentage}%` }}
@@ -957,7 +957,7 @@ export default function ProvaLogicaProgramacaoPage() {
         </div>
 
         {/* Navegação de Questões */}
-        <div className="bg-steam-darker border border-steam-blue rounded-lg p-4 mb-4">
+        <div className="bg-senai-dark border border-senai-blue rounded-lg p-4 mb-4">
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-lg font-semibold text-white">Questões</h2>
             <p className="text-xs text-gray-400">
@@ -977,10 +977,10 @@ export default function ProvaLogicaProgramacaoPage() {
                   onClick={() => setCurrentQuestion(index)}
                   className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
                     index === currentQuestion
-                      ? "bg-steam-blueLight text-white"
+                      ? "bg-senai-orange text-white"
                       : hasValidAnswer
-                      ? "bg-steam-green/20 text-steam-green border border-steam-green"
-                      : "bg-steam-dark text-gray-300 border border-steam-blue hover:bg-steam-blue"
+                      ? "bg-senai-blueLight/20 text-senai-blueLight border border-senai-blueLight"
+                      : "bg-senai-blueDark text-gray-300 border border-senai-blue hover:bg-senai-blue"
                   }`}
                   title={`Questão ${q.id} - ${hasValidAnswer ? "Respondida" : "Não respondida"}`}
                 >
@@ -995,9 +995,9 @@ export default function ProvaLogicaProgramacaoPage() {
         {currentQ && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 h-[calc(100vh-300px)]">
             {/* Coluna Esquerda: Enunciado da Questão */}
-            <div className="bg-steam-darker border border-steam-blue rounded-lg p-6 overflow-y-auto">
+            <div className="bg-senai-dark border border-senai-blue rounded-lg p-6 overflow-y-auto">
               <div className="flex items-center gap-2 mb-3">
-                <span className="px-3 py-1 bg-steam-blue text-white rounded-lg text-sm font-semibold">
+                <span className="px-3 py-1 bg-senai-blue text-white rounded-lg text-sm font-semibold">
                   {currentQ.part}
                 </span>
                 <span className="text-sm text-gray-400">{currentQ.partTitle}</span>
@@ -1006,27 +1006,27 @@ export default function ProvaLogicaProgramacaoPage() {
               <p className="text-gray-300 whitespace-pre-line mb-4 leading-relaxed">{currentQ.description}</p>
 
               {/* Exemplos */}
-              <div className="bg-steam-dark rounded-lg p-4">
-                <h4 className="text-sm font-semibold text-steam-blueLight mb-3 flex items-center gap-2">
+              <div className="bg-senai-blueDark rounded-lg p-4">
+                <h4 className="text-sm font-semibold text-senai-orange mb-3 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4" />
                   Exemplos:
                 </h4>
                 <div className="space-y-3">
                   {currentQ.examples.map((ex, idx) => (
-                    <div key={idx} className="border-l-2 border-steam-blue pl-3">
+                    <div key={idx} className="border-l-2 border-senai-blue pl-3">
                       <p className="text-xs text-gray-400 mb-1 font-semibold">
                         Exemplo {idx + 1}:
                       </p>
                       <p className="text-xs text-gray-400 mb-1">
                         <strong>Entrada:</strong>
                       </p>
-                      <pre className="text-xs text-gray-300 bg-steam-darker p-2 rounded mb-2 font-mono overflow-x-auto">
+                      <pre className="text-xs text-gray-300 bg-senai-dark p-2 rounded mb-2 font-mono overflow-x-auto">
                         {ex.input}
                       </pre>
                       <p className="text-xs text-gray-400 mb-1">
                         <strong>Saída:</strong>
                       </p>
-                      <pre className="text-xs text-steam-green bg-steam-darker p-2 rounded font-mono overflow-x-auto">
+                      <pre className="text-xs text-senai-blueLight bg-senai-dark p-2 rounded font-mono overflow-x-auto">
                         {ex.output}
                       </pre>
                     </div>
@@ -1036,7 +1036,7 @@ export default function ProvaLogicaProgramacaoPage() {
             </div>
 
             {/* Coluna Direita: Editor de Código (Maior) */}
-            <div className="bg-steam-darker border border-steam-blue rounded-lg p-4 flex flex-col overflow-hidden">
+            <div className="bg-senai-dark border border-senai-blue rounded-lg p-4 flex flex-col overflow-hidden">
               <div className="flex items-center justify-between mb-3">
                 <label className="text-sm font-semibold text-white flex items-center gap-2">
                   <BookOpen className="w-4 h-4" />
@@ -1048,7 +1048,7 @@ export default function ProvaLogicaProgramacaoPage() {
                                         answer.trim() !== "" && 
                                         answer.trim() !== currentQ.template.trim();
                   return hasValidAnswer && (
-                    <span className="text-xs text-steam-green flex items-center gap-1">
+                    <span className="text-xs text-senai-blueLight flex items-center gap-1">
                       <CheckCircle className="w-3 h-3" />
                       Respondida
                     </span>
@@ -1104,14 +1104,14 @@ export default function ProvaLogicaProgramacaoPage() {
             <button
               onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}
               disabled={currentQuestion === 0}
-              className="px-4 py-2 bg-steam-dark border border-steam-blue text-white rounded-lg hover:bg-steam-blue disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 bg-senai-blueDark border border-senai-blue text-white rounded-lg hover:bg-senai-blue disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Anterior
             </button>
             <button
               onClick={() => setCurrentQuestion(Math.min(questions.length - 1, currentQuestion + 1))}
               disabled={currentQuestion === questions.length - 1}
-              className="px-4 py-2 bg-steam-dark border border-steam-blue text-white rounded-lg hover:bg-steam-blue disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 bg-senai-blueDark border border-senai-blue text-white rounded-lg hover:bg-senai-blue disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Próxima
             </button>
@@ -1120,7 +1120,7 @@ export default function ProvaLogicaProgramacaoPage() {
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-steam-green to-steam-blueLight text-white rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-senai-blueLight to-senai-orange text-white rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? (
               <>
@@ -1140,7 +1140,7 @@ export default function ProvaLogicaProgramacaoPage() {
       {/* Modal de Confirmação */}
       {showConfirmModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-steam-darker border-2 border-yellow-600 rounded-lg p-6 max-w-md w-full">
+          <div className="bg-senai-dark border-2 border-yellow-600 rounded-lg p-6 max-w-md w-full">
             <div className="flex items-start gap-3 mb-4">
               <AlertCircle className="w-6 h-6 text-yellow-400 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
@@ -1162,14 +1162,14 @@ export default function ProvaLogicaProgramacaoPage() {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowConfirmModal(false)}
-                className="flex-1 px-4 py-2 bg-steam-dark border border-steam-blue text-white rounded-lg hover:bg-steam-blue transition-colors"
+                className="flex-1 px-4 py-2 bg-senai-blueDark border border-senai-blue text-white rounded-lg hover:bg-senai-blue transition-colors"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleFinalSubmit}
                 disabled={isSubmitting}
-                className="flex-1 px-4 py-2 bg-gradient-to-r from-steam-green to-steam-blueLight text-white rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-2 bg-gradient-to-r from-senai-blueLight to-senai-orange text-white rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? "Enviando..." : "Sim, Enviar"}
               </button>

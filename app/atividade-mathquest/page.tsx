@@ -239,10 +239,10 @@ export default function AtividadeMathQuestPage() {
   };
 
   return (
-    <div className="min-h-screen bg-steam-dark">
+    <div className="min-h-screen bg-senai-blueDark">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="bg-gradient-to-r from-steam-blue via-steam-blueLight to-steam-green rounded-lg p-6 mb-6 text-white">
+        <div className="bg-gradient-to-r from-senai-blue via-senai-orange to-senai-blueLight rounded-lg p-6 mb-6 text-white">
           <div className="flex items-center gap-3 mb-2">
             <Gamepad2 className="w-8 h-8" />
             <h1 className="text-3xl md:text-4xl font-bold">Atividade MathQuest - Semana 1</h1>
@@ -253,8 +253,8 @@ export default function AtividadeMathQuestPage() {
         </div>
 
         {/* Instruções */}
-        <div className="bg-steam-darker border border-steam-blue rounded-lg p-6 mb-6">
-          <h2 className="text-xl font-bold text-steam-blueLight mb-4 flex items-center gap-2">
+        <div className="bg-senai-dark border border-senai-blue rounded-lg p-6 mb-6">
+          <h2 className="text-xl font-bold text-senai-orange mb-4 flex items-center gap-2">
             <AlertCircle className="w-6 h-6" />
             Instruções
           </h2>
@@ -273,8 +273,8 @@ export default function AtividadeMathQuestPage() {
         </div>
 
         {submitted ? (
-          <div className="bg-gradient-to-br from-steam-green/20 to-steam-blue/20 border-2 border-steam-green rounded-lg p-8 text-center">
-            <CheckCircle className="w-16 h-16 text-steam-green mx-auto mb-4" />
+          <div className="bg-gradient-to-br from-senai-blueLight/20 to-senai-blue/20 border-2 border-senai-blueLight rounded-lg p-8 text-center">
+            <CheckCircle className="w-16 h-16 text-senai-blueLight mx-auto mb-4" />
             <h2 className="text-3xl font-bold text-white mb-2">Submissão Enviada com Sucesso! 🎉</h2>
             <p className="text-gray-300 mb-6">
               Sua atividade foi registrada. O professor receberá sua submissão para análise e feedback.
@@ -295,7 +295,7 @@ export default function AtividadeMathQuestPage() {
                 setScenarioPreview(null);
                 setGddFile(null);
               }}
-              className="px-6 py-3 bg-steam-blueLight hover:bg-steam-blue text-white rounded-lg font-semibold transition-colors"
+              className="px-6 py-3 bg-senai-orange hover:bg-senai-blue text-white rounded-lg font-semibold transition-colors"
             >
               Fazer Nova Submissão
             </button>
@@ -303,7 +303,7 @@ export default function AtividadeMathQuestPage() {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Título do Projeto */}
-            <div className="bg-steam-darker border border-steam-blue rounded-lg p-6">
+            <div className="bg-senai-dark border border-senai-blue rounded-lg p-6">
               <label htmlFor="projectTitle" className="block text-lg font-semibold text-white mb-2">
                 Título do Projeto <span className="text-red-400">*</span>
               </label>
@@ -314,13 +314,13 @@ export default function AtividadeMathQuestPage() {
                 value={formData.projectTitle}
                 onChange={handleInputChange}
                 placeholder="Ex: MathQuest - Protótipo 1"
-                className="w-full bg-steam-dark border border-steam-blue rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight"
+                className="w-full bg-senai-blueDark border border-senai-blue rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-senai-orange"
                 required
               />
             </div>
 
             {/* Descrição Resumida */}
-            <div className="bg-steam-darker border border-steam-blue rounded-lg p-6">
+            <div className="bg-senai-dark border border-senai-blue rounded-lg p-6">
               <label htmlFor="description" className="block text-lg font-semibold text-white mb-2">
                 Descrição Resumida <span className="text-red-400">*</span>
               </label>
@@ -334,7 +334,7 @@ export default function AtividadeMathQuestPage() {
                 onChange={handleInputChange}
                 placeholder="Descreva o conceito do jogo, o personagem principal e o cenário estilo plataforma..."
                 rows={6}
-                className="w-full bg-steam-dark border border-steam-blue rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight resize-y"
+                className="w-full bg-senai-blueDark border border-senai-blue rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-senai-orange resize-y"
                 required
               />
               <p className="text-sm text-gray-500 mt-2">
@@ -343,7 +343,7 @@ export default function AtividadeMathQuestPage() {
             </div>
 
             {/* Arte do Personagem */}
-            <div className="bg-steam-darker border border-steam-blue rounded-lg p-6">
+            <div className="bg-senai-dark border border-senai-blue rounded-lg p-6">
               <label className="block text-lg font-semibold text-white mb-2">
                 Arte do Personagem <span className="text-red-400">*</span>
               </label>
@@ -363,8 +363,8 @@ export default function AtividadeMathQuestPage() {
                     htmlFor="characterArt"
                     className={`flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
                       characterArt
-                        ? "border-steam-green bg-steam-green/10"
-                        : "border-steam-blue bg-steam-dark hover:bg-steam-darker"
+                        ? "border-senai-blueLight bg-senai-blueLight/10"
+                        : "border-senai-blue bg-senai-blueDark hover:bg-senai-dark"
                     }`}
                   >
                     {characterPreview ? (
@@ -384,7 +384,7 @@ export default function AtividadeMathQuestPage() {
                   </label>
                 </div>
                 {characterArt && (
-                  <div className="flex items-center gap-2 text-steam-green">
+                  <div className="flex items-center gap-2 text-senai-blueLight">
                     <CheckCircle className="w-5 h-5" />
                     <span className="text-sm">{characterArt.name}</span>
                   </div>
@@ -393,7 +393,7 @@ export default function AtividadeMathQuestPage() {
             </div>
 
             {/* Arte do Cenário */}
-            <div className="bg-steam-darker border border-steam-blue rounded-lg p-6">
+            <div className="bg-senai-dark border border-senai-blue rounded-lg p-6">
               <label className="block text-lg font-semibold text-white mb-2">
                 Arte e Design do Cenário <span className="text-red-400">*</span>
               </label>
@@ -413,8 +413,8 @@ export default function AtividadeMathQuestPage() {
                     htmlFor="scenarioArt"
                     className={`flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
                       scenarioArt
-                        ? "border-steam-green bg-steam-green/10"
-                        : "border-steam-blue bg-steam-dark hover:bg-steam-darker"
+                        ? "border-senai-blueLight bg-senai-blueLight/10"
+                        : "border-senai-blue bg-senai-blueDark hover:bg-senai-dark"
                     }`}
                   >
                     {scenarioPreview ? (
@@ -434,7 +434,7 @@ export default function AtividadeMathQuestPage() {
                   </label>
                 </div>
                 {scenarioArt && (
-                  <div className="flex items-center gap-2 text-steam-green">
+                  <div className="flex items-center gap-2 text-senai-blueLight">
                     <CheckCircle className="w-5 h-5" />
                     <span className="text-sm">{scenarioArt.name}</span>
                   </div>
@@ -443,7 +443,7 @@ export default function AtividadeMathQuestPage() {
             </div>
 
             {/* Protótipo */}
-            <div className="bg-steam-darker border border-steam-blue rounded-lg p-6">
+            <div className="bg-senai-dark border border-senai-blue rounded-lg p-6">
               <label htmlFor="prototypeLink" className="block text-lg font-semibold text-white mb-2">
                 Arquivo ou Link do Protótipo <span className="text-red-400">*</span>
               </label>
@@ -459,7 +459,7 @@ export default function AtividadeMathQuestPage() {
                   value={formData.prototypeLink}
                   onChange={handleInputChange}
                   placeholder="https://exemplo.com/prototipo ou link do Google Drive"
-                  className="flex-1 bg-steam-dark border border-steam-blue rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight"
+                  className="flex-1 bg-senai-blueDark border border-senai-blue rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-senai-orange"
                 />
               </div>
               <p className="text-xs text-gray-500 mt-2">
@@ -468,7 +468,7 @@ export default function AtividadeMathQuestPage() {
             </div>
 
             {/* GDD */}
-            <div className="bg-steam-darker border border-steam-blue rounded-lg p-6">
+            <div className="bg-senai-dark border border-senai-blue rounded-lg p-6">
               <label className="block text-lg font-semibold text-white mb-2">
                 Game Design Document (versão inicial) <span className="text-red-400">*</span>
               </label>
@@ -490,12 +490,12 @@ export default function AtividadeMathQuestPage() {
                       value={formData.gddLink}
                       onChange={handleInputChange}
                       placeholder="https://docs.google.com/document/..."
-                      className="flex-1 bg-steam-dark border border-steam-blue rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight"
+                      className="flex-1 bg-senai-blueDark border border-senai-blue rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-senai-orange"
                     />
                   </div>
                 </div>
 
-                <div className="border-t border-steam-blue pt-4">
+                <div className="border-t border-senai-blue pt-4">
                   <p className="text-sm text-gray-300 mb-2">Ou faça upload do arquivo GDD:</p>
                   <input
                     type="file"
@@ -508,8 +508,8 @@ export default function AtividadeMathQuestPage() {
                     htmlFor="gddFile"
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer transition-colors ${
                       gddFile
-                        ? "bg-steam-green/20 text-steam-green border border-steam-green"
-                        : "bg-steam-blue hover:bg-steam-blueLight text-white border border-steam-blue"
+                        ? "bg-senai-blueLight/20 text-senai-blueLight border border-senai-blueLight"
+                        : "bg-senai-blue hover:bg-senai-orange text-white border border-senai-blue"
                     }`}
                   >
                     <FileText className="w-5 h-5" />
@@ -520,7 +520,7 @@ export default function AtividadeMathQuestPage() {
             </div>
 
             {/* Comentários */}
-            <div className="bg-steam-darker border border-steam-blue rounded-lg p-6">
+            <div className="bg-senai-dark border border-senai-blue rounded-lg p-6">
               <label htmlFor="comments" className="block text-lg font-semibold text-white mb-2 flex items-center gap-2">
                 <MessageSquare className="w-5 h-5" />
                 Comentários ou Observações
@@ -535,7 +535,7 @@ export default function AtividadeMathQuestPage() {
                 onChange={handleInputChange}
                 placeholder="Adicione suas observações, justificativas de design, desafios encontrados..."
                 rows={5}
-                className="w-full bg-steam-dark border border-steam-blue rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight resize-y"
+                className="w-full bg-senai-blueDark border border-senai-blue rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-senai-orange resize-y"
               />
             </div>
 
@@ -544,7 +544,7 @@ export default function AtividadeMathQuestPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-steam-blueLight to-steam-green text-white rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-senai-orange to-senai-blueLight text-white rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>

@@ -168,7 +168,7 @@ function GamesPageContent() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-4 text-steam-blueLight">
+        <h1 className="text-4xl font-bold mb-4 text-senai-orange">
           {t("games.all")}
         </h1>
         <div className="flex flex-col md:flex-row gap-4">
@@ -178,22 +178,22 @@ function GamesPageContent() {
               placeholder={t("games.searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-steam-dark border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight"
+              className="w-full bg-senai-blueDark border border-senai-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-senai-orange"
             />
             {searching && (
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <Loader2 className="w-4 h-4 animate-spin text-steam-blueLight" />
+                <Loader2 className="w-4 h-4 animate-spin text-senai-orange" />
               </div>
             )}
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 bg-steam-blue hover:bg-steam-blueLight text-white px-6 py-2 rounded transition relative"
+            className="flex items-center gap-2 bg-senai-blue hover:bg-senai-orange text-white px-6 py-2 rounded transition relative"
           >
             <Filter className="w-5 h-5" />
             {t("games.filters")}
             {activeFiltersCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-steam-green text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              <span className="absolute -top-2 -right-2 bg-senai-blueLight text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 {activeFiltersCount}
               </span>
             )}
@@ -203,7 +203,7 @@ function GamesPageContent() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as "date" | "rating" | "name")}
-              className="bg-steam-dark border border-steam-blue rounded px-4 py-2 text-white focus:outline-none focus:border-steam-blueLight"
+              className="bg-senai-blueDark border border-senai-blue rounded px-4 py-2 text-white focus:outline-none focus:border-senai-orange"
             >
               <option value="date">{t("games.sortRecent")}</option>
               <option value="rating">{t("games.sortTopRated")}</option>
@@ -213,16 +213,16 @@ function GamesPageContent() {
         </div>
 
         {showFilters && (
-          <div className="mt-4 p-4 bg-steam-dark rounded border border-steam-blue animate-slideIn">
+          <div className="mt-4 p-4 bg-senai-blueDark rounded border border-senai-blue animate-slideIn">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-steam-blueLight mb-2">
+                <label className="block text-senai-orange mb-2">
                   {t("games.genre")}
                 </label>
                 <select
                   value={selectedGenre}
                   onChange={(e) => setSelectedGenre(e.target.value)}
-                  className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white focus:outline-none focus:border-steam-blueLight"
+                  className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white focus:outline-none focus:border-senai-orange"
                 >
                   {GENRES.map((genre) => (
                     <option key={genre} value={genre}>
@@ -232,13 +232,13 @@ function GamesPageContent() {
                 </select>
               </div>
               <div>
-                <label className="block text-steam-blueLight mb-2">
+                <label className="block text-senai-orange mb-2">
                   {t("games.technology")}
                 </label>
                 <select
                   value={selectedTechnology}
                   onChange={(e) => setSelectedTechnology(e.target.value)}
-                  className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white focus:outline-none focus:border-steam-blueLight"
+                  className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white focus:outline-none focus:border-senai-orange"
                 >
                   {TECHNOLOGIES.map((tech) => (
                     <option key={tech} value={tech}>
@@ -248,13 +248,13 @@ function GamesPageContent() {
                 </select>
               </div>
               <div>
-                <label className="block text-steam-blueLight mb-2">
+                <label className="block text-senai-orange mb-2">
                   {t("games.author")}
                 </label>
                 <select
                   value={selectedAuthor}
                   onChange={(e) => setSelectedAuthor(e.target.value)}
-                  className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white focus:outline-none focus:border-steam-blueLight"
+                  className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white focus:outline-none focus:border-senai-orange"
                 >
                   <option value="__all__">{t("games.allOption")}</option>
                   {uniqueAuthors.map((author) => (
@@ -272,7 +272,7 @@ function GamesPageContent() {
                   setSelectedTechnology("__all__");
                   setSelectedAuthor("__all__");
                 }}
-                className="mt-4 flex items-center gap-2 text-steam-blueLight hover:text-white transition"
+                className="mt-4 flex items-center gap-2 text-senai-orange hover:text-white transition"
               >
                 <X className="w-4 h-4" />
                 {t("games.clearFilters")}
@@ -306,7 +306,7 @@ function GamesPageContent() {
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
-                className="bg-steam-dark hover:bg-steam-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded transition flex items-center gap-2"
+                className="bg-senai-blueDark hover:bg-senai-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded transition flex items-center gap-2"
               >
                 <ChevronLeft className="w-4 h-4" />
                 {t("games.previous")}
@@ -329,8 +329,8 @@ function GamesPageContent() {
                       onClick={() => setCurrentPage(pageNum)}
                       className={`px-4 py-2 rounded transition ${
                         currentPage === pageNum
-                          ? "bg-steam-blueLight text-white"
-                          : "bg-steam-dark text-gray-300 hover:bg-steam-blue"
+                          ? "bg-senai-orange text-white"
+                          : "bg-senai-blueDark text-gray-300 hover:bg-senai-blue"
                       }`}
                     >
                       {pageNum}
@@ -341,7 +341,7 @@ function GamesPageContent() {
               <button
                 onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                 disabled={currentPage === totalPages}
-                className="bg-steam-dark hover:bg-steam-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded transition flex items-center gap-2"
+                className="bg-senai-blueDark hover:bg-senai-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded transition flex items-center gap-2"
               >
                 {t("games.next")}
                 <ChevronRight className="w-4 h-4" />

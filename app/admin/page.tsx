@@ -120,7 +120,7 @@ export default function AdminPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-4xl font-bold text-steam-blueLight">
+        <h1 className="text-4xl font-bold text-senai-orange">
           Painel Administrativo
         </h1>
         <div className="text-gray-400">
@@ -137,7 +137,7 @@ export default function AdminPage() {
             placeholder="Buscar por título, autor, e-mail ou descrição..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-steam-dark border border-steam-blue rounded px-4 py-2 pl-10 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight"
+            className="w-full bg-senai-blueDark border border-senai-blue rounded px-4 py-2 pl-10 text-white placeholder-gray-400 focus:outline-none focus:border-senai-orange"
           />
         </div>
       </div>
@@ -148,8 +148,8 @@ export default function AdminPage() {
           onClick={() => setFilter("pending")}
           className={`px-4 py-2 rounded transition ${
             filter === "pending"
-              ? "bg-steam-blueLight text-white"
-              : "bg-steam-dark text-gray-300 hover:bg-steam-blue"
+              ? "bg-senai-orange text-white"
+              : "bg-senai-blueDark text-gray-300 hover:bg-senai-blue"
           }`}
         >
           Aguardando Aprovação ({games.filter((g) => g.pending && !g.approved).length})
@@ -158,8 +158,8 @@ export default function AdminPage() {
           onClick={() => setFilter("approved")}
           className={`px-4 py-2 rounded transition ${
             filter === "approved"
-              ? "bg-steam-green text-white"
-              : "bg-steam-dark text-gray-300 hover:bg-steam-blue"
+              ? "bg-senai-blueLight text-white"
+              : "bg-senai-blueDark text-gray-300 hover:bg-senai-blue"
           }`}
         >
           Aprovados ({games.filter((g) => g.approved).length})
@@ -168,8 +168,8 @@ export default function AdminPage() {
           onClick={() => setFilter("all")}
           className={`px-4 py-2 rounded transition ${
             filter === "all"
-              ? "bg-steam-blue text-white"
-              : "bg-steam-dark text-gray-300 hover:bg-steam-blue"
+              ? "bg-senai-blue text-white"
+              : "bg-senai-blueDark text-gray-300 hover:bg-senai-blue"
           }`}
         >
           Todos ({games.length})
@@ -191,10 +191,10 @@ export default function AdminPage() {
 
       {loading ? (
         <div className="flex justify-center items-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-steam-blueLight" />
+          <Loader2 className="w-8 h-8 animate-spin text-senai-orange" />
         </div>
       ) : filteredGames.length === 0 ? (
-        <div className="bg-steam-dark rounded-lg p-12 text-center">
+        <div className="bg-senai-blueDark rounded-lg p-12 text-center">
           <p className="text-gray-400 text-xl">
             {searchQuery
               ? `Nenhum jogo encontrado com "${searchQuery}"`
@@ -206,12 +206,12 @@ export default function AdminPage() {
           {filteredGames.map((game) => (
             <div
               key={game.id}
-              className="bg-steam-dark rounded-lg p-6 border border-steam-blue hover:border-steam-blueLight transition"
+              className="bg-senai-blueDark rounded-lg p-6 border border-senai-blue hover:border-senai-orange transition"
             >
               <div className="flex items-start justify-between mb-2">
                 <h3 className="text-xl font-bold text-white flex-1">{game.title}</h3>
                 {game.approved && (
-                  <span className="bg-steam-green text-white text-xs px-2 py-1 rounded ml-2">
+                  <span className="bg-senai-blueLight text-white text-xs px-2 py-1 rounded ml-2">
                     Aprovado
                   </span>
                 )}
@@ -242,7 +242,7 @@ export default function AdminPage() {
                       href={game.downloadLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-steam-blueLight hover:underline break-all"
+                      className="text-senai-orange hover:underline break-all"
                     >
                       {game.downloadLink.substring(0, 40)}...
                     </a>
@@ -258,7 +258,7 @@ export default function AdminPage() {
                 {game.genres.map((genre) => (
                   <span
                     key={genre}
-                    className="bg-steam-blue text-steam-blueLight text-xs px-2 py-1 rounded"
+                    className="bg-senai-blue text-senai-orange text-xs px-2 py-1 rounded"
                   >
                     {genre}
                   </span>
@@ -267,7 +267,7 @@ export default function AdminPage() {
               <div className="flex gap-2 flex-wrap">
                 <Link
                   href={`/games/${game.id}`}
-                  className="flex-1 bg-steam-blue hover:bg-steam-blueLight text-white px-4 py-2 rounded text-center transition flex items-center justify-center gap-2 min-w-[100px]"
+                  className="flex-1 bg-senai-blue hover:bg-senai-orange text-white px-4 py-2 rounded text-center transition flex items-center justify-center gap-2 min-w-[100px]"
                 >
                   <Eye className="w-4 h-4" />
                   Ver
@@ -275,7 +275,7 @@ export default function AdminPage() {
                 {!game.approved ? (
                   <button
                     onClick={() => handleApprove(game.id)}
-                    className="bg-steam-green hover:bg-green-600 text-white px-4 py-2 rounded transition flex items-center gap-2"
+                    className="bg-senai-blueLight hover:bg-green-600 text-white px-4 py-2 rounded transition flex items-center gap-2"
                   >
                     <CheckCircle className="w-4 h-4" />
                     Aprovar

@@ -49,7 +49,7 @@ export default function ShareButton({ gameId, gameTitle }: ShareButtonProps) {
     <div className="flex gap-2">
       <button
         onClick={handleShare}
-        className="flex items-center gap-2 bg-steam-dark hover:bg-steam-blue text-white px-4 py-2 rounded transition"
+        className="flex items-center gap-2 bg-senai-blueDark hover:bg-senai-blue text-white px-4 py-2 rounded transition"
         title="Compartilhar jogo"
       >
         <Share2 className="w-4 h-4" />
@@ -57,7 +57,7 @@ export default function ShareButton({ gameId, gameTitle }: ShareButtonProps) {
       </button>
       <button
         onClick={handleCopy}
-        className="flex items-center gap-2 bg-steam-dark hover:bg-steam-blue text-white px-4 py-2 rounded transition"
+        className="flex items-center gap-2 bg-senai-blueDark hover:bg-senai-blue text-white px-4 py-2 rounded transition"
         title="Copiar link"
       >
         {copied ? (

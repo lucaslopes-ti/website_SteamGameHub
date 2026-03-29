@@ -279,16 +279,16 @@ export default function QuizComponent({ onComplete }: QuizComponentProps) {
           <span>Pergunta {currentQuestion + 1} de {questions.length}</span>
           <span>{correctAnswers} corretas</span>
         </div>
-        <div className="w-full bg-steam-darker rounded-full h-2">
+        <div className="w-full bg-senai-dark rounded-full h-2">
           <div
-            className="bg-steam-blueLight h-2 rounded-full transition-all"
+            className="bg-senai-orange h-2 rounded-full transition-all"
             style={{ width: `${progress}%` }}
           />
         </div>
       </div>
 
       {/* Pergunta */}
-      <div className="bg-steam-dark rounded-lg p-6 border border-steam-blue">
+      <div className="bg-senai-blueDark rounded-lg p-6 border border-senai-blue">
         <h4 className="text-lg font-semibold text-white mb-4">{question.question}</h4>
         <div className="space-y-2">
           {question.options.map((option, index) => {
@@ -304,12 +304,12 @@ export default function QuizComponent({ onComplete }: QuizComponentProps) {
                 disabled={showResult}
                 className={`w-full text-left p-4 rounded-lg border transition-all ${
                   showCorrect
-                    ? "bg-steam-green/20 border-steam-green text-steam-green"
+                    ? "bg-senai-blueLight/20 border-senai-blueLight text-senai-blueLight"
                     : showWrong
                     ? "bg-red-500/20 border-red-500 text-red-400"
                     : isSelected
-                    ? "bg-steam-blue/20 border-steam-blueLight text-steam-blueLight"
-                    : "bg-steam-darker border-steam-blue text-gray-300 hover:border-steam-blueLight"
+                    ? "bg-senai-blue/20 border-senai-orange text-senai-orange"
+                    : "bg-senai-dark border-senai-blue text-gray-300 hover:border-senai-orange"
                 } ${showResult ? "cursor-default" : "cursor-pointer"}`}
               >
                 <div className="flex items-center justify-between">
@@ -325,11 +325,11 @@ export default function QuizComponent({ onComplete }: QuizComponentProps) {
 
       {/* Explicação */}
       {showResult && (
-        <div className="bg-steam-blue/10 border border-steam-blue rounded-lg p-4">
-          <p className="text-steam-blueLight font-medium mb-2">Explicação:</p>
+        <div className="bg-senai-blue/10 border border-senai-blue rounded-lg p-4">
+          <p className="text-senai-orange font-medium mb-2">Explicação:</p>
           <p className="text-gray-300 text-sm">{question.explanation}</p>
           {selectedAnswer === question.correct && (
-            <p className="text-steam-green mt-2 font-medium">+{question.xp} XP!</p>
+            <p className="text-senai-blueLight mt-2 font-medium">+{question.xp} XP!</p>
           )}
         </div>
       )}
@@ -343,7 +343,7 @@ export default function QuizComponent({ onComplete }: QuizComponentProps) {
               setSelectedAnswer(null);
               setShowResult(false);
             }}
-            className="px-4 py-2 bg-steam-darker border border-steam-blue text-gray-300 rounded-lg hover:bg-steam-dark transition-colors"
+            className="px-4 py-2 bg-senai-dark border border-senai-blue text-gray-300 rounded-lg hover:bg-senai-blueDark transition-colors"
           >
             ← Anterior
           </button>
@@ -353,14 +353,14 @@ export default function QuizComponent({ onComplete }: QuizComponentProps) {
             <button
               onClick={handleSubmit}
               disabled={selectedAnswer === null}
-              className="px-6 py-2 bg-steam-blueLight hover:bg-steam-blue text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-6 py-2 bg-senai-orange hover:bg-senai-blue text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Verificar Resposta
             </button>
           ) : (
             <button
               onClick={handleNext}
-              className="px-6 py-2 bg-steam-green hover:bg-steam-green/80 text-white rounded-lg font-semibold transition-colors"
+              className="px-6 py-2 bg-senai-blueLight hover:bg-senai-blueLight/80 text-white rounded-lg font-semibold transition-colors"
             >
               {currentQuestion < questions.length - 1 ? "Próxima →" : "Concluir Quiz"}
             </button>
@@ -370,7 +370,7 @@ export default function QuizComponent({ onComplete }: QuizComponentProps) {
 
       {/* XP Total */}
       {earnedXP > 0 && (
-        <div className="text-center text-steam-green font-semibold">
+        <div className="text-center text-senai-blueLight font-semibold">
           XP Total Ganho: {earnedXP} pontos
         </div>
       )}

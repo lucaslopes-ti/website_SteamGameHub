@@ -143,7 +143,7 @@ export default function Home() {
         <>
           {featuredGames.length > 0 && (
             <section className="container mx-auto px-4">
-              <h2 className="text-3xl font-bold mb-6 text-steam-blueLight">
+              <h2 className="text-3xl font-bold mb-6 text-senai-orange">
                 {t("home.highlights")}
               </h2>
               <GameCarousel games={featuredGames} />
@@ -165,13 +165,13 @@ export default function Home() {
           <AboutSection />
 
           <section className="container mx-auto px-4">
-            <div className="bg-steam-dark border border-steam-blue rounded-lg p-4 mb-6">
+            <div className="bg-senai-blueDark border border-senai-blue rounded-lg p-4 mb-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2 text-steam-blueLight font-semibold">
+                <div className="flex items-center gap-2 text-senai-orange font-semibold">
                   <SlidersHorizontal className="w-4 h-4" />
                   <span>{t("home.filters")}</span>
                   {(query || selectedGenres.length > 0 || selectedTechs.length > 0) && (
-                    <span className="bg-steam-blueLight text-steam-darker text-xs font-bold px-2 py-0.5 rounded-full">
+                    <span className="bg-senai-orange text-senai-dark text-xs font-bold px-2 py-0.5 rounded-full">
                       {[query ? 1 : 0, selectedGenres.length, selectedTechs.length].reduce((a, b) => a + b, 0)} {t("home.active")}
                     </span>
                   )}
@@ -193,7 +193,7 @@ export default function Home() {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder={t("home.searchBy")}
-                    className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight"
+                    className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-senai-orange"
                     title={t("home.searchTitle")}
                   />
                 </div>
@@ -202,7 +202,7 @@ export default function Home() {
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as any)}
-                    className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white focus:outline-none focus:border-steam-blueLight"
+                    className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white focus:outline-none focus:border-senai-orange"
                     title={t("home.sortTitle")}
                   >
                     <option value="recent">{t("home.sortRecent")}</option>
@@ -224,8 +224,8 @@ export default function Home() {
                           onClick={() => toggleGenre(gen)}
                           className={`px-3 py-1 rounded text-sm border transition ${
                             active
-                              ? "bg-steam-blue text-steam-blueLight border-steam-blueLight"
-                              : "bg-steam-darker text-gray-300 border-steam-blue hover:border-steam-blueLight"
+                              ? "bg-senai-blue text-senai-orange border-senai-orange"
+                              : "bg-senai-dark text-gray-300 border-senai-blue hover:border-senai-orange"
                           }`}
                           title={active ? t("home.removeGenre") : t("home.addGenre")}
                         >
@@ -249,8 +249,8 @@ export default function Home() {
                           onClick={() => toggleTech(tech)}
                           className={`px-3 py-1 rounded text-sm border transition ${
                             active
-                              ? "bg-steam-green text-white border-steam-green"
-                              : "bg-steam-darker text-gray-300 border-steam-blue hover:border-steam-blueLight"
+                              ? "bg-senai-blueLight text-white border-senai-blueLight"
+                              : "bg-senai-dark text-gray-300 border-senai-blue hover:border-senai-orange"
                           }`}
                           title={active ? t("home.removeTech") : t("home.addTech")}
                         >
@@ -263,7 +263,7 @@ export default function Home() {
               )}
             </div>
             <div className="flex items-baseline justify-between mb-6">
-              <h2 className="text-3xl font-bold text-steam-blueLight">
+              <h2 className="text-3xl font-bold text-senai-orange">
                 {(query || selectedGenres.length > 0 || selectedTechs.length > 0) ? t("home.results") : t("home.recentGames")}
               </h2>
               <span className="text-sm text-gray-400">
@@ -274,7 +274,7 @@ export default function Home() {
               <GameGrid games={visibleGames} />
             ) : (
               <div className="flex flex-col items-center py-16 text-gray-400 gap-4">
-                <SearchX className="w-14 h-14 text-steam-blue opacity-60" />
+                <SearchX className="w-14 h-14 text-senai-blue opacity-60" />
                 <p className="text-lg font-medium">{t("home.noneFound")}</p>
                 <p className="text-sm text-gray-500">{t("home.adjustFilters")}</p>
               </div>
@@ -284,7 +284,7 @@ export default function Home() {
               <div className="flex items-center justify-center mt-6">
                 <button
                   onClick={() => setPage((p) => p + 1)}
-                  className="px-4 py-2 rounded border border-steam-blue text-steam-blueLight hover:border-steam-blueLight"
+                  className="px-4 py-2 rounded border border-senai-blue text-senai-orange hover:border-senai-orange"
                   title={t("home.loadMoreTitle")}
                 >
                   {t("home.loadMore")}

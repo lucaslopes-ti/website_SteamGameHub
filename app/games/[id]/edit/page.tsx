@@ -217,7 +217,7 @@ export default function EditGamePage() {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
-        <Loader2 className="w-8 h-8 animate-spin text-steam-blueLight mx-auto" />
+        <Loader2 className="w-8 h-8 animate-spin text-senai-orange mx-auto" />
       </div>
     );
   }
@@ -232,19 +232,19 @@ export default function EditGamePage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-4xl font-bold mb-8 text-steam-blueLight">
+      <h1 className="text-4xl font-bold mb-8 text-senai-orange">
         Editar Jogo
       </h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-steam-dark rounded-lg p-6">
+        <div className="bg-senai-blueDark rounded-lg p-6">
           <h2 className="text-2xl font-bold mb-4 text-white">
             Informações Básicas
           </h2>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-steam-blueLight mb-2">
+              <label className="block text-senai-orange mb-2">
                 Título do Jogo *
               </label>
               <input
@@ -254,12 +254,12 @@ export default function EditGamePage() {
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
                 }
-                className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white focus:outline-none focus:border-steam-blueLight"
+                className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white focus:outline-none focus:border-senai-orange"
               />
             </div>
 
             <div>
-              <label className="block text-steam-blueLight mb-2">
+              <label className="block text-senai-orange mb-2">
                 Descrição *
               </label>
               <textarea
@@ -269,13 +269,13 @@ export default function EditGamePage() {
                   setFormData({ ...formData, description: e.target.value })
                 }
                 rows={5}
-                className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white focus:outline-none focus:border-steam-blueLight"
+                className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white focus:outline-none focus:border-senai-orange"
               />
             </div>
           </div>
         </div>
 
-        <div className="bg-steam-dark rounded-lg p-6">
+        <div className="bg-senai-blueDark rounded-lg p-6">
           <h2 className="text-2xl font-bold mb-4 text-white">Gêneros *</h2>
           <div className="flex flex-wrap gap-2">
             {availableGenres.map((genre) => (
@@ -285,8 +285,8 @@ export default function EditGamePage() {
                 onClick={() => handleGenreToggle(genre)}
                 className={`px-4 py-2 rounded transition ${
                   selectedGenres.includes(genre)
-                    ? "bg-steam-blueLight text-white"
-                    : "bg-steam-darker text-gray-300 hover:bg-steam-blue"
+                    ? "bg-senai-orange text-white"
+                    : "bg-senai-dark text-gray-300 hover:bg-senai-blue"
                 }`}
               >
                 {genre}
@@ -295,7 +295,7 @@ export default function EditGamePage() {
           </div>
         </div>
 
-        <div className="bg-steam-dark rounded-lg p-6">
+        <div className="bg-senai-blueDark rounded-lg p-6">
           <h2 className="text-2xl font-bold mb-4 text-white">Tecnologias *</h2>
           <div className="flex flex-wrap gap-2">
             {availableTechnologies.map((tech) => (
@@ -305,8 +305,8 @@ export default function EditGamePage() {
                 onClick={() => handleTechnologyToggle(tech)}
                 className={`px-4 py-2 rounded transition ${
                   selectedTechnologies.includes(tech)
-                    ? "bg-steam-green text-white"
-                    : "bg-steam-darker text-gray-300 hover:bg-steam-blue"
+                    ? "bg-senai-blueLight text-white"
+                    : "bg-senai-dark text-gray-300 hover:bg-senai-blue"
                 }`}
               >
                 {tech}
@@ -315,7 +315,7 @@ export default function EditGamePage() {
           </div>
         </div>
 
-        <div className="bg-steam-dark rounded-lg p-6">
+        <div className="bg-senai-blueDark rounded-lg p-6">
           <h2 className="text-2xl font-bold mb-4 text-white flex items-center gap-2">
             <ImageIcon className="w-6 h-6" />
             Imagem de Capa (Opcional)
@@ -326,7 +326,7 @@ export default function EditGamePage() {
                 <img
                   src={imagePreview}
                   alt="Preview"
-                  className="w-full h-64 object-cover rounded border border-steam-blue"
+                  className="w-full h-64 object-cover rounded border border-senai-blue"
                 />
                 <button
                   type="button"
@@ -340,7 +340,7 @@ export default function EditGamePage() {
                 </button>
               </div>
             ) : (
-              <div className="border-2 border-dashed border-steam-blue rounded p-8 text-center">
+              <div className="border-2 border-dashed border-senai-blue rounded p-8 text-center">
                 <input
                   type="file"
                   id="image-file"
@@ -362,7 +362,7 @@ export default function EditGamePage() {
           </div>
         </div>
 
-        <div className="bg-steam-dark rounded-lg p-6">
+        <div className="bg-senai-blueDark rounded-lg p-6">
           <h2 className="text-2xl font-bold mb-4 text-white flex items-center gap-2">
             <ImageIcon className="w-6 h-6" />
             Screenshots do Jogo (Opcional)
@@ -378,7 +378,7 @@ export default function EditGamePage() {
                     <img
                       src={preview}
                       alt={`Screenshot ${index + 1}`}
-                      className="w-full h-32 object-cover rounded border border-steam-blue"
+                      className="w-full h-32 object-cover rounded border border-senai-blue"
                     />
                     <button
                       type="button"
@@ -394,7 +394,7 @@ export default function EditGamePage() {
                 ))}
               </div>
             )}
-            <div className="border-2 border-dashed border-steam-blue rounded p-8 text-center">
+            <div className="border-2 border-dashed border-senai-blue rounded p-8 text-center">
               <input
                 type="file"
                 id="screenshots-files-edit"
@@ -435,7 +435,7 @@ export default function EditGamePage() {
           </div>
         </div>
 
-        <div className="bg-steam-dark rounded-lg p-6">
+        <div className="bg-senai-blueDark rounded-lg p-6">
           <h2 className="text-2xl font-bold mb-4 text-white">
             Trailer do Jogo (Opcional)
           </h2>
@@ -446,7 +446,7 @@ export default function EditGamePage() {
               setFormData({ ...formData, trailerUrl: e.target.value })
             }
             placeholder="https://www.youtube.com/watch?v=..."
-            className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white focus:outline-none focus:border-steam-blueLight"
+            className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white focus:outline-none focus:border-senai-orange"
           />
         </div>
 
@@ -461,7 +461,7 @@ export default function EditGamePage() {
           <button
             type="submit"
             disabled={saving}
-            className="flex-1 bg-steam-blueLight hover:bg-steam-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded font-semibold transition flex items-center justify-center gap-2"
+            className="flex-1 bg-senai-orange hover:bg-senai-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded font-semibold transition flex items-center justify-center gap-2"
           >
             {saving ? (
               <>

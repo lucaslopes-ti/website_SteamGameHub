@@ -32,7 +32,7 @@ export default function ActivityProgress({
   };
 
   return (
-    <div className="bg-steam-dark border border-steam-blue rounded-lg p-6">
+    <div className="bg-senai-blueDark border border-senai-blue rounded-lg p-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold text-white">Progresso da Atividade</h2>
         <div className="flex items-center gap-2">
@@ -44,9 +44,9 @@ export default function ActivityProgress({
 
       {/* Barra de Progresso */}
       <div className="mb-6">
-        <div className="w-full bg-steam-darker rounded-full h-4 mb-2">
+        <div className="w-full bg-senai-dark rounded-full h-4 mb-2">
           <div
-            className="bg-gradient-to-r from-steam-blueLight to-steam-green h-4 rounded-full transition-all duration-500"
+            className="bg-gradient-to-r from-senai-orange to-senai-blueLight h-4 rounded-full transition-all duration-500"
             style={{ width: `${progressPercentage}%` }}
           />
         </div>
@@ -69,29 +69,29 @@ export default function ActivityProgress({
               key={phase.id}
               className={`flex items-center gap-4 p-3 rounded-lg border transition-all ${
                 isCurrent
-                  ? "bg-steam-blue/20 border-steam-blueLight"
+                  ? "bg-senai-blue/20 border-senai-orange"
                   : isCompleted
-                  ? "bg-steam-green/10 border-steam-green"
+                  ? "bg-senai-blueLight/10 border-senai-blueLight"
                   : isLocked
-                  ? "bg-steam-darker border-steam-darker opacity-50"
-                  : "bg-steam-darker border-steam-blue"
+                  ? "bg-senai-dark border-senai-dark opacity-50"
+                  : "bg-senai-dark border-senai-blue"
               }`}
             >
               <div
                 className={`p-2 rounded-lg ${
                   isCompleted
-                    ? "bg-steam-green/20"
+                    ? "bg-senai-blueLight/20"
                     : isCurrent
-                    ? "bg-steam-blueLight/20"
-                    : "bg-steam-blue/10"
+                    ? "bg-senai-orange/20"
+                    : "bg-senai-blue/10"
                 }`}
               >
                 <Icon
                   className={`w-5 h-5 ${
                     isCompleted
-                      ? "text-steam-green"
+                      ? "text-senai-blueLight"
                       : isCurrent
-                      ? "text-steam-blueLight"
+                      ? "text-senai-orange"
                       : "text-gray-400"
                   }`}
                 />
@@ -101,9 +101,9 @@ export default function ActivityProgress({
                   <span
                     className={`font-medium ${
                       isCompleted
-                        ? "text-steam-green"
+                        ? "text-senai-blueLight"
                         : isCurrent
-                        ? "text-steam-blueLight"
+                        ? "text-senai-orange"
                         : "text-gray-400"
                     }`}
                   >

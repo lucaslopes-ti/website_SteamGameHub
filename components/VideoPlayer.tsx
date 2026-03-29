@@ -45,10 +45,10 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
 
   if (!isPlaying) {
     return (
-      <div className="relative aspect-video bg-steam-dark rounded-lg overflow-hidden group cursor-pointer" onClick={() => setIsPlaying(true)}>
-        <div className="absolute inset-0 bg-gradient-to-br from-steam-blue to-steam-darker flex items-center justify-center">
+      <div className="relative aspect-video bg-senai-blueDark rounded-lg overflow-hidden group cursor-pointer" onClick={() => setIsPlaying(true)}>
+        <div className="absolute inset-0 bg-gradient-to-br from-senai-blue to-senai-dark flex items-center justify-center">
           <div className="text-center">
-            <div className="bg-steam-blueLight bg-opacity-80 rounded-full p-6 mb-4 group-hover:bg-opacity-100 transition mx-auto w-20 h-20 flex items-center justify-center">
+            <div className="bg-senai-orange bg-opacity-80 rounded-full p-6 mb-4 group-hover:bg-opacity-100 transition mx-auto w-20 h-20 flex items-center justify-center">
               <Play className="w-10 h-10 text-white ml-1" />
             </div>
             {title && (
@@ -62,7 +62,7 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
   }
 
   return (
-    <div className="relative aspect-video bg-steam-dark rounded-lg overflow-hidden">
+    <div className="relative aspect-video bg-senai-blueDark rounded-lg overflow-hidden">
       <button
         onClick={() => setIsPlaying(false)}
         className="absolute top-2 right-2 z-10 bg-black bg-opacity-70 hover:bg-opacity-90 text-white rounded-full p-2 transition"

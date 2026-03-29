@@ -40,13 +40,13 @@ export default function GameCarousel({ games }: GameCarouselProps) {
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-steam-dark bg-opacity-80 hover:bg-opacity-100 text-white p-2 rounded-full transition"
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-senai-blueDark bg-opacity-80 hover:bg-opacity-100 text-white p-2 rounded-full transition"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-steam-dark bg-opacity-80 hover:bg-opacity-100 text-white p-2 rounded-full transition"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-senai-blueDark bg-opacity-80 hover:bg-opacity-100 text-white p-2 rounded-full transition"
           >
             <ChevronRight className="w-6 h-6" />
           </button>
@@ -58,7 +58,7 @@ export default function GameCarousel({ games }: GameCarouselProps) {
             key={index}
             onClick={() => setCurrentIndex(index)}
             className={`w-2 h-2 rounded-full transition ${
-              index === currentIndex ? "bg-steam-blueLight" : "bg-gray-600"
+              index === currentIndex ? "bg-senai-orange" : "bg-gray-600"
             }`}
           />
         ))}

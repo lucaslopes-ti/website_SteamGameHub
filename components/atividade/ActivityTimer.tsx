@@ -62,18 +62,18 @@ export default function ActivityTimer() {
   const isUrgent = timeRemaining < 30 * 60; // Menos de 30 minutos
 
   return (
-    <div className="bg-steam-dark border border-steam-blue rounded-lg p-6">
+    <div className="bg-senai-blueDark border border-senai-blue rounded-lg p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <Clock className={`w-6 h-6 ${isUrgent ? "text-red-400" : "text-steam-blueLight"}`} />
+          <Clock className={`w-6 h-6 ${isUrgent ? "text-red-400" : "text-senai-orange"}`} />
           <h3 className="text-xl font-bold text-white">Timer da Atividade</h3>
         </div>
         <button
           onClick={() => setIsPaused(!isPaused)}
-          className="p-2 bg-steam-darker hover:bg-steam-blue rounded-lg transition-colors"
+          className="p-2 bg-senai-dark hover:bg-senai-blue rounded-lg transition-colors"
         >
           {isPaused ? (
-            <Play className="w-5 h-5 text-steam-green" />
+            <Play className="w-5 h-5 text-senai-blueLight" />
           ) : (
             <Pause className="w-5 h-5 text-gray-400" />
           )}
@@ -83,7 +83,7 @@ export default function ActivityTimer() {
       <div className="text-center mb-4">
         <div
           className={`text-4xl font-bold mb-2 ${
-            isUrgent ? "text-red-400 animate-pulse" : "text-steam-blueLight"
+            isUrgent ? "text-red-400 animate-pulse" : "text-senai-orange"
           }`}
         >
           {formatTime(timeRemaining)}
@@ -93,12 +93,12 @@ export default function ActivityTimer() {
         </p>
       </div>
 
-      <div className="w-full bg-steam-darker rounded-full h-3">
+      <div className="w-full bg-senai-dark rounded-full h-3">
         <div
           className={`h-3 rounded-full transition-all ${
             isUrgent
               ? "bg-gradient-to-r from-red-500 to-red-400"
-              : "bg-gradient-to-r from-steam-blueLight to-steam-green"
+              : "bg-gradient-to-r from-senai-orange to-senai-blueLight"
           }`}
           style={{ width: `${percentage}%` }}
         />

@@ -44,7 +44,7 @@ export default function StatsCards({ games, stats }: Readonly<StatsCardsProps>) 
         return (
           <div
             key={stat.label}
-            className="bg-steam-dark border border-steam-blue rounded-lg p-6 hover:border-steam-blueLight transition-all duration-300 hover:shadow-lg hover:shadow-steam-blue/20 group"
+            className="bg-senai-blueDark border border-senai-blue rounded-lg p-6 hover:border-senai-orange transition-all duration-300 hover:shadow-lg hover:shadow-senai-blue/20 group"
           >
             <div className="flex items-center justify-between mb-4">
               <div className={`p-3 rounded-lg transition-all ${style.iconBg}`}>

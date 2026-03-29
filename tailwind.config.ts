@@ -9,12 +9,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        steam: {
-          dark: "#1b2838",
-          darker: "#171a21",
-          blue: "#1e3a5f",
-          blueLight: "#66c0f4",
-          green: "#5c7e10",
+        senai: {
+          dark: "#1A202C",
+          blue: "#004F9F",
+          blueLight: "#00A5E2",
+          blueDark: "#002776",
+          orange: "#F37021",
+          white: "#FFFFFF",
+          grayLight: "#F1F5F9",
         },
       },
       backgroundImage: {

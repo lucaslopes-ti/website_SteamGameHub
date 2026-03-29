@@ -7,16 +7,18 @@ service cloud.firestore {
     // COLEÇÃO DE ATIVIDADES MATHQUEST
     // ==========================================
     match /atividades_mathquest/{document=**} {
-      // Permitir leitura e escrita para todos (necessário para envio de atividades EAD)
-      allow read, write: if true;
+      // Leitura pública, escrita requer autenticação
+      allow read: if true;
+      allow write: if request.auth != null;
     }
     
     // ==========================================
     // COLEÇÃO DE PROVA DE LÓGICA DE PROGRAMAÇÃO
     // ==========================================
     match /prova_logica_programacao/{document=**} {
-      // Permitir leitura e escrita para todos (necessário para envio de provas EAD)
-      allow read, write: if true;
+      // Leitura pública, escrita requer autenticação
+      allow read: if true;
+      allow write: if request.auth != null;
     }
     
     // ==========================================
@@ -26,8 +28,8 @@ service cloud.firestore {
       // Leitura: Qualquer um pode ler jogos (público)
       allow read: if true;
       
-      // Criação: Qualquer um pode criar jogos (pendente de aprovação)
-      allow create: if request.resource.data.title is string &&
+      // Criação: Requerer autenticação
+      allow create: if request.auth != null && request.resource.data.title is string &&
       request.resource.data.description is string &&
       request.resource.data.author is string &&
       request.resource.data.authorEmail is string &&
@@ -36,12 +38,11 @@ service cloud.firestore {
       request.resource.data.rating is int &&
       request.resource.data.totalRatings is int;
       
-      // Atualização: Apenas o próprio autor ou admin pode atualizar
-      // Por enquanto, permitir qualquer atualização (admin via API)
-      allow update: if true;
+      // Atualização: Acesso restrito
+      allow update: if request.auth != null;
       
-      // Deletar: Apenas admin (por enquanto, permitir via API)
-      allow delete: if true;
+      // Deletar: Acesso restrito
+      allow delete: if request.auth != null;
     }
     
     // ==========================================
@@ -51,8 +52,8 @@ service cloud.firestore {
       // Leitura: Qualquer um pode ler comentários
       allow read: if true;
       
-      // Criação: Qualquer um pode criar comentários
-      allow create: if request.resource.data.gameId is string &&
+      // Criação: Requerer autenticação
+      allow create: if request.auth != null && request.resource.data.gameId is string &&
       request.resource.data.content is string &&
       request.resource.data.userName is string &&
       request.resource.data.userEmail is string;
@@ -72,12 +73,12 @@ service cloud.firestore {
       // Leitura: Apenas o próprio usuário pode ver seus favoritos
       allow read: if true; // Permitir público para simplificar
       
-      // Criação: Qualquer um pode criar favoritos
-      allow create: if request.resource.data.userEmail is string &&
+      // Criação: Requerer usuário logado
+      allow create: if request.auth != null && request.resource.data.userEmail is string &&
       request.resource.data.gameId is string;
       
-      // Deletar: Apenas o próprio usuário pode deletar seus favoritos
-      allow delete: if true; // Permitir via API para simplificar
+      // Deletar: Requerer usuário logado
+      allow delete: if request.auth != null;
     }
     
     // ==========================================

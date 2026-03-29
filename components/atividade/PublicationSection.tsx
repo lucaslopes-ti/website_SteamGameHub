@@ -199,20 +199,20 @@ Atividade completada com sucesso!
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold text-steam-blueLight mb-2 flex items-center gap-3">
+        <h2 className="text-3xl font-bold text-senai-orange mb-2 flex items-center gap-3">
           <Upload className="w-8 h-8" />
           Publicação e Reflexão
         </h2>
         <p className="text-gray-300 mb-3">
           Envie todos os arquivos finais e compartilhe sua reflexão sobre a atividade.
         </p>
-        <div className="bg-gradient-to-r from-steam-blue/20 to-steam-green/20 border border-steam-blueLight rounded-lg p-4 mb-4">
+        <div className="bg-gradient-to-r from-senai-blue/20 to-senai-blueLight/20 border border-senai-orange rounded-lg p-4 mb-4">
           <div className="flex items-start gap-3">
             <span className="text-yellow-400 font-bold text-lg">🎯</span>
             <div>
-              <p className="text-steam-blueLight font-semibold mb-2">Objetivo desta seção:</p>
+              <p className="text-senai-orange font-semibold mb-2">Objetivo desta seção:</p>
               <p className="text-gray-300 text-sm mb-2">
-                Esta seção é para <strong className="text-steam-green">publicar e documentar o trabalho desta unidade</strong>. 
+                Esta seção é para <strong className="text-senai-blueLight">publicar e documentar o trabalho desta unidade</strong>. 
                 Aqui você anexará:
               </p>
               <ul className="text-gray-300 text-sm list-disc list-inside space-y-1 ml-4 mb-2">
@@ -221,7 +221,7 @@ Atividade completada com sucesso!
                 <li><strong>GDD Mini:</strong> Documentação do projeto desta unidade</li>
               </ul>
               <p className="text-gray-300 text-sm">
-                <strong className="text-steam-blueLight">Lembre-se:</strong> Esta publicação representa o trabalho completo desta unidade. 
+                <strong className="text-senai-orange">Lembre-se:</strong> Esta publicação representa o trabalho completo desta unidade. 
                 O código é para preparação futura, a capa é para esta unidade, e tudo será avaliado junto!
               </p>
             </div>
@@ -230,14 +230,14 @@ Atividade completada com sucesso!
       </div>
 
       {/* Upload de Arquivos */}
-      <div className="bg-steam-darker border border-steam-blue rounded-lg p-6">
+      <div className="bg-senai-dark border border-senai-blue rounded-lg p-6">
         <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
           <Upload className="w-6 h-6" />
           Upload Final
         </h3>
         {allUploaded && (
-          <div className="mb-4 bg-steam-green/20 border border-steam-green rounded-lg p-4">
-            <div className="flex items-center gap-2 text-steam-green">
+          <div className="mb-4 bg-senai-blueLight/20 border border-senai-blueLight rounded-lg p-4">
+            <div className="flex items-center gap-2 text-senai-blueLight">
               <CheckCircle className="w-5 h-5" />
               <span className="font-medium">Todos os arquivos foram enviados! +200 XP</span>
             </div>
@@ -246,8 +246,8 @@ Atividade completada com sucesso!
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           {/* Código C# */}
-          <div className="bg-steam-dark border border-steam-blue rounded-lg p-4">
-            <FileText className="w-8 h-8 text-steam-blueLight mb-2" />
+          <div className="bg-senai-blueDark border border-senai-blue rounded-lg p-4">
+            <FileText className="w-8 h-8 text-senai-orange mb-2" />
             <h4 className="font-semibold text-white mb-2">Código C#</h4>
             <input
               type="file"
@@ -261,10 +261,10 @@ Atividade completada com sucesso!
               htmlFor="code-upload"
               className={`block text-center px-4 py-2 rounded-lg cursor-pointer transition-colors ${
                 codeFile
-                  ? "bg-steam-green/20 text-steam-green border border-steam-green"
+                  ? "bg-senai-blueLight/20 text-senai-blueLight border border-senai-blueLight"
                   : allUploaded
-                  ? "bg-steam-darker text-gray-500 cursor-not-allowed"
-                  : "bg-steam-blue hover:bg-steam-blueLight text-white"
+                  ? "bg-senai-dark text-gray-500 cursor-not-allowed"
+                  : "bg-senai-blue hover:bg-senai-orange text-white"
               }`}
             >
               {codeFile ? codeFile.name : "Selecionar .cs"}
@@ -272,8 +272,8 @@ Atividade completada com sucesso!
           </div>
 
           {/* Capa 3D */}
-          <div className="bg-steam-dark border border-steam-blue rounded-lg p-4">
-            <Upload className="w-8 h-8 text-steam-blueLight mb-2" />
+          <div className="bg-senai-blueDark border border-senai-blue rounded-lg p-4">
+            <Upload className="w-8 h-8 text-senai-orange mb-2" />
             <h4 className="font-semibold text-white mb-2">Capa 3D</h4>
             <input
               type="file"
@@ -287,10 +287,10 @@ Atividade completada com sucesso!
               htmlFor="cover-upload"
               className={`block text-center px-4 py-2 rounded-lg cursor-pointer transition-colors ${
                 coverFile
-                  ? "bg-steam-green/20 text-steam-green border border-steam-green"
+                  ? "bg-senai-blueLight/20 text-senai-blueLight border border-senai-blueLight"
                   : allUploaded
-                  ? "bg-steam-darker text-gray-500 cursor-not-allowed"
-                  : "bg-steam-blue hover:bg-steam-blueLight text-white"
+                  ? "bg-senai-dark text-gray-500 cursor-not-allowed"
+                  : "bg-senai-blue hover:bg-senai-orange text-white"
               }`}
             >
               {coverFile ? coverFile.name : "Selecionar Imagem"}
@@ -298,8 +298,8 @@ Atividade completada com sucesso!
           </div>
 
           {/* GDD */}
-          <div className="bg-steam-dark border border-steam-blue rounded-lg p-4">
-            <FileText className="w-8 h-8 text-steam-blueLight mb-2" />
+          <div className="bg-senai-blueDark border border-senai-blue rounded-lg p-4">
+            <FileText className="w-8 h-8 text-senai-orange mb-2" />
             <h4 className="font-semibold text-white mb-2">GDD Mini</h4>
             <input
               type="file"
@@ -313,10 +313,10 @@ Atividade completada com sucesso!
               htmlFor="gdd-upload"
               className={`block text-center px-4 py-2 rounded-lg cursor-pointer transition-colors ${
                 gddFile
-                  ? "bg-steam-green/20 text-steam-green border border-steam-green"
+                  ? "bg-senai-blueLight/20 text-senai-blueLight border border-senai-blueLight"
                   : allUploaded
-                  ? "bg-steam-darker text-gray-500 cursor-not-allowed"
-                  : "bg-steam-blue hover:bg-steam-blueLight text-white"
+                  ? "bg-senai-dark text-gray-500 cursor-not-allowed"
+                  : "bg-senai-blue hover:bg-senai-orange text-white"
               }`}
             >
               {gddFile ? gddFile.name : "Selecionar GDD"}
@@ -328,7 +328,7 @@ Atividade completada com sucesso!
           <button
             onClick={handleUploadAll}
             disabled={!codeFile || !coverFile || !gddFile}
-            className="w-full px-6 py-3 bg-steam-green hover:bg-steam-green/80 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-6 py-3 bg-senai-blueLight hover:bg-senai-blueLight/80 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Enviar Todos os Arquivos
           </button>
@@ -336,14 +336,14 @@ Atividade completada com sucesso!
       </div>
 
       {/* Reflexão */}
-      <div className="bg-steam-darker border border-steam-blue rounded-lg p-6">
+      <div className="bg-senai-dark border border-senai-blue rounded-lg p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-bold text-white flex items-center gap-2">
             <MessageSquare className="w-6 h-6" />
             Autoavaliação e Reflexão
           </h3>
           {reflectionCompleted && (
-            <div className="flex items-center gap-2 text-steam-green">
+            <div className="flex items-center gap-2 text-senai-blueLight">
               <CheckCircle className="w-5 h-5" />
               <span className="font-medium">Concluída +50 XP</span>
             </div>
@@ -358,7 +358,7 @@ Atividade completada com sucesso!
           onChange={(e) => setReflectionText(e.target.value)}
           placeholder="Escreva sua reflexão aqui..."
           rows={8}
-          className="w-full bg-steam-dark border border-steam-blue rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight resize-y mb-4"
+          className="w-full bg-senai-blueDark border border-senai-blue rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:border-senai-orange resize-y mb-4"
           disabled={reflectionCompleted}
         />
         <div className="flex justify-between items-center">
@@ -369,7 +369,7 @@ Atividade completada com sucesso!
             <button
               onClick={handleReflectionSubmit}
               disabled={reflectionText.trim().length < 50}
-              className="px-6 py-3 bg-steam-blueLight hover:bg-steam-blue text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-3 bg-senai-orange hover:bg-senai-blue text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Enviar Reflexão
             </button>
@@ -381,13 +381,13 @@ Atividade completada com sucesso!
       <ChatComponent activityId="prototipo-csharp" />
 
       {/* Ações Finais */}
-      <div className="bg-steam-darker border border-steam-blue rounded-lg p-6">
+      <div className="bg-senai-dark border border-senai-blue rounded-lg p-6">
         <h3 className="text-xl font-bold text-white mb-4">Ações Finais</h3>
         <div className="flex gap-4">
           <button
             onClick={handleGenerateReport}
             disabled={!canComplete}
-            className="flex items-center gap-2 px-6 py-3 bg-steam-blue hover:bg-steam-blue/80 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-6 py-3 bg-senai-blue hover:bg-senai-blue/80 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Download className="w-5 h-5" />
             Gerar Relatório PDF
@@ -398,11 +398,11 @@ Atividade completada com sucesso!
       {/* Tela de Conclusão */}
       {canComplete && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-gradient-to-br from-steam-dark via-steam-darker to-steam-dark border-2 border-steam-blueLight rounded-2xl p-8 max-w-2xl w-full shadow-2xl relative overflow-hidden">
+          <div className="bg-gradient-to-br from-senai-blueDark via-senai-dark to-senai-blueDark border-2 border-senai-orange rounded-2xl p-8 max-w-2xl w-full shadow-2xl relative overflow-hidden">
             {/* Efeito de brilho animado */}
             <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 via-transparent to-yellow-400/20 animate-pulse" />
-            <div className="absolute top-0 right-0 w-64 h-64 bg-steam-blueLight/10 rounded-full blur-3xl" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-steam-green/10 rounded-full blur-3xl" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-senai-orange/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-senai-blueLight/10 rounded-full blur-3xl" />
             
             <div className="relative z-10 text-center">
               {/* Ícones e animações */}
@@ -429,39 +429,39 @@ Atividade completada com sucesso!
               </div>
 
               {/* Mensagem principal */}
-              <div className="bg-steam-dark/50 border border-steam-blueLight rounded-lg p-6 mb-6 backdrop-blur-sm">
+              <div className="bg-senai-blueDark/50 border border-senai-orange rounded-lg p-6 mb-6 backdrop-blur-sm">
                 <p className="text-lg text-gray-200 mb-4">
                   Você completou todas as fases da atividade! Seu progresso foi salvo e você ganhou <span className="text-yellow-400 font-bold">{totalXP} XP</span>!
                 </p>
                 
-                <div className="bg-gradient-to-r from-steam-blue/20 to-steam-green/20 border border-steam-blue rounded-lg p-4 mb-4">
+                <div className="bg-gradient-to-r from-senai-blue/20 to-senai-blueLight/20 border border-senai-blue rounded-lg p-4 mb-4">
                   <div className="flex items-center justify-center gap-3 mb-3">
-                    <Camera className="w-8 h-8 text-steam-blueLight" />
-                    <h3 className="text-xl font-bold text-steam-blueLight">Próximo Passo</h3>
+                    <Camera className="w-8 h-8 text-senai-orange" />
+                    <h3 className="text-xl font-bold text-senai-orange">Próximo Passo</h3>
                   </div>
                   <p className="text-white font-medium text-lg mb-2">
                     📸 Tire um print desta tela
                   </p>
                   <p className="text-gray-300">
-                    Envie o print no <strong className="text-steam-green">Google Classroom</strong> para o professor avaliar sua atividade.
+                    Envie o print no <strong className="text-senai-blueLight">Google Classroom</strong> para o professor avaliar sua atividade.
                   </p>
                 </div>
 
                 {/* Checklist de arquivos enviados */}
                 <div className="space-y-2 text-left mb-4">
-                  <div className="flex items-center gap-2 text-steam-green">
+                  <div className="flex items-center gap-2 text-senai-blueLight">
                     <CheckCircle className="w-5 h-5" />
                     <span>Código C# enviado</span>
                   </div>
-                  <div className="flex items-center gap-2 text-steam-green">
+                  <div className="flex items-center gap-2 text-senai-blueLight">
                     <CheckCircle className="w-5 h-5" />
                     <span>Capa 3D enviada</span>
                   </div>
-                  <div className="flex items-center gap-2 text-steam-green">
+                  <div className="flex items-center gap-2 text-senai-blueLight">
                     <CheckCircle className="w-5 h-5" />
                     <span>GDD Mini enviado</span>
                   </div>
-                  <div className="flex items-center gap-2 text-steam-green">
+                  <div className="flex items-center gap-2 text-senai-blueLight">
                     <CheckCircle className="w-5 h-5" />
                     <span>Reflexão completada</span>
                   </div>
@@ -478,7 +478,7 @@ Atividade completada com sucesso!
                       window.print();
                     }, 500);
                   }}
-                  className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-steam-blueLight to-steam-blue text-white rounded-lg font-semibold hover:shadow-lg transition-all"
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-senai-orange to-senai-blue text-white rounded-lg font-semibold hover:shadow-lg transition-all"
                 >
                   <Camera className="w-5 h-5" />
                   Preparar para Print
@@ -486,7 +486,7 @@ Atividade completada com sucesso!
                 
                 <button
                   onClick={onComplete}
-                  className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-steam-green to-green-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-senai-blueLight to-green-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
                 >
                   <CheckCircle className="w-5 h-5" />
                   Finalizar Atividade
@@ -507,7 +507,7 @@ Atividade completada com sucesso!
         <div className="flex justify-end">
           <button
             onClick={onComplete}
-            className="px-8 py-3 bg-gradient-to-r from-steam-blueLight to-steam-green text-white rounded-lg font-bold text-lg hover:shadow-lg transition-all"
+            className="px-8 py-3 bg-gradient-to-r from-senai-orange to-senai-blueLight text-white rounded-lg font-bold text-lg hover:shadow-lg transition-all"
           >
             Concluir Atividade e Finalizar →
           </button>

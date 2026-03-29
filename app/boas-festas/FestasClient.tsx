@@ -149,9 +149,9 @@ export default function FestasClient() {
     <>
       <style jsx>{rgbGlowStyle}</style>
       <div className="relative overflow-hidden pb-16">
-      <div className="absolute inset-0 bg-gradient-to-b from-steam-dark via-steam-darker to-black opacity-80 -z-10" />
-      <div className="absolute -left-32 -top-32 h-72 w-72 rounded-full bg-steam-blue/30 blur-3xl" />
-      <div className="absolute right-0 top-10 h-64 w-64 rounded-full bg-steam-green/25 blur-3xl" />
+      <div className="absolute inset-0 bg-gradient-to-b from-senai-blueDark via-senai-dark to-black opacity-80 -z-10" />
+      <div className="absolute -left-32 -top-32 h-72 w-72 rounded-full bg-senai-blue/30 blur-3xl" />
+      <div className="absolute right-0 top-10 h-64 w-64 rounded-full bg-senai-blueLight/25 blur-3xl" />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-10 bg-[linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(0deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:48px_48px]"
@@ -174,16 +174,16 @@ export default function FestasClient() {
       </div>
 
       <section className="container mx-auto px-4 pt-12">
-        <div className="rounded-2xl border border-steam-blue/60 bg-steam-dark/70 p-8 shadow-2xl backdrop-blur-md glass-card">
-          <div className="flex flex-wrap items-center gap-3 text-sm font-semibold uppercase tracking-wide text-steam-blueLight">
+        <div className="rounded-2xl border border-senai-blue/60 bg-senai-blueDark/70 p-8 shadow-2xl backdrop-blur-md glass-card">
+          <div className="flex flex-wrap items-center gap-3 text-sm font-semibold uppercase tracking-wide text-senai-orange">
             <Sparkles className="h-5 w-5" />
             Especial de Natal e Ano Novo · Turma de Programação de Jogos Digitais
           </div>
-          <div className="mt-3 rounded-lg border border-steam-blue/50 bg-black/40 px-4 py-3 font-mono text-sm text-steam-blueLight shadow-inner">
+          <div className="mt-3 rounded-lg border border-senai-blue/50 bg-black/40 px-4 py-3 font-mono text-sm text-senai-orange shadow-inner">
             <div className="flex flex-wrap gap-2">
               <span className="text-green-300">root@charuri</span>
               <span className="text-gray-300">~$</span>
-              <span className="text-steam-blueLight">
+              <span className="text-senai-orange">
                 ./festive_message --year 2026 --mode pixel-snow --vibes console
               </span>
             </div>
@@ -201,7 +201,7 @@ export default function FestasClient() {
                 Cifra de César. Bora liberar a mensagem e começar 2026 com curiosidade no
                 nível máximo?
               </p>
-              <p className="text-sm text-steam-blueLight font-semibold flex flex-wrap gap-2 items-center">
+              <p className="text-sm text-senai-orange font-semibold flex flex-wrap gap-2 items-center">
                 Desejo um Feliz Natal e Próspero Ano Novo. Desejo que sua árvore tenha mais
                 luzes que seu PC tem LEDs{" "}
                 <button
@@ -210,8 +210,8 @@ export default function FestasClient() {
                     setRgbGlow(true);
                     setTimeout(() => setRgbGlow(false), 2000);
                   }}
-                  className={`relative inline-flex items-center gap-1 px-1 text-steam-blueLight/60 underline decoration-dotted decoration-steam-blue ${
-                    rgbGlow ? "rgb-blink" : "hover:text-steam-blueLight"
+                  className={`relative inline-flex items-center gap-1 px-1 text-senai-orange/60 underline decoration-dotted decoration-senai-blue ${
+                    rgbGlow ? "rgb-blink" : "hover:text-senai-orange"
                   }`}
                   title="(psst) clica aqui"
                 >
@@ -225,35 +225,35 @@ export default function FestasClient() {
                 !
               </p>
               <div className="flex flex-wrap gap-3">
-                <span className="rounded-full border border-steam-blue/70 bg-steam-darker px-4 py-2 text-sm text-steam-blueLight">
+                <span className="rounded-full border border-senai-blue/70 bg-senai-dark px-4 py-2 text-sm text-senai-orange">
                   Recesso: aproveitem, descansem, anotem ideias
                 </span>
-                <span className="rounded-full border border-steam-blue/70 bg-steam-darker px-4 py-2 text-sm text-steam-blueLight">
+                <span className="rounded-full border border-senai-blue/70 bg-senai-dark px-4 py-2 text-sm text-senai-orange">
                   Retorno: 12/01 para fechar a trajetória do curso
                 </span>
               </div>
             </div>
             <div className="grid gap-3">
-              <div className="rounded-xl border border-steam-blue/60 bg-steam-darker p-4 shadow">
-                <div className="flex items-center gap-2 text-steam-blueLight">
+              <div className="rounded-xl border border-senai-blue/60 bg-senai-dark p-4 shadow">
+                <div className="flex items-center gap-2 text-senai-orange">
                   <CalendarClock className="h-5 w-5" />
                   <span className="text-sm font-semibold uppercase tracking-wide">
                     Linha do tempo
                   </span>
                 </div>
                 <div className="mt-3 space-y-2 text-sm text-gray-200">
-                  <div className="flex justify-between rounded-lg bg-steam-dark/60 px-3 py-2">
+                  <div className="flex justify-between rounded-lg bg-senai-blueDark/60 px-3 py-2">
                     <span>Recesso</span>
-                    <span className="text-steam-blueLight">até 11/01</span>
+                    <span className="text-senai-orange">até 11/01</span>
                   </div>
-                  <div className="flex justify-between rounded-lg bg-steam-dark/60 px-3 py-2">
+                  <div className="flex justify-between rounded-lg bg-senai-blueDark/60 px-3 py-2">
                     <span>Voltamos</span>
-                    <span className="text-steam-blueLight">12/01</span>
+                    <span className="text-senai-orange">12/01</span>
                   </div>
                 </div>
               </div>
-              <div className="rounded-xl border border-steam-blue/60 bg-steam-darker p-4 shadow">
-                <div className="flex items-center gap-2 text-steam-blueLight">
+              <div className="rounded-xl border border-senai-blue/60 bg-senai-dark p-4 shadow">
+                <div className="flex items-center gap-2 text-senai-orange">
                   <Gift className="h-5 w-5" />
                   <span className="text-sm font-semibold uppercase tracking-wide">
                     Missão
@@ -264,24 +264,24 @@ export default function FestasClient() {
                   Natal e Ano Novo feita especialmente para vocês.
                 </p>
               </div>
-              <div className="rounded-xl border border-steam-blue/60 bg-steam-darker p-4 shadow">
-                <div className="flex items-center gap-2 text-steam-blueLight">
+              <div className="rounded-xl border border-senai-blue/60 bg-senai-dark p-4 shadow">
+                <div className="flex items-center gap-2 text-senai-orange">
                   <Gamepad2 className="h-5 w-5" />
                   <span className="text-sm font-semibold uppercase tracking-wide">
                     Console hacker vibe
                   </span>
                 </div>
                 <div className="mt-3 space-y-2 text-sm text-gray-300 font-mono">
-                  <div className="flex items-center gap-2 rounded-lg bg-steam-dark/60 px-3 py-2">
-                    <Monitor className="h-4 w-4 text-steam-blueLight" />
+                  <div className="flex items-center gap-2 rounded-lg bg-senai-blueDark/60 px-3 py-2">
+                    <Monitor className="h-4 w-4 text-senai-orange" />
                     <span>prompt: ./boot_holiday --pixel-snow --crt</span>
                   </div>
-                  <div className="flex items-center gap-2 rounded-lg bg-steam-dark/60 px-3 py-2">
-                    <Cpu className="h-4 w-4 text-steam-blueLight" />
+                  <div className="flex items-center gap-2 rounded-lg bg-senai-blueDark/60 px-3 py-2">
+                    <Cpu className="h-4 w-4 text-senai-orange" />
                     <span>scanlines + glitch leve + leds em verde neon</span>
                   </div>
-                  <div className="flex items-center gap-2 rounded-lg bg-steam-dark/60 px-3 py-2">
-                    <Sparkles className="h-4 w-4 text-steam-blueLight" />
+                  <div className="flex items-center gap-2 rounded-lg bg-senai-blueDark/60 px-3 py-2">
+                    <Sparkles className="h-4 w-4 text-senai-orange" />
                     <span>pixel snow caindo sobre o HUD festivo</span>
                   </div>
                 </div>
@@ -292,8 +292,8 @@ export default function FestasClient() {
       </section>
 
       <section className="container mx-auto mt-10 grid gap-6 px-4 lg:grid-cols-3">
-        <div className="lg:col-span-2 rounded-2xl border border-steam-blue/70 bg-steam-dark/80 p-8 shadow-xl backdrop-blur-md">
-          <div className="flex items-center gap-2 text-steam-blueLight">
+        <div className="lg:col-span-2 rounded-2xl border border-senai-blue/70 bg-senai-blueDark/80 p-8 shadow-xl backdrop-blur-md">
+          <div className="flex items-center gap-2 text-senai-orange">
             <Lock className="h-5 w-5" />
             <h2 className="text-xl font-semibold text-white">
               Desafio de Cifra de César
@@ -304,9 +304,9 @@ export default function FestasClient() {
             enigma, digite a resposta (sem acentos) e libere a carta final.
           </p>
 
-          <div className="mt-4 rounded-xl border border-steam-blue/40 bg-black/50 p-4 font-mono text-sm text-gray-200 shadow-inner">
-            <div className="text-steam-blueLight mb-2 flex items-center gap-2">
-              <span className="rounded bg-steam-darker px-2 py-1 text-xs uppercase">terminal.py</span>
+          <div className="mt-4 rounded-xl border border-senai-blue/40 bg-black/50 p-4 font-mono text-sm text-gray-200 shadow-inner">
+            <div className="text-senai-orange mb-2 flex items-center gap-2">
+              <span className="rounded bg-senai-dark px-2 py-1 text-xs uppercase">terminal.py</span>
               <span>// comentário suspeito</span>
             </div>
             <div className="space-y-1">
@@ -315,26 +315,26 @@ export default function FestasClient() {
               <div># SECRET_KEY = ?</div>
               <div>print("Feliz Natal, devs!")</div>
             </div>
-            <div className="mt-3 text-steam-blueLight">
+            <div className="mt-3 text-senai-orange">
               Dica do terminal: “O valor da variável secreta é o oposto de um bug que faz sorrir.”
               Descubra a SECRET_KEY e decifre a cifra abaixo.
             </div>
           </div>
 
-          <div className="mt-6 space-y-3 rounded-xl border border-steam-blue/40 bg-steam-darker p-4">
+          <div className="mt-6 space-y-3 rounded-xl border border-senai-blue/40 bg-senai-dark p-4">
             <div className="flex items-center justify-between gap-3">
               <p className="text-xs uppercase tracking-wide text-gray-400">
                 Texto cifrado
               </p>
               <button
                 onClick={handleCopyCipher}
-                className="text-xs rounded border border-steam-blue/60 bg-steam-dark px-3 py-1 text-steam-blueLight hover:border-steam-blueLight transition"
+                className="text-xs rounded border border-senai-blue/60 bg-senai-blueDark px-3 py-1 text-senai-orange hover:border-senai-orange transition"
                 title="Copiar texto cifrado"
               >
                 Copiar cifra
               </button>
             </div>
-            <div className="font-mono text-lg text-white tracking-wider bg-steam-dark rounded-lg p-4 border border-steam-blue/40 whitespace-pre-wrap">
+            <div className="font-mono text-lg text-white tracking-wider bg-senai-blueDark rounded-lg p-4 border border-senai-blue/40 whitespace-pre-wrap">
               {cipherText}
             </div>
             {copyStatus === "ok" && (
@@ -362,11 +362,11 @@ export default function FestasClient() {
                 }}
                 rows={5}
                 placeholder={`Ex:\n# TODO: REFACTORAR ALEGRIA PARA OTIMIZAR FIM DE ANO\n# FIXME: CORRIGIR BUG DE SONO ACUMULADO\n# SECRET_KEY = BUGFREECHRISTMAS\nprint("Feliz Natal, devs!")\n> CBRT(8316073576) == ?`}
-                className="w-full rounded-lg border border-steam-blue/60 bg-steam-darker px-4 py-3 font-mono text-sm text-white outline-none ring-0 focus:border-steam-blueLight focus:ring-2 focus:ring-steam-blue/40"
+                className="w-full rounded-lg border border-senai-blue/60 bg-senai-dark px-4 py-3 font-mono text-sm text-white outline-none ring-0 focus:border-senai-orange focus:ring-2 focus:ring-senai-blue/40"
               />
               <button
                 onClick={handleCheck}
-                className="w-full sm:w-40 rounded-lg bg-steam-blue px-4 py-3 font-semibold text-white transition hover:bg-steam-blueLight focus:outline-none focus:ring-2 focus:ring-steam-blueLight focus:ring-offset-2 focus:ring-offset-steam-dark"
+                className="w-full sm:w-40 rounded-lg bg-senai-blue px-4 py-3 font-semibold text-white transition hover:bg-senai-orange focus:outline-none focus:ring-2 focus:ring-senai-orange focus:ring-offset-2 focus:ring-offset-senai-blueDark"
               >
                 Conferir
               </button>
@@ -378,7 +378,7 @@ export default function FestasClient() {
               </p>
             )}
             {status === "ok" && (
-              <div className="flex items-center gap-2 text-steam-blueLight">
+              <div className="flex items-center gap-2 text-senai-orange">
                 <Unlock className="h-5 w-5" />
                 <p className="text-sm">
                   Desbloqueado! Role para ler a carta completa.
@@ -388,7 +388,7 @@ export default function FestasClient() {
             <div className="text-xs text-gray-400 flex flex-col sm:flex-row sm:items-center sm:gap-2">
               <button
                 onClick={() => setShowPlanB((prev) => !prev)}
-                className="w-fit rounded border border-steam-blue/60 bg-steam-darker px-3 py-1 text-steam-blueLight hover:border-steam-blueLight transition"
+                className="w-fit rounded border border-senai-blue/60 bg-senai-dark px-3 py-1 text-senai-orange hover:border-senai-orange transition"
               >
                 {showPlanB ? "Ocultar plano B" : "Mostrar plano B"}
               </button>
@@ -404,15 +404,15 @@ export default function FestasClient() {
         </div>
 
         <div className="space-y-4">
-          <div className="rounded-2xl border border-steam-blue/60 bg-steam-dark/80 p-6 shadow-lg">
+          <div className="rounded-2xl border border-senai-blue/60 bg-senai-blueDark/80 p-6 shadow-lg">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-steam-blueLight">
+              <div className="flex items-center gap-2 text-senai-orange">
                 <Lightbulb className="h-5 w-5" />
                 <span className="font-semibold text-white">Dicas</span>
               </div>
               <button
                 onClick={() => setShowHints((prev) => !prev)}
-                className="text-sm text-steam-blueLight underline underline-offset-4"
+                className="text-sm text-senai-orange underline underline-offset-4"
               >
                 {showHints ? "Ocultar" : "Mostrar"}
               </button>
@@ -446,8 +446,8 @@ export default function FestasClient() {
             )}
           </div>
 
-          <div className="rounded-2xl border border-steam-blue/60 bg-steam-dark/80 p-6 shadow-lg">
-            <div className="flex items-center gap-2 text-steam-blueLight">
+          <div className="rounded-2xl border border-senai-blue/60 bg-senai-blueDark/80 p-6 shadow-lg">
+            <div className="flex items-center gap-2 text-senai-orange">
               <KeyRound className="h-5 w-5" />
               <span className="font-semibold text-white">
                 Laboratório de cifra
@@ -467,23 +467,23 @@ export default function FestasClient() {
                 max={13}
                 value={testShift}
                 onChange={(e) => setTestShift(Number(e.target.value))}
-                className="w-full accent-steam-blueLight"
+                className="w-full accent-senai-orange"
               />
-              <div className="rounded-lg border border-steam-blue/40 bg-steam-darker px-3 py-2 font-mono text-sm text-white whitespace-pre-wrap">
+              <div className="rounded-lg border border-senai-blue/40 bg-senai-dark px-3 py-2 font-mono text-sm text-white whitespace-pre-wrap">
                 {decodedPreview}
               </div>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-steam-blue/60 bg-steam-dark/80 p-6 shadow-lg">
+          <div className="rounded-2xl border border-senai-blue/60 bg-senai-blueDark/80 p-6 shadow-lg">
             <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 text-steam-blueLight">
+              <div className="flex items-center gap-2 text-senai-orange">
                 <Monitor className="h-5 w-5" />
                 <span className="font-semibold text-white">Console festivo</span>
               </div>
               <button
                 onClick={runFestiveConsole}
-                className="rounded bg-steam-blue px-3 py-2 text-sm font-semibold text-white hover:bg-steam-blueLight transition focus:outline-none focus:ring-2 focus:ring-steam-blueLight focus:ring-offset-2 focus:ring-offset-steam-dark"
+                className="rounded bg-senai-blue px-3 py-2 text-sm font-semibold text-white hover:bg-senai-orange transition focus:outline-none focus:ring-2 focus:ring-senai-orange focus:ring-offset-2 focus:ring-offset-senai-blueDark"
               >
                 Rodar script
               </button>
@@ -492,7 +492,7 @@ export default function FestasClient() {
               Rode o script e veja o terminal revelar a SECRET_KEY e a raiz cúbica
               que libera a carta.
             </p>
-            <div className="mt-3 rounded-lg border border-steam-blue/50 bg-black/60 p-3 font-mono text-sm text-gray-200 min-h-[140px]">
+            <div className="mt-3 rounded-lg border border-senai-blue/50 bg-black/60 p-3 font-mono text-sm text-gray-200 min-h-[140px]">
               {terminalOutput.length === 0 ? (
                 <p className="text-gray-500">Aguardando comando...</p>
               ) : (
@@ -505,8 +505,8 @@ export default function FestasClient() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-steam-blue/60 bg-steam-dark/80 p-6 shadow-lg">
-            <div className="flex items-center gap-2 text-steam-blueLight">
+          <div className="rounded-2xl border border-senai-blue/60 bg-senai-blueDark/80 p-6 shadow-lg">
+            <div className="flex items-center gap-2 text-senai-orange">
               <Snowflake className="h-5 w-5" />
               <span className="font-semibold text-white">Clima da turma</span>
             </div>
@@ -522,14 +522,14 @@ export default function FestasClient() {
         <div
           className={`relative overflow-hidden rounded-2xl border p-8 shadow-2xl backdrop-blur-md ${
             solved
-              ? "border-steam-green bg-gradient-to-br from-steam-dark/80 via-steam-darker/80 to-steam-dark/70"
-              : "border-dashed border-steam-blue/60 bg-steam-dark/70"
+              ? "border-senai-blueLight bg-gradient-to-br from-senai-blueDark/80 via-senai-dark/80 to-senai-blueDark/70"
+              : "border-dashed border-senai-blue/60 bg-senai-blueDark/70"
           }`}
         >
-          <div className="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-steam-blue/20 blur-3xl" />
-          <div className="absolute -left-16 bottom-0 h-44 w-44 rounded-full bg-steam-green/20 blur-3xl" />
+          <div className="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-senai-blue/20 blur-3xl" />
+          <div className="absolute -left-16 bottom-0 h-44 w-44 rounded-full bg-senai-blueLight/20 blur-3xl" />
 
-          <div className="relative flex items-center gap-2 text-steam-blueLight">
+          <div className="relative flex items-center gap-2 text-senai-orange">
             {solved ? (
               <PartyPopper className="h-6 w-6" />
             ) : (
@@ -542,7 +542,7 @@ export default function FestasClient() {
 
           {solved ? (
             <div className="relative mt-4 space-y-4 text-gray-200">
-              <div className="rounded-lg border border-steam-blue/40 bg-steam-darker/60 p-4 shadow-inner">
+              <div className="rounded-lg border border-senai-blue/40 bg-senai-dark/60 p-4 shadow-inner">
                 <label className="text-sm font-semibold text-gray-300">
                   Personalize a carta com seu nome
                 </label>
@@ -552,7 +552,7 @@ export default function FestasClient() {
                     value={recipientName}
                     onChange={(e) => setRecipientName(e.target.value)}
                     placeholder="Seu nome aqui"
-                    className="w-full rounded-lg border border-steam-blue/60 bg-steam-dark px-3 py-2 text-sm text-white outline-none ring-0 sm:max-w-xs focus:border-steam-blueLight focus:ring-2 focus:ring-steam-blue/40"
+                    className="w-full rounded-lg border border-senai-blue/60 bg-senai-blueDark px-3 py-2 text-sm text-white outline-none ring-0 sm:max-w-xs focus:border-senai-orange focus:ring-2 focus:ring-senai-blue/40"
                   />
                   <span className="text-xs text-gray-400">
                     Se deixar em branco, uso “você”.
@@ -569,11 +569,11 @@ export default function FestasClient() {
                 Valeu por embarcar comigo nessa jornada: dos cálculos com raízes quadradas na lousa (sim, eu vi sua reação!) às manhãs/tardes em que o ar-condicionado desistia de viver enquanto você seguia firme codando. Foi intenso, divertido e, acima de tudo, verdadeiro.
               </p>
               <p className="text-gray-200 leading-relaxed">
-                Que o recesso te traga descanso, inspiração e bons momentos com a família. Em <span className="font-semibold text-steam-blueLight">12/01</span>, voltamos com os teclados a postos, o controle na mão e aquele olhar afiado pra reta final do curso. Vamos lapidar protótipos, fechar builds e mostrar com orgulho o que você ajudou a criar — porque o melhor ainda está por vir.
+                Que o recesso te traga descanso, inspiração e bons momentos com a família. Em <span className="font-semibold text-senai-orange">12/01</span>, voltamos com os teclados a postos, o controle na mão e aquele olhar afiado pra reta final do curso. Vamos lapidar protótipos, fechar builds e mostrar com orgulho o que você ajudou a criar — porque o melhor ainda está por vir.
               </p>
               <div className="grid gap-4 md:grid-cols-3">
-                <div className="rounded-xl border border-steam-blue/50 bg-steam-darker/80 p-4">
-                  <div className="flex items-center gap-2 text-steam-blueLight">
+                <div className="rounded-xl border border-senai-blue/50 bg-senai-dark/80 p-4">
+                  <div className="flex items-center gap-2 text-senai-orange">
                     <Gift className="h-5 w-5" />
                     <span className="font-semibold text-white">Para o recesso</span>
                   </div>
@@ -583,8 +583,8 @@ export default function FestasClient() {
                     <li>Jogue algo novo e analise o que te prende.</li>
                   </ul>
                 </div>
-                <div className="rounded-xl border border-steam-blue/50 bg-steam-darker/80 p-4">
-                  <div className="flex items-center gap-2 text-steam-blueLight">
+                <div className="rounded-xl border border-senai-blue/50 bg-senai-dark/80 p-4">
+                  <div className="flex items-center gap-2 text-senai-orange">
                     <CalendarClock className="h-5 w-5" />
                     <span className="font-semibold text-white">Quando voltarmos</span>
                   </div>
@@ -594,8 +594,8 @@ export default function FestasClient() {
                     <li>Preparar a entrega que vai marcar nossa história.</li>
                   </ul>
                 </div>
-                <div className="rounded-xl border border-steam-blue/50 bg-steam-darker/80 p-4">
-                  <div className="flex items-center gap-2 text-steam-blueLight">
+                <div className="rounded-xl border border-senai-blue/50 bg-senai-dark/80 p-4">
+                  <div className="flex items-center gap-2 text-senai-orange">
                     <Sparkles className="h-5 w-5" />
                     <span className="font-semibold text-white">Para levar na vida</span>
                   </div>
@@ -607,7 +607,7 @@ export default function FestasClient() {
                 </div>
               </div>
               <p className="text-gray-200 leading-relaxed">
-                Nos vemos em <span className="font-semibold text-steam-blueLight">12/01</span>!
+                Nos vemos em <span className="font-semibold text-senai-orange">12/01</span>!
               </p>
             </div>
           ) : (

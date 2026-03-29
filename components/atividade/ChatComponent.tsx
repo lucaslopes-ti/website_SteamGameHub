@@ -78,14 +78,14 @@ export default function ChatComponent({ activityId }: ChatComponentProps) {
   };
 
   return (
-    <div className="bg-steam-darker border border-steam-blue rounded-lg p-6">
+    <div className="bg-senai-dark border border-senai-blue rounded-lg p-6">
       <div className="flex items-center gap-2 mb-4">
-        <MessageSquare className="w-6 h-6 text-steam-blueLight" />
+        <MessageSquare className="w-6 h-6 text-senai-orange" />
         <h3 className="text-xl font-bold text-white">Chat da Atividade</h3>
       </div>
 
       {/* Mensagens */}
-      <div className="bg-steam-dark rounded-lg p-4 h-64 overflow-y-auto mb-4 space-y-3">
+      <div className="bg-senai-blueDark rounded-lg p-4 h-64 overflow-y-auto mb-4 space-y-3">
         {loading ? (
           <div className="text-center text-gray-400 py-8">Carregando mensagens...</div>
         ) : messages.length === 0 ? (
@@ -103,8 +103,8 @@ export default function ChatComponent({ activityId }: ChatComponentProps) {
                 <div
                   className={`max-w-[80%] rounded-lg p-3 ${
                     isOwn
-                      ? "bg-steam-blueLight text-white"
-                      : "bg-steam-dark text-gray-300 border border-steam-blue"
+                      ? "bg-senai-orange text-white"
+                      : "bg-senai-blueDark text-gray-300 border border-senai-blue"
                   }`}
                 >
                   <div className="text-xs opacity-75 mb-1">{msg.userName}</div>
@@ -131,12 +131,12 @@ export default function ChatComponent({ activityId }: ChatComponentProps) {
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyPress={(e) => e.key === "Enter" && handleSend()}
           placeholder="Digite sua mensagem..."
-          className="flex-1 bg-steam-dark border border-steam-blue rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight"
+          className="flex-1 bg-senai-blueDark border border-senai-blue rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-senai-orange"
         />
         <button
           onClick={handleSend}
           disabled={!newMessage.trim()}
-          className="px-6 py-2 bg-steam-blueLight hover:bg-steam-blue text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          className="px-6 py-2 bg-senai-orange hover:bg-senai-blue text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
           <Send className="w-5 h-5" />
         </button>

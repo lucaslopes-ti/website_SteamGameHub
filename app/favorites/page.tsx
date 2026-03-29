@@ -63,12 +63,12 @@ export default function FavoritesPage() {
   if (loading) {
     content = (
       <div className="flex justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-steam-blueLight" />
+        <Loader2 className="w-8 h-8 animate-spin text-senai-orange" />
       </div>
     );
   } else if (favoriteGames.length === 0) {
     content = (
-      <div className="bg-steam-dark rounded-lg p-12 text-center">
+      <div className="bg-senai-blueDark rounded-lg p-12 text-center">
         <Heart className="w-16 h-16 mx-auto mb-4 text-gray-400 opacity-50" />
         <p className="text-gray-400 text-xl mb-4">
           {t("favorites.emptyTitle")}
@@ -78,7 +78,7 @@ export default function FavoritesPage() {
         </p>
         <Link
           href="/games"
-          className="inline-block bg-steam-blueLight hover:bg-steam-blue text-white px-6 py-3 rounded font-semibold transition"
+          className="inline-block bg-senai-orange hover:bg-senai-blue text-white px-6 py-3 rounded font-semibold transition"
         >
           {t("favorites.exploreGames")}
         </Link>
@@ -103,7 +103,7 @@ export default function FavoritesPage() {
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3">
           <Heart className="w-8 h-8 text-red-500 fill-red-500" />
-          <h1 className="text-4xl font-bold text-steam-blueLight">{t("favorites.title")}</h1>
+          <h1 className="text-4xl font-bold text-senai-orange">{t("favorites.title")}</h1>
         </div>
       </div>
 

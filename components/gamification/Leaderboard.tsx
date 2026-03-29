@@ -45,7 +45,7 @@ export default function Leaderboard({ activityId, className }: LeaderboardProps)
   };
 
   return (
-    <div className={`bg-steam-dark border border-steam-blue rounded-lg p-6 ${className}`}>
+    <div className={`bg-senai-blueDark border border-senai-blue rounded-lg p-6 ${className}`}>
       <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
         <Trophy className="w-6 h-6 text-yellow-400" />
         Leaderboard
@@ -66,7 +66,7 @@ export default function Leaderboard({ activityId, className }: LeaderboardProps)
               className={`flex items-center justify-between p-3 rounded-lg ${
                 entry.position <= 3
                   ? "bg-yellow-400/10 border border-yellow-400/30"
-                  : "bg-steam-darker border border-steam-blue"
+                  : "bg-senai-dark border border-senai-blue"
               }`}
             >
               <div className="flex items-center gap-3">
@@ -79,7 +79,7 @@ export default function Leaderboard({ activityId, className }: LeaderboardProps)
                   {entry.userName || entry.userId.split("@")[0]}
                 </span>
               </div>
-              <span className="text-steam-blueLight font-bold">{entry.xp} XP</span>
+              <span className="text-senai-orange font-bold">{entry.xp} XP</span>
             </div>
           ))}
         </div>

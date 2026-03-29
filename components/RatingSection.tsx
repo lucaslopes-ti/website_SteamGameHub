@@ -56,8 +56,8 @@ export default function RatingSection({
   };
 
   return (
-    <section className="bg-steam-dark rounded-lg p-6" aria-labelledby="rating-heading">
-      <h2 id="rating-heading" className="text-2xl font-bold mb-4 text-steam-blueLight">
+    <section className="bg-senai-blueDark rounded-lg p-6" aria-labelledby="rating-heading">
+      <h2 id="rating-heading" className="text-2xl font-bold mb-4 text-senai-orange">
         Avaliar este jogo
       </h2>
       <div className="flex items-center gap-2 mb-4" role="radiogroup" aria-label="Selecione uma avaliação de 1 a 5 estrelas">
@@ -102,7 +102,7 @@ export default function RatingSection({
         <button
           type="button"
           onClick={handleSubmit}
-          className="bg-steam-blueLight hover:bg-steam-blue text-white px-6 py-2 rounded transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
+          className="bg-senai-orange hover:bg-senai-blue text-white px-6 py-2 rounded transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
           aria-label={`Enviar avaliação de ${rating} ${rating === 1 ? "estrela" : "estrelas"}`}
         >
           Enviar Avaliação
@@ -115,7 +115,7 @@ export default function RatingSection({
         </div>
       )}
       {submitted && (
-        <p className="text-steam-green" role="status" aria-live="polite" aria-atomic="true">
+        <p className="text-senai-blueLight" role="status" aria-live="polite" aria-atomic="true">
           Obrigado pela sua avaliação!
         </p>
       )}

@@ -100,7 +100,7 @@ export default function GameDetailPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <div className="relative h-64 md:h-96 bg-steam-blue rounded-lg overflow-hidden mb-6">
+        <div className="relative h-64 md:h-96 bg-senai-blue rounded-lg overflow-hidden mb-6">
           {game.image && game.image.trim() !== "" && (game.image.startsWith("http") || game.image.startsWith("/")) && !imageError ? (
             <Image
               src={game.image}
@@ -146,7 +146,7 @@ export default function GameDetailPage() {
                 <Link
                   href={game.playableLink}
                   target="_blank"
-                  className="flex items-center gap-2 bg-steam-blueLight hover:bg-steam-blue text-white px-6 py-3 rounded font-semibold transition"
+                  className="flex items-center gap-2 bg-senai-orange hover:bg-senai-blue text-white px-6 py-3 rounded font-semibold transition"
                 >
                   <Play className="w-5 h-5" />
                   Jogar Agora
@@ -173,7 +173,7 @@ export default function GameDetailPage() {
                       }
                     }
                   }}
-                  className="flex items-center gap-2 bg-steam-green hover:bg-green-600 text-white px-6 py-3 rounded font-semibold transition"
+                  className="flex items-center gap-2 bg-senai-blueLight hover:bg-green-600 text-white px-6 py-3 rounded font-semibold transition"
                 >
                   <Download className="w-5 h-5" />
                   Baixar Jogo
@@ -188,7 +188,7 @@ export default function GameDetailPage() {
                 <Link
                   href={game.downloadLink}
                   target="_blank"
-                  className="flex items-center gap-2 bg-steam-green hover:bg-green-600 text-white px-6 py-3 rounded font-semibold transition"
+                  className="flex items-center gap-2 bg-senai-blueLight hover:bg-green-600 text-white px-6 py-3 rounded font-semibold transition"
                 >
                   <Download className="w-5 h-5" />
                   Download
@@ -198,10 +198,10 @@ export default function GameDetailPage() {
 
             {/* Tutorial de download */}
             {(game.downloadLink || game.executableFile) && (
-              <div className="mb-6 border border-steam-blue/30 rounded-lg overflow-hidden">
+              <div className="mb-6 border border-senai-blue/30 rounded-lg overflow-hidden">
                 <button
                   onClick={() => setShowGuide((v: boolean) => !v)}
-                  className="w-full flex items-center justify-between px-4 py-3 bg-steam-dark/60 hover:bg-steam-dark text-steam-blueLight font-semibold transition-colors"
+                  className="w-full flex items-center justify-between px-4 py-3 bg-senai-blueDark/60 hover:bg-senai-blueDark text-senai-orange font-semibold transition-colors"
                 >
                   <span className="flex items-center gap-2">
                     <HelpCircle className="w-4 h-4" />
@@ -213,20 +213,20 @@ export default function GameDetailPage() {
                 </button>
 
                 {showGuide && (
-                  <div className="px-5 py-4 bg-steam-darker space-y-3 text-sm">
+                  <div className="px-5 py-4 bg-senai-dark space-y-3 text-sm">
                     {game.executableFile ? (
                       // Guia para download direto
                       <ol className="space-y-3 text-gray-300">
                         <li className="flex items-start gap-3">
-                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-steam-green/20 border border-steam-green/40 flex items-center justify-center text-steam-green font-bold text-xs">1</span>
+                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-senai-blueLight/20 border border-senai-blueLight/40 flex items-center justify-center text-senai-blueLight font-bold text-xs">1</span>
                           <span>Clique no botão <strong className="text-white">Baixar Jogo</strong> acima — o arquivo será baixado direto para o seu computador.</span>
                         </li>
                         <li className="flex items-start gap-3">
-                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-steam-green/20 border border-steam-green/40 flex items-center justify-center text-steam-green font-bold text-xs">2</span>
+                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-senai-blueLight/20 border border-senai-blueLight/40 flex items-center justify-center text-senai-blueLight font-bold text-xs">2</span>
                           <span>Aguarde o download terminar e abra o arquivo baixado (normalmente em <strong className="text-white">Downloads</strong>).</span>
                         </li>
                         <li className="flex items-start gap-3">
-                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-steam-green/20 border border-steam-green/40 flex items-center justify-center text-steam-green font-bold text-xs">3</span>
+                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-senai-blueLight/20 border border-senai-blueLight/40 flex items-center justify-center text-senai-blueLight font-bold text-xs">3</span>
                           <span>Se o Windows exibir um aviso de segurança, clique em <strong className="text-white">Mais informações</strong> e depois em <strong className="text-white">Executar mesmo assim</strong>.</span>
                         </li>
                       </ol>
@@ -256,7 +256,7 @@ export default function GameDetailPage() {
                       </ol>
                     )}
 
-                    <div className="mt-3 pt-3 border-t border-steam-blue/20 text-gray-400 text-xs space-y-1">
+                    <div className="mt-3 pt-3 border-t border-senai-blue/20 text-gray-400 text-xs space-y-1">
                       <p>Certifique-se de ter espaço suficiente em disco antes de baixar.</p>
                       <p>Mantenha todos os arquivos na mesma pasta para o jogo funcionar corretamente.</p>
                     </div>
@@ -267,7 +267,7 @@ export default function GameDetailPage() {
 
             {game.trailerUrl && (
               <div className="mb-6">
-                <h2 className="text-2xl font-bold mb-4 text-steam-blueLight">
+                <h2 className="text-2xl font-bold mb-4 text-senai-orange">
                   Trailer
                 </h2>
                 <VideoPlayer url={game.trailerUrl} title={game.title} />
@@ -276,7 +276,7 @@ export default function GameDetailPage() {
 
             {game.screenshots && game.screenshots.length > 0 && (
               <div className="mb-6">
-                <h2 className="text-2xl font-bold mb-4 text-steam-blueLight flex items-center gap-2">
+                <h2 className="text-2xl font-bold mb-4 text-senai-orange flex items-center gap-2">
                   <ImageIcon className="w-6 h-6" />
                   Screenshots
                 </h2>
@@ -285,7 +285,7 @@ export default function GameDetailPage() {
                     <button
                       key={index}
                       onClick={() => setSelectedScreenshot(screenshot)}
-                      className="relative aspect-video bg-steam-dark rounded-lg overflow-hidden hover:ring-2 ring-steam-blueLight transition-all group shadow-lg"
+                      className="relative aspect-video bg-senai-blueDark rounded-lg overflow-hidden hover:ring-2 ring-senai-orange transition-all group shadow-lg"
                       aria-label={`Ver screenshot ${index + 1} em tamanho maior`}
                     >
                       <img
@@ -342,9 +342,9 @@ export default function GameDetailPage() {
           </div>
 
           <div className="md:col-span-1">
-            <div className="bg-steam-dark rounded-lg p-6 space-y-6">
+            <div className="bg-senai-blueDark rounded-lg p-6 space-y-6">
               <div>
-                <div className="flex items-center gap-2 mb-2 text-steam-blueLight">
+                <div className="flex items-center gap-2 mb-2 text-senai-orange">
                   <Star className="w-5 h-5 fill-current" />
                   <span className="text-2xl font-bold">{game.rating.toFixed(1)}</span>
                 </div>
@@ -354,7 +354,7 @@ export default function GameDetailPage() {
               </div>
 
               <div>
-                <div className="flex items-center gap-2 mb-4 text-steam-blueLight">
+                <div className="flex items-center gap-2 mb-4 text-senai-orange">
                   <User className="w-5 h-5" />
                   <span className="font-semibold">Autor</span>
                 </div>
@@ -363,7 +363,7 @@ export default function GameDetailPage() {
               </div>
 
               <div>
-                <div className="flex items-center gap-2 mb-4 text-steam-blueLight">
+                <div className="flex items-center gap-2 mb-4 text-senai-orange">
                   <Calendar className="w-5 h-5" />
                   <span className="font-semibold">Data de Lançamento</span>
                 </div>
@@ -373,7 +373,7 @@ export default function GameDetailPage() {
               </div>
 
               <div>
-                <div className="flex items-center gap-2 mb-4 text-steam-blueLight">
+                <div className="flex items-center gap-2 mb-4 text-senai-orange">
                   <Eye className="w-5 h-5" />
                   <span className="font-semibold">Visualizações</span>
                 </div>
@@ -384,7 +384,7 @@ export default function GameDetailPage() {
 
               {game.executableFile && (
                 <div>
-                  <div className="flex items-center gap-2 mb-4 text-steam-blueLight">
+                  <div className="flex items-center gap-2 mb-4 text-senai-orange">
                     <HardDrive className="w-5 h-5" />
                     <span className="font-semibold">Arquivo</span>
                   </div>
@@ -400,7 +400,7 @@ export default function GameDetailPage() {
               )}
 
               <div>
-                <div className="flex items-center gap-2 mb-4 text-steam-blueLight">
+                <div className="flex items-center gap-2 mb-4 text-senai-orange">
                   <Tag className="w-5 h-5" />
                   <span className="font-semibold">Gêneros</span>
                 </div>
@@ -408,7 +408,7 @@ export default function GameDetailPage() {
                   {game.genres.map((genre) => (
                     <span
                       key={genre}
-                      className="bg-steam-blue text-steam-blueLight text-sm px-3 py-1 rounded"
+                      className="bg-senai-blue text-senai-orange text-sm px-3 py-1 rounded"
                     >
                       {genre}
                     </span>
@@ -417,7 +417,7 @@ export default function GameDetailPage() {
               </div>
 
               <div>
-                <div className="flex items-center gap-2 mb-4 text-steam-blueLight">
+                <div className="flex items-center gap-2 mb-4 text-senai-orange">
                   <Code className="w-5 h-5" />
                   <span className="font-semibold">Tecnologias</span>
                 </div>
@@ -425,7 +425,7 @@ export default function GameDetailPage() {
                   {game.technologies.map((tech) => (
                     <span
                       key={tech}
-                      className="bg-steam-green text-white text-sm px-3 py-1 rounded"
+                      className="bg-senai-blueLight text-white text-sm px-3 py-1 rounded"
                     >
                       {tech}
                     </span>

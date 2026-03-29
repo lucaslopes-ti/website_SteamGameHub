@@ -125,17 +125,17 @@ export default function ProfilePage() {
   if (loading) {
     myGamesContent = (
       <div className="flex justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-steam-blueLight" />
+        <Loader2 className="w-8 h-8 animate-spin text-senai-orange" />
       </div>
     );
   } else if (myGames.length === 0) {
     myGamesContent = (
-      <div className="bg-steam-dark rounded-lg p-12 text-center">
+      <div className="bg-senai-blueDark rounded-lg p-12 text-center">
         <Gamepad2 className="w-16 h-16 mx-auto mb-4 text-gray-400 opacity-50" />
         <p className="text-gray-400 text-xl mb-4">{t("profile.noGamesUploaded")}</p>
         <Link
           href="/upload"
-          className="inline-block bg-steam-blueLight hover:bg-steam-blue text-white px-6 py-3 rounded font-semibold transition"
+          className="inline-block bg-senai-orange hover:bg-senai-blue text-white px-6 py-3 rounded font-semibold transition"
         >
           {t("profile.uploadFirstGame")}
         </Link>
@@ -147,10 +147,10 @@ export default function ProfilePage() {
         {myGames.map((game) => (
           <div
             key={game.id}
-            className="bg-steam-dark rounded-lg overflow-hidden border border-steam-blue"
+            className="bg-senai-blueDark rounded-lg overflow-hidden border border-senai-blue"
           >
             {game.image && (
-              <div className="relative h-48 bg-steam-blue">
+              <div className="relative h-48 bg-senai-blue">
                 <img
                   src={game.image}
                   alt={game.title}
@@ -162,7 +162,7 @@ export default function ProfilePage() {
                   </div>
                 )}
                 {game.approved && (
-                  <div className="absolute top-2 right-2 bg-steam-green text-white px-2 py-1 rounded text-xs font-bold">
+                  <div className="absolute top-2 right-2 bg-senai-blueLight text-white px-2 py-1 rounded text-xs font-bold">
                     {t("profile.approvedBadge")}
                   </div>
                 )}
@@ -185,7 +185,7 @@ export default function ProfilePage() {
               <div className="flex gap-2">
                 <Link
                   href={`/games/${game.id}`}
-                  className="flex-1 bg-steam-blue hover:bg-steam-blueLight text-white px-4 py-2 rounded text-center transition text-sm flex items-center justify-center gap-2"
+                  className="flex-1 bg-senai-blue hover:bg-senai-orange text-white px-4 py-2 rounded text-center transition text-sm flex items-center justify-center gap-2"
                 >
                   <Eye className="w-4 h-4" />
                   {t("profile.view")}
@@ -193,7 +193,7 @@ export default function ProfilePage() {
                 {game.approved && (
                   <Link
                     href={`/games/${game.id}/edit`}
-                    className="bg-steam-green hover:bg-green-600 text-white px-4 py-2 rounded transition"
+                    className="bg-senai-blueLight hover:bg-green-600 text-white px-4 py-2 rounded transition"
                     title={t("profile.edit")}
                   >
                     <Edit className="w-4 h-4" />
@@ -218,12 +218,12 @@ export default function ProfilePage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8 text-steam-blueLight">{t("profile.title")}</h1>
+      <h1 className="text-4xl font-bold mb-8 text-senai-orange">{t("profile.title")}</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-        <div className="bg-steam-dark rounded-lg p-6">
+        <div className="bg-senai-blueDark rounded-lg p-6">
           <div className="flex items-center gap-4 mb-4">
-            <div className="bg-steam-blueLight rounded-full p-4">
+            <div className="bg-senai-orange rounded-full p-4">
               <User className="w-8 h-8 text-white" />
             </div>
             <div>
@@ -234,42 +234,42 @@ export default function ProfilePage() {
               </p>
             </div>
           </div>
-          <div className="pt-4 border-t border-steam-blue">
+          <div className="pt-4 border-t border-senai-blue">
             <p className="text-gray-400 text-sm mb-1">{t("profile.accountType")}</p>
-            <p className="text-steam-blueLight font-semibold capitalize">
+            <p className="text-senai-orange font-semibold capitalize">
               {roleLabel}
             </p>
           </div>
         </div>
 
-        <div className="md:col-span-2 bg-steam-dark rounded-lg p-6">
+        <div className="md:col-span-2 bg-senai-blueDark rounded-lg p-6">
           <h3 className="text-xl font-bold mb-4 text-white flex items-center gap-2">
-            <History className="w-5 h-5 text-steam-blueLight" />
+            <History className="w-5 h-5 text-senai-orange" />
             {t("header.stats")}
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-steam-darker rounded p-4 border border-steam-blue/30 hover:border-steam-blueLight transition-colors">
+            <div className="bg-senai-dark rounded p-4 border border-senai-blue/30 hover:border-senai-orange transition-colors">
               <div className="flex items-center gap-2 mb-2">
-                <Gamepad2 className="w-5 h-5 text-steam-blueLight" />
+                <Gamepad2 className="w-5 h-5 text-senai-orange" />
                 <p className="text-gray-400 text-sm">{t("statsPage.totalGames")}</p>
               </div>
               <p className="text-3xl font-bold text-white">{stats.totalGames.toLocaleString(locale)}</p>
             </div>
-            <div className="bg-steam-darker rounded p-4 border border-steam-green/30 hover:border-steam-green transition-colors">
+            <div className="bg-senai-dark rounded p-4 border border-senai-blueLight/30 hover:border-senai-blueLight transition-colors">
               <div className="flex items-center gap-2 mb-2">
-                <Eye className="w-5 h-5 text-steam-green" />
+                <Eye className="w-5 h-5 text-senai-blueLight" />
                 <p className="text-gray-400 text-sm">{t("profile.approved")}</p>
               </div>
               <p className="text-3xl font-bold text-white">{stats.approvedGames.toLocaleString(locale)}</p>
             </div>
-            <div className="bg-steam-darker rounded p-4 border border-yellow-400/30 hover:border-yellow-400 transition-colors">
+            <div className="bg-senai-dark rounded p-4 border border-yellow-400/30 hover:border-yellow-400 transition-colors">
               <div className="flex items-center gap-2 mb-2">
                 <Calendar className="w-5 h-5 text-yellow-400" />
                 <p className="text-gray-400 text-sm">{t("statsPage.pending")}</p>
               </div>
               <p className="text-3xl font-bold text-white">{stats.pendingGames.toLocaleString(locale)}</p>
             </div>
-            <div className="bg-steam-darker rounded p-4 border border-yellow-400/30 hover:border-yellow-400 transition-colors">
+            <div className="bg-senai-dark rounded p-4 border border-yellow-400/30 hover:border-yellow-400 transition-colors">
               <div className="flex items-center gap-2 mb-2">
                 <Star className="w-5 h-5 text-yellow-400 fill-current" />
                 <p className="text-gray-400 text-sm">{t("statsPage.averageRating")}</p>
@@ -283,18 +283,18 @@ export default function ProfilePage() {
       </div>
 
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-steam-blueLight">{t("profile.myGames")}</h2>
+        <h2 className="text-2xl font-bold text-senai-orange">{t("profile.myGames")}</h2>
         <div className="flex gap-4">
           <button
             onClick={() => setShowDownloadHistory(!showDownloadHistory)}
-            className="bg-steam-blue hover:bg-steam-blueLight text-white px-6 py-2 rounded font-semibold transition flex items-center gap-2"
+            className="bg-senai-blue hover:bg-senai-orange text-white px-6 py-2 rounded font-semibold transition flex items-center gap-2"
           >
             <History className="w-5 h-5" />
             {t("profile.downloadHistory")}
           </button>
           <Link
             href="/upload"
-            className="bg-steam-blueLight hover:bg-steam-blue text-white px-6 py-2 rounded font-semibold transition flex items-center gap-2"
+            className="bg-senai-orange hover:bg-senai-blue text-white px-6 py-2 rounded font-semibold transition flex items-center gap-2"
           >
             <Gamepad2 className="w-5 h-5" />
             {t("profile.uploadNewGame")}
@@ -303,7 +303,7 @@ export default function ProfilePage() {
       </div>
 
       {showDownloadHistory && (
-        <div className="mb-8 bg-steam-dark rounded-lg p-6 border border-steam-blue">
+        <div className="mb-8 bg-senai-blueDark rounded-lg p-6 border border-senai-blue">
           <h3 className="text-xl font-bold mb-4 text-white flex items-center gap-2">
             <History className="w-5 h-5" />
             {t("profile.downloadHistory")} ({downloadHistory.length.toLocaleString(locale)})
@@ -318,9 +318,9 @@ export default function ProfilePage() {
                 <Link
                   key={item.game.id}
                   href={`/games/${item.game.id}`}
-                  className="bg-steam-darker rounded p-4 hover:bg-steam-blue transition group"
+                  className="bg-senai-dark rounded p-4 hover:bg-senai-blue transition group"
                 >
-                  <h4 className="text-white font-semibold mb-2 group-hover:text-steam-blueLight transition">
+                  <h4 className="text-white font-semibold mb-2 group-hover:text-senai-orange transition">
                     {item.game.title}
                   </h4>
                   <p className="text-gray-400 text-sm">

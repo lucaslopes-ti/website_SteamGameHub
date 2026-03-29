@@ -192,7 +192,7 @@ export default function AtividadePrototipoCSharpPage() {
   };
 
   return (
-    <div className="min-h-screen bg-steam-dark">
+    <div className="min-h-screen bg-senai-blueDark">
       <div className="container mx-auto px-4 py-8">
         {/* Banner com Data */}
         {activityDate && (
@@ -211,7 +211,7 @@ export default function AtividadePrototipoCSharpPage() {
         )}
 
         {/* Header da Atividade */}
-        <div className="bg-gradient-to-r from-steam-blue via-steam-blueLight to-steam-green rounded-lg p-6 mb-6 text-white">
+        <div className="bg-gradient-to-r from-senai-blue via-senai-orange to-senai-blueLight rounded-lg p-6 mb-6 text-white">
           <h1 className="text-4xl font-bold mb-2">Missão: Protótipo Codificado</h1>
           <p className="text-lg text-gray-200">
             Atividade gamificada de 4 horas - Planejamento e Publicação de Jogos Digitais
@@ -225,7 +225,7 @@ export default function AtividadePrototipoCSharpPage() {
           </div>
           <div>
             <ActivityTimer />
-            <div className="mt-4 bg-steam-dark border border-steam-blue rounded-lg p-4">
+            <div className="mt-4 bg-senai-blueDark border border-senai-blue rounded-lg p-4">
               {showNameInput ? (
                 <div className="space-y-2">
                   <input
@@ -233,7 +233,7 @@ export default function AtividadePrototipoCSharpPage() {
                     value={nameInput}
                     onChange={(e) => setNameInput(e.target.value)}
                     placeholder="Digite seu nome"
-                    className="w-full bg-steam-darker border border-steam-blue rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight text-sm"
+                    className="w-full bg-senai-dark border border-senai-blue rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-senai-orange text-sm"
                     onKeyPress={(e) => {
                       if (e.key === "Enter" && nameInput.trim()) {
                         const newName = nameInput.trim();
@@ -255,7 +255,7 @@ export default function AtividadePrototipoCSharpPage() {
                           setNameInput("");
                         }
                       }}
-                      className="flex-1 px-3 py-1 bg-steam-green hover:bg-steam-green/80 text-white rounded text-sm transition-colors"
+                      className="flex-1 px-3 py-1 bg-senai-blueLight hover:bg-senai-blueLight/80 text-white rounded text-sm transition-colors"
                     >
                       Salvar
                     </button>
@@ -264,7 +264,7 @@ export default function AtividadePrototipoCSharpPage() {
                         setShowNameInput(false);
                         setNameInput("");
                       }}
-                      className="px-3 py-1 bg-steam-darker border border-steam-blue text-gray-300 rounded text-sm hover:bg-steam-dark transition-colors"
+                      className="px-3 py-1 bg-senai-dark border border-senai-blue text-gray-300 rounded text-sm hover:bg-senai-blueDark transition-colors"
                     >
                       Cancelar
                     </button>
@@ -274,14 +274,14 @@ export default function AtividadePrototipoCSharpPage() {
                 <>
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm text-gray-400">
-                      <strong className="text-steam-blueLight">Você:</strong> {userName}
+                      <strong className="text-senai-orange">Você:</strong> {userName}
                     </p>
                     <button
                       onClick={() => {
                         setNameInput(userName);
                         setShowNameInput(true);
                       }}
-                      className="text-xs text-steam-blueLight hover:text-steam-green transition-colors"
+                      className="text-xs text-senai-orange hover:text-senai-blueLight transition-colors"
                     >
                       Editar
                     </button>
@@ -296,10 +296,10 @@ export default function AtividadePrototipoCSharpPage() {
         </div>
 
         {/* Navegação por Fases */}
-        <div className="bg-steam-darker border border-steam-blue rounded-lg p-4 mb-6">
+        <div className="bg-senai-dark border border-senai-blue rounded-lg p-4 mb-6">
           <div className="mb-3">
             <p className="text-sm text-gray-400 mb-2">
-              <strong className="text-steam-blueLight">Sistema de Desbloqueio:</strong> Cada fase só é liberada após completar a anterior
+              <strong className="text-senai-orange">Sistema de Desbloqueio:</strong> Cada fase só é liberada após completar a anterior
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -315,12 +315,12 @@ export default function AtividadePrototipoCSharpPage() {
                   disabled={!canAccess}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
                     isActive
-                      ? "bg-steam-blueLight text-white"
+                      ? "bg-senai-orange text-white"
                       : phase.completed
-                      ? "bg-steam-green/20 text-steam-green border border-steam-green"
+                      ? "bg-senai-blueLight/20 text-senai-blueLight border border-senai-blueLight"
                       : canAccess
-                      ? "bg-steam-dark text-gray-300 hover:bg-steam-blue border border-steam-blue"
-                      : "bg-steam-darker text-gray-500 border border-steam-darker cursor-not-allowed opacity-50"
+                      ? "bg-senai-blueDark text-gray-300 hover:bg-senai-blue border border-senai-blue"
+                      : "bg-senai-dark text-gray-500 border border-senai-dark cursor-not-allowed opacity-50"
                   }`}
                   title={!canAccess ? `Complete a fase anterior para desbloquear esta fase (+${phase.xp} XP)` : `+${phase.xp} XP`}
                 >
@@ -328,7 +328,7 @@ export default function AtividadePrototipoCSharpPage() {
                   <span className="font-medium">{phase.title}</span>
                   {!canAccess && <span className="text-xs ml-1">🔒</span>}
                   {phase.completed && <Trophy className="w-4 h-4" />}
-                  <span className={`text-xs ${phase.completed ? 'text-yellow-400' : canAccess ? 'text-steam-blueLight' : 'text-gray-500'}`}>
+                  <span className={`text-xs ${phase.completed ? 'text-yellow-400' : canAccess ? 'text-senai-orange' : 'text-gray-500'}`}>
                     +{phase.xp} XP
                   </span>
                 </button>
@@ -338,7 +338,7 @@ export default function AtividadePrototipoCSharpPage() {
         </div>
 
         {/* Conteúdo da Fase Ativa */}
-        <div className="bg-steam-dark border border-steam-blue rounded-lg p-6">
+        <div className="bg-senai-blueDark border border-senai-blue rounded-lg p-6">
           {activePhase.id === "briefing" && (
             <BriefingSection
               onComplete={() => unlockNextPhase("briefing")}

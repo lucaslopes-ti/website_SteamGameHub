@@ -36,8 +36,8 @@ export default function LoginPage() {
 
   return (
     <div className="container mx-auto px-4 py-20 max-w-md">
-      <div className="bg-steam-dark rounded-lg p-8 shadow-xl">
-        <h1 className="text-3xl font-bold mb-2 text-steam-blueLight text-center">
+      <div className="bg-senai-blueDark rounded-lg p-8 shadow-xl">
+        <h1 className="text-3xl font-bold mb-2 text-senai-orange text-center">
           {t("login.title")}
         </h1>
         <p className="text-gray-400 text-center mb-8">
@@ -57,7 +57,7 @@ export default function LoginPage() {
           )}
 
           <div>
-            <label htmlFor="email" className="block text-steam-blueLight mb-2">
+            <label htmlFor="email" className="block text-senai-orange mb-2">
               {t("login.email")}
             </label>
             <input
@@ -67,7 +67,7 @@ export default function LoginPage() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight focus-visible:ring-2 focus-visible:ring-steam-blueLight"
+              className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-senai-orange focus-visible:ring-2 focus-visible:ring-senai-orange"
               placeholder={t("login.emailPlaceholder")}
               aria-describedby="email-description"
               aria-invalid={error ? "true" : "false"}
@@ -79,7 +79,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-steam-blueLight mb-2">
+            <label htmlFor="password" className="block text-senai-orange mb-2">
               {t("login.passcode")}
             </label>
             <input
@@ -89,7 +89,7 @@ export default function LoginPage() {
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-steam-blueLight focus-visible:ring-2 focus-visible:ring-steam-blueLight"
+              className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-senai-orange focus-visible:ring-2 focus-visible:ring-senai-orange"
               placeholder="••••••••"
               aria-describedby="password-description"
               aria-invalid={error ? "true" : "false"}
@@ -103,7 +103,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading || !email || !password}
-            className="w-full bg-steam-blueLight hover:bg-steam-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded font-semibold transition flex items-center justify-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
+            className="w-full bg-senai-orange hover:bg-senai-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded font-semibold transition flex items-center justify-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
             aria-label={loading ? t("login.submittingAria") : t("login.submitAria")}
           >
             <LogIn className="w-5 h-5" aria-hidden="true" />

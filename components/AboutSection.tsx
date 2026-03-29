@@ -39,7 +39,7 @@ export default function AboutSection() {
   const { t } = useI18n();
 
   return (
-    <section className="bg-gradient-to-b from-steam-dark via-steam-darker to-steam-dark border-t border-b border-steam-blue py-16">
+    <section className="bg-gradient-to-b from-senai-blueDark via-senai-dark to-senai-blueDark border-t border-b border-senai-blue py-16">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
@@ -53,7 +53,7 @@ export default function AboutSection() {
           </p>
           <Link
             href="/about"
-            className="inline-flex items-center gap-2 bg-steam-blueLight hover:bg-steam-blue text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 hover:shadow-lg hover:shadow-steam-blueLight/30"
+            className="inline-flex items-center gap-2 bg-senai-orange hover:bg-senai-blue text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 hover:shadow-lg hover:shadow-senai-orange/30"
           >
             {t("about.learnMore")}
             <ArrowRight className="w-5 h-5" />
@@ -66,7 +66,7 @@ export default function AboutSection() {
             return (
               <div
                 key={feature.titleKey}
-                className="bg-steam-dark border border-steam-blue rounded-lg p-6 hover:border-steam-blueLight transition-all duration-300 hover:shadow-lg hover:shadow-steam-blue/20 group"
+                className="bg-senai-blueDark border border-senai-blue rounded-lg p-6 hover:border-senai-orange transition-all duration-300 hover:shadow-lg hover:shadow-senai-blue/20 group"
               >
                 <div className={`inline-flex p-3 rounded-lg mb-4 transition-all ${feature.iconBg}`}>
                   <Icon className={`w-6 h-6 ${feature.iconColor}`} />

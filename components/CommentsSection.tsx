@@ -100,8 +100,8 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
   };
 
   return (
-    <div className="bg-steam-dark rounded-lg p-6">
-      <h2 className="text-2xl font-bold mb-6 text-steam-blueLight flex items-center gap-2">
+    <div className="bg-senai-blueDark rounded-lg p-6">
+      <h2 className="text-2xl font-bold mb-6 text-senai-orange flex items-center gap-2">
         <MessageSquare className="w-6 h-6" />
         Comentários ({comments.length})
       </h2>
@@ -120,7 +120,7 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
                 value={guestName}
                 onChange={(e) => setGuestName(e.target.value)}
                 placeholder="Seu nome (opcional)"
-                className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight focus-visible:ring-2 focus-visible:ring-steam-blueLight"
+                className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-senai-orange focus-visible:ring-2 focus-visible:ring-senai-orange"
                 aria-label="Seu nome para exibição no comentário (opcional)"
               />
             </div>
@@ -135,7 +135,7 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
                 value={guestEmail}
                 onChange={(e) => setGuestEmail(e.target.value)}
                 placeholder="Seu e-mail (opcional)"
-                className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight focus-visible:ring-2 focus-visible:ring-steam-blueLight"
+                className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-senai-orange focus-visible:ring-2 focus-visible:ring-senai-orange"
                 aria-label="Seu e-mail (opcional, não será exibido publicamente)"
               />
             </div>
@@ -152,7 +152,7 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Escreva um comentário..."
               rows={3}
-              className="w-full bg-steam-darker border border-steam-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-steam-blueLight focus-visible:ring-2 focus-visible:ring-steam-blueLight resize-y"
+              className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-senai-orange focus-visible:ring-2 focus-visible:ring-senai-orange resize-y"
               aria-label="Campo de texto para escrever seu comentário"
               aria-required="true"
             />
@@ -160,7 +160,7 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
           <button
             type="submit"
             disabled={!newComment.trim() || submitting}
-            className="bg-steam-blueLight hover:bg-steam-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-2 rounded transition flex items-center gap-2 h-fit focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
+            className="bg-senai-orange hover:bg-senai-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-2 rounded transition flex items-center gap-2 h-fit focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
             aria-label={submitting ? "Enviando comentário, aguarde" : "Enviar comentário"}
           >
             {submitting ? (
@@ -180,7 +180,7 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
 
       {loading ? (
         <div className="flex justify-center py-8" role="status" aria-live="polite" aria-label="Carregando comentários">
-          <Loader2 className="w-6 h-6 animate-spin text-steam-blueLight" aria-hidden="true" />
+          <Loader2 className="w-6 h-6 animate-spin text-senai-orange" aria-hidden="true" />
           <span className="sr-only">Carregando comentários</span>
         </div>
       ) : comments.length === 0 ? (
@@ -193,13 +193,13 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
           {comments.map((comment, index) => (
             <article
               key={comment.id}
-              className="bg-steam-darker rounded p-4 border border-steam-blue"
+              className="bg-senai-dark rounded p-4 border border-senai-blue"
               role="listitem"
               aria-labelledby={`comment-author-${comment.id}`}
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <User className="w-5 h-5 text-steam-blueLight" aria-hidden="true" />
+                  <User className="w-5 h-5 text-senai-orange" aria-hidden="true" />
                   <div id={`comment-author-${comment.id}`}>
                     <p className="text-white font-semibold">{comment.author}</p>
                     <time 

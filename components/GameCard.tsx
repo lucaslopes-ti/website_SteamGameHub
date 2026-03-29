@@ -75,17 +75,17 @@ export default function GameCard({ game }: Readonly<GameCardProps>) {
     <article className="animate-fadeIn stagger-item">
       <Link 
         href={`/games/${game.id}`}
-        className="block bg-steam-dark rounded-lg overflow-hidden hover-lift-modern cursor-pointer group focus-visible:outline focus-visible:outline-2 focus-visible:outline-steam-blueLight focus-visible:outline-offset-2 card-shine"
+        className="block bg-senai-blueDark rounded-lg overflow-hidden hover-lift-modern cursor-pointer group focus-visible:outline focus-visible:outline-2 focus-visible:outline-senai-orange focus-visible:outline-offset-2 card-shine"
         aria-label={t("game.detailsAria", {
           title: game.title,
           featured: game.featured ? ` (${t("game.featured")})` : "",
         })}
       >
-        <div className="relative h-48 bg-steam-blue overflow-hidden">
+        <div className="relative h-48 bg-senai-blue overflow-hidden">
           {mediaContent}
           <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
             {game.featured && (
-              <span className="bg-steam-green text-white px-2 py-1 rounded text-xs font-bold" aria-label={t("game.featuredAria")}>
+              <span className="bg-senai-blueLight text-white px-2 py-1 rounded text-xs font-bold" aria-label={t("game.featuredAria")}>
                 {t("game.featured")}
               </span>
             )}
@@ -107,7 +107,7 @@ export default function GameCard({ game }: Readonly<GameCardProps>) {
           </div>
         </div>
         <div className="p-4">
-          <h3 className="text-lg font-bold text-white mb-2 line-clamp-1 group-hover:text-steam-blueLight transition">
+          <h3 className="text-lg font-bold text-white mb-2 line-clamp-1 group-hover:text-senai-orange transition">
             {game.title}
           </h3>
           <p className="text-gray-400 text-sm mb-3 line-clamp-2">
@@ -130,7 +130,7 @@ export default function GameCard({ game }: Readonly<GameCardProps>) {
             {game.genres.slice(0, 2).map((genre) => (
               <li
                 key={genre}
-                className="bg-steam-blue text-steam-blueLight text-xs px-2 py-1 rounded list-none"
+                className="bg-senai-blue text-senai-orange text-xs px-2 py-1 rounded list-none"
               >
                 {genre}
               </li>
