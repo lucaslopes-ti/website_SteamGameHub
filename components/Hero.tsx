@@ -178,10 +178,10 @@ export default function Hero() {
             <div className="space-y-6 card-3d-content">
               <div className="aspect-[4/5] rounded-2xl bg-senai-blueDark relative overflow-hidden group shadow-2xl border border-white/10">
                 {/* Game Image */}
-                {topGame?.coverImageUrl ? (
+                {topGame?.image ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img 
-                    src={topGame.coverImageUrl} 
+                    src={topGame.image} 
                     alt={topGame.title}
                     className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700"
                   />
