@@ -29,16 +29,16 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "pt_BR",
-    url: "https://senaigamehub.vercel.app",
+    url: "/",
     siteName: "SENAI Game HUB",
     title: "SENAI Dr. Celso Charuri Game HUB",
     description: "Vitrine de jogos desenvolvidos pelos alunos do curso Técnico em Programação de Jogos Digitais",
     images: [
       {
-        url: "/og-image.png",
+        url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "SENAI Game HUB",
+        alt: "SENAI Dr. Celso Charuri Game HUB",
       },
     ],
   },
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "SENAI Dr. Celso Charuri Game HUB",
     description: "Vitrine de jogos desenvolvidos pelos alunos do curso Técnico em Programação de Jogos Digitais",
-    images: ["/og-image.png"],
+    images: ["/opengraph-image"],
   },
   robots: {
     index: true,
