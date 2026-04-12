@@ -21,43 +21,55 @@ const firebaseConfig: FirebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "",
 };
 
-// Inicializar Firebase apenas uma vez
-let app: FirebaseApp;
-let storage: FirebaseStorage;
-let db: Firestore;
-let auth: Auth;
+let appInstance: FirebaseApp | null = null;
+let storageInstance: FirebaseStorage | null = null;
+let dbInstance: Firestore | null = null;
+let authInstance: Auth | null = null;
 
-if (typeof window !== "undefined") {
-  // Cliente
-  if (!getApps().length) {
-    app = initializeApp(firebaseConfig);
-  } else {
-    app = getApps()[0];
-  }
-  storage = getStorage(app);
-  db = getFirestore(app);
-  auth = getAuth(app);
-} else {
-  // Servidor - inicializar se necessário
+const hasFirebaseConfig = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.appId);
+
+if (hasFirebaseConfig) {
   try {
-    if (!getApps().length) {
-      // Verificar se todas as variáveis necessárias estão configuradas
-      if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
-        console.warn("⚠️ Firebase config incompleto no servidor. Verifique as variáveis de ambiente.");
-      }
-      app = initializeApp(firebaseConfig);
-    } else {
-      app = getApps()[0];
-    }
-    storage = getStorage(app);
-    db = getFirestore(app);
-    auth = getAuth(app);
-  } catch (error: any) {
-    console.error("Erro ao inicializar Firebase no servidor:", error?.message);
-    // Em caso de erro, ainda tentar exportar (pode ser usado apenas no cliente)
-    throw error;
+    appInstance = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+    storageInstance = getStorage(appInstance);
+    dbInstance = getFirestore(appInstance);
+    authInstance = getAuth(appInstance);
+  } catch (error) {
+    console.warn("⚠️ Firebase não inicializado no carregamento do módulo:", error);
   }
 }
 
-export { app, storage, db, auth };
+export function getFirebaseApp(): FirebaseApp {
+  if (!appInstance) {
+    throw new TypeError("Firebase App não foi inicializado. Verifique as variáveis NEXT_PUBLIC_FIREBASE_*.");
+  }
+  return appInstance;
+}
+
+export function getFirebaseStorage(): FirebaseStorage {
+  if (!storageInstance) {
+    throw new TypeError("Firebase Storage não foi inicializado. Verifique as variáveis NEXT_PUBLIC_FIREBASE_*.");
+  }
+  return storageInstance;
+}
+
+export function getFirebaseDb(): Firestore {
+  if (!dbInstance) {
+    throw new TypeError("Firestore não foi inicializado. Verifique as variáveis NEXT_PUBLIC_FIREBASE_*.");
+  }
+  return dbInstance;
+}
+
+export function getFirebaseAuth(): Auth {
+  if (!authInstance) {
+    throw new TypeError("Firebase Auth não foi inicializado. Verifique as variáveis NEXT_PUBLIC_FIREBASE_*.");
+  }
+  return authInstance;
+}
+
+// Compatibilidade com imports legados
+export const app = appInstance as FirebaseApp;
+export const storage = storageInstance as FirebaseStorage;
+export const db = dbInstance as Firestore;
+export const auth = authInstance as Auth;
 

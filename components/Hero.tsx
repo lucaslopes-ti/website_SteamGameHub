@@ -2,8 +2,6 @@
 
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
-import { useTheme } from "./ThemeProvider";
-import { useI18n } from "./I18nProvider";
 
 function useAnimatedCounter(target: number, duration = 2000, decimals = 0) {
   const [count, setCount] = useState(0);
@@ -33,12 +31,6 @@ function useAnimatedCounter(target: number, duration = 2000, decimals = 0) {
 }
 
 export default function Hero() {
-  const { theme } = useTheme();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { t } = useI18n();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const isLight = theme === "light";
-  
   const [stats, setStats] = useState({
     totalGames: 0,
     totalAuthors: 0,
@@ -47,7 +39,6 @@ export default function Hero() {
   
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [topGame, setTopGame] = useState<any>(null);
-  const [isVisible, setIsVisible] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
 
   const animatedGames = useAnimatedCounter(stats.totalGames, 1500);
@@ -95,11 +86,6 @@ export default function Hero() {
         }
       })
       .catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 100);
-    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -244,14 +230,10 @@ export default function Hero() {
         <div className="flex whitespace-nowrap animate-marquee">
           <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-senai-orange font-sans">HUB Atualizado: Novos jogos adicionados</span>
           <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest opacity-50 font-sans">•</span>
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest font-sans">Alunos do SENAI brilham com novos protótipos</span>
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest opacity-50 font-sans">•</span>
           <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-senai-blueLight font-sans">Acesse agora e deixe sua avaliação</span>
           <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest opacity-50 font-sans">•</span>
           {/* Duplicate for infinite effect */}
           <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-senai-orange font-sans">HUB Atualizado: Novos jogos adicionados</span>
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest opacity-50 font-sans">•</span>
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest font-sans">Alunos do SENAI brilham com novos protótipos</span>
           <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest opacity-50 font-sans">•</span>
           <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-senai-blueLight font-sans">Acesse agora e deixe sua avaliação</span>
         </div>

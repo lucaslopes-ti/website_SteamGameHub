@@ -1,12 +1,33 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { User } from "@/lib/auth";
+import { createContext, useContext, useState, useEffect, ReactNode, useMemo } from "react";
+import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+  updateProfile,
+} from "firebase/auth";
+import { getFirebaseAuth } from "@/lib/firebase/config";
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: "student" | "teacher" | "admin";
+}
 
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  loginWithGoogle: () => Promise<boolean>;
+  register: (name: string, email: string, password: string) => Promise<boolean>;
+  resetPassword: (email: string) => Promise<boolean>;
+  logout: () => Promise<void>;
+  loading: boolean;
   isAuthenticated: boolean;
   isAdmin: boolean;
   isTeacher: boolean;
@@ -14,60 +35,107 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const googleProvider = new GoogleAuthProvider();
+
+  const resolveRole = (email?: string | null): User["role"] => {
+    const adminEmail = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || process.env.ADMIN_EMAIL || "").toLowerCase();
+    if (email && adminEmail && email.toLowerCase() === adminEmail) {
+      return "teacher";
+    }
+    return "student";
+  };
 
   useEffect(() => {
-    // Verificar se há usuário salvo no localStorage
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
+    const auth = getFirebaseAuth();
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (!firebaseUser) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
+      setUser({
+        id: firebaseUser.uid,
+        name: firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "Usuário",
+        email: firebaseUser.email || "",
+        role: resolveRole(firebaseUser.email),
+      });
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      // Autenticação no servidor (mais seguro)
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success && data.user) {
-          setUser(data.user);
-          localStorage.setItem("user", JSON.stringify(data.user));
-          return true;
-        }
-      }
-
-      return false;
+      const auth = getFirebaseAuth();
+      await signInWithEmailAndPassword(auth, email, password);
+      return true;
     } catch (error) {
       console.error("Erro ao fazer login:", error);
       return false;
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("user");
+  const register = async (name: string, email: string, password: string): Promise<boolean> => {
+    try {
+      const auth = getFirebaseAuth();
+      const credential = await createUserWithEmailAndPassword(auth, email, password);
+      if (name.trim()) {
+        await updateProfile(credential.user, { displayName: name.trim() });
+      }
+      return true;
+    } catch (error) {
+      console.error("Erro ao cadastrar usuário:", error);
+      return false;
+    }
   };
 
+  const loginWithGoogle = async (): Promise<boolean> => {
+    try {
+      const auth = getFirebaseAuth();
+      await signInWithPopup(auth, googleProvider);
+      return true;
+    } catch (error) {
+      console.error("Erro ao fazer login com Google:", error);
+      return false;
+    }
+  };
+
+  const resetPassword = async (email: string): Promise<boolean> => {
+    try {
+      const auth = getFirebaseAuth();
+      await sendPasswordResetEmail(auth, email);
+      return true;
+    } catch (error) {
+      console.error("Erro ao enviar e-mail de recuperação:", error);
+      return false;
+    }
+  };
+
+  const logout = async () => {
+    const auth = getFirebaseAuth();
+    await signOut(auth);
+  };
+
+  const value = useMemo(() => ({
+    user,
+    login,
+    loginWithGoogle,
+    register,
+    resetPassword,
+    logout,
+    loading,
+    isAuthenticated: !!user,
+    isAdmin: user?.role === "admin",
+    isTeacher: user?.role === "teacher" || user?.role === "admin",
+  }), [user, loading]);
+
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        login,
-        logout,
-        isAuthenticated: !!user,
-        isAdmin: user?.role === "admin",
-        isTeacher: user?.role === "teacher" || user?.role === "admin",
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

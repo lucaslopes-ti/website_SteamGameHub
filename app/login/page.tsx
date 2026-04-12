@@ -3,12 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
+import Link from "next/link";
 import { LogIn, AlertCircle } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,12 +24,30 @@ export default function LoginPage() {
     try {
       const success = await login(email, password);
       if (success) {
-        router.push("/admin");
+        router.push("/materiais");
       } else {
         setError(t("login.invalidCredentials"));
       }
     } catch {
       setError(t("login.error"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setError("");
+    setLoading(true);
+
+    try {
+      const success = await loginWithGoogle();
+      if (success) {
+        router.push("/materiais");
+      } else {
+        setError("Não foi possível entrar com Google.");
+      }
+    } catch {
+      setError("Erro ao tentar entrar com Google.");
     } finally {
       setLoading(false);
     }
@@ -109,6 +128,37 @@ export default function LoginPage() {
             <LogIn className="w-5 h-5" aria-hidden="true" />
             <span>{loading ? t("login.submitting") : t("login.submit")}</span>
           </button>
+
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            disabled={loading}
+            className="w-full bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed text-gray-900 px-6 py-3 rounded font-semibold transition flex items-center justify-center gap-2 border border-gray-300"
+            aria-label="Entrar com Google"
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.55-.2-2.27H12v4.29h6.44a5.5 5.5 0 0 1-2.39 3.61v3h3.86c2.26-2.08 3.58-5.15 3.58-8.63z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.07 7.94-2.9l-3.86-3a7.16 7.16 0 0 1-10.66-3.76H1.43v3.08A12 12 0 0 0 12 24z"/>
+              <path fill="#FBBC05" d="M5.42 14.34a7.2 7.2 0 0 1 0-4.68V6.58H1.43a12 12 0 0 0 0 10.84l3.99-3.08z"/>
+              <path fill="#EA4335" d="M12 4.77c1.76 0 3.35.6 4.59 1.77l3.44-3.44C17.95 1.08 15.24 0 12 0 7.31 0 3.27 2.69 1.43 6.58l3.99 3.08A7.16 7.16 0 0 1 12 4.77z"/>
+            </svg>
+            <span>Entrar com Google</span>
+          </button>
+
+          <div className="flex items-center justify-between text-sm">
+            <Link
+              href="/cadastro"
+              className="text-senai-blueLight hover:text-senai-orange transition"
+            >
+              Criar conta
+            </Link>
+            <Link
+              href="/recuperar-senha"
+              className="text-senai-blueLight hover:text-senai-orange transition"
+            >
+              Esqueci minha senha
+            </Link>
+          </div>
         </form>
       </div>
     </div>

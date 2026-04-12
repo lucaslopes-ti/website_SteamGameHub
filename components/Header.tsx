@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Search, User, Gamepad2, LogOut, Heart, Info, Menu, X, Sun, Moon } from "lucide-react";
+import { Search, User, Gamepad2, LogOut, Heart, Info, Menu, X, Sun, Moon, BookOpen } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "./AuthProvider";
 import { useTheme } from "./ThemeProvider";
 import { useI18n } from "./I18nProvider";
-import LanguageSelector from "./LanguageSelector";
 
 export default function Header() {
   const router = useRouter();
@@ -98,8 +97,6 @@ export default function Header() {
             role="navigation" 
             aria-label={t("header.mainNav")}
           >
-            <LanguageSelector />
-
             <button
               onClick={toggleTheme}
               className="flex items-center justify-center w-9 h-9 rounded-lg text-[#e2e8f0] hover:text-senai-orange hover:bg-senai-blueDark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-senai-orange focus-visible:outline-offset-2"
@@ -129,6 +126,15 @@ export default function Header() {
             >
               <Info className="w-4 h-4 group-hover:scale-110 transition-transform" aria-hidden="true" />
               <span className="font-medium">{t("header.about")}</span>
+            </Link>
+
+            <Link
+              href="/materiais"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-[#e2e8f0] hover:text-senai-orange hover:bg-senai-blueDark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-senai-orange focus-visible:outline-offset-2 group"
+              aria-label="Acessar materiais do curso"
+            >
+              <BookOpen className="w-4 h-4 group-hover:scale-110 transition-transform" aria-hidden="true" />
+              <span className="font-medium">Materiais</span>
             </Link>
             
             <Link
@@ -245,10 +251,6 @@ export default function Header() {
             aria-label={t("header.mobileNav")}
           >
             <div className="flex flex-col gap-2">
-              <div className="px-4 py-2">
-                <LanguageSelector compact />
-              </div>
-
               <button
                 onClick={toggleTheme}
                 className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#e2e8f0] hover:text-senai-orange hover:bg-senai-blueDark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-senai-orange focus-visible:outline-offset-2 text-left"
@@ -280,6 +282,16 @@ export default function Header() {
               >
                 <Info className="w-5 h-5" aria-hidden="true" />
                 <span className="font-medium">{t("footer.aboutProject")}</span>
+              </Link>
+
+              <Link
+                href="/materiais"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#e2e8f0] hover:text-senai-orange hover:bg-senai-blueDark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-senai-orange focus-visible:outline-offset-2"
+                aria-label="Acessar materiais do curso"
+              >
+                <BookOpen className="w-5 h-5" aria-hidden="true" />
+                <span className="font-medium">Materiais</span>
               </Link>
               
               <Link

@@ -57,6 +57,15 @@ export default function Footer() {
                   {t("footer.stats")}
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/materiais"
+                  className="hover:text-senai-orange transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-senai-orange focus-visible:outline-offset-2 rounded px-1"
+                  aria-label="Acessar materiais do curso"
+                >
+                  Materiais
+                </Link>
+              </li>
             </ul>
           </div>
           <div>

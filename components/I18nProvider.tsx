@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo } from "react";
 import { Language, htmlLangMap, languageLabels, translations } from "@/lib/i18n";
 
 interface I18nContextValue {
@@ -10,16 +10,7 @@ interface I18nContextValue {
   languageLabels: Record<Language, string>;
 }
 
-const STORAGE_KEY = "site-language";
-
-const resolveTemplate = (language: Language, key: string) => {
-  return (
-    translations[language]?.[key]
-    ?? translations.en[key]
-    ?? translations.pt[key]
-    ?? key
-  );
-};
+const resolveTemplate = (key: string) => translations.pt[key] ?? key;
 
 const I18nContext = createContext<I18nContextValue>({
   language: "pt",
@@ -29,25 +20,17 @@ const I18nContext = createContext<I18nContextValue>({
 });
 
 export function I18nProvider({ children }: Readonly<{ children: React.ReactNode }>) {
-  const [language, setLanguage] = useState<Language>("pt");
+  const language: Language = "pt";
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY) as Language | null;
-    if (stored && stored in translations) {
-      setLanguage(stored);
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, language);
     document.documentElement.lang = htmlLangMap[language];
   }, [language]);
 
   const value = useMemo<I18nContextValue>(() => ({
     language,
-    setLanguage,
+    setLanguage: () => {},
     t: (key: string, params?: Record<string, string | number>) => {
-      const template = resolveTemplate(language, key);
+      const template = resolveTemplate(key);
       if (!params) return template;
 
       return Object.entries(params).reduce((acc, [paramKey, value]) => {
