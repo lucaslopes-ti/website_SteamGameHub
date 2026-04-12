@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { BookOpen, ExternalLink, GraduationCap, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 
@@ -9,17 +8,44 @@ const driveUrl = process.env.NEXT_PUBLIC_MATERIAIS_DRIVE_URL ?? "https://drive.g
 const hasConfiguredDriveUrl = Boolean(process.env.NEXT_PUBLIC_MATERIAIS_DRIVE_URL);
 
 export default function MateriaisPage() {
-  const router = useRouter();
   const { isAuthenticated, loading } = useAuth();
 
-  useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      router.push("/login");
-    }
-  }, [isAuthenticated, loading, router]);
-
-  if (loading || !isAuthenticated) {
+  if (loading) {
     return null;
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <main className="container mx-auto px-4 py-12 max-w-3xl">
+        <section className="rounded-xl border border-senai-blue/30 bg-senai-blueDark p-8 text-center">
+          <div className="mx-auto mb-4 inline-flex items-center gap-2 rounded-full border border-senai-blueLight/40 bg-senai-blueLight/10 px-4 py-2 text-sm text-senai-blueLight">
+            <GraduationCap className="h-4 w-4" aria-hidden="true" />
+            Área exclusiva para ex-alunos
+          </div>
+
+          <h1 className="text-3xl font-bold text-senai-orange">Acesso aos materiais do curso</h1>
+          <p className="mt-4 text-gray-300 leading-relaxed">
+            Ex-alunos que desejam acessar os materiais devem fazer login.
+            Se ainda não tiver conta, faça seu cadastro gratuitamente.
+          </p>
+
+          <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link
+              href="/login"
+              className="inline-flex items-center justify-center rounded-lg bg-senai-orange px-6 py-3 font-semibold text-white transition-colors hover:bg-senai-blue"
+            >
+              Fazer login
+            </Link>
+            <Link
+              href="/cadastro"
+              className="inline-flex items-center justify-center rounded-lg border border-senai-blueLight/50 bg-senai-blueLight/10 px-6 py-3 font-semibold text-senai-blueLight transition-colors hover:bg-senai-blueLight/20"
+            >
+              Criar conta
+            </Link>
+          </div>
+        </section>
+      </main>
+    );
   }
 
   return (
