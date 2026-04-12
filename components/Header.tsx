@@ -2,17 +2,15 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Search, User, Gamepad2, LogOut, Heart, Info, Menu, X, Sun, Moon, BookOpen } from "lucide-react";
+import { Search, User, Gamepad2, LogOut, Heart, Info, Menu, X, BookOpen } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "./AuthProvider";
-import { useTheme } from "./ThemeProvider";
 import { useI18n } from "./I18nProvider";
 
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const { isAuthenticated, user, logout, isTeacher } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const { t } = useI18n();
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -97,19 +95,6 @@ export default function Header() {
             role="navigation" 
             aria-label={t("header.mainNav")}
           >
-            <button
-              onClick={toggleTheme}
-              className="flex items-center justify-center w-9 h-9 rounded-lg text-[#e2e8f0] hover:text-senai-orange hover:bg-senai-blueDark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-senai-orange focus-visible:outline-offset-2"
-              aria-label={theme === "dark" ? t("header.switchToLight") : t("header.switchToDark")}
-              title={theme === "dark" ? t("header.themeLight") : t("header.themeDark")}
-            >
-              {theme === "dark" ? (
-                <Sun className="w-5 h-5" aria-hidden="true" />
-              ) : (
-                <Moon className="w-5 h-5" aria-hidden="true" />
-              )}
-            </button>
-
             <Link
               href="/games"
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-[#e2e8f0] hover:text-senai-orange hover:bg-senai-blueDark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-senai-orange focus-visible:outline-offset-2 group"
@@ -251,19 +236,6 @@ export default function Header() {
             aria-label={t("header.mobileNav")}
           >
             <div className="flex flex-col gap-2">
-              <button
-                onClick={toggleTheme}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#e2e8f0] hover:text-senai-orange hover:bg-senai-blueDark/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-senai-orange focus-visible:outline-offset-2 text-left"
-                aria-label={theme === "dark" ? t("header.switchToLight") : t("header.switchToDark")}
-              >
-                {theme === "dark" ? (
-                  <Sun className="w-5 h-5" aria-hidden="true" />
-                ) : (
-                  <Moon className="w-5 h-5" aria-hidden="true" />
-                )}
-                <span className="font-medium">{theme === "dark" ? t("header.themeLight") : t("header.themeDark")}</span>
-              </button>
-
               <Link
                 href="/games"
                 onClick={() => setIsMobileMenuOpen(false)}
