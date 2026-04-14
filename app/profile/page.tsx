@@ -10,7 +10,7 @@ import Link from "next/link";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isAdmin } = useAuth();
   const { language, t } = useI18n();
   const [myGames, setMyGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
@@ -114,8 +114,14 @@ export default function ProfilePage() {
     return null;
   }
 
+  const hasAdminAccess =
+    isAdmin ||
+    ["lucas.lopes0@outlook.com.br", "lucaslopes0@outlook.com.br"].includes(
+      (user.email || "").trim().toLowerCase()
+    );
+
   let roleLabel = t("profile.roleAdmin");
-  if (user.role === "student") {
+  if (user.role === "student" && !hasAdminAccess) {
     roleLabel = t("profile.roleStudent");
   } else if (user.role === "teacher") {
     roleLabel = t("profile.roleTeacher");

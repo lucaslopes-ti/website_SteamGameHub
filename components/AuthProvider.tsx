@@ -40,6 +40,11 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [loading, setLoading] = useState(true);
   const googleProvider = new GoogleAuthProvider();
 
+  const emergencyAdminEmails = [
+    "lucas.lopes0@outlook.com.br",
+    "lucaslopes0@outlook.com.br",
+  ];
+
   const parseEmailList = (value?: string): string[] => {
     if (!value) return [];
     return value
@@ -48,17 +53,22 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
       .filter(Boolean);
   };
 
-  const resolveRole = (email?: string | null): User["role"] => {
-    if (!email) return "student";
-
-    const normalizedEmail = email.trim().toLowerCase();
-
-    const adminEmails = parseEmailList(
+  const getAdminEmails = (): string[] => {
+    const envEmails = parseEmailList(
       process.env.NEXT_PUBLIC_ADMIN_EMAILS ||
         process.env.ADMIN_EMAILS ||
         process.env.NEXT_PUBLIC_ADMIN_EMAIL ||
         process.env.ADMIN_EMAIL
     );
+    return Array.from(new Set([...emergencyAdminEmails, ...envEmails]));
+  };
+
+  const resolveRole = (email?: string | null): User["role"] => {
+    if (!email) return "student";
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const adminEmails = getAdminEmails();
 
     const teacherEmails = parseEmailList(
       process.env.NEXT_PUBLIC_TEACHER_EMAILS || process.env.TEACHER_EMAILS
@@ -148,18 +158,29 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
     await signOut(auth);
   };
 
-  const value = useMemo(() => ({
-    user,
-    login,
-    loginWithGoogle,
-    register,
-    resetPassword,
-    logout,
-    loading,
-    isAuthenticated: !!user,
-    isAdmin: user?.role === "admin",
-    isTeacher: user?.role === "teacher" || user?.role === "admin",
-  }), [user, loading]);
+  const value = useMemo(() => {
+    const normalizedEmail = (user?.email || "").trim().toLowerCase();
+    const adminEmails = getAdminEmails();
+    const teacherEmails = parseEmailList(
+      process.env.NEXT_PUBLIC_TEACHER_EMAILS || process.env.TEACHER_EMAILS
+    );
+    const hasAdminAccess = !!normalizedEmail && adminEmails.includes(normalizedEmail);
+    const hasTeacherAccess =
+      hasAdminAccess || (!!normalizedEmail && teacherEmails.includes(normalizedEmail));
+
+    return {
+      user,
+      login,
+      loginWithGoogle,
+      register,
+      resetPassword,
+      logout,
+      loading,
+      isAuthenticated: !!user,
+      isAdmin: hasAdminAccess || user?.role === "admin",
+      isTeacher: hasTeacherAccess || user?.role === "teacher" || user?.role === "admin",
+    };
+  }, [user, loading]);
 
   return (
     <AuthContext.Provider value={value}>

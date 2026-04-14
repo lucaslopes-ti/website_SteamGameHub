@@ -10,7 +10,13 @@ import { useToast } from "@/components/ToastProvider";
 
 export default function AdminPage() {
   const router = useRouter();
-  const { isAuthenticated, isTeacher, user } = useAuth();
+  const { isAuthenticated, isTeacher, isAdmin, loading: authLoading, user } = useAuth();
+  const hasAdminAccess =
+    isAdmin ||
+    isTeacher ||
+    ["lucas.lopes0@outlook.com.br", "lucaslopes0@outlook.com.br"].includes(
+      (user?.email || "").trim().toLowerCase()
+    );
   const { showToast } = useToast();
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,12 +24,14 @@ export default function AdminPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    if (!isAuthenticated || !isTeacher) {
+    if (authLoading) return;
+
+    if (!isAuthenticated || !hasAdminAccess) {
       router.push("/login");
       return;
     }
     loadGames();
-  }, [isAuthenticated, isTeacher, router]);
+  }, [authLoading, isAuthenticated, hasAdminAccess, router]);
 
   const loadGames = async () => {
     try {
@@ -113,7 +121,11 @@ export default function AdminPage() {
     );
   }, [statusFilteredGames, searchQuery]);
 
-  if (!isAuthenticated || !isTeacher) {
+  if (authLoading) {
+    return null;
+  }
+
+  if (!isAuthenticated || !hasAdminAccess) {
     return null;
   }
 

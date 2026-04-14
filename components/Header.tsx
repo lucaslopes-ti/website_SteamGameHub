@@ -11,6 +11,11 @@ export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const { isAuthenticated, user, logout, isTeacher } = useAuth();
+  const hasAdminAccess =
+    isTeacher ||
+    ["lucas.lopes0@outlook.com.br", "lucaslopes0@outlook.com.br"].includes(
+      (user?.email || "").trim().toLowerCase()
+    );
   const { t } = useI18n();
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -150,7 +155,7 @@ export default function Header() {
             </Link>
             {isAuthenticated ? (
               <div className="flex items-center gap-2">
-                {isTeacher && (
+                {hasAdminAccess && (
                   <Link
                     href="/admin"
                     className="flex items-center gap-2 px-4 py-2 rounded-lg bg-senai-blueLight/10 hover:bg-senai-blueLight/20 text-senai-blueLight border border-senai-blueLight/30 hover:border-senai-blueLight/50 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-senai-blueLight focus-visible:outline-offset-2 font-medium"
@@ -298,7 +303,7 @@ export default function Header() {
               
               {isAuthenticated && (
                 <>
-                  {isTeacher && (
+                  {hasAdminAccess && (
                     <Link
                       href="/admin"
                       onClick={() => setIsMobileMenuOpen(false)}
