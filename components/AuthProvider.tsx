@@ -44,6 +44,7 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
     "lucas.lopes0@outlook.com.br",
     "lucaslopes0@outlook.com.br",
   ];
+  const emergencyAdminLocalParts = new Set(["lucaslopes0"]);
 
   const parseEmailList = (value?: string): string[] => {
     if (!value) return [];
@@ -63,10 +64,23 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
     return Array.from(new Set([...emergencyAdminEmails, ...envEmails]));
   };
 
+  const isEmergencyAdminEmail = (email?: string | null): boolean => {
+    if (!email) return false;
+    const normalizedEmail = email.trim().toLowerCase();
+    if (emergencyAdminEmails.includes(normalizedEmail)) return true;
+
+    const localPart = normalizedEmail.split("@")[0]?.replaceAll(/[^a-z0-9]/g, "") || "";
+    return emergencyAdminLocalParts.has(localPart);
+  };
+
   const resolveRole = (email?: string | null): User["role"] => {
     if (!email) return "student";
 
     const normalizedEmail = email.trim().toLowerCase();
+
+    if (isEmergencyAdminEmail(normalizedEmail)) {
+      return "admin";
+    }
 
     const adminEmails = getAdminEmails();
 
@@ -164,7 +178,9 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
     const teacherEmails = parseEmailList(
       process.env.NEXT_PUBLIC_TEACHER_EMAILS || process.env.TEACHER_EMAILS
     );
-    const hasAdminAccess = !!normalizedEmail && adminEmails.includes(normalizedEmail);
+    const hasAdminAccess =
+      (!!normalizedEmail && adminEmails.includes(normalizedEmail)) ||
+      isEmergencyAdminEmail(normalizedEmail);
     const hasTeacherAccess =
       hasAdminAccess || (!!normalizedEmail && teacherEmails.includes(normalizedEmail));
 
