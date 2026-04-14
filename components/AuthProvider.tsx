@@ -40,11 +40,38 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [loading, setLoading] = useState(true);
   const googleProvider = new GoogleAuthProvider();
 
+  const parseEmailList = (value?: string): string[] => {
+    if (!value) return [];
+    return value
+      .split(/[;,]/)
+      .map((item) => item.trim().toLowerCase())
+      .filter(Boolean);
+  };
+
   const resolveRole = (email?: string | null): User["role"] => {
-    const adminEmail = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || process.env.ADMIN_EMAIL || "").toLowerCase();
-    if (email && adminEmail && email.toLowerCase() === adminEmail) {
+    if (!email) return "student";
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const adminEmails = parseEmailList(
+      process.env.NEXT_PUBLIC_ADMIN_EMAILS ||
+        process.env.ADMIN_EMAILS ||
+        process.env.NEXT_PUBLIC_ADMIN_EMAIL ||
+        process.env.ADMIN_EMAIL
+    );
+
+    const teacherEmails = parseEmailList(
+      process.env.NEXT_PUBLIC_TEACHER_EMAILS || process.env.TEACHER_EMAILS
+    );
+
+    if (adminEmails.includes(normalizedEmail)) {
+      return "admin";
+    }
+
+    if (teacherEmails.includes(normalizedEmail)) {
       return "teacher";
     }
+
     return "student";
   };
 
