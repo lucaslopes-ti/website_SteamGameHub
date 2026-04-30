@@ -14,29 +14,6 @@ interface StatsCardsProps {
   };
 }
 
-const statStyles = [
-  {
-    iconBg: "from-sky-500/35 via-sky-500/10 to-transparent",
-    ring: "ring-sky-400/40",
-    iconColor: "text-sky-300",
-  },
-  {
-    iconBg: "from-emerald-500/35 via-emerald-500/10 to-transparent",
-    ring: "ring-emerald-400/40",
-    iconColor: "text-emerald-300",
-  },
-  {
-    iconBg: "from-yellow-500/35 via-yellow-500/10 to-transparent",
-    ring: "ring-yellow-400/40",
-    iconColor: "text-yellow-300",
-  },
-  {
-    iconBg: "from-purple-500/35 via-purple-500/10 to-transparent",
-    ring: "ring-purple-400/40",
-    iconColor: "text-purple-300",
-  },
-];
-
 export default function StatsCards({ games, stats }: Readonly<StatsCardsProps>) {
   const { language, t } = useI18n();
   const approvedGames = games.filter((g) => g.approved);
@@ -57,28 +34,31 @@ export default function StatsCards({ games, stats }: Readonly<StatsCardsProps>) 
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {statsItems.map((stat, index) => {
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 py-8">
+      {statsItems.map((stat) => {
         const Icon = stat.icon;
-        const style = statStyles[index];
         return (
           <div
             key={stat.label}
-            className="group relative overflow-hidden rounded-2xl border border-senai-blue/50 bg-senai-blueDark/80 p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-senai-orange/70 hover:shadow-hero"
+            className="group relative overflow-hidden rounded-xl glass p-6 hover:border-senai-orange/50 transition-all animate-fadeIn"
           >
-            <div className="flex items-center justify-between mb-4">
-              <div
-                className={`p-3 rounded-2xl bg-gradient-to-br ${style.iconBg} ring-1 ${style.ring} shadow-[0_12px_30px_rgba(0,39,118,0.25)]`}
-              >
-                <Icon className={`w-6 h-6 ${style.iconColor}`} strokeWidth={2.1} />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-senai-orange/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative space-y-3">
+              <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center border border-white/10">
+                <Icon className="w-5 h-5 text-senai-orange" strokeWidth={2} />
+              </div>
+              <div>
+                <div className="font-display font-bold text-3xl md:text-4xl tracking-tight text-white">
+                  {stat.value}
+                </div>
+                <div className="text-xs font-mono uppercase tracking-wider text-gray-400 mt-1">
+                  {stat.label}
+                </div>
               </div>
             </div>
-            <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
-            <div className="text-sm text-gray-400 uppercase tracking-wide">{stat.label}</div>
           </div>
         );
       })}
     </div>
   );
 }
-

@@ -23,15 +23,17 @@ export default function GameCarousel({ games }: GameCarouselProps) {
   if (games.length === 0) return null;
 
   return (
-    <div className="relative">
-      <div className="overflow-hidden rounded-lg">
+    <div className="relative group">
+      <div className="overflow-hidden rounded-xl bg-white/5 border border-white/10 p-4">
         <div
-          className="flex transition-transform duration-500 ease-in-out"
+          className="flex transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
         >
           {games.map((game) => (
-            <div key={game.id} className="min-w-full">
-              <GameCard game={game} />
+            <div key={game.id} className="min-w-full px-2">
+              <div className="max-w-2xl mx-auto">
+                <GameCard game={game} variant="compact" />
+              </div>
             </div>
           ))}
         </div>
@@ -40,15 +42,17 @@ export default function GameCarousel({ games }: GameCarouselProps) {
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-senai-blueDark bg-opacity-80 hover:bg-opacity-100 text-white p-2 rounded-full transition"
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full glass flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-senai-orange hover:border-senai-orange shadow-glow-orange -ml-5 z-10"
+            aria-label="Anterior"
           >
-            <ChevronLeft className="w-6 h-6" />
+            <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-senai-blueDark bg-opacity-80 hover:bg-opacity-100 text-white p-2 rounded-full transition"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full glass flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-senai-orange hover:border-senai-orange shadow-glow-orange -mr-5 z-10"
+            aria-label="Próximo"
           >
-            <ChevronRight className="w-6 h-6" />
+            <ChevronRight className="w-5 h-5" />
           </button>
         </>
       )}
@@ -57,8 +61,9 @@ export default function GameCarousel({ games }: GameCarouselProps) {
           <button
             key={index}
             onClick={() => setCurrentIndex(index)}
-            className={`w-2 h-2 rounded-full transition ${
-              index === currentIndex ? "bg-senai-orange" : "bg-gray-600"
+            aria-label={`Ir para slide ${index + 1}`}
+            className={`w-2 h-2 rounded-full transition-all ${
+              index === currentIndex ? "bg-senai-orange w-6" : "bg-white/20 hover:bg-white/40"
             }`}
           />
         ))}
@@ -66,4 +71,3 @@ export default function GameCarousel({ games }: GameCarouselProps) {
     </div>
   );
 }
-

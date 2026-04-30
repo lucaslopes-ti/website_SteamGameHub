@@ -152,20 +152,20 @@ export default function Hero() {
       <div className="container mx-auto px-6 sm:px-8 pt-16 pb-24 md:pt-24 md:pb-32 relative">
         <div className="grid lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-7 space-y-7">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-xs font-semibold uppercase tracking-[0.2em] text-senai-orange/90">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-xs font-mono uppercase tracking-[0.2em] text-senai-orange">
               <Sparkles className="w-3.5 h-3.5" strokeWidth={2.2} />
-              SENAI Dr. Celso Charuri
+              Técnico em Programação de Jogos
             </div>
 
             <div className="space-y-3">
-              <h1 className="font-gaming font-black text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[0.95] tracking-tight">
+              <h1 className="font-bold text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[0.95] tracking-tighter">
                 <span className="block text-gradient-blue">SENAI</span>
                 <span className="block text-gradient-orange">Game Hub</span>
               </h1>
             </div>
 
             <p className="text-lg md:text-xl text-gray-300 max-w-2xl leading-relaxed">
-              A vitrine oficial dos jogos autorais criados pelos alunos do SENAI Dr. Celso Charuri.
+              A vitrine oficial dos jogos autorais criados pelos alunos do curso Técnico em Programação de Jogos.
               Descubra, jogue e avalie experiências interativas feitas por novos talentos.
             </p>
 
