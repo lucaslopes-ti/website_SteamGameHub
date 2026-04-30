@@ -197,7 +197,7 @@ export default function Hero() {
                       <Icon className={`w-5 h-5 ${stat.iconColor}`} strokeWidth={2.1} />
                     </div>
                     <div>
-                      <div className="flex items-baseline gap-1 text-white font-bold text-xl md:text-2xl">
+                      <div className="flex items-baseline gap-1 text-gray-300 font-bold text-xl md:text-2xl">
                         <span>{stat.value}</span>
                         {stat.suffix && <span className="text-sm text-gray-400">{stat.suffix}</span>}
                       </div>
