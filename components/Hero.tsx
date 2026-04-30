@@ -1,7 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import {
+  ArrowRight,
+  BarChart3,
+  Gamepad2,
+  Play,
+  Sparkles,
+  Star,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 
 function useAnimatedCounter(target: number, duration = 2000, decimals = 0) {
   const [count, setCount] = useState(0);
@@ -35,8 +45,9 @@ export default function Hero() {
     totalGames: 0,
     totalAuthors: 0,
     avgRating: 0,
+    totalRatings: 0,
   });
-  
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [topGame, setTopGame] = useState<any>(null);
   const heroRef = useRef<HTMLElement>(null);
@@ -44,6 +55,7 @@ export default function Hero() {
   const animatedGames = useAnimatedCounter(stats.totalGames, 1500);
   const animatedAuthors = useAnimatedCounter(stats.totalAuthors, 1800);
   const animatedRating = useAnimatedCounter(stats.avgRating, 2200, 1);
+  const animatedRatings = useAnimatedCounter(stats.totalRatings, 2000);
 
   useEffect(() => {
     fetch("/api/games?approved=true")
@@ -59,11 +71,17 @@ export default function Hero() {
             ? approved.reduce((sum: number, g: any) => sum + (g.rating || 0), 0) /
               approved.length
             : 0;
+        const totalRatings = approved.reduce(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (sum: number, g: any) => sum + (g.totalRatings || 0),
+          0
+        );
 
         setStats({
           totalGames: approved.length,
           totalAuthors: uniqueAuthors.size,
           avgRating: avgRating,
+          totalRatings,
         });
 
         if (approved.length > 0) {
@@ -71,13 +89,13 @@ export default function Hero() {
           // Usando uma variação de Média Bayesiana para calcular a relevância
           const m = 3; // Peso mínimo de votos para relevância
           const C = avgRating || 0; // Média global do hub
-          
+
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const getScore = (g: any) => {
             const v = g.totalRatings || 0;
             const R = g.rating || 0;
             if (v === 0) return 0;
-            return ((v * R) + (m * C)) / (v + m);
+            return (v * R + m * C) / (v + m);
           };
 
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -88,154 +106,194 @@ export default function Hero() {
       .catch(() => {});
   }, []);
 
+  const ratingValue = stats.avgRating > 0 ? animatedRating.toFixed(1) : "-";
+  const ratingSuffix = stats.avgRating > 0 ? "/ 5" : "";
+  const locale = "pt-BR";
+
+  const statsItems = [
+    {
+      icon: Star,
+      value: ratingValue,
+      suffix: ratingSuffix,
+      label: "Avaliação média",
+      ring: "ring-senai-orange/40",
+      iconColor: "text-senai-orange",
+    },
+    {
+      icon: Gamepad2,
+      value: Math.round(animatedGames).toLocaleString(locale),
+      label: "Jogos publicados",
+      ring: "ring-senai-blueLight/40",
+      iconColor: "text-senai-blueLight",
+    },
+    {
+      icon: Users,
+      value: Math.round(animatedAuthors).toLocaleString(locale),
+      label: "Desenvolvedores",
+      ring: "ring-emerald-400/40",
+      iconColor: "text-emerald-300",
+    },
+    {
+      icon: BarChart3,
+      value: Math.round(animatedRatings).toLocaleString(locale),
+      label: "Avaliações",
+      ring: "ring-yellow-400/40",
+      iconColor: "text-yellow-300",
+    },
+  ];
+
   return (
-    <section
-      ref={heroRef}
-      className={`relative min-h-screen flex items-center justify-center pt-24 overflow-hidden transition-colors duration-500`}
-    >
-      {/* Background Dynamics SENAI */}
-      <div className="blob" style={{ left: '20%', top: '20%', pointerEvents: 'none' }}></div>
-      <div className="scanlines" style={{ mixBlendMode: 'overlay', opacity: 0.5 }}></div>
+    <section ref={heroRef} className="relative overflow-hidden">
+      <div className="absolute inset-0 grid-pattern opacity-40" />
+      <div className="absolute inset-0 bg-gradient-glow" />
+      <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-senai-blueLight/20 rounded-full blur-[120px]" />
+      <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] bg-senai-orange/20 rounded-full blur-[140px]" />
 
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 w-full grid lg:grid-cols-12 gap-12 lg:gap-16 items-center relative z-20 pb-20">
-        
-        {/* Left Text Content */}
-        <div className="lg:col-span-7 space-y-8">
-          <div className="flex items-center gap-4">
-            <span className="h-[2px] w-12 bg-senai-orange"></span>
-            <span className="uppercase tracking-[0.2em] sm:tracking-[0.4em] text-senai-orange font-bold text-xs sm:text-sm">
-              Técnico em Programação de Jogos
-            </span>
-          </div>
+      <div className="container mx-auto px-6 sm:px-8 pt-16 pb-24 md:pt-24 md:pb-32 relative">
+        <div className="grid lg:grid-cols-12 gap-12 items-center">
+          <div className="lg:col-span-7 space-y-7">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-xs font-semibold uppercase tracking-[0.2em] text-senai-orange/90">
+              <Sparkles className="w-3.5 h-3.5" strokeWidth={2.2} />
+              SENAI Dr. Celso Charuri
+            </div>
 
-          <h1 className="text-6xl sm:text-7xl lg:text-8xl font-gaming font-black leading-[0.85] tracking-tighter">
-            <span className="block mb-2 text-senai-blueDark dark:text-senai-blueLight drop-shadow-md">SENAI</span>
-            <span 
-              className="glitch text-transparent bg-clip-text bg-gradient-to-r from-senai-orange via-senai-blueLight to-senai-blue" 
-              data-text="Game Hub"
-            >
-              Game Hub
-            </span>
-          </h1>
+            <div className="space-y-3">
+              <h1 className="font-gaming font-black text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[0.95] tracking-tight">
+                <span className="block text-gradient-blue">SENAI</span>
+                <span className="block text-gradient-orange">Game Hub</span>
+              </h1>
+            </div>
 
-          <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-2xl leading-relaxed font-light font-sans">
-            Não somos apenas um repositório. Somos o <span className="text-senai-blue dark:text-senai-blueLight font-bold italic">SENAI Hub</span>. 
-            Acesse jogos inovadores, protótipos e experiências desenvolvidas pelos criativos estudantes do SENAI Dr. Celso Charuri.
-          </p>
+            <p className="text-lg md:text-xl text-gray-300 max-w-2xl leading-relaxed">
+              A vitrine oficial dos jogos autorais criados pelos alunos do SENAI Dr. Celso Charuri.
+              Descubra, jogue e avalie experiências interativas feitas por novos talentos.
+            </p>
 
-          <div className="flex flex-wrap gap-6 items-center pt-4">
-            <Link href="/games">
-              <button className="group relative px-8 sm:px-10 py-4 sm:py-5 bg-senai-blue font-black uppercase tracking-widest text-xs sm:text-sm overflow-hidden skew-x-[-15deg] transition-all hover:bg-senai-orange text-white shadow-xl shadow-senai-blue/20 hover:shadow-senai-orange/40">
-                <span className="relative z-10 block skew-x-[15deg] font-sans">Explorar Jogos</span>
-                <div className="absolute top-0 left-0 w-full h-full bg-white/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
-              </button>
-            </Link>
-            
-            <div className="flex flex-col border-l-2 border-senai-blue/30 pl-6">
-              <span className="text-senai-orange font-bold text-2xl font-gaming">{stats.avgRating > 0 ? animatedRating : "-"} / 5</span>
-              <span className="text-gray-500 text-[10px] uppercase tracking-widest font-sans">Avaliação Média Global</span>
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <Link
+                href="/games"
+                className="group inline-flex items-center gap-2 rounded-full bg-senai-orange px-6 py-3 text-sm font-bold uppercase tracking-widest text-white shadow-glow-orange transition hover:-translate-y-0.5"
+              >
+                <Play className="w-4 h-4" strokeWidth={2.2} />
+                Explorar jogos
+              </Link>
+              <Link
+                href="/upload"
+                className="group inline-flex items-center gap-2 rounded-full glass px-6 py-3 text-sm font-semibold uppercase tracking-widest text-white/90 transition hover:border-senai-orange/60"
+              >
+                Enviar meu jogo
+                <ArrowRight className="w-4 h-4" strokeWidth={2.2} />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-2 gap-6 pt-6 border-t border-senai-blue/40">
+              {statsItems.map((stat) => {
+                const Icon = stat.icon;
+                return (
+                  <div key={stat.label} className="flex items-center gap-3">
+                    <div
+                      className={`h-10 w-10 rounded-xl bg-senai-blueDark/70 border border-senai-blue/40 ring-1 ${stat.ring} flex items-center justify-center shadow-[0_12px_30px_rgba(0,39,118,0.25)]`}
+                    >
+                      <Icon className={`w-5 h-5 ${stat.iconColor}`} strokeWidth={2.1} />
+                    </div>
+                    <div>
+                      <div className="flex items-baseline gap-1 text-white font-bold text-xl md:text-2xl">
+                        <span>{stat.value}</span>
+                        {stat.suffix && <span className="text-sm text-gray-400">{stat.suffix}</span>}
+                      </div>
+                      <p className="text-[11px] uppercase tracking-widest text-gray-400">{stat.label}</p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
-          
-          {/* Live Stats */}
-          <div className="grid grid-cols-3 gap-4 sm:gap-8 pt-10 border-t border-senai-grayLight dark:border-white/10">
-            <div>
-              <div className="text-2xl sm:text-3xl font-gaming font-bold text-senai-blue dark:text-senai-blueLight drop-shadow-sm">{animatedGames}</div>
-              <div className="text-gray-500 text-[9px] sm:text-[10px] uppercase tracking-widest mt-1 font-sans">Jogos Publicados</div>
-            </div>
-            <div>
-              <div className="text-2xl sm:text-3xl font-gaming font-bold text-senai-orange drop-shadow-sm">{animatedAuthors}</div>
-              <div className="text-gray-500 text-[9px] sm:text-[10px] uppercase tracking-widest mt-1 font-sans">Desenvolvedores</div>
-            </div>
-            <div>
-              <div className="text-2xl sm:text-3xl font-gaming font-bold text-yellow-500 drop-shadow-sm">99%</div>
-              <div className="text-gray-500 text-[9px] sm:text-[10px] uppercase tracking-widest mt-1 font-sans">Projetos Ativos</div>
-            </div>
-          </div>
-        </div>
 
-        {/* 3D Visual Right (Hidden on mobile for better flow) */}
-        <div className="lg:col-span-5 relative perspective-container hidden lg:block">
-          <div className="card-3d relative bg-white/80 dark:bg-black/40 backdrop-blur-xl border border-senai-blue/20 dark:border-white/10 p-8 rounded-3xl">
-            {/* UI Overlay Corners */}
-            <div className="absolute -top-6 -right-6 w-32 h-32 border-t-4 border-r-4 border-senai-orange rounded-tr-3xl opacity-50 pointer-events-none"></div>
-            <div className="absolute -bottom-6 -left-6 w-32 h-32 border-b-4 border-l-4 border-senai-blue rounded-bl-3xl opacity-50 pointer-events-none"></div>
-            
-            <div className="space-y-6 card-3d-content">
-              <div className="aspect-[4/5] rounded-2xl bg-senai-blueDark relative overflow-hidden group shadow-2xl border border-white/10">
-                {/* Game Image */}
-                {topGame?.image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img 
-                    src={topGame.image} 
-                    alt={topGame.title}
-                    className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700"
-                  />
-                ) : (
-                  <div className="absolute inset-0 bg-gradient-to-br from-senai-blueDark to-senai-blue opacity-50"></div>
-                )}
-                
-                <div className="absolute inset-0 bg-gradient-to-t from-[#001a4d] via-black/40 to-transparent z-10 transition-opacity duration-300 group-hover:opacity-80"></div>
-                
-                <div className="absolute bottom-6 left-6 right-6 z-20">
-                  <span className="px-3 py-1 bg-senai-orange text-white text-[10px] font-bold rounded-full uppercase mb-3 inline-block shadow-lg font-sans">
-                    Destaque do Mês
-                  </span>
-                  <h4 className="text-3xl font-gaming font-black text-white leading-tight line-clamp-2 drop-shadow-lg">
-                    {topGame ? topGame.title : "PROJETO ALPHA"}
-                  </h4>
-                  {topGame && (
-                    <p className="text-gray-200 text-sm mt-2 font-medium line-clamp-1 font-sans drop-shadow-md">por {topGame.author}</p>
+          <div className="lg:col-span-5 relative">
+            <div className="relative animate-float">
+              <div className="absolute -inset-8 bg-gradient-to-br from-senai-orange/30 via-senai-blueLight/20 to-transparent blur-3xl rounded-full" />
+
+              <div className="relative rounded-2xl overflow-hidden glass-strong shadow-hero">
+                <div className="relative aspect-[3/4] overflow-hidden">
+                  {topGame?.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={topGame.image}
+                      alt={topGame.title}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-senai-blueDark to-senai-blue" />
                   )}
-                </div>
-              </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-senai-dark via-senai-dark/40 to-transparent" />
 
-              <div className="flex justify-between items-end">
-                <div className="space-y-2">
-                  <p className="text-[10px] text-gray-500 uppercase tracking-tighter font-bold font-sans">Avaliação do Jogo</p>
-                  <div className="flex gap-1 items-end">
-                    <div className="w-1.5 h-3 bg-senai-blueLight rounded-t-sm"></div>
-                    <div className="w-1.5 h-4 bg-senai-blueLight rounded-t-sm"></div>
-                    <div className="w-1.5 h-5 bg-senai-blueLight rounded-t-sm"></div>
-                    <div className="w-1.5 h-6 bg-senai-blue rounded-t-sm"></div>
-                    <span className="ml-2 text-sm font-black font-gaming text-senai-blueDark dark:text-white">
-                      {topGame ? topGame.rating?.toFixed(1) || "5.0" : "5.0"}
-                    </span>
+                  <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-senai-orange text-white text-[10px] font-bold uppercase tracking-wider shadow-glow-orange">
+                    <TrendingUp className="w-3 h-3" strokeWidth={2.3} />
+                    Em destaque
+                  </div>
+
+                  <div className="absolute top-4 right-4 inline-flex items-center gap-1 px-2.5 py-1 rounded-full glass text-xs font-bold">
+                    <Star className="w-3.5 h-3.5 text-senai-orange fill-senai-orange" strokeWidth={1.5} />
+                    {topGame ? topGame.rating?.toFixed(1) || "-" : "-"}
                   </div>
                 </div>
-                {topGame ? (
-                  <Link href={`/games/${topGame.id}`}>
-                    <button className="bg-senai-blueDark text-white px-6 py-2 rounded-full font-bold text-xs uppercase hover:bg-senai-orange transition-colors shadow-lg font-sans btn-neon border border-transparent">
-                      Ver Detalhes
-                    </button>
-                  </Link>
-                ) : (
-                  <button className="bg-senai-blueDark text-white px-6 py-2 rounded-full font-bold text-xs uppercase hover:bg-senai-orange transition-colors shadow-lg font-sans cursor-not-allowed">
-                    Em Breve
-                  </button>
-                )}
+
+                <div className="p-6 space-y-4">
+                  <div>
+                    <h3 className="font-gaming font-bold text-2xl leading-tight mb-1 text-white">
+                      {topGame ? topGame.title : "Projeto em destaque"}
+                    </h3>
+                    <p className="text-sm text-gray-400">
+                      por <span className="text-senai-orange font-semibold">{topGame ? topGame.author : "Equipe SENAI"}</span>
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs font-semibold">
+                    <div className="flex items-center gap-1.5 text-gray-400">
+                      <Star className="w-3.5 h-3.5 text-senai-orange" strokeWidth={2.2} />
+                      {topGame ? (topGame.totalRatings || 0).toLocaleString(locale) : "0"} avaliações
+                    </div>
+                    {topGame ? (
+                      <Link
+                        href={`/games/${topGame.id}`}
+                        className="inline-flex items-center gap-1 text-senai-orange hover:text-senai-blueLight transition-colors"
+                      >
+                        Ver detalhes
+                        <ArrowRight className="w-3.5 h-3.5" strokeWidth={2.2} />
+                      </Link>
+                    ) : (
+                      <span className="text-gray-500">Em breve</span>
+                    )}
+                  </div>
+                </div>
               </div>
+
+              <div className="absolute -top-3 -right-3 w-16 h-16 border-2 border-senai-orange/40 rounded-tr-2xl" />
+              <div className="absolute -bottom-3 -left-3 w-16 h-16 border-2 border-senai-blueLight/40 rounded-bl-2xl" />
             </div>
           </div>
-
-          {/* Floating Elements */}
-          <div className="absolute -top-12 -left-12 w-24 h-24 bg-senai-orange/20 blur-2xl rounded-full animate-pulse pointer-events-none"></div>
-          <div className="absolute top-1/2 -right-20 w-40 h-1 bg-gradient-to-r from-transparent via-senai-blueLight to-transparent rotate-45 pointer-events-none"></div>
         </div>
-
       </div>
 
-      {/* Marquee Ticker */}
       <div className="absolute bottom-0 w-full bg-senai-blueDark text-white py-2 overflow-hidden z-30 shadow-lg">
         <div className="flex whitespace-nowrap animate-marquee">
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-senai-orange font-sans">HUB Atualizado: Novos jogos adicionados</span>
+          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-senai-orange font-sans">
+            HUB Atualizado: Novos jogos adicionados
+          </span>
           <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest opacity-50 font-sans">•</span>
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-senai-blueLight font-sans">Acesse agora e deixe sua avaliação</span>
+          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-senai-blueLight font-sans">
+            Acesse agora e deixe sua avaliação
+          </span>
           <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest opacity-50 font-sans">•</span>
-          {/* Duplicate for infinite effect */}
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-senai-orange font-sans">HUB Atualizado: Novos jogos adicionados</span>
+          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-senai-orange font-sans">
+            HUB Atualizado: Novos jogos adicionados
+          </span>
           <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest opacity-50 font-sans">•</span>
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-senai-blueLight font-sans">Acesse agora e deixe sua avaliação</span>
+          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-senai-blueLight font-sans">
+            Acesse agora e deixe sua avaliação
+          </span>
         </div>
       </div>
     </section>

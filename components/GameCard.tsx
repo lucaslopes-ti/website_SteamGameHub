@@ -115,14 +115,14 @@ export default function GameCard({ game }: Readonly<GameCardProps>) {
           </p>
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-1.5 text-yellow-400" aria-label={t("game.ratingAria", { rating: game.rating.toFixed(1), totalRatings: game.totalRatings })}>
-              <Star className="w-4 h-4 fill-current" aria-hidden="true" />
+              <Star className="w-4 h-4 text-yellow-400 fill-yellow-400 drop-shadow-[0_4px_12px_rgba(250,204,21,0.4)]" strokeWidth={1.6} aria-hidden="true" />
               <span className="font-semibold">{game.rating.toFixed(1)}</span>
               {game.totalRatings > 0 && (
                 <span className="text-gray-500 text-xs">({game.totalRatings})</span>
               )}
             </div>
             <div className="flex items-center gap-1 text-gray-400 max-w-[45%]" aria-label={t("game.authorAria", { author: game.author })}>
-              <User className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+              <User className="w-4 h-4 flex-shrink-0 text-senai-blueLight" strokeWidth={2.1} aria-hidden="true" />
               <span className="truncate">{game.author}</span>
             </div>
           </div>
