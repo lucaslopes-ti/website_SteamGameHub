@@ -193,9 +193,9 @@ export default function Home() {
             <span className="text-xs font-semibold uppercase tracking-wider text-[var(--secondary)]">Destaque</span>
           </div>
           <div className="relative w-full aspect-[16/9] bg-[var(--surface-dim)] flex items-center justify-center text-[var(--outline)]">
-            {heroGame?.coverImage ? (
+            {heroGame?.image ? (
               <img
-                src={heroGame.coverImage}
+                src={heroGame.image}
                 alt={heroGame.title}
                 className="absolute inset-0 w-full h-full object-cover"
               />
@@ -261,8 +261,8 @@ export default function Home() {
                     className="bg-[var(--surface)] rounded-xl overflow-hidden shadow-sm border border-[var(--outline-variant)]/20 flex flex-col hover:shadow-md transition-shadow"
                   >
                     <div className="w-full aspect-video bg-[var(--surface-dim)] flex items-center justify-center text-[var(--outline)] overflow-hidden">
-                      {game.coverImage ? (
-                        <img src={game.coverImage} alt={game.title} className="w-full h-full object-cover" />
+                      {game.image ? (
+                        <img src={game.image} alt={game.title} className="w-full h-full object-cover" />
                       ) : (
                         <span className="text-sm font-semibold">Sem imagem</span>
                       )}
@@ -464,8 +464,8 @@ export default function Home() {
                     className="bg-[var(--surface-container-lowest)] rounded-xl overflow-hidden shadow-sm border border-[var(--outline-variant)]/20 flex flex-col group cursor-pointer"
                   >
                     <div className="w-full aspect-video bg-[var(--surface-dim)] flex flex-col items-center justify-center text-[var(--outline)] relative overflow-hidden">
-                      {game.coverImage ? (
-                        <img src={game.coverImage} alt={game.title} className="absolute inset-0 w-full h-full object-cover" />
+                      {game.image ? (
+                        <img src={game.image} alt={game.title} className="absolute inset-0 w-full h-full object-cover" />
                       ) : (
                         <span className="text-xs font-semibold uppercase">Sem imagem</span>
                       )}
