@@ -7,16 +7,54 @@
 /* Laranja SENAI: #F37021 | Branco: #FFFFFF | Cinza Claro: #F1F5F9 */
 
 :root {
-  --foreground-rgb: 26, 32, 44;
-  --background-start-rgb: 255, 255, 255;
-  --background-end-rgb: 241, 245, 249;
-  --senai-blue: #004F9F;
-  --senai-blue-dark: #002776;
-  --senai-blue-light: #00A5E2;
-  --senai-orange: #F37021;
-  --senai-orange-light: #FF8C42;
-  --senai-white: #FFFFFF;
-  --senai-gray-light: #F1F5F9;
+  --surface: #f7f9fb;
+  --surface-dim: #d8dadc;
+  --surface-bright: #f7f9fb;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f2f4f6;
+  --surface-container: #eceef0;
+  --surface-container-high: #e6e8ea;
+  --surface-container-highest: #e0e3e5;
+  --on-surface: #191c1e;
+  --on-surface-variant: #414751;
+  --inverse-surface: #2d3133;
+  --inverse-on-surface: #eff1f3;
+  --outline: #727782;
+  --outline-variant: #c1c7d2;
+  --surface-tint: #0e60a8;
+  --background: #f7f9fb;
+  --on-background: #191c1e;
+  --primary: #00437b;
+  --on-primary: #ffffff;
+  --primary-container: #005ba3;
+  --on-primary-container: #b6d3ff;
+  --secondary: #954a00;
+  --secondary-container: #fd8100;
+  --on-secondary-container: #5d2c00;
+  --tertiary: #1f446c;
+  --tertiary-container: #395c85;
+  --primary-fixed-dim: #a3c9ff;
+  --error: #ba1a1a;
+
+  --primary-5: color-mix(in_srgb, var(--primary) 5%, transparent);
+  --primary-10: color-mix(in_srgb, var(--primary) 10%, transparent);
+  --primary-20: color-mix(in_srgb, var(--primary) 20%, transparent);
+  --secondary-10: color-mix(in_srgb, var(--secondary-container) 10%, transparent);
+  --secondary-20: color-mix(in_srgb, var(--secondary-container) 20%, transparent);
+  --outline-10: color-mix(in_srgb, var(--outline-variant) 30%, transparent);
+  --surface-glass: color-mix(in_srgb, var(--surface-container-lowest) 80%, transparent);
+
+  --foreground-rgb: 25, 28, 30;
+  --background-start-rgb: 247, 249, 251;
+  --background-end-rgb: 242, 244, 246;
+
+  --senai-blue: var(--primary);
+  --senai-blue-dark: var(--primary-container);
+  --senai-blue-light: var(--primary-fixed-dim);
+  --senai-orange: var(--secondary-container);
+  --senai-orange-light: #ffb785;
+  --senai-white: var(--surface-container-lowest);
+  --senai-gray-light: var(--surface-container-low);
 }
 
 html.light {
