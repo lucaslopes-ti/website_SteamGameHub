@@ -3,7 +3,21 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Search, User, Gamepad2, LogOut, Heart, Info, Menu, X, BookOpen } from "lucide-react";
+import {
+  Search,
+  User,
+  Gamepad2,
+  LogOut,
+  Heart,
+  Info,
+  Menu,
+  X,
+  BookOpen,
+  Sparkles,
+  Rocket,
+  Trophy,
+  GraduationCap,
+} from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "./AuthProvider";
 import { useI18n } from "./I18nProvider";
@@ -21,6 +35,13 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const marqueeItems = [
+    { icon: Gamepad2, text: "A vitrine de jogos autorais" },
+    { icon: Sparkles, text: "Novos jogos adicionados" },
+    { icon: Rocket, text: "Acesse e de sua avaliacao" },
+    { icon: Trophy, text: "99% recomendam jogos do hub" },
+    { icon: GraduationCap, text: "Curso Tecnico em Programacao de Jogos" },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,13 +66,11 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full" role="banner">
       <div
-        className={`transition-all duration-300 ${
-          scrolled
-            ? "bg-[var(--surface-glass)] border-b border-[var(--outline-10)] shadow-sm"
-            : "bg-[var(--surface)] border-b border-[var(--outline-10)]"
+        className={`header-liquid transition-all duration-300 ${
+          scrolled ? "header-liquid--scrolled" : "header-liquid--top"
         }`}
       >
-        <div className="container mx-auto px-4 flex h-16 items-center gap-4">
+        <div className="container relative z-10 mx-auto px-4 flex h-16 items-center gap-4">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 shrink-0 group focus-visible:outline focus-visible:outline-2 focus-visible:outline-senai-orange rounded-lg">
             <div className="relative">
@@ -147,15 +166,10 @@ export default function Header() {
         <div className="flex animate-marquee whitespace-nowrap py-2 text-xs font-mono uppercase tracking-widest text-[var(--on-primary)]">
           {Array.from({ length: 2 }).map((_, i) => (
             <div key={i} className="flex items-center shrink-0">
-              {[
-                "🎮 A vitrine de jogos autorais",
-                "✨ Novos jogos adicionados",
-                "🚀 Acesse e dê sua avaliação",
-                "🏆 99% recomendam jogos do hub",
-                "👾 Curso Técnico em Programação de Jogos",
-              ].map((text, j) => (
-                <span key={j} className="px-8 flex items-center gap-3">
-                  {text}
+              {marqueeItems.map(({ icon: Icon, text }, j) => (
+                <span key={`${i}-${j}`} className="px-8 flex items-center gap-3">
+                  <Icon className="w-4 h-4 text-[var(--primary-fixed-dim)]" aria-hidden="true" />
+                  <span>{text}</span>
                   <span className="text-[var(--secondary-container)]">◆</span>
                 </span>
               ))}

@@ -76,6 +76,71 @@ body {
   font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
+/* Header liquid glass */
+.header-liquid {
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  transition: background-color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.header-liquid::before {
+  content: "";
+  position: absolute;
+  inset: -40% 0 -60% 0;
+  background:
+    radial-gradient(180px 120px at 12% 12%, rgba(255, 255, 255, 0.45), transparent 70%),
+    radial-gradient(240px 160px at 86% 0%, rgba(0, 165, 226, 0.4), transparent 75%),
+    radial-gradient(260px 200px at 50% 100%, rgba(255, 255, 255, 0.3), transparent 70%);
+  opacity: 0.45;
+  transform: translate3d(-6%, -8%, 0);
+  animation: liquidShift 18s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.header-liquid--top {
+  background-color: color-mix(in_srgb, var(--surface-container-lowest) 90%, transparent);
+  border-bottom: 1px solid var(--outline-10);
+}
+
+.header-liquid--scrolled {
+  --on-surface: #f2f6fb;
+  --on-surface-variant: #d6e0ec;
+  --outline: #9fb0c7;
+  --surface-container-lowest: color-mix(in_srgb, #0b213c 65%, transparent);
+  --surface-container-low: color-mix(in_srgb, #0b213c 72%, transparent);
+  --surface-container: color-mix(in_srgb, #0b213c 80%, transparent);
+  --primary: #c1dcff;
+  --primary-container: #9bc1ff;
+  --secondary: #ffc089;
+  --secondary-container: #ffa24a;
+  --on-secondary-container: #4b2400;
+  --outline-10: color-mix(in_srgb, #a8bfdc 30%, transparent);
+  background: linear-gradient(120deg, rgba(4, 33, 68, 0.78), rgba(0, 79, 159, 0.55));
+  border-bottom: 1px solid rgba(128, 160, 200, 0.35);
+  box-shadow: 0 16px 40px rgba(0, 24, 56, 0.25);
+}
+
+.header-liquid--scrolled::before {
+  opacity: 0.7;
+}
+
+@keyframes liquidShift {
+  0% {
+    transform: translate3d(-6%, -8%, 0) scale(1);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translate3d(6%, 6%, 0) scale(1.06);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate3d(-6%, -8%, 0) scale(1);
+    opacity: 0.45;
+  }
+}
+
 /* ========== LIGHT THEME OVERRIDES ========== */
 
 /* Background overrides */
