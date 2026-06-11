@@ -752,7 +752,7 @@ export default function SimuladoSAEPLumenPage() {
           </div>
           <div ref={glowRef} className="hero-glow" />
           <div className="hero-ring" />
-          <div class="hero-ring-2" />
+          <div className="hero-ring-2" />
 
           <div className="eyebrow">Preparatório Oficial 2026</div>
 
