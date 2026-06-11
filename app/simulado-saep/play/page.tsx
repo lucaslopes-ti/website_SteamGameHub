@@ -28,247 +28,7 @@ import {
 const QUESTIONS_PER_QUIZ = 20;
 
 // CSS Injection para a Página de Play
-const playLumenStyles = `
-/* ─── TOKENS & BASE ─── */
-.lumen-theme {
-	--bg: #060608;
-	--bg2: #0d0d12;
-	--bg3: #12121a;
-	--border: rgba(255, 255, 255, 0.06);
-	--text: #d4cfc8;
-	--text-dim: #6b6870;
-	--amber: #f5c97a;
-	--amber-dim: #a8823a;
-	--amber-glow: rgba(245, 201, 122, 0.15);
-	--radius: 8px;
-  --success: #7ecfa0;
-  --success-glow: rgba(126, 207, 160, 0.15);
-  --error-color: #e57373;
-  --error-glow: rgba(229, 115, 115, 0.15);
-  --warm: #f0e8d8;
 
-	background: var(--bg);
-	color: var(--text);
-	font-family: "DM Mono", monospace;
-	font-weight: 300;
-	overflow-x: hidden;
-  min-height: 100vh;
-  position: relative;
-  z-index: 1;
-}
-
-.lumen-theme *, .lumen-theme *::before, .lumen-theme *::after {
-	box-sizing: border-box;
-}
-
-/* ─── NOISE GRAIN ─── */
-.lumen-theme::after {
-	content: "";
-	position: fixed;
-	inset: 0;
-	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-	pointer-events: none;
-	z-index: 9999;
-	opacity: 0.5;
-}
-
-/* ─── CUSTOM CURSOR ─── */
-.lumen-theme { cursor: none; }
-.lumen-theme a, .lumen-theme button { cursor: none; }
-.lumen-theme .cur {
-	position: fixed;
-	width: 6px; height: 6px;
-	background: var(--amber);
-	border-radius: 50%;
-	pointer-events: none;
-	z-index: 10000;
-	transform: translate(-50%, -50%);
-	transition: width 0.15s, height 0.15s, background 0.15s;
-}
-.lumen-theme .cur-ring {
-	position: fixed;
-	width: 28px; height: 28px;
-	border: 1px solid var(--amber);
-	border-radius: 50%;
-	pointer-events: none;
-	z-index: 9999;
-	transform: translate(-50%, -50%);
-	transition: width 0.25s, height 0.25s, opacity 0.25s, border-color 0.25s;
-	opacity: 0.35;
-}
-.lumen-theme:has(a:hover, button:hover) .cur {
-	width: 10px; height: 10px; background: var(--amber);
-}
-.lumen-theme:has(a:hover, button:hover) .cur-ring {
-	width: 44px; height: 44px; opacity: 0.6;
-}
-
-/* COMPONENTES DA PROVA */
-.play-topbar {
-  position: sticky;
-  top: 64px; /* below header */
-  z-index: 40;
-  background: rgba(6, 6, 8, 0.92);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  padding: 16px 24px;
-}
-.play-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-@media (min-width: 1024px) {
-  .play-container { padding: 0 40px; }
-}
-
-/* Typography */
-.play-title { font-family: "Cormorant Garamond", serif; font-weight: 300; color: var(--warm); }
-.play-mono { font-family: "DM Mono", monospace; }
-
-/* Buttons */
-.btn-amber {
-  background: var(--amber);
-  color: var(--bg);
-  border: 1px solid var(--amber);
-  padding: 12px 24px;
-  font-family: "DM Mono", monospace;
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  border-radius: var(--radius);
-  transition: all 0.2s;
-}
-.btn-amber:hover { background: #ffd98a; border-color: #ffd98a; }
-
-.btn-outline {
-  background: transparent;
-  color: var(--amber);
-  border: 1px solid var(--border);
-  padding: 12px 24px;
-  font-family: "DM Mono", monospace;
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  border-radius: var(--radius);
-  transition: all 0.2s;
-}
-.btn-outline:hover { background: var(--border); border-color: var(--amber-dim); }
-
-.btn-success {
-  background: transparent;
-  color: var(--success);
-  border: 1px solid var(--success);
-  padding: 12px 24px;
-  font-family: "DM Mono", monospace;
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  border-radius: var(--radius);
-  transition: all 0.2s;
-}
-.btn-success:hover { background: var(--success); color: var(--bg); }
-
-/* Option Cards */
-.option-card {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px 24px;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-.option-card:hover { border-color: rgba(245, 201, 122, 0.4); background: rgba(245, 201, 122, 0.02); }
-.option-card.selected {
-  background: var(--amber-glow);
-  border-color: var(--amber);
-}
-.option-card.correct {
-  background: var(--success-glow);
-  border-color: var(--success);
-}
-.option-card.wrong {
-  background: var(--error-glow);
-  border-color: var(--error);
-}
-.option-letter {
-  width: 32px; height: 32px;
-  border-radius: 6px;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-dim);
-  font-family: "DM Mono", monospace;
-  font-size: 14px;
-}
-.option-card.selected .option-letter {
-  background: var(--amber);
-  color: var(--bg);
-}
-.option-card.correct .option-letter {
-  background: var(--success);
-  color: var(--bg);
-}
-.option-card.wrong .option-letter {
-  background: var(--error);
-  color: var(--bg);
-}
-
-/* Sidebar Navigator */
-.nav-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
-}
-.nav-dot {
-  aspect-ratio: 1;
-  border-radius: 6px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px;
-  font-family: "DM Mono", monospace;
-  border: 1px solid var(--border);
-  background: var(--bg3);
-  color: var(--text-dim);
-  transition: all 0.2s;
-}
-.nav-dot:hover { background: rgba(255, 255, 255, 0.05); }
-.nav-dot.correct { background: var(--success-glow); border-color: rgba(126, 207, 160, 0.3); color: var(--success); }
-.nav-dot.wrong { background: var(--error-glow); border-color: rgba(230, 100, 100, 0.3); color: var(--error); }
-.nav-dot.current { border-color: var(--amber); color: var(--amber); box-shadow: 0 0 10px var(--amber-glow); }
-.nav-dot.current.answered { background: var(--amber); color: var(--bg); border-color: var(--amber); box-shadow: none;}
-
-/* Result Card */
-.result-card {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 48px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-.result-card::before {
-  content: ""; position: absolute; inset: 0;
-  background: radial-gradient(ellipse at center top, var(--amber-glow), transparent 60%);
-  opacity: 0.5; pointer-events: none;
-}
-.result-card.success-glow::before { background: radial-gradient(ellipse at center top, var(--success-glow), transparent 60%); }
-.result-card.error-glow::before { background: radial-gradient(ellipse at center top, var(--error-glow), transparent 60%); }
-
-/* Modal */
-.modal-overlay {
-  position: fixed; inset: 0; z-index: 100;
-  background: rgba(6, 6, 8, 0.9);
-  backdrop-filter: blur(8px);
-  display: flex; align-items: center; justify-content: center;
-}
-.modal-content {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 32px;
-  max-width: 400px;
-  width: 90%;
-  text-align: center;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-}
-`;
 
 export default function SimuladoPlayPage() {
   const router = useRouter();
@@ -385,14 +145,12 @@ export default function SimuladoPlayPage() {
     }));
   };
 
-  const goToQuestion = useCallback(
-    (index: number) => {
-      if (index >= 0 && index < questions.length) {
-        setCurrentIndex(index);
-      }
-    },
-    [questions.length]
-  );
+  const goToQuestion = useCallback((idx: number) => {
+    if (idx >= 0 && idx < questions.length) {
+      setCurrentIndex(idx);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [questions.length]);
 
   const handleSubmit = async () => {
     if (!user) return;
@@ -434,10 +192,7 @@ export default function SimuladoPlayPage() {
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: `@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap');` }} />
-      <style dangerouslySetInnerHTML={{ __html: playLumenStyles }} />
-
-      <div className="lumen-theme">
+      <div className="lumen-theme w-full h-full">
         <div ref={cursorRef} className="cur" />
         <div ref={ringRef} className="cur-ring" />
 
@@ -552,22 +307,22 @@ export default function SimuladoPlayPage() {
         ) : (
           /* =================== TELA DA PROVA =================== */
           <>
-            <div className="play-topbar flex items-center justify-between gap-6">
-              <button onClick={() => router.push("/simulado-saep")} className="flex items-center gap-2 text-xs uppercase tracking-widest text-[var(--text-dim)] hover:text-[var(--amber)] transition-colors">
-                <ArrowLeft className="w-4 h-4" />
+            <div className="play-topbar flex items-center justify-between gap-2 md:gap-6 px-4 md:px-6 py-4">
+              <button onClick={() => router.push("/simulado-saep")} className="flex items-center gap-1 md:gap-2 text-[10px] md:text-xs uppercase tracking-widest text-[var(--text-dim)] hover:text-[var(--amber)] transition-colors">
+                <ArrowLeft className="w-3 h-3 md:w-4 md:h-4" />
                 Sair
               </button>
               
-              <div className="flex-1 max-w-md flex items-center gap-4">
-                <span className="text-[10px] font-mono text-[var(--text-dim)]">{answeredCount}/{questions.length}</span>
-                <div className="flex-1 h-1 bg-[var(--border)] overflow-hidden rounded-full">
+              <div className="flex-1 max-w-md flex items-center gap-2 md:gap-4 mx-2">
+                <span className="text-[9px] md:text-[10px] font-mono text-[var(--text-dim)]">{answeredCount}/{questions.length}</span>
+                <div className="flex-1 h-1 bg-[rgba(255,255,255,0.15)] overflow-hidden rounded-full">
                   <div className="h-full bg-[var(--amber)] transition-all duration-500" style={{ width: `${progress}%` }} />
                 </div>
-                <span className="text-[10px] font-mono text-[var(--text-dim)]">{progress.toFixed(0)}%</span>
+                <span className="text-[9px] md:text-[10px] font-mono text-[var(--text-dim)]">{progress.toFixed(0)}%</span>
               </div>
 
-              <div className="flex items-center gap-2 text-xs font-mono text-[var(--amber-dim)]">
-                <Clock className="w-4 h-4" />
+              <div className="flex items-center gap-1 md:gap-2 text-[10px] md:text-xs font-mono text-[var(--amber-dim)] whitespace-nowrap">
+                <Clock className="w-3 h-3 md:w-4 md:h-4" />
                 {formatTime(elapsedTime)}
               </div>
             </div>

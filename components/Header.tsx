@@ -63,6 +63,10 @@ export default function Header() {
     }
   };
 
+  if (pathname.startsWith("/simulado-saep/play")) {
+    return null;
+  }
+
   return (
     <>
       {pathname.startsWith("/simulado-saep") && (
