@@ -21,6 +21,7 @@ export default function Home() {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedTechs, setSelectedTechs] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<"recent" | "rating" | "mostRated">("recent");
+  const [heroGame, setHeroGame] = useState<Game | null>(null);
   const [page, setPage] = useState(1);
   const pageSize = 12;
   const loaderRef = useRef<HTMLDivElement | null>(null);
@@ -48,6 +49,13 @@ export default function Home() {
       if (gamesResponse.ok) {
         const data = await gamesResponse.json();
         setGames(data);
+        
+        const featured = data.filter((g: Game) => g.featured);
+        const pool = featured.length > 0 ? featured : data;
+        if (pool.length > 0) {
+          const randomIndex = Math.floor(Math.random() * pool.length);
+          setHeroGame(pool[randomIndex]);
+        }
       }
 
       if (statsResponse.ok) {
@@ -61,8 +69,6 @@ export default function Home() {
     }
   };
 
-  const featuredGames = games.filter((game) => game.featured).slice(0, 3);
-  const heroGame = featuredGames[0] ?? games[0];
 
   const uniqueGenres = Array.from(new Set(games.flatMap((g) => g.genres))).sort((a, b) =>
     a.localeCompare(b, undefined, { sensitivity: "base" })
