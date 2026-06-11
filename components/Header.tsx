@@ -64,6 +64,41 @@ export default function Header() {
   };
 
   return (
+    <>
+      {pathname.startsWith("/simulado-saep") && (
+        <style dangerouslySetInnerHTML={{ __html: `
+          .header-liquid {
+            --surface-container-lowest: transparent !important;
+            --surface-container-low: #0d0d12 !important;
+            --primary: #f5c97a !important;
+            --primary-container: #ffd98a !important;
+            --on-surface-variant: #d4cfc8 !important;
+            --outline-10: rgba(255, 255, 255, 0.06) !important;
+            --secondary-container: #a8823a !important;
+            --on-secondary-container: #060608 !important;
+            --on-surface: #f0e8d8 !important;
+            --outline: #6b6870 !important;
+            --surface: #060608 !important;
+            --on-primary: #060608 !important;
+            --primary-fixed-dim: #a8823a !important;
+            background-color: #060608 !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+          }
+          .header-liquid::before {
+            display: none !important;
+          }
+          .header-liquid--scrolled {
+            background: rgba(6, 6, 8, 0.92) !important;
+            backdrop-filter: blur(12px) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+            box-shadow: none !important;
+          }
+          /* Custom hover states for nav links */
+          .header-liquid nav a:hover {
+            color: #f5c97a !important;
+          }
+        `}} />
+      )}
     <header className="sticky top-0 z-50 w-full" role="banner">
       <div
         className={`header-liquid transition-all duration-300 ${
@@ -119,6 +154,10 @@ export default function Header() {
             </Link>
             <Link href="/stats" className="px-3 py-2 text-sm font-medium text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors">
               {t("header.stats")}
+            </Link>
+            <Link href="/simulado-saep" className="px-3 py-2 text-sm font-medium text-[var(--on-surface-variant)] hover:text-[var(--secondary-container)] transition-colors flex items-center gap-1">
+              <Trophy className="w-3.5 h-3.5" />
+              Simulado SAEP
             </Link>
             {isAuthenticated && (
               <Link href="/favorites" className="px-3 py-2 text-sm font-medium text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors">
@@ -209,6 +248,10 @@ export default function Header() {
             <Link href="/stats" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-low)] transition-colors">
               <span className="font-medium">{t("header.stats")}</span>
             </Link>
+            <Link href="/simulado-saep" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-low)] transition-colors">
+              <Trophy className="w-5 h-5" />
+              <span className="font-medium">Simulado SAEP</span>
+            </Link>
             {isAuthenticated && (
               <Link href="/favorites" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-low)] transition-colors">
                 <Heart className="w-5 h-5" />
@@ -246,5 +289,6 @@ export default function Header() {
         </div>
       )}
     </header>
+    </>
   );
 }

@@ -114,6 +114,28 @@ service cloud.firestore {
     }
     
     // ==========================================
+    // COLEÇÃO DE QUESTÕES SAEP (saep_questions)
+    // ==========================================
+    match /saep_questions/{questionId} {
+      // Leitura pública (alunos precisam ler as questões)
+      allow read: if true;
+      // Escrita requer autenticação (admin/teacher gerencia)
+      allow write: if request.auth != null;
+    }
+    
+    // ==========================================
+    // COLEÇÃO DE TENTATIVAS SAEP (saep_attempts)
+    // ==========================================
+    match /saep_attempts/{attemptId} {
+      // Leitura pública (ranking é visível para todos)
+      allow read: if true;
+      // Criação requer autenticação
+      allow create: if request.auth != null;
+      // Tentativas são imutáveis após criação
+      allow update, delete: if false;
+    }
+    
+    // ==========================================
     // OUTRAS COLEÇÕES - Negar tudo por padrão
     // ==========================================
     match /{document=**} {

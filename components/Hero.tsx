@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
   BarChart3,
+  ChevronLeft,
+  ChevronRight,
   Gamepad2,
   Play,
   Sparkles,
@@ -49,8 +51,11 @@ export default function Hero() {
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [topGame, setTopGame] = useState<any>(null);
+  const [topGames, setTopGames] = useState<any[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const animatedGames = useAnimatedCounter(stats.totalGames, 1500);
   const animatedAuthors = useAnimatedCounter(stats.totalAuthors, 1800);
@@ -85,10 +90,8 @@ export default function Hero() {
         });
 
         if (approved.length > 0) {
-          // Evita que um jogo com 1 avaliação nota 5 ultrapasse jogos populares
-          // Usando uma variação de Média Bayesiana para calcular a relevância
-          const m = 3; // Peso mínimo de votos para relevância
-          const C = avgRating || 0; // Média global do hub
+          const m = 3;
+          const C = avgRating || 0;
 
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const getScore = (g: any) => {
@@ -100,11 +103,68 @@ export default function Hero() {
 
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const sorted = [...approved].sort((a: any, b: any) => getScore(b) - getScore(a));
-          setTopGame(sorted[0]);
+          setTopGames(sorted.slice(0, 5));
         }
       })
       .catch(() => {});
   }, []);
+
+  // Troca com transição suave (fade out → troca → fade in)
+  const goToIndex = useCallback(
+    (newIndex: number) => {
+      if (isTransitioning || topGames.length <= 1) return;
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentIndex(newIndex % topGames.length);
+        setIsTransitioning(false);
+      }, 400);
+    },
+    [isTransitioning, topGames.length]
+  );
+
+  const goNext = useCallback(() => {
+    goToIndex((currentIndex + 1) % topGames.length);
+  }, [currentIndex, goToIndex, topGames.length]);
+
+  const goPrev = useCallback(() => {
+    goToIndex((currentIndex - 1 + topGames.length) % topGames.length);
+  }, [currentIndex, goToIndex, topGames.length]);
+
+  // Reset do timer automático ao navegar manualmente
+  const resetTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      goNext();
+    }, 5000);
+  }, [goNext]);
+
+  // Auto-rotação a cada 5 segundos
+  useEffect(() => {
+    if (topGames.length <= 1) return;
+    timerRef.current = setInterval(() => {
+      goNext();
+    }, 5000);
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [topGames.length, goNext]);
+
+  const handleDotClick = (index: number) => {
+    goToIndex(index);
+    resetTimer();
+  };
+
+  const handlePrev = () => {
+    goPrev();
+    resetTimer();
+  };
+
+  const handleNext = () => {
+    goNext();
+    resetTimer();
+  };
+
+  const topGame = topGames[currentIndex] || null;
 
   const ratingValue = stats.avgRating > 0 ? animatedRating.toFixed(1) : "-";
   const ratingSuffix = stats.avgRating > 0 ? "/ 5" : "";
@@ -209,24 +269,31 @@ export default function Hero() {
             </div>
           </div>
 
+          {/* ===== CARD DO JOGO EM DESTAQUE COM TRANSIÇÃO ===== */}
           <div className="lg:col-span-5 relative">
             <div className="relative animate-float">
               <div className="absolute -inset-8 bg-gradient-to-br from-senai-orange/30 via-senai-blueLight/20 to-transparent blur-3xl rounded-full" />
 
               <div className="relative rounded-2xl overflow-hidden glass-strong shadow-hero">
                 <div className="relative aspect-[3/4] overflow-hidden">
-                  {topGame?.image ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={topGame.image}
-                      alt={topGame.title}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-senai-blueDark to-senai-blue" />
-                  )}
+                  {/* Imagem com transição fade */}
+                  <div
+                    className="absolute inset-0 transition-opacity duration-500 ease-in-out"
+                    style={{ opacity: isTransitioning ? 0 : 1 }}
+                  >
+                    {topGame?.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={topGame.image}
+                        alt={topGame.title}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-gradient-to-br from-senai-blueDark to-senai-blue" />
+                    )}
+                  </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-senai-dark via-senai-dark/40 to-transparent" />
 
                   <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-senai-orange text-white text-[10px] font-bold uppercase tracking-wider shadow-glow-orange">
@@ -238,9 +305,33 @@ export default function Hero() {
                     <Star className="w-3.5 h-3.5 text-senai-orange fill-senai-orange" strokeWidth={1.5} />
                     {topGame ? topGame.rating?.toFixed(1) || "-" : "-"}
                   </div>
+
+                  {/* Setas de navegação */}
+                  {topGames.length > 1 && (
+                    <>
+                      <button
+                        onClick={handlePrev}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-senai-dark/60 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white/80 hover:text-white hover:bg-senai-dark/80 transition-all z-10"
+                        aria-label="Jogo anterior"
+                      >
+                        <ChevronLeft className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={handleNext}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-senai-dark/60 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white/80 hover:text-white hover:bg-senai-dark/80 transition-all z-10"
+                        aria-label="Próximo jogo"
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </button>
+                    </>
+                  )}
                 </div>
 
-                <div className="p-6 space-y-4">
+                {/* Informações do jogo com fade */}
+                <div
+                  className="p-6 space-y-4 transition-opacity duration-500 ease-in-out"
+                  style={{ opacity: isTransitioning ? 0 : 1 }}
+                >
                   <div>
                     <h3 className="font-gaming font-bold text-2xl leading-tight mb-1 text-white">
                       {topGame ? topGame.title : "Projeto em destaque"}
@@ -268,6 +359,24 @@ export default function Hero() {
                     )}
                   </div>
                 </div>
+
+                {/* Dots de navegação */}
+                {topGames.length > 1 && (
+                  <div className="absolute bottom-[120px] left-0 right-0 flex justify-center gap-2 z-10">
+                    {topGames.map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleDotClick(idx)}
+                        className={`rounded-full transition-all duration-300 ${
+                          idx === currentIndex
+                            ? "w-6 h-2 bg-senai-orange shadow-glow-orange"
+                            : "w-2 h-2 bg-white/40 hover:bg-white/70"
+                        }`}
+                        aria-label={`Ir para jogo ${idx + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="absolute -top-3 -right-3 w-16 h-16 border-2 border-senai-orange/40 rounded-tr-2xl" />

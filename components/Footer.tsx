@@ -5,11 +5,51 @@ import Link from "next/link";
 import { Mail, Github } from "lucide-react";
 import { useI18n } from "./I18nProvider";
 
+import { usePathname } from "next/navigation";
+
 export default function Footer() {
   const { t } = useI18n();
+  const pathname = usePathname();
   const currentYear = new Date().getFullYear();
 
   return (
+    <>
+      {pathname.startsWith("/simulado-saep") && (
+        <style dangerouslySetInnerHTML={{ __html: `
+          #footer {
+            --surface-container-low: #060608 !important;
+            --surface-container-lowest: #0d0d12 !important;
+            --primary: #f5c97a !important;
+            --on-surface-variant: #6b6870 !important;
+            --outline-10: rgba(255, 255, 255, 0.06) !important;
+            --secondary: #a8823a !important;
+            --secondary-container: #f5c97a !important;
+            background-color: #060608 !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+          }
+          #footer p, #footer span, #footer div {
+            color: #d4cfc8;
+          }
+          #footer .text-\\[10px\\] {
+            color: #6b6870 !important;
+          }
+          #footer a {
+            color: #d4cfc8 !important;
+          }
+          #footer a:hover {
+            color: #f5c97a !important;
+          }
+          #footer .text-\\[var\\(--primary\\)\\] {
+            color: #f5c97a !important;
+          }
+          #footer .text-\\[var\\(--secondary\\)\\] {
+            color: #a8823a !important;
+          }
+          #footer .bg-gradient-to-r {
+            background-image: linear-gradient(to right, transparent, rgba(245, 201, 122, 0.2), transparent) !important;
+          }
+        `}} />
+      )}
     <footer id="footer" className="relative border-t border-[var(--outline-10)] mt-20 bg-[var(--surface-container-low)]" role="contentinfo">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--secondary-container)]/60 to-transparent" />
 
@@ -110,5 +150,6 @@ export default function Footer() {
         </div>
       </div>
     </footer>
+    </>
   );
 }
