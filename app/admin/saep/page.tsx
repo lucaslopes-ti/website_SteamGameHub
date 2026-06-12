@@ -138,35 +138,70 @@ export default function AdminSAEPPage() {
       return;
     }
 
-    let parsed: Array<{
-      question: string;
-      options: string[];
-      correctAnswer: number;
-      subject?: string;
-      difficulty?: string;
-    }>;
+    let rawParsed: any[];
 
     try {
-      parsed = JSON.parse(batchJson);
-      if (!Array.isArray(parsed)) throw new Error("JSON deve ser um array");
+      rawParsed = JSON.parse(batchJson);
+      if (!Array.isArray(rawParsed)) throw new Error("JSON deve ser um array");
     } catch {
       showToast("JSON inválido. Verifique o formato.", "error");
       return;
     }
 
+    // Normalize: accept both formats
+    const letterToIndex: Record<string, number> = { A: 0, B: 1, C: 2, D: 3, E: 4 };
+
+    const normalized = rawParsed.map((item: any) => {
+      // Format 1: Standard (question, options[], correctAnswer)
+      if (item.question && Array.isArray(item.options)) {
+        return {
+          question: item.question,
+          options: item.options,
+          correctAnswer: item.correctAnswer,
+          subject: item.subject || "Conhecimentos Específicos",
+          difficulty: item.difficulty || "medium",
+        };
+      }
+
+      // Format 2: SAEP (enunciado/pergunta, alternativas{A,B,C,D}, resposta_correta/correta)
+      const text = item.enunciado || item.pergunta;
+      const alts = item.alternativas;
+      const answer = item.resposta_correta || item.correta || item.gabarito;
+
+      if (text && alts && typeof alts === "object" && !Array.isArray(alts)) {
+        const keys = Object.keys(alts).sort(); // A, B, C, D...
+        const options = keys.map((k) => alts[k]);
+        const correctAnswer = answer ? letterToIndex[answer.toUpperCase()] ?? 0 : 0;
+
+        return {
+          question: text,
+          options,
+          correctAnswer,
+          subject: item.subject || "Conhecimentos Específicos",
+          difficulty: item.difficulty || "medium",
+        };
+      }
+
+      return null; // Invalid format
+    });
+
     setSubmitting(true);
     let success = 0;
     let errors = 0;
+    const errorMessages: string[] = [];
 
-    for (const item of parsed) {
+    for (let i = 0; i < normalized.length; i++) {
+      const item = normalized[i];
       try {
-        if (!item.question || !item.options || item.options.length !== 4 || item.correctAnswer === undefined) {
+        if (!item || !item.question || !item.options || item.options.length < 4 || item.correctAnswer === undefined) {
           errors++;
+          const id = rawParsed[i]?.id || `#${i + 1}`;
+          errorMessages.push(`Questão ${id}: formato inválido`);
           continue;
         }
         await addQuestion({
           question: item.question,
-          options: item.options,
+          options: item.options.slice(0, 4), // max 4 options
           correctAnswer: item.correctAnswer,
           subject: item.subject || "Outro",
           difficulty: (item.difficulty as "easy" | "medium" | "hard") || "medium",
@@ -175,6 +210,10 @@ export default function AdminSAEPPage() {
       } catch {
         errors++;
       }
+    }
+
+    if (errorMessages.length > 0) {
+      console.warn("Erros na importação:", errorMessages);
     }
 
     showToast(
@@ -391,17 +430,25 @@ export default function AdminSAEPPage() {
               </button>
             </div>
 
-            <div className="rounded-xl bg-white/5 border border-white/10 p-4 text-xs text-gray-400 font-mono">
-              <p className="text-gray-300 mb-2">Formato esperado:</p>
-              <pre className="overflow-x-auto">{`[
-  {
-    "question": "Quanto é 2 + 2?",
-    "options": ["3", "4", "5", "6"],
-    "correctAnswer": 1,
-    "subject": "Matemática",
-    "difficulty": "easy"
-  }
-]`}</pre>
+            <div className="rounded-xl bg-white/5 border border-white/10 p-4 text-xs text-gray-400 font-mono space-y-3">
+              <div>
+                <p className="text-gray-300 mb-1 font-sans font-semibold">Formato 1 — Padrão:</p>
+                <pre className="overflow-x-auto">{`[{
+  "question": "Quanto é 2 + 2?",
+  "options": ["3", "4", "5", "6"],
+  "correctAnswer": 1,
+  "subject": "Matemática",
+  "difficulty": "easy"
+}]`}</pre>
+              </div>
+              <div className="border-t border-white/10 pt-3">
+                <p className="text-gray-300 mb-1 font-sans font-semibold">Formato 2 — SAEP (enunciado + alternativas):</p>
+                <pre className="overflow-x-auto">{`[{
+  "enunciado": "Qual tag HTML...",
+  "alternativas": { "A": "...", "B": "...", "C": "...", "D": "..." },
+  "resposta_correta": "B"
+}]`}</pre>
+              </div>
             </div>
 
             <textarea

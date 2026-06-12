@@ -54,6 +54,8 @@ export default function SimuladoPlayPage() {
   const ringRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (authLoading) return; // Wait until DOM is actually rendered
+
     const cur = cursorRef.current;
     const ring = ringRef.current;
     if (!cur || !ring) return;
@@ -83,7 +85,7 @@ export default function SimuladoPlayPage() {
       window.removeEventListener("mousemove", onMouseMove);
       cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [authLoading]);
 
   // Auth redirect
   useEffect(() => {
@@ -192,6 +194,8 @@ export default function SimuladoPlayPage() {
 
   return (
     <>
+      {/* Import Google Fonts for lumen-theme */}
+      <style dangerouslySetInnerHTML={{ __html: `@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap');` }} />
       <div className="lumen-theme w-full h-full">
         <div ref={cursorRef} className="cur" />
         <div ref={ringRef} className="cur-ring" />

@@ -57,3 +57,7 @@ docs/ATIVIDADE_PROTOTIPO_CSharp.md
 docs/CONFIGURACAO_VERCEL_FIREBASE.md
 docs/GUIA_RAPIDO_FIREBASE.md
 .env*
+
+# scripts adicionais (questões, etc)
+scripts/*.json
+scripts/seed-saep-novas.ts

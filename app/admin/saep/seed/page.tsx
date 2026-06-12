@@ -292,10 +292,20 @@ export default function SeedPage() {
     }
 
     for (const q of rawQuestions) {
-      if (!q.id || !q.pergunta || !q.alternativas || !q.resposta_correta) {
-        setStatus(`Erro: A questão ${q.id || 'sem ID'} não tem o formato correto.`);
+      const text = q.pergunta || q.enunciado;
+      const id = q.id || `SAEP_AUTO_${Date.now()}_${count}`;
+
+      if (!text || !q.alternativas) {
+        setStatus(`Erro: A questão ${id} não tem o formato correto. Precisa ter "pergunta" ou "enunciado" e "alternativas".`);
         setIsProcessing(false);
         return;
+      }
+
+      // Aceita: resposta_correta, correta, ou gabarito
+      const answer = q.resposta_correta || q.correta || q.gabarito;
+
+      if (!answer) {
+        console.warn(`⚠️ Questão ${id} sem resposta correta, usando "A" como padrão.`);
       }
 
       const options = [
@@ -306,24 +316,26 @@ export default function SeedPage() {
         q.alternativas.E,
       ].filter(Boolean);
 
-      const correctIndex = letters.indexOf(q.resposta_correta);
+      const correctIndex = answer 
+        ? letters.indexOf(answer.toUpperCase()) 
+        : 0;
 
       const docData = {
-        question: q.pergunta,
+        question: text,
         options: options,
-        correctAnswer: correctIndex,
-        subject: "Conhecimentos Específicos",
-        difficulty: "medium",
+        correctAnswer: correctIndex >= 0 ? correctIndex : 0,
+        subject: q.subject || "Conhecimentos Específicos",
+        difficulty: q.difficulty || "medium",
         createdAt: Timestamp.now(),
       };
 
       try {
-        const docRef = doc(db, "saep_questions", q.id);
+        const docRef = doc(db, "saep_questions", id);
         await setDoc(docRef, docData);
         count++;
-        setStatus(`Enviada: ${q.id} (${count}/${rawQuestions.length})`);
+        setStatus(`Enviada: ${id} (${count}/${rawQuestions.length})`);
       } catch (e: any) {
-        setStatus(`Erro em ${q.id}: ${e.message}`);
+        setStatus(`Erro em ${id}: ${e.message}`);
         console.error(e);
         setIsProcessing(false);
         return;
