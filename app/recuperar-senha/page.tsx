@@ -68,7 +68,7 @@ export default function RecuperarSenhaPage() {
           <button
             type="submit"
             disabled={loading || !email}
-            className="w-full bg-senai-orange hover:bg-senai-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded font-semibold transition flex items-center justify-center gap-2"
+            className="w-full bg-senai-orange hover:bg-senai-blue disabled:opacity-50 disabled:cursor-not-allowed text-slate-950 hover:text-white px-6 py-3 rounded font-semibold transition flex items-center justify-center gap-2"
           >
             <Mail className="w-5 h-5" aria-hidden="true" />
             <span>{loading ? "Enviando..." : "Enviar link de recuperação"}</span>

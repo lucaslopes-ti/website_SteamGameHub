@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { Star, Loader2 } from "lucide-react";
 import { useToast } from "@/components/ToastProvider";
+import { authedFetch } from "@/lib/client-auth";
+import { useAuth } from "./AuthProvider";
+import Link from "next/link";
 
 interface RatingSectionProps {
   gameId: string;
@@ -14,6 +17,7 @@ export default function RatingSection({
   currentRating,
 }: RatingSectionProps) {
   const { showToast } = useToast();
+  const { isAuthenticated } = useAuth();
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [submitted, setSubmitted] = useState(false);
@@ -25,9 +29,13 @@ export default function RatingSection({
 
   const handleSubmit = async () => {
     if (rating > 0 && !submitted) {
+      if (!isAuthenticated) {
+        showToast("Faça login para avaliar", "info");
+        return;
+      }
       setLoading(true);
       try {
-        const response = await fetch(`/api/games/${gameId}/rate`, {
+        const response = await authedFetch(`/api/games/${gameId}/rate`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -44,6 +52,8 @@ export default function RatingSection({
             // Recarregar a página para atualizar a avaliação
             window.location.reload();
           }, 2000);
+        } else if (response.status === 401 || response.status === 403) {
+          showToast("Faça login para avaliar", "info");
         } else {
           showToast("Erro ao enviar avaliação", "error");
         }
@@ -60,6 +70,17 @@ export default function RatingSection({
       <h2 id="rating-heading" className="text-2xl font-bold mb-4 text-senai-orange">
         Avaliar este jogo
       </h2>
+      {!isAuthenticated && (
+        <div className="mb-4 bg-senai-dark border border-senai-blue rounded p-4 text-gray-300">
+          <p className="mb-2">Faça login para avaliar este jogo.</p>
+          <Link
+            href="/login"
+            className="inline-block bg-senai-orange hover:bg-senai-blue text-slate-950 hover:text-white px-4 py-2 rounded transition"
+          >
+            Entrar
+          </Link>
+        </div>
+      )}
       <div className="flex items-center gap-2 mb-4" role="radiogroup" aria-label="Selecione uma avaliação de 1 a 5 estrelas">
         {[1, 2, 3, 4, 5].map((value) => (
           <button
@@ -102,7 +123,7 @@ export default function RatingSection({
         <button
           type="button"
           onClick={handleSubmit}
-          className="bg-senai-orange hover:bg-senai-blue text-white px-6 py-2 rounded transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
+          className="bg-senai-orange hover:bg-senai-blue text-slate-950 hover:text-white px-6 py-2 rounded transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
           aria-label={`Enviar avaliação de ${rating} ${rating === 1 ? "estrela" : "estrelas"}`}
         >
           Enviar Avaliação

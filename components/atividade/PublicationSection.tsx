@@ -264,7 +264,7 @@ Atividade completada com sucesso!
                   ? "bg-senai-blueLight/20 text-senai-blueLight border border-senai-blueLight"
                   : allUploaded
                   ? "bg-senai-dark text-gray-500 cursor-not-allowed"
-                  : "bg-senai-blue hover:bg-senai-orange text-white"
+                  : "bg-senai-blue hover:bg-senai-orange text-white hover:text-slate-950"
               }`}
             >
               {codeFile ? codeFile.name : "Selecionar .cs"}
@@ -290,7 +290,7 @@ Atividade completada com sucesso!
                   ? "bg-senai-blueLight/20 text-senai-blueLight border border-senai-blueLight"
                   : allUploaded
                   ? "bg-senai-dark text-gray-500 cursor-not-allowed"
-                  : "bg-senai-blue hover:bg-senai-orange text-white"
+                  : "bg-senai-blue hover:bg-senai-orange text-white hover:text-slate-950"
               }`}
             >
               {coverFile ? coverFile.name : "Selecionar Imagem"}
@@ -316,7 +316,7 @@ Atividade completada com sucesso!
                   ? "bg-senai-blueLight/20 text-senai-blueLight border border-senai-blueLight"
                   : allUploaded
                   ? "bg-senai-dark text-gray-500 cursor-not-allowed"
-                  : "bg-senai-blue hover:bg-senai-orange text-white"
+                  : "bg-senai-blue hover:bg-senai-orange text-white hover:text-slate-950"
               }`}
             >
               {gddFile ? gddFile.name : "Selecionar GDD"}
@@ -328,7 +328,7 @@ Atividade completada com sucesso!
           <button
             onClick={handleUploadAll}
             disabled={!codeFile || !coverFile || !gddFile}
-            className="w-full px-6 py-3 bg-senai-blueLight hover:bg-senai-blueLight/80 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-6 py-3 bg-senai-blueLight hover:bg-senai-blueLight/80 text-slate-950 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Enviar Todos os Arquivos
           </button>
@@ -369,7 +369,7 @@ Atividade completada com sucesso!
             <button
               onClick={handleReflectionSubmit}
               disabled={reflectionText.trim().length < 50}
-              className="px-6 py-3 bg-senai-orange hover:bg-senai-blue text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-3 bg-senai-orange hover:bg-senai-blue text-slate-950 hover:text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Enviar Reflexão
             </button>
@@ -410,7 +410,7 @@ Atividade completada com sucesso!
                 <div className="relative">
                   <div className="absolute inset-0 bg-yellow-400 rounded-full blur-xl animate-ping opacity-75" />
                   <div className="relative bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full p-6 shadow-2xl">
-                    <Trophy className="w-16 h-16 text-white" />
+                    <Trophy className="w-16 h-16 text-slate-950" />
                   </div>
                 </div>
               </div>
@@ -478,7 +478,7 @@ Atividade completada com sucesso!
                       window.print();
                     }, 500);
                   }}
-                  className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-senai-orange to-senai-blue text-white rounded-lg font-semibold hover:shadow-lg transition-all"
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-senai-orange to-senai-blueLight text-slate-950 rounded-lg font-semibold hover:shadow-lg transition-all"
                 >
                   <Camera className="w-5 h-5" />
                   Preparar para Print
@@ -486,7 +486,7 @@ Atividade completada com sucesso!
                 
                 <button
                   onClick={onComplete}
-                  className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-senai-blueLight to-green-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-senai-blueLight to-green-600 text-slate-950 rounded-lg font-semibold hover:shadow-lg transition-all"
                 >
                   <CheckCircle className="w-5 h-5" />
                   Finalizar Atividade
@@ -507,7 +507,7 @@ Atividade completada com sucesso!
         <div className="flex justify-end">
           <button
             onClick={onComplete}
-            className="px-8 py-3 bg-gradient-to-r from-senai-orange to-senai-blueLight text-white rounded-lg font-bold text-lg hover:shadow-lg transition-all"
+            className="px-8 py-3 bg-gradient-to-r from-senai-orange to-senai-blueLight text-slate-950 rounded-lg font-bold text-lg hover:shadow-lg transition-all"
           >
             Concluir Atividade e Finalizar →
           </button>

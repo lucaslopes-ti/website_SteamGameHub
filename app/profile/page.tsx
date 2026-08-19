@@ -7,10 +7,11 @@ import { useI18n } from "@/components/I18nProvider";
 import { Game } from "@/lib/games";
 import { User, Mail, Gamepad2, Calendar, Star, Eye, Edit, Trash2, Loader2, History } from "lucide-react";
 import Link from "next/link";
+import { authedFetch } from "@/lib/client-auth";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, isAuthenticated, isAdmin } = useAuth();
+  const { user, isAuthenticated, loading: authLoading } = useAuth();
   const { language, t } = useI18n();
   const [myGames, setMyGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,20 +27,23 @@ export default function ProfilePage() {
   const locale = language === "pt" ? "pt-BR" : "en-US";
 
   useEffect(() => {
+    if (authLoading) return;
     if (!isAuthenticated) {
       router.push("/login");
       return;
     }
     loadMyGames();
     loadDownloadHistory();
-  }, [isAuthenticated, user, router]);
+  }, [isAuthenticated, authLoading, user, router]);
 
   const loadMyGames = async () => {
     try {
-      const response = await fetch("/api/games");
+      const response = await authedFetch("/api/games");
       if (response.ok) {
         const allGames: Game[] = await response.json();
-        const filtered = allGames.filter((g) => g.authorEmail === user?.email);
+        const filtered = allGames.filter(
+          (g) => g.authorUid === user?.id || g.authorEmail === user?.email
+        );
         setMyGames(filtered);
 
         // Calcular estatísticas
@@ -70,11 +74,13 @@ export default function ProfilePage() {
     if (!confirm(t("profile.deleteConfirm"))) return;
 
     try {
-      const response = await fetch(`/api/games/${gameId}`, {
+      const response = await authedFetch(`/api/games/${gameId}`, {
         method: "DELETE",
       });
       if (response.ok) {
         loadMyGames();
+      } else if (response.status === 401 || response.status === 403) {
+        alert(t("profile.deleteError"));
       }
     } catch {
       alert(t("profile.deleteError"));
@@ -85,12 +91,12 @@ export default function ProfilePage() {
     if (!user) return;
     
     try {
-      const response = await fetch(`/api/downloads?userId=${user.email}`);
+      const response = await authedFetch(`/api/downloads`);
       if (response.ok) {
         const downloads = await response.json();
         
         // Buscar detalhes dos jogos
-        const gamesResponse = await fetch("/api/games");
+        const gamesResponse = await authedFetch("/api/games");
         if (gamesResponse.ok) {
           const allGames: Game[] = await gamesResponse.json();
           const history = downloads
@@ -114,15 +120,10 @@ export default function ProfilePage() {
     return null;
   }
 
-  const hasAdminAccess =
-    isAdmin ||
-    ["lucas.lopes0@outlook.com.br", "lucaslopes0@outlook.com.br"].includes(
-      (user.email || "").trim().toLowerCase()
-    );
-
-  let roleLabel = t("profile.roleAdmin");
-  if (user.role === "student" && !hasAdminAccess) {
-    roleLabel = t("profile.roleStudent");
+  // Papel efetivo vem do servidor (custom claims + allowlists server-side).
+  let roleLabel = t("profile.roleStudent");
+  if (user.role === "admin") {
+    roleLabel = t("profile.roleAdmin");
   } else if (user.role === "teacher") {
     roleLabel = t("profile.roleTeacher");
   }
@@ -141,7 +142,7 @@ export default function ProfilePage() {
         <p className="text-gray-400 text-xl mb-4">{t("profile.noGamesUploaded")}</p>
         <Link
           href="/upload"
-          className="inline-block bg-senai-orange hover:bg-senai-blue text-white px-6 py-3 rounded font-semibold transition"
+          className="inline-block bg-senai-orange hover:bg-senai-blue text-slate-950 hover:text-white px-6 py-3 rounded font-semibold transition"
         >
           {t("profile.uploadFirstGame")}
         </Link>
@@ -163,12 +164,12 @@ export default function ProfilePage() {
                   className="w-full h-full object-cover"
                 />
                 {!game.approved && game.pending && (
-                  <div className="absolute top-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded text-xs font-bold">
+                  <div className="absolute top-2 right-2 bg-yellow-500 text-slate-950 px-2 py-1 rounded text-xs font-bold">
                     {t("profile.pendingBadge")}
                   </div>
                 )}
                 {game.approved && (
-                  <div className="absolute top-2 right-2 bg-senai-blueLight text-white px-2 py-1 rounded text-xs font-bold">
+                  <div className="absolute top-2 right-2 bg-senai-blueLight text-slate-950 px-2 py-1 rounded text-xs font-bold">
                     {t("profile.approvedBadge")}
                   </div>
                 )}
@@ -191,7 +192,7 @@ export default function ProfilePage() {
               <div className="flex gap-2">
                 <Link
                   href={`/games/${game.id}`}
-                  className="flex-1 bg-senai-blue hover:bg-senai-orange text-white px-4 py-2 rounded text-center transition text-sm flex items-center justify-center gap-2"
+                  className="flex-1 bg-senai-blue hover:bg-senai-orange text-white hover:text-slate-950 px-4 py-2 rounded text-center transition text-sm flex items-center justify-center gap-2"
                 >
                   <Eye className="w-4 h-4" />
                   {t("profile.view")}
@@ -199,7 +200,7 @@ export default function ProfilePage() {
                 {game.approved && (
                   <Link
                     href={`/games/${game.id}/edit`}
-                    className="bg-senai-blueLight hover:bg-green-600 text-white px-4 py-2 rounded transition"
+                    className="bg-senai-blueLight hover:bg-green-600 text-slate-950 hover:text-slate-950 px-4 py-2 rounded transition"
                     title={t("profile.edit")}
                   >
                     <Edit className="w-4 h-4" />
@@ -293,14 +294,14 @@ export default function ProfilePage() {
         <div className="flex gap-4">
           <button
             onClick={() => setShowDownloadHistory(!showDownloadHistory)}
-            className="bg-senai-blue hover:bg-senai-orange text-white px-6 py-2 rounded font-semibold transition flex items-center gap-2"
+            className="bg-senai-blue hover:bg-senai-orange text-white hover:text-slate-950 px-6 py-2 rounded font-semibold transition flex items-center gap-2"
           >
             <History className="w-5 h-5" />
             {t("profile.downloadHistory")}
           </button>
           <Link
             href="/upload"
-            className="bg-senai-orange hover:bg-senai-blue text-white px-6 py-2 rounded font-semibold transition flex items-center gap-2"
+            className="bg-senai-orange hover:bg-senai-blue text-slate-950 hover:text-white px-6 py-2 rounded font-semibold transition flex items-center gap-2"
           >
             <Gamepad2 className="w-5 h-5" />
             {t("profile.uploadNewGame")}

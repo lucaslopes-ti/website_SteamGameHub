@@ -242,7 +242,7 @@ export default function AtividadeMathQuestPage() {
     <div className="min-h-screen bg-senai-blueDark">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="bg-gradient-to-r from-senai-blue via-senai-orange to-senai-blueLight rounded-lg p-6 mb-6 text-white">
+        <div className="bg-gradient-to-r from-senai-blueDark via-orange-800 to-senai-blue rounded-lg p-6 mb-6 text-white">
           <div className="flex items-center gap-3 mb-2">
             <Gamepad2 className="w-8 h-8" />
             <h1 className="text-3xl md:text-4xl font-bold">Atividade MathQuest - Semana 1</h1>
@@ -295,7 +295,7 @@ export default function AtividadeMathQuestPage() {
                 setScenarioPreview(null);
                 setGddFile(null);
               }}
-              className="px-6 py-3 bg-senai-orange hover:bg-senai-blue text-white rounded-lg font-semibold transition-colors"
+              className="px-6 py-3 bg-senai-orange hover:bg-senai-blue text-slate-950 hover:text-white rounded-lg font-semibold transition-colors"
             >
               Fazer Nova Submissão
             </button>
@@ -509,7 +509,7 @@ export default function AtividadeMathQuestPage() {
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer transition-colors ${
                       gddFile
                         ? "bg-senai-blueLight/20 text-senai-blueLight border border-senai-blueLight"
-                        : "bg-senai-blue hover:bg-senai-orange text-white border border-senai-blue"
+                        : "bg-senai-blue hover:bg-senai-orange text-white hover:text-slate-950 border border-senai-blue"
                     }`}
                   >
                     <FileText className="w-5 h-5" />
@@ -544,7 +544,7 @@ export default function AtividadeMathQuestPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-senai-orange to-senai-blueLight text-white rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-senai-orange to-senai-blueLight text-slate-950 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>

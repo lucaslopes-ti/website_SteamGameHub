@@ -232,7 +232,7 @@ export default function Hero() {
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <Link
                 href="/games"
-                className="group inline-flex items-center gap-2 rounded-full bg-senai-orange px-6 py-3 text-sm font-bold uppercase tracking-widest text-white shadow-glow-orange transition hover:-translate-y-0.5"
+                className="group inline-flex items-center gap-2 rounded-full bg-senai-orange px-6 py-3 text-sm font-bold uppercase tracking-widest text-slate-950 shadow-glow-orange transition hover:-translate-y-0.5"
               >
                 <Play className="w-4 h-4" strokeWidth={2.2} />
                 Explorar jogos
@@ -296,7 +296,7 @@ export default function Hero() {
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-senai-dark via-senai-dark/40 to-transparent" />
 
-                  <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-senai-orange text-white text-[10px] font-bold uppercase tracking-wider shadow-glow-orange">
+                  <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-senai-orange text-slate-950 text-[10px] font-bold uppercase tracking-wider shadow-glow-orange">
                     <TrendingUp className="w-3 h-3" strokeWidth={2.3} />
                     Em destaque
                   </div>
@@ -388,19 +388,19 @@ export default function Hero() {
 
       <div className="absolute bottom-0 w-full bg-senai-blueDark text-white py-2 overflow-hidden z-30 shadow-lg">
         <div className="flex whitespace-nowrap animate-marquee">
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-senai-orange font-sans">
+          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-white font-sans">
             HUB Atualizado: Novos jogos adicionados
           </span>
           <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest opacity-50 font-sans">•</span>
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-senai-blueLight font-sans">
+          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-slate-100 font-sans">
             Acesse agora e deixe sua avaliação
           </span>
           <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest opacity-50 font-sans">•</span>
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-senai-orange font-sans">
+          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-white font-sans">
             HUB Atualizado: Novos jogos adicionados
           </span>
           <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest opacity-50 font-sans">•</span>
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-senai-blueLight font-sans">
+          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-slate-100 font-sans">
             Acesse agora e deixe sua avaliação
           </span>
         </div>

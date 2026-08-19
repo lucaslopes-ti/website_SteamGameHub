@@ -353,14 +353,14 @@ export default function QuizComponent({ onComplete }: QuizComponentProps) {
             <button
               onClick={handleSubmit}
               disabled={selectedAnswer === null}
-              className="px-6 py-2 bg-senai-orange hover:bg-senai-blue text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-6 py-2 bg-senai-orange hover:bg-senai-blue text-slate-950 hover:text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Verificar Resposta
             </button>
           ) : (
             <button
               onClick={handleNext}
-              className="px-6 py-2 bg-senai-blueLight hover:bg-senai-blueLight/80 text-white rounded-lg font-semibold transition-colors"
+              className="px-6 py-2 bg-senai-blueLight hover:bg-senai-blueLight/80 text-slate-950 rounded-lg font-semibold transition-colors"
             >
               {currentQuestion < questions.length - 1 ? "Próxima →" : "Concluir Quiz"}
             </button>

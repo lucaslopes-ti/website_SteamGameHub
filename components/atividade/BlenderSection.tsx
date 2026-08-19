@@ -185,7 +185,7 @@ Esta capa representa visualmente o protótipo codificado em C#, mostrando os obj
           {!timerStarted && (
             <button
               onClick={() => setTimerStarted(true)}
-              className="px-4 py-2 bg-senai-blueLight hover:bg-senai-blueLight/80 text-white rounded-lg font-semibold transition-colors"
+              className="px-4 py-2 bg-senai-blueLight hover:bg-senai-blueLight/80 text-slate-950 rounded-lg font-semibold transition-colors"
             >
               Iniciar Timer
             </button>
@@ -343,7 +343,7 @@ Esta capa representa visualmente o protótipo codificado em C#, mostrando os obj
             className={`px-6 py-3 rounded-lg font-semibold transition-colors cursor-pointer ${
               uploaded
                 ? "bg-senai-dark text-gray-500 cursor-not-allowed"
-                : "bg-senai-blue hover:bg-senai-orange text-white"
+                : "bg-senai-blue hover:bg-senai-orange text-white hover:text-slate-950"
             }`}
           >
             {coverPreview ? "Trocar Imagem" : "Selecionar Imagem"}
@@ -351,7 +351,7 @@ Esta capa representa visualmente o protótipo codificado em C#, mostrando os obj
           <button
             onClick={handleUpload}
             disabled={!coverImage || uploaded}
-            className="px-6 py-3 bg-senai-blueLight hover:bg-senai-blueLight/80 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 bg-senai-blueLight hover:bg-senai-blueLight/80 text-slate-950 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {uploaded ? "Enviado ✓" : "Enviar Capa"}
           </button>
@@ -394,7 +394,7 @@ Esta capa representa visualmente o protótipo codificado em C#, mostrando os obj
         <button
           onClick={handleDownloadGDD}
           disabled={gddDescription.trim().length === 0 || gddDownloaded}
-          className="px-6 py-3 bg-senai-orange hover:bg-senai-blue text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-6 py-3 bg-senai-orange hover:bg-senai-blue text-slate-950 hover:text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {gddDownloaded ? "GDD Baixado ✓" : "Gerar e Baixar GDD Mini"}
         </button>
@@ -405,7 +405,7 @@ Esta capa representa visualmente o protótipo codificado em C#, mostrando os obj
         <div className="flex justify-end">
           <button
             onClick={onComplete}
-            className="px-8 py-3 bg-gradient-to-r from-senai-orange to-senai-blueLight text-white rounded-lg font-bold text-lg hover:shadow-lg transition-all"
+            className="px-8 py-3 bg-gradient-to-r from-senai-orange to-senai-blueLight text-slate-950 rounded-lg font-bold text-lg hover:shadow-lg transition-all"
           >
             Concluir Modelagem e Avançar →
           </button>

@@ -6,28 +6,31 @@ import { MessageSquare, Send, Trash2, User } from "lucide-react";
 import { useAuth } from "./AuthProvider";
 import { useToast } from "@/components/ToastProvider";
 import { Loader2 } from "lucide-react";
+import { authedFetch } from "@/lib/client-auth";
+import Link from "next/link";
 
 interface CommentsSectionProps {
   gameId: string;
 }
 
 export default function CommentsSection({ gameId }: CommentsSectionProps) {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, loading: authLoading } = useAuth();
   const { showToast } = useToast();
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [newComment, setNewComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [guestName, setGuestName] = useState("");
-  const [guestEmail, setGuestEmail] = useState("");
 
   useEffect(() => {
+    // Aguarda a hidratação da sessão para que authedFetch anexe o token
+    // (comentários de jogos pendentes dependem da visibilidade do ator).
+    if (authLoading) return;
     loadComments();
-  }, [gameId]);
+  }, [gameId, authLoading]);
 
   const loadComments = async () => {
     try {
-      const response = await fetch(`/api/games/${gameId}/comments`);
+      const response = await authedFetch(`/api/games/${gameId}/comments`);
       if (response.ok) {
         const data = await response.json();
         setComments(data.sort((a: Comment, b: Comment) => 
@@ -44,32 +47,30 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim()) return;
+    if (!isAuthenticated) {
+      showToast("Faça login para comentar", "info");
+      return;
+    }
 
     setSubmitting(true);
     try {
-      const response = await fetch(`/api/games/${gameId}/comments`, {
+      const response = await authedFetch(`/api/games/${gameId}/comments`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          author: isAuthenticated && user ? user.name : guestName.trim() || "Anônimo",
-          authorEmail:
-            isAuthenticated && user
-              ? user.email
-              : guestEmail.trim() || `anon-${Date.now()}@example.com`,
+          author: user?.name || "",
           content: newComment.trim(),
         }),
       });
 
       if (response.ok) {
         setNewComment("");
-        if (!isAuthenticated) {
-          setGuestName("");
-          setGuestEmail("");
-        }
         showToast("Comentário enviado com sucesso!", "success");
         loadComments();
+      } else if (response.status === 401 || response.status === 403) {
+        showToast("Faça login para comentar", "info");
       } else {
         showToast("Erro ao enviar comentário", "error");
       }
@@ -84,13 +85,15 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
     if (!confirm("Tem certeza que deseja deletar este comentário?")) return;
 
     try {
-      const response = await fetch(`/api/comments/${commentId}`, {
+      const response = await authedFetch(`/api/comments/${commentId}`, {
         method: "DELETE",
       });
 
       if (response.ok) {
         showToast("Comentário deletado com sucesso!", "success");
         loadComments();
+      } else if (response.status === 401 || response.status === 403) {
+        showToast("Você não tem permissão para deletar este comentário", "error");
       } else {
         showToast("Erro ao deletar comentário", "error");
       }
@@ -108,37 +111,14 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
 
       <form onSubmit={handleSubmit} className="mb-6" aria-label="Formulário de comentários">
         {!isAuthenticated && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label htmlFor="guest-name" className="sr-only">
-                Seu nome (opcional)
-              </label>
-              <input
-                id="guest-name"
-                type="text"
-                autoComplete="name"
-                value={guestName}
-                onChange={(e) => setGuestName(e.target.value)}
-                placeholder="Seu nome (opcional)"
-                className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-senai-orange focus-visible:ring-2 focus-visible:ring-senai-orange"
-                aria-label="Seu nome para exibição no comentário (opcional)"
-              />
-            </div>
-            <div>
-              <label htmlFor="guest-email" className="sr-only">
-                Seu e-mail (opcional)
-              </label>
-              <input
-                id="guest-email"
-                type="email"
-                autoComplete="email"
-                value={guestEmail}
-                onChange={(e) => setGuestEmail(e.target.value)}
-                placeholder="Seu e-mail (opcional)"
-                className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-senai-orange focus-visible:ring-2 focus-visible:ring-senai-orange"
-                aria-label="Seu e-mail (opcional, não será exibido publicamente)"
-              />
-            </div>
+          <div className="mb-4 bg-senai-dark border border-senai-blue rounded p-4 text-gray-300">
+            <p className="mb-2">Faça login para deixar um comentário.</p>
+            <Link
+              href="/login"
+              className="inline-block bg-senai-orange hover:bg-senai-blue text-slate-950 hover:text-white px-4 py-2 rounded transition"
+            >
+              Entrar
+            </Link>
           </div>
         )}
         <div className="flex gap-4">
@@ -159,8 +139,8 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
           </div>
           <button
             type="submit"
-            disabled={!newComment.trim() || submitting}
-            className="bg-senai-orange hover:bg-senai-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-2 rounded transition flex items-center gap-2 h-fit focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
+            disabled={!newComment.trim() || submitting || !isAuthenticated}
+            className="bg-senai-orange hover:bg-senai-blue disabled:opacity-50 disabled:cursor-not-allowed text-slate-950 hover:text-white px-6 py-2 rounded transition flex items-center gap-2 h-fit focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
             aria-label={submitting ? "Enviando comentário, aguarde" : "Enviar comentário"}
           >
             {submitting ? (
@@ -223,7 +203,7 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
                     </time>
                   </div>
                 </div>
-                {(isAuthenticated && (user?.email === comment.authorEmail || user?.role === "admin")) && (
+                {comment.canDelete && (
                   <button
                     type="button"
                     onClick={() => handleDelete(comment.id)}

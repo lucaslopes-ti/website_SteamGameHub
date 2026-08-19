@@ -60,7 +60,7 @@ export default function AboutSection() {
           </p>
           <Link
             href="/about"
-            className="inline-flex items-center gap-2 rounded-full bg-senai-orange px-6 py-3 font-semibold text-white shadow-glow-orange transition hover:-translate-y-0.5"
+            className="inline-flex items-center gap-2 rounded-full bg-senai-orange px-6 py-3 font-semibold text-slate-950 shadow-glow-orange transition hover:-translate-y-0.5"
           >
             {t("about.learnMore")}
             <ArrowRight className="w-5 h-5" strokeWidth={2.2} />

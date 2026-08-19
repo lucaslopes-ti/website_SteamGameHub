@@ -103,7 +103,7 @@ export default function ChatComponent({ activityId }: ChatComponentProps) {
                 <div
                   className={`max-w-[80%] rounded-lg p-3 ${
                     isOwn
-                      ? "bg-senai-orange text-white"
+                      ? "bg-senai-orange text-slate-950"
                       : "bg-senai-blueDark text-gray-300 border border-senai-blue"
                   }`}
                 >
@@ -136,7 +136,7 @@ export default function ChatComponent({ activityId }: ChatComponentProps) {
         <button
           onClick={handleSend}
           disabled={!newMessage.trim()}
-          className="px-6 py-2 bg-senai-orange hover:bg-senai-blue text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          className="px-6 py-2 bg-senai-orange hover:bg-senai-blue text-slate-950 hover:text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
           <Send className="w-5 h-5" />
         </button>

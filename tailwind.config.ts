@@ -19,6 +19,11 @@ const config: Config = {
           grayLight: "#F1F5F9",
         },
       },
+      fontFamily: {
+        sans: ["var(--font-plus-jakarta-sans)", "sans-serif"],
+        display: ["var(--font-orbitron)", "sans-serif"],
+        gaming: ["var(--font-orbitron)", "sans-serif"],
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",

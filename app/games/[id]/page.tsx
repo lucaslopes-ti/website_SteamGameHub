@@ -13,10 +13,11 @@ import VideoPlayer from "@/components/VideoPlayer";
 import ShareButton from "@/components/ShareButton";
 import { GameDetailSkeleton } from "@/components/SkeletonLoader";
 import { useAuth } from "@/components/AuthProvider";
+import { authedFetch } from "@/lib/client-auth";
 
 export default function GameDetailPage() {
   const params = useParams();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, loading: authLoading } = useAuth();
   const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedScreenshot, setSelectedScreenshot] = useState<string | null>(null);
@@ -25,13 +26,15 @@ export default function GameDetailPage() {
   const [showGuide, setShowGuide] = useState(false);
 
   useEffect(() => {
+    // Aguarda a hidratação da sessão para que authedFetch anexe o token.
+    if (authLoading) return;
     loadGame();
     registerView();
-  }, [params.id]);
+  }, [params.id, authLoading]);
 
   const registerView = async () => {
     try {
-      const res = await fetch(`/api/games/${params.id}/views`, {
+      const res = await authedFetch(`/api/games/${params.id}/views`, {
         method: "POST",
       });
       if (res.ok) {
@@ -59,7 +62,8 @@ export default function GameDetailPage() {
 
   const loadGame = async () => {
     try {
-      const response = await fetch(`/api/games/${params.id}`);
+      // authedFetch permite que autor/staff vejam jogos pendentes.
+      const response = await authedFetch(`/api/games/${params.id}`);
       if (response.ok) {
         const data = await response.json();
         setGame(data);
@@ -146,7 +150,7 @@ export default function GameDetailPage() {
                 <Link
                   href={game.playableLink}
                   target="_blank"
-                  className="flex items-center gap-2 bg-senai-orange hover:bg-senai-blue text-white px-6 py-3 rounded font-semibold transition"
+                  className="flex items-center gap-2 bg-senai-orange hover:bg-senai-blue text-slate-950 hover:text-white px-6 py-3 rounded font-semibold transition"
                 >
                   <Play className="w-5 h-5" />
                   Jogar Agora
@@ -160,12 +164,11 @@ export default function GameDetailPage() {
                     // Registrar download se usuário estiver logado
                     if (isAuthenticated && user) {
                       try {
-                        await fetch("/api/downloads", {
+                        await authedFetch("/api/downloads", {
                           method: "POST",
                           headers: { "Content-Type": "application/json" },
                           body: JSON.stringify({
                             gameId: game.id,
-                            userId: user.email,
                           }),
                         });
                       } catch (error) {
@@ -173,7 +176,7 @@ export default function GameDetailPage() {
                       }
                     }
                   }}
-                  className="flex items-center gap-2 bg-senai-blueLight hover:bg-green-600 text-white px-6 py-3 rounded font-semibold transition"
+                  className="flex items-center gap-2 bg-senai-blueLight hover:bg-green-600 text-slate-950 hover:text-slate-950 px-6 py-3 rounded font-semibold transition"
                 >
                   <Download className="w-5 h-5" />
                   Baixar Jogo
@@ -188,7 +191,7 @@ export default function GameDetailPage() {
                 <Link
                   href={game.downloadLink}
                   target="_blank"
-                  className="flex items-center gap-2 bg-senai-blueLight hover:bg-green-600 text-white px-6 py-3 rounded font-semibold transition"
+                  className="flex items-center gap-2 bg-senai-blueLight hover:bg-green-600 text-slate-950 hover:text-slate-950 px-6 py-3 rounded font-semibold transition"
                 >
                   <Download className="w-5 h-5" />
                   Download
@@ -218,15 +221,15 @@ export default function GameDetailPage() {
                       // Guia para download direto
                       <ol className="space-y-3 text-gray-300">
                         <li className="flex items-start gap-3">
-                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-senai-blueLight/20 border border-senai-blueLight/40 flex items-center justify-center text-senai-blueLight font-bold text-xs">1</span>
+                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-senai-blueLight/20 border border-senai-blueLight/40 flex items-center justify-center text-slate-100 font-bold text-xs">1</span>
                           <span>Clique no botão <strong className="text-white">Baixar Jogo</strong> acima — o arquivo será baixado direto para o seu computador.</span>
                         </li>
                         <li className="flex items-start gap-3">
-                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-senai-blueLight/20 border border-senai-blueLight/40 flex items-center justify-center text-senai-blueLight font-bold text-xs">2</span>
+                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-senai-blueLight/20 border border-senai-blueLight/40 flex items-center justify-center text-slate-100 font-bold text-xs">2</span>
                           <span>Aguarde o download terminar e abra o arquivo baixado (normalmente em <strong className="text-white">Downloads</strong>).</span>
                         </li>
                         <li className="flex items-start gap-3">
-                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-senai-blueLight/20 border border-senai-blueLight/40 flex items-center justify-center text-senai-blueLight font-bold text-xs">3</span>
+                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-senai-blueLight/20 border border-senai-blueLight/40 flex items-center justify-center text-slate-100 font-bold text-xs">3</span>
                           <span>Se o Windows exibir um aviso de segurança, clique em <strong className="text-white">Mais informações</strong> e depois em <strong className="text-white">Executar mesmo assim</strong>.</span>
                         </li>
                       </ol>
@@ -408,7 +411,7 @@ export default function GameDetailPage() {
                   {game.genres.map((genre) => (
                     <span
                       key={genre}
-                      className="bg-senai-blue text-senai-orange text-sm px-3 py-1 rounded"
+                      className="bg-senai-blueDark/40 text-senai-orange border border-senai-orange/30 text-sm px-3 py-1 rounded font-semibold"
                     >
                       {genre}
                     </span>
@@ -425,7 +428,7 @@ export default function GameDetailPage() {
                   {game.technologies.map((tech) => (
                     <span
                       key={tech}
-                      className="bg-senai-blueLight text-white text-sm px-3 py-1 rounded"
+                      className="bg-senai-blue/20 text-slate-100 border border-senai-blueLight/30 text-sm px-3 py-1 rounded font-semibold"
                     >
                       {tech}
                     </span>

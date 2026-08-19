@@ -76,7 +76,7 @@ export default function AboutPage() {
             </div>
 
             <div className="space-y-3">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--primary)]">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--primary-text)]">
                 {t("aboutPage.title")}
               </h1>
               <h2 className="text-2xl md:text-3xl font-bold text-[var(--on-surface)]">
@@ -91,7 +91,7 @@ export default function AboutPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-[var(--outline-10)]">
               {indicators.map((item) => (
                 <div key={item.label} className="bg-[var(--surface-container-lowest)] rounded-xl p-4 text-center border border-[var(--outline-10)]">
-                  <div className="text-[var(--primary)] font-bold text-2xl">
+                  <div className="text-[var(--primary-text)] font-bold text-2xl">
                     {item.value}
                   </div>
                   <div className="text-[11px] uppercase tracking-widest text-[var(--on-surface-variant)]">
@@ -107,7 +107,7 @@ export default function AboutPage() {
               <div className="bg-[var(--surface-container-lowest)] rounded-2xl p-6 border border-[var(--outline-10)] transition-all hover:border-[var(--secondary-container)]">
                 <div className="flex items-start gap-4">
                   <div className="mt-1 inline-flex items-center justify-center rounded-2xl p-3 bg-[var(--primary-10)] ring-1 ring-[var(--primary)]/30 shadow-sm">
-                    <Target className="w-6 h-6 text-[var(--primary)]" strokeWidth={2.1} />
+                    <Target className="w-6 h-6 text-[var(--primary-text)]" strokeWidth={2.1} />
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-[var(--on-surface)] mb-3">{t("aboutPage.objectivesTitle")}</h3>

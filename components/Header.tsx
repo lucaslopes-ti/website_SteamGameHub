@@ -26,11 +26,8 @@ export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const { isAuthenticated, user, logout, isTeacher } = useAuth();
-  const hasAdminAccess =
-    isTeacher ||
-    ["lucas.lopes0@outlook.com.br", "lucaslopes0@outlook.com.br"].includes(
-      (user?.email || "").trim().toLowerCase()
-    );
+  // Papel efetivo vem do servidor (custom claims + allowlists server-side).
+  const hasAdminAccess = isTeacher;
   const { t } = useI18n();
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -146,7 +143,7 @@ export default function Header() {
           </form>
 
           {/* Nav */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav id="navigation" className="hidden lg:flex items-center gap-1">
             <Link href="/games" className="px-3 py-2 text-sm font-medium text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors">
               {t("header.games")}
             </Link>
@@ -211,9 +208,9 @@ export default function Header() {
             <div key={i} className="flex items-center shrink-0">
               {marqueeItems.map(({ icon: Icon, text }, j) => (
                 <span key={`${i}-${j}`} className="px-8 flex items-center gap-3">
-                  <Icon className="w-4 h-4 text-[var(--primary-fixed-dim)]" aria-hidden="true" />
+                  <Icon className="w-4 h-4 text-white" aria-hidden="true" />
                   <span>{text}</span>
-                  <span className="text-[var(--secondary-container)]">◆</span>
+                  <span className="text-white">◆</span>
                 </span>
               ))}
             </div>

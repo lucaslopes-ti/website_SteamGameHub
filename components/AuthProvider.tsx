@@ -12,6 +12,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { getFirebaseAuth } from "@/lib/firebase/config";
+import { authedFetch } from "@/lib/client-auth";
 
 export interface User {
   id: string;
@@ -31,6 +32,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isAdmin: boolean;
   isTeacher: boolean;
+  isStaff: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -40,81 +42,49 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [loading, setLoading] = useState(true);
   const googleProvider = new GoogleAuthProvider();
 
-  const emergencyAdminEmails = [
-    "lucas.lopes0@outlook.com.br",
-    "lucaslopes0@outlook.com.br",
-  ];
-  const emergencyAdminLocalParts = new Set(["lucaslopes0"]);
-
-  const parseEmailList = (value?: string): string[] => {
-    if (!value) return [];
-    return value
-      .split(/[;,]/)
-      .map((item) => item.trim().toLowerCase())
-      .filter(Boolean);
-  };
-
-  const getAdminEmails = (): string[] => {
-    const envEmails = parseEmailList(
-      process.env.NEXT_PUBLIC_ADMIN_EMAILS ||
-        process.env.ADMIN_EMAILS ||
-        process.env.NEXT_PUBLIC_ADMIN_EMAIL ||
-        process.env.ADMIN_EMAIL
-    );
-    return Array.from(new Set([...emergencyAdminEmails, ...envEmails]));
-  };
-
-  const isEmergencyAdminEmail = (email?: string | null): boolean => {
-    if (!email) return false;
-    const normalizedEmail = email.trim().toLowerCase();
-    if (emergencyAdminEmails.includes(normalizedEmail)) return true;
-
-    const localPart = normalizedEmail.split("@")[0]?.replaceAll(/[^a-z0-9]/g, "") || "";
-    return emergencyAdminLocalParts.has(localPart);
-  };
-
-  const resolveRole = (email?: string | null): User["role"] => {
-    if (!email) return "student";
-
-    const normalizedEmail = email.trim().toLowerCase();
-
-    if (isEmergencyAdminEmail(normalizedEmail)) {
-      return "admin";
-    }
-
-    const adminEmails = getAdminEmails();
-
-    const teacherEmails = parseEmailList(
-      process.env.NEXT_PUBLIC_TEACHER_EMAILS || process.env.TEACHER_EMAILS
-    );
-
-    if (adminEmails.includes(normalizedEmail)) {
-      return "admin";
-    }
-
-    if (teacherEmails.includes(normalizedEmail)) {
-      return "teacher";
-    }
-
-    return "student";
-  };
-
   useEffect(() => {
     const auth = getFirebaseAuth();
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (!firebaseUser) {
         setUser(null);
         setLoading(false);
         return;
       }
 
-      setUser({
+      // Estado base imediato (papel ainda não resolvido).
+      const baseUser: User = {
         id: firebaseUser.uid,
-        name: firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "Usuário",
+        name:
+          firebaseUser.displayName ||
+          firebaseUser.email?.split("@")[0] ||
+          "Usuário",
         email: firebaseUser.email || "",
-        role: resolveRole(firebaseUser.email),
-      });
-      setLoading(false);
+        role: "student",
+      };
+      setUser(baseUser);
+
+      // Papel efetivo vem do servidor (custom claims + allowlists
+      // server-side). O servidor é a única barreira de segurança; aqui apenas
+      // alinhamos a UI com a autorização real.
+      try {
+        const res = await authedFetch("/api/auth/me");
+        // Evita aplicar um papel de uma sessão que já mudou (ex.: logout).
+        if (auth.currentUser !== firebaseUser) return;
+        if (res.ok) {
+          const me = await res.json();
+          setUser({
+            ...baseUser,
+            name: me.name || baseUser.name,
+            role: me.role === "admin" || me.role === "teacher" ? me.role : "student",
+          });
+        }
+      } catch (error) {
+        console.error("Erro ao obter papel efetivo:", error);
+      } finally {
+        if (auth.currentUser === firebaseUser) {
+          setLoading(false);
+        }
+      }
     });
 
     return () => unsubscribe();
@@ -173,16 +143,9 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
   };
 
   const value = useMemo(() => {
-    const normalizedEmail = (user?.email || "").trim().toLowerCase();
-    const adminEmails = getAdminEmails();
-    const teacherEmails = parseEmailList(
-      process.env.NEXT_PUBLIC_TEACHER_EMAILS || process.env.TEACHER_EMAILS
-    );
-    const hasAdminAccess =
-      (!!normalizedEmail && adminEmails.includes(normalizedEmail)) ||
-      isEmergencyAdminEmail(normalizedEmail);
-    const hasTeacherAccess =
-      hasAdminAccess || (!!normalizedEmail && teacherEmails.includes(normalizedEmail));
+    const role = user?.role ?? "student";
+    const isAdmin = role === "admin";
+    const isTeacher = role === "teacher" || isAdmin;
 
     return {
       user,
@@ -193,8 +156,9 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
       logout,
       loading,
       isAuthenticated: !!user,
-      isAdmin: hasAdminAccess || user?.role === "admin",
-      isTeacher: hasTeacherAccess || user?.role === "teacher" || user?.role === "admin",
+      isAdmin,
+      isTeacher,
+      isStaff: isTeacher || isAdmin,
     };
   }, [user, loading]);
 
@@ -212,4 +176,3 @@ export function useAuth() {
   }
   return context;
 }
-

@@ -1,109 +1,89 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readFile, writeFile } from "fs/promises";
-import { existsSync } from "fs";
-import path from "path";
-import { Game } from "@/lib/games";
-import { useLocalDatabase } from "@/lib/config";
+import { getAdminDb } from "@/lib/firebase/admin";
+import { getAuthUser, requireAuth } from "@/lib/server-auth";
+import { loadVisibleGame } from "@/lib/game-access";
 
-const GAMES_FILE = path.join(process.cwd(), "data", "games.json");
-
-async function getGamesFromFile(): Promise<Game[]> {
-  if (!existsSync(GAMES_FILE)) {
-    return [];
-  }
-  const content = await readFile(GAMES_FILE, "utf-8");
-  return JSON.parse(content);
-}
-
-async function saveGamesToFile(games: Game[]) {
-  await writeFile(GAMES_FILE, JSON.stringify(games, null, 2));
-}
-
-// Função helper para atualizar rating no Firestore
-async function updateRatingInFirestore(id: string, rating: number): Promise<{ rating: number; totalRatings: number }> {
-  const { db } = await import("@/lib/firebase/config");
-  const { doc, getDoc, updateDoc } = await import("firebase/firestore");
-  
-  const gameRef = doc(db, "games", id);
-  const gameSnap = await getDoc(gameRef);
-  
-  if (!gameSnap.exists()) {
-    throw new Error("Jogo não encontrado");
-  }
-  
-  const game = gameSnap.data() as Game;
-  const totalRatings = (game.totalRatings || 0) + 1;
-  const newRating = ((game.rating || 0) * (game.totalRatings || 0) + rating) / totalRatings;
-  
-  await updateDoc(gameRef, {
-    rating: newRating,
-    totalRatings: totalRatings,
-  });
-  
-  return { rating: newRating, totalRatings };
-}
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    const user = await getAuthUser(request);
+    const authError = requireAuth(user);
+    if (authError) return authError;
+
     const body = await request.json();
-    const { rating } = body;
-    
-    if (!rating || rating < 1 || rating > 5) {
+    const rating = Number(body.rating);
+
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
       return NextResponse.json(
-        { error: "Avaliação deve ser entre 1 e 5" },
+        { error: "Avaliação deve ser um inteiro entre 1 e 5" },
         { status: 400 }
       );
     }
 
-    // Em produção, sempre usar Firestore
-    if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
-      const result = await updateRatingInFirestore(params.id, rating);
-      return NextResponse.json({
-        success: true,
-        rating: result.rating,
-        totalRatings: result.totalRatings,
-      });
-    }
-
-    // Desenvolvimento local
-    if (!useLocalDatabase()) {
-      const result = await updateRatingInFirestore(params.id, rating);
-      return NextResponse.json({
-        success: true,
-        rating: result.rating,
-        totalRatings: result.totalRatings,
-      });
-    }
-
-    // Modo local apenas em desenvolvimento
-    const games = await getGamesFromFile();
-    const index = games.findIndex((g) => g.id === params.id);
-    
-    if (index === -1) {
+    const db = getAdminDb();
+    // Só permite avaliar jogos visíveis ao ator (aprovados ou próprios/staff).
+    const loaded = await loadVisibleGame(db, params.id, user);
+    if (!loaded.exists || !loaded.visible) {
       return NextResponse.json({ error: "Jogo não encontrado" }, { status: 404 });
     }
-    
-    const game = games[index];
-    const totalRatings = (game.totalRatings || 0) + 1;
-    const newRating = ((game.rating || 0) * (game.totalRatings || 0) + rating) / totalRatings;
-    
-    games[index].rating = newRating;
-    games[index].totalRatings = totalRatings;
-    
-    await saveGamesToFile(games);
-    
-    return NextResponse.json({
-      success: true,
-      rating: newRating,
-      totalRatings,
+
+    const gameRef = db.collection("games").doc(params.id);
+    // Uma nota por UID + jogo.
+    const ratingRef = db.collection("ratings").doc(`${params.id}_${user!.uid}`);
+
+    const result = await db.runTransaction(async (tx) => {
+      const gameSnap = await tx.get(gameRef);
+      if (!gameSnap.exists) {
+        throw new Error("NOT_FOUND");
+      }
+
+      const game = gameSnap.data() as {
+        rating?: number;
+        totalRatings?: number;
+      };
+      const currentTotal = game.totalRatings || 0;
+      const currentAvg = game.rating || 0;
+
+      const ratingSnap = await tx.get(ratingRef);
+      const existing = ratingSnap.exists
+        ? (ratingSnap.data()?.rating as number)
+        : null;
+
+      let newTotal: number;
+      let newAvg: number;
+
+      if (existing !== null) {
+        // Ajuste correto quando a nota muda.
+        newTotal = currentTotal;
+        const sum = currentAvg * currentTotal - existing + rating;
+        newAvg = newTotal > 0 ? sum / newTotal : rating;
+      } else {
+        newTotal = currentTotal + 1;
+        newAvg = (currentAvg * currentTotal + rating) / newTotal;
+      }
+
+      tx.update(gameRef, { rating: newAvg, totalRatings: newTotal });
+      tx.set(ratingRef, {
+        gameId: params.id,
+        uid: user!.uid,
+        rating,
+        updatedAt: new Date().toISOString(),
+      });
+
+      return { rating: newAvg, totalRatings: newTotal };
     });
+
+    return NextResponse.json({ success: true, ...result });
   } catch (error: any) {
+    if (error?.message === "NOT_FOUND") {
+      return NextResponse.json({ error: "Jogo não encontrado" }, { status: 404 });
+    }
     console.error("Erro ao avaliar jogo:", error);
-    const errorMessage = error?.message || "Erro ao avaliar jogo";
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    return NextResponse.json({ error: "Erro ao avaliar jogo" }, { status: 500 });
   }
 }
-

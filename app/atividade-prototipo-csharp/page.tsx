@@ -197,12 +197,12 @@ export default function AtividadePrototipoCSharpPage() {
         {/* Banner com Data */}
         {activityDate && (
           <div className="mb-4 animate-pulse">
-            <div className="bg-gradient-to-r from-yellow-400 via-orange-400 to-red-500 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow">
+            <div className="bg-gradient-to-r from-yellow-400 via-orange-400 to-red-600 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow text-slate-950">
               <div className="flex items-center justify-center gap-3">
-                <div className="bg-white/20 backdrop-blur-sm rounded-full p-2">
-                  <Trophy className="w-6 h-6 text-white" />
+                <div className="bg-slate-950/15 backdrop-blur-sm rounded-full p-2">
+                  <Trophy className="w-6 h-6 text-slate-950" />
                 </div>
-                <h2 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">
+                <h2 className="text-2xl md:text-3xl font-bold text-slate-950 drop-shadow-lg">
                   {activityDate}
                 </h2>
               </div>
@@ -211,7 +211,7 @@ export default function AtividadePrototipoCSharpPage() {
         )}
 
         {/* Header da Atividade */}
-        <div className="bg-gradient-to-r from-senai-blue via-senai-orange to-senai-blueLight rounded-lg p-6 mb-6 text-white">
+        <div className="bg-gradient-to-r from-senai-blueDark via-orange-800 to-senai-blue rounded-lg p-6 mb-6 text-white">
           <h1 className="text-4xl font-bold mb-2">Missão: Protótipo Codificado</h1>
           <p className="text-lg text-gray-200">
             Atividade gamificada de 4 horas - Planejamento e Publicação de Jogos Digitais
@@ -255,7 +255,7 @@ export default function AtividadePrototipoCSharpPage() {
                           setNameInput("");
                         }
                       }}
-                      className="flex-1 px-3 py-1 bg-senai-blueLight hover:bg-senai-blueLight/80 text-white rounded text-sm transition-colors"
+                      className="flex-1 px-3 py-1 bg-senai-blueLight hover:bg-senai-blueLight/80 text-slate-950 rounded text-sm transition-colors"
                     >
                       Salvar
                     </button>
@@ -315,7 +315,7 @@ export default function AtividadePrototipoCSharpPage() {
                   disabled={!canAccess}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
                     isActive
-                      ? "bg-senai-orange text-white"
+                      ? "bg-senai-orange text-slate-950"
                       : phase.completed
                       ? "bg-senai-blueLight/20 text-senai-blueLight border border-senai-blueLight"
                       : canAccess

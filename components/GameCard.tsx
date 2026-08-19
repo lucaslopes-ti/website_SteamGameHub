@@ -101,7 +101,7 @@ export default function GameCard({ game, variant = "default" }: Readonly<GameCar
             
             <div className="flex flex-col items-end gap-1">
               {game.featured && (
-                <div className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-senai-blueLight text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                <div className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-senai-blueLight text-slate-950 text-[10px] font-bold uppercase tracking-wider shadow-sm">
                   <Sparkles className="w-2.5 h-2.5" />
                   {t("game.featured")}
                 </div>

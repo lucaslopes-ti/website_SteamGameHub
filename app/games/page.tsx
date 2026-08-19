@@ -188,12 +188,12 @@ function GamesPageContent() {
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 bg-senai-blue hover:bg-senai-orange text-white px-6 py-2 rounded transition relative"
+            className="flex items-center gap-2 bg-senai-blue hover:bg-senai-orange text-white hover:text-slate-950 px-6 py-2 rounded transition relative"
           >
             <Filter className="w-5 h-5" />
             {t("games.filters")}
             {activeFiltersCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-senai-blueLight text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              <span className="absolute -top-2 -right-2 bg-senai-blueLight text-slate-950 text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 {activeFiltersCount}
               </span>
             )}
@@ -329,7 +329,7 @@ function GamesPageContent() {
                       onClick={() => setCurrentPage(pageNum)}
                       className={`px-4 py-2 rounded transition ${
                         currentPage === pageNum
-                          ? "bg-senai-orange text-white"
+                          ? "bg-senai-orange text-slate-950"
                           : "bg-senai-blueDark text-gray-300 hover:bg-senai-blue"
                       }`}
                     >

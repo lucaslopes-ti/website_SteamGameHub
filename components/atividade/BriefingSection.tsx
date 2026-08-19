@@ -165,7 +165,7 @@ export default function BriefingSection({
         {!videoWatched && (
           <button
             onClick={handleVideoWatch}
-            className="px-6 py-3 bg-senai-orange hover:bg-senai-blue text-white rounded-lg font-semibold transition-colors"
+            className="px-6 py-3 bg-senai-orange hover:bg-senai-blue text-slate-950 hover:text-white rounded-lg font-semibold transition-colors"
           >
             ✓ Marcar como assistido
           </button>
@@ -230,7 +230,7 @@ export default function BriefingSection({
         {!teamFormed ? (
           <button
             onClick={handleFormTeam}
-            className="px-6 py-3 bg-senai-blueLight hover:bg-senai-blueLight/80 text-white rounded-lg font-semibold transition-colors"
+            className="px-6 py-3 bg-senai-blueLight hover:bg-senai-blueLight/80 text-slate-950 rounded-lg font-semibold transition-colors"
           >
             Formar Dupla Aleatoriamente
           </button>
@@ -249,7 +249,7 @@ export default function BriefingSection({
         <div className="flex justify-end">
           <button
             onClick={onComplete}
-            className="px-8 py-3 bg-gradient-to-r from-senai-orange to-senai-blueLight text-white rounded-lg font-bold text-lg hover:shadow-lg transition-all"
+            className="px-8 py-3 bg-gradient-to-r from-senai-orange to-senai-blueLight text-slate-950 rounded-lg font-bold text-lg hover:shadow-lg transition-all"
           >
             Concluir Briefing e Avançar →
           </button>

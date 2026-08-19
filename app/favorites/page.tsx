@@ -8,28 +8,31 @@ import { Heart, Loader2 } from "lucide-react";
 import GameGrid from "@/components/GameGrid";
 import Link from "next/link";
 import { useI18n } from "@/components/I18nProvider";
+import { authedFetch } from "@/lib/client-auth";
 
 export default function FavoritesPage() {
   const router = useRouter();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, loading: authLoading } = useAuth();
   const { t } = useI18n();
   const [favoriteGames, setFavoriteGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Aguarda a hidratação da sessão antes de redirecionar/buscar.
+    if (authLoading) return;
     if (!isAuthenticated) {
       router.push("/login");
       return;
     }
     loadFavorites();
-  }, [isAuthenticated, user, router]);
+  }, [isAuthenticated, authLoading, user, router]);
 
   const loadFavorites = async () => {
     if (!user) return;
 
     try {
-      // Buscar IDs dos favoritos
-      const favoritesResponse = await fetch(`/api/favorites?userId=${user.email}`);
+      // Buscar IDs dos favoritos (identidade vem do token)
+      const favoritesResponse = await authedFetch(`/api/favorites`);
       if (!favoritesResponse.ok) return;
 
       const favoritesData = await favoritesResponse.json();
@@ -41,8 +44,8 @@ export default function FavoritesPage() {
         return;
       }
 
-      // Buscar detalhes dos jogos
-      const gamesResponse = await fetch("/api/games?approved=true");
+      // Buscar detalhes dos jogos (authedFetch inclui jogos próprios pendentes)
+      const gamesResponse = await authedFetch("/api/games");
       if (gamesResponse.ok) {
         const allGames: Game[] = await gamesResponse.json();
         const favorites = allGames.filter((game) => gameIds.includes(game.id));
@@ -78,7 +81,7 @@ export default function FavoritesPage() {
         </p>
         <Link
           href="/games"
-          className="inline-block bg-senai-orange hover:bg-senai-blue text-white px-6 py-3 rounded font-semibold transition"
+          className="inline-block bg-senai-orange hover:bg-senai-blue text-slate-950 hover:text-white px-6 py-3 rounded font-semibold transition"
         >
           {t("favorites.exploreGames")}
         </Link>

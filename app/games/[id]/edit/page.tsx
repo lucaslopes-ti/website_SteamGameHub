@@ -6,11 +6,12 @@ import { useAuth } from "@/components/AuthProvider";
 import { Game } from "@/lib/games";
 import { Loader2, Upload, Image as ImageIcon, X } from "lucide-react";
 import { useToast } from "@/components/ToastProvider";
+import { authedFetch } from "@/lib/client-auth";
 
 export default function EditGamePage() {
   const params = useParams();
   const router = useRouter();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isTeacher, loading: authLoading } = useAuth();
   const { showToast } = useToast();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -51,21 +52,26 @@ export default function EditGamePage() {
   ];
 
   useEffect(() => {
+    // Aguarda a hidratação da sessão antes de redirecionar/buscar.
+    if (authLoading) return;
     if (!isAuthenticated) {
       router.push("/login");
       return;
     }
     loadGame();
-  }, [params.id, isAuthenticated, router]);
+  }, [params.id, isAuthenticated, authLoading, router]);
 
   const loadGame = async () => {
     try {
-      const response = await fetch(`/api/games/${params.id}`);
+      // authedFetch permite que autor/staff vejam jogos pendentes.
+      const response = await authedFetch(`/api/games/${params.id}`);
       if (response.ok) {
         const data: Game = await response.json();
         
-        // Verificar se o usuário é o autor ou admin
-        if (data.authorEmail !== user?.email && user?.role !== "admin") {
+        // Verificar se o usuário é o autor ou staff (papel efetivo do servidor).
+        const isOwner =
+          data.authorUid === user?.id || data.authorEmail === user?.email;
+        if (!isOwner && !isTeacher) {
           showToast("Você não tem permissão para editar este jogo", "error");
           router.push(`/games/${params.id}`);
           return;
@@ -183,7 +189,7 @@ export default function EditGamePage() {
       }
 
       // Atualizar jogo
-      const response = await fetch(`/api/games/${params.id}`, {
+      const response = await authedFetch(`/api/games/${params.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -204,6 +210,8 @@ export default function EditGamePage() {
         setTimeout(() => {
           router.push(`/games/${params.id}`);
         }, 1000);
+      } else if (response.status === 401 || response.status === 403) {
+        showToast("Você não tem permissão para editar este jogo", "error");
       } else {
         throw new Error("Erro ao atualizar jogo");
       }
@@ -285,7 +293,7 @@ export default function EditGamePage() {
                 onClick={() => handleGenreToggle(genre)}
                 className={`px-4 py-2 rounded transition ${
                   selectedGenres.includes(genre)
-                    ? "bg-senai-orange text-white"
+                    ? "bg-senai-orange text-slate-950"
                     : "bg-senai-dark text-gray-300 hover:bg-senai-blue"
                 }`}
               >
@@ -305,7 +313,7 @@ export default function EditGamePage() {
                 onClick={() => handleTechnologyToggle(tech)}
                 className={`px-4 py-2 rounded transition ${
                   selectedTechnologies.includes(tech)
-                    ? "bg-senai-blueLight text-white"
+                    ? "bg-senai-blueLight text-slate-950"
                     : "bg-senai-dark text-gray-300 hover:bg-senai-blue"
                 }`}
               >
@@ -461,7 +469,7 @@ export default function EditGamePage() {
           <button
             type="submit"
             disabled={saving}
-            className="flex-1 bg-senai-orange hover:bg-senai-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded font-semibold transition flex items-center justify-center gap-2"
+            className="flex-1 bg-senai-orange hover:bg-senai-blue disabled:opacity-50 disabled:cursor-not-allowed text-slate-950 hover:text-white px-6 py-3 rounded font-semibold transition flex items-center justify-center gap-2"
           >
             {saving ? (
               <>

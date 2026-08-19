@@ -7,16 +7,13 @@ import { Game } from "@/lib/games";
 import { CheckCircle, XCircle, Eye, Trash2, Loader2, Search, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/components/ToastProvider";
+import { authedFetch } from "@/lib/client-auth";
 
 export default function AdminPage() {
   const router = useRouter();
   const { isAuthenticated, isTeacher, isAdmin, loading: authLoading, user } = useAuth();
-  const hasAdminAccess =
-    isAdmin ||
-    isTeacher ||
-    ["lucas.lopes0@outlook.com.br", "lucaslopes0@outlook.com.br"].includes(
-      (user?.email || "").trim().toLowerCase()
-    );
+  // Papel efetivo vem do servidor (custom claims + allowlists server-side).
+  const hasAdminAccess = isTeacher || isAdmin;
   const { showToast } = useToast();
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,7 +32,7 @@ export default function AdminPage() {
 
   const loadGames = async () => {
     try {
-      const response = await fetch("/api/games");
+      const response = await authedFetch("/api/games");
       if (response.ok) {
         const data = await response.json();
         setGames(data);
@@ -49,13 +46,15 @@ export default function AdminPage() {
 
   const handleApprove = async (gameId: string) => {
     try {
-      const response = await fetch(`/api/games/${gameId}/approve`, {
+      const response = await authedFetch(`/api/games/${gameId}/approve`, {
         method: "POST",
       });
       if (response.ok) {
         showToast("Jogo aprovado com sucesso!", "success");
         loadGames();
         window.dispatchEvent(new Event("gamesUpdated"));
+      } else if (response.status === 401 || response.status === 403) {
+        showToast("Você não tem permissão para aprovar jogos", "error");
       } else {
         showToast("Erro ao aprovar jogo", "error");
       }
@@ -68,13 +67,15 @@ export default function AdminPage() {
     if (!confirm("Tem certeza que deseja reprovar este jogo? Ele voltará para 'Aguardando Aprovação'.")) return;
 
     try {
-      const response = await fetch(`/api/games/${gameId}/approve`, {
+      const response = await authedFetch(`/api/games/${gameId}/approve`, {
         method: "DELETE",
       });
       if (response.ok) {
         showToast("Aprovação revertida! Jogo voltou para pendência.", "success");
         loadGames();
         window.dispatchEvent(new Event("gamesUpdated"));
+      } else if (response.status === 401 || response.status === 403) {
+        showToast("Você não tem permissão para reprovar jogos", "error");
       } else {
         showToast("Erro ao reprovar jogo", "error");
       }
@@ -87,12 +88,14 @@ export default function AdminPage() {
     if (!confirm("Tem certeza que deseja deletar este jogo?")) return;
 
     try {
-      const response = await fetch(`/api/games/${gameId}`, {
+      const response = await authedFetch(`/api/games/${gameId}`, {
         method: "DELETE",
       });
       if (response.ok) {
         showToast("Jogo deletado com sucesso!", "success");
         loadGames();
+      } else if (response.status === 401 || response.status === 403) {
+        showToast("Você não tem permissão para deletar este jogo", "error");
       } else {
         showToast("Erro ao deletar jogo", "error");
       }
@@ -188,7 +191,7 @@ export default function AdminPage() {
           onClick={() => setFilter("pending")}
           className={`px-4 py-2 rounded transition ${
             filter === "pending"
-              ? "bg-senai-orange text-white"
+              ? "bg-senai-orange text-slate-950"
               : "bg-senai-blueDark text-gray-300 hover:bg-senai-blue"
           }`}
         >
@@ -198,7 +201,7 @@ export default function AdminPage() {
           onClick={() => setFilter("approved")}
           className={`px-4 py-2 rounded transition ${
             filter === "approved"
-              ? "bg-senai-blueLight text-white"
+              ? "bg-senai-blueLight text-slate-950"
               : "bg-senai-blueDark text-gray-300 hover:bg-senai-blue"
           }`}
         >
@@ -251,12 +254,12 @@ export default function AdminPage() {
               <div className="flex items-start justify-between mb-2">
                 <h3 className="text-xl font-bold text-white flex-1">{game.title}</h3>
                 {game.approved && (
-                  <span className="bg-senai-blueLight text-white text-xs px-2 py-1 rounded ml-2">
+                  <span className="bg-senai-blueLight text-slate-950 text-xs px-2 py-1 rounded ml-2">
                     Aprovado
                   </span>
                 )}
                 {game.pending && !game.approved && (
-                  <span className="bg-yellow-600 text-white text-xs px-2 py-1 rounded ml-2">
+                  <span className="bg-yellow-600 text-slate-950 text-xs px-2 py-1 rounded ml-2">
                     Pendente
                   </span>
                 )}
@@ -298,7 +301,7 @@ export default function AdminPage() {
                 {game.genres.map((genre) => (
                   <span
                     key={genre}
-                    className="bg-senai-blue text-senai-orange text-xs px-2 py-1 rounded"
+                    className="bg-senai-blueDark text-slate-100 border border-senai-orange/40 text-xs px-2 py-1 rounded"
                   >
                     {genre}
                   </span>
@@ -307,7 +310,7 @@ export default function AdminPage() {
               <div className="flex gap-2 flex-wrap">
                 <Link
                   href={`/games/${game.id}`}
-                  className="flex-1 bg-senai-blue hover:bg-senai-orange text-white px-4 py-2 rounded text-center transition flex items-center justify-center gap-2 min-w-[100px]"
+                  className="flex-1 bg-senai-blue hover:bg-senai-orange text-white hover:text-slate-950 px-4 py-2 rounded text-center transition flex items-center justify-center gap-2 min-w-[100px]"
                 >
                   <Eye className="w-4 h-4" />
                   Ver
@@ -315,7 +318,7 @@ export default function AdminPage() {
                 {!game.approved ? (
                   <button
                     onClick={() => handleApprove(game.id)}
-                    className="bg-senai-blueLight hover:bg-green-600 text-white px-4 py-2 rounded transition flex items-center gap-2"
+                    className="bg-senai-blueLight hover:bg-green-600 text-slate-950 hover:text-slate-950 px-4 py-2 rounded transition flex items-center gap-2"
                   >
                     <CheckCircle className="w-4 h-4" />
                     Aprovar
@@ -323,7 +326,7 @@ export default function AdminPage() {
                 ) : (
                   <button
                     onClick={() => handleUnapprove(game.id)}
-                    className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded transition flex items-center gap-2"
+                    className="bg-yellow-600 hover:bg-yellow-700 text-slate-950 px-4 py-2 rounded transition flex items-center gap-2"
                     title="Desfazer aprovação"
                   >
                     <RotateCcw className="w-4 h-4" />

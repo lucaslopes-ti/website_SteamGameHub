@@ -52,44 +52,46 @@ const lumenStyles = `
 }
 
 /* ─── CUSTOM CURSOR ─── */
-.lumen-theme {
-	cursor: none;
-}
-.lumen-theme a, .lumen-theme button {
-  cursor: none;
-}
-.lumen-theme .cur {
-	position: fixed;
-	width: 6px;
-	height: 6px;
-	background: var(--amber);
-	border-radius: 50%;
-	pointer-events: none;
-	z-index: 10000;
-	transform: translate(-50%, -50%);
-	transition: width 0.15s, height 0.15s, background 0.15s;
-}
-.lumen-theme .cur-ring {
-	position: fixed;
-	width: 28px;
-	height: 28px;
-	border: 1px solid var(--amber);
-	border-radius: 50%;
-	pointer-events: none;
-	z-index: 9999;
-	transform: translate(-50%, -50%);
-	transition: width 0.25s, height 0.25s, opacity 0.25s, border-color 0.25s;
-	opacity: 0.35;
-}
-.lumen-theme:has(a:hover, button:hover) .cur {
-	width: 10px;
-	height: 10px;
-	background: var(--amber);
-}
-.lumen-theme:has(a:hover, button:hover) .cur-ring {
-	width: 44px;
-	height: 44px;
-	opacity: 0.6;
+@media (hover: hover) and (pointer: fine) {
+  .lumen-theme {
+    cursor: none;
+  }
+  .lumen-theme a, .lumen-theme button {
+    cursor: none;
+  }
+  .lumen-theme .cur {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    background: var(--amber);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10000;
+    transform: translate(-50%, -50%);
+    transition: width 0.15s, height 0.15s, background 0.15s;
+  }
+  .lumen-theme .cur-ring {
+    position: fixed;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--amber);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.25s, height 0.25s, opacity 0.25s, border-color 0.25s;
+    opacity: 0.35;
+  }
+  .lumen-theme:has(a:hover, button:hover) .cur {
+    width: 10px;
+    height: 10px;
+    background: var(--amber);
+  }
+  .lumen-theme:has(a:hover, button:hover) .cur-ring {
+    width: 44px;
+    height: 44px;
+    opacity: 0.6;
+  }
 }
 
 /* ─── HERO ─── */
@@ -268,7 +270,6 @@ const lumenStyles = `
 	font-weight: 600;
 	letter-spacing: 0.1em;
 	text-transform: uppercase;
-	cursor: none;
 	border-radius: var(--radius);
 	white-space: nowrap;
 	transition: background 0.2s, opacity 0.2s;
@@ -939,7 +940,6 @@ export default function SimuladoSAEPLumenPage() {
                   letterSpacing: "0.15em",
                   textTransform: "uppercase",
                   borderRadius: "4px",
-                  cursor: "none",
                   transition: "background 0.3s, color 0.3s"
                 }}
                 onMouseOver={(e) => { e.currentTarget.style.background = "var(--amber)"; e.currentTarget.style.color = "var(--bg)"; }}

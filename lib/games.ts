@@ -4,6 +4,7 @@ export interface Game {
   description: string;
   author: string;
   authorEmail: string;
+  authorUid?: string;
   genres: string[];
   technologies: string[];
   releaseDate: string;

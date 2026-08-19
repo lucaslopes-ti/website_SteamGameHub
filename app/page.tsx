@@ -6,6 +6,8 @@ import { Game } from "@/lib/games";
 import { Search, SearchX, SlidersHorizontal, Star } from "lucide-react";
 import { GameGridSkeleton } from "@/components/SkeletonLoader";
 import { useI18n } from "@/components/I18nProvider";
+import Hero from "@/components/Hero";
+import TopRatedGames from "@/components/TopRatedGames";
 
 export default function Home() {
   const { t } = useI18n();
@@ -144,26 +146,6 @@ export default function Home() {
   return (
     <div className="bg-[var(--surface)] text-[var(--on-surface)]">
       <style jsx global>{`
-        :root {
-          --surface: #f7f9fb;
-          --surface-dim: #d8dadc;
-          --surface-container-lowest: #ffffff;
-          --surface-container-low: #f2f4f6;
-          --surface-container: #eceef0;
-          --surface-container-high: #e6e8ea;
-          --surface-container-highest: #e0e3e5;
-          --on-surface: #191c1e;
-          --on-surface-variant: #414751;
-          --outline: #727782;
-          --outline-variant: #c1c7d2;
-          --primary: #00437b;
-          --primary-container: #005ba3;
-          --secondary: #954a00;
-          --secondary-container: #fd8100;
-          --on-secondary-container: #5d2c00;
-          --primary-fixed-dim: #a3c9ff;
-          --error: #ba1a1a;
-        }
         @keyframes marquee {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
@@ -173,50 +155,7 @@ export default function Home() {
         }
       `}</style>
 
-      <section className="relative max-w-[1280px] mx-auto px-8 py-20 lg:py-[120px] flex flex-col md:flex-row items-center gap-12">
-        <div className="flex-1 flex flex-col gap-6 z-10">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-[var(--primary)]">SENAI Game Hub</h1>
-          <p className="text-lg text-[var(--on-surface-variant)] max-w-2xl">
-            A vitrine oficial dos jogos autorais criados pelos alunos do curso Tecnico em Programacao de Jogos.
-          </p>
-          <div className="flex flex-wrap gap-4 mt-2">
-            <Link
-              href="/games"
-              className="bg-[var(--secondary-container)] text-[var(--on-secondary-container)] px-8 py-3 rounded-full font-semibold shadow-sm hover:opacity-90 transition-opacity"
-            >
-              Explorar jogos
-            </Link>
-            <Link
-              href="/upload"
-              className="border border-[var(--primary)] text-[var(--primary)] px-8 py-3 rounded-full font-semibold hover:bg-[#00437b]/5 transition-colors"
-            >
-              Enviar meu jogo
-            </Link>
-          </div>
-        </div>
-        <div className="flex-1 relative w-full rounded-xl overflow-hidden shadow-lg border border-[var(--outline-variant)]/40 bg-[var(--surface-container)] flex flex-col">
-          <div className="bg-[var(--surface-container-high)] p-3 flex justify-between items-center border-b border-[var(--outline-variant)]/40">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--secondary)]">Destaque</span>
-          </div>
-          <div className="relative w-full aspect-[16/9] bg-[var(--surface-dim)] flex items-center justify-center text-[var(--outline)]">
-            {heroGame?.image ? (
-              <img
-                src={heroGame.image}
-                alt={heroGame.title}
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-            ) : (
-              <span className="text-4xl font-semibold">Imagem</span>
-            )}
-          </div>
-          <div className="p-6 bg-[var(--surface-container-lowest)]">
-            <h3 className="text-xl font-semibold text-[var(--on-surface)]">{heroGame?.title ?? "Destaque"}</h3>
-            <p className="text-[var(--on-surface-variant)] mt-2 line-clamp-2">
-              {heroGame?.description ?? "Descubra os jogos em destaque da turma."}
-            </p>
-          </div>
-        </div>
-      </section>
+      <Hero />
 
       <div className="bg-[var(--primary)] text-white py-3 overflow-hidden whitespace-nowrap flex border-y border-[var(--primary-container)]">
         <div className="animate-marquee flex gap-12 font-semibold text-sm">
@@ -239,7 +178,7 @@ export default function Home() {
             <h2 className="text-3xl font-semibold text-[var(--on-surface)] text-center">Impacto do Hub</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="bg-[var(--surface-container-low)] rounded-xl p-6 flex flex-col items-center justify-center text-center shadow-sm border border-[var(--outline-variant)]/20">
-                <span className="text-3xl font-bold text-[var(--primary)]">{games.length}</span>
+                <span className="text-3xl font-bold text-[var(--primary-text)]">{games.length}</span>
                 <span className="text-xs font-semibold text-[var(--on-surface-variant)] uppercase tracking-wider">Jogos</span>
               </div>
               <div className="bg-[var(--surface-container-low)] rounded-xl p-6 flex flex-col items-center justify-center text-center shadow-sm border border-[var(--outline-variant)]/20">
@@ -247,7 +186,7 @@ export default function Home() {
                 <span className="text-xs font-semibold text-[var(--on-surface-variant)] uppercase tracking-wider">Visualizacoes</span>
               </div>
               <div className="bg-[var(--surface-container-low)] rounded-xl p-6 flex flex-col items-center justify-center text-center shadow-sm border border-[var(--outline-variant)]/20">
-                <span className="text-3xl font-bold text-[var(--primary-container)]">{totalDownloads}</span>
+                <span className="text-3xl font-bold text-[var(--primary-container-text)]">{totalDownloads}</span>
                 <span className="text-xs font-semibold text-[var(--on-surface-variant)] uppercase tracking-wider">Downloads</span>
               </div>
               <div className="bg-[var(--surface-container-low)] rounded-xl p-6 flex flex-col items-center justify-center text-center shadow-sm border border-[var(--outline-variant)]/20">
@@ -257,43 +196,7 @@ export default function Home() {
             </div>
           </section>
 
-          <section className="bg-[var(--surface-container-lowest)] py-16">
-            <div className="max-w-[1280px] mx-auto px-8">
-              <h2 className="text-3xl font-semibold text-[var(--on-surface)] mb-8">Melhor Avaliados</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {topRated.map((game) => (
-                  <div
-                    key={game.id}
-                    className="bg-[var(--surface)] rounded-xl overflow-hidden shadow-sm border border-[var(--outline-variant)]/20 flex flex-col hover:shadow-md transition-shadow"
-                  >
-                    <div className="w-full aspect-video bg-[var(--surface-dim)] flex items-center justify-center text-[var(--outline)] overflow-hidden">
-                      {game.image ? (
-                        <img src={game.image} alt={game.title} className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="text-sm font-semibold">Sem imagem</span>
-                      )}
-                    </div>
-                    <div className="p-4 flex flex-col flex-grow">
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="text-base font-semibold text-[var(--on-surface)]">{game.title}</h3>
-                        <div className="flex items-center gap-1 text-[var(--secondary)]">
-                          <Star className="w-4 h-4" />
-                          <span className="text-sm font-semibold">{game.rating.toFixed(1)}</span>
-                        </div>
-                      </div>
-                      <p className="text-[var(--on-surface-variant)] text-sm mb-4 flex-grow line-clamp-2">{game.description}</p>
-                      <Link
-                        href={`/games/${game.id}`}
-                        className="w-full bg-[#00437b]/10 text-[var(--primary)] font-semibold py-2 rounded-lg hover:bg-[#00437b]/20 transition-colors text-center"
-                      >
-                        Ver Detalhes
-                      </Link>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
+          <TopRatedGames games={games} />
 
           <section className="max-w-[1280px] mx-auto px-8 py-16">
             <h2 className="text-3xl font-semibold text-[var(--on-surface)] mb-8 text-center">Generos Populares</h2>
@@ -310,7 +213,7 @@ export default function Home() {
                         : "bg-[#00437b]/5 border-[var(--primary)]/20 hover:bg-[#00437b]/10"
                     }`}
                   >
-                    <span className="font-semibold text-[var(--primary)]">{gen}</span>
+                    <span className="font-semibold text-[var(--primary-text)]">{gen}</span>
                     <span className="bg-[var(--primary)] text-white text-xs rounded-full px-2 py-0.5">{count}</span>
                   </button>
                 );
@@ -322,7 +225,7 @@ export default function Home() {
             <div className="max-w-[1280px] mx-auto px-8 flex flex-col lg:flex-row gap-12 items-center">
               <div className="flex-1 flex flex-col gap-6">
                 <h2 className="text-3xl font-semibold">Sobre o Projeto</h2>
-                <p className="text-[var(--primary-fixed-dim)] text-lg">
+                <p className="text-white text-lg">
                   O SENAI Game Hub nasceu da necessidade de centralizar e dar visibilidade aos projetos desenvolvidos pelos alunos.
                   Mais do que um repositorio, e uma comunidade ativa onde conhecimento e talento se encontram.
                 </p>
@@ -330,19 +233,19 @@ export default function Home() {
               <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
                 <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/20">
                   <h4 className="text-base font-semibold mb-2">Curso Tecnico</h4>
-                  <p className="text-sm text-[var(--primary-fixed-dim)]">Focado em Programacao de Jogos Digitais com excelencia SENAI.</p>
+                  <p className="text-sm text-white">Focado em Programacao de Jogos Digitais com excelencia SENAI.</p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/20">
                   <h4 className="text-base font-semibold mb-2">Tecnologia Diversa</h4>
-                  <p className="text-sm text-[var(--primary-fixed-dim)]">Projetos em Unity, Unreal, Godot e linguagens nativas.</p>
+                  <p className="text-sm text-white">Projetos em Unity, Unreal, Godot e linguagens nativas.</p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/20">
                   <h4 className="text-base font-semibold mb-2">Comunidade Ativa</h4>
-                  <p className="text-sm text-[var(--primary-fixed-dim)]">Alunos e professores colaborando para criar os melhores jogos.</p>
+                  <p className="text-sm text-white">Alunos e professores colaborando para criar os melhores jogos.</p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/20">
                   <h4 className="text-base font-semibold mb-2">Qualidade Garantida</h4>
-                  <p className="text-sm text-[var(--primary-fixed-dim)]">Todos os jogos passam por avaliacao docente antes de publicar.</p>
+                  <p className="text-sm text-white">Todos os jogos passam por avaliacao docente antes de publicar.</p>
                 </div>
               </div>
             </div>
@@ -393,7 +296,7 @@ export default function Home() {
             {(uniqueGenres.length > 0 || uniqueTechs.length > 0) && (
               <div className="bg-[var(--surface-container-lowest)] rounded-xl border border-[var(--outline-variant)]/30 p-6 flex flex-col gap-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-[var(--primary)] font-semibold">
+                  <div className="flex items-center gap-2 text-[var(--primary-text)] font-semibold">
                     <SlidersHorizontal className="w-4 h-4" />
                     <span>{t("home.filters")}</span>
                     {(query || selectedGenres.length > 0 || selectedTechs.length > 0) && (
@@ -423,8 +326,8 @@ export default function Home() {
                             onClick={() => toggleGenre(gen)}
                             className={`px-3 py-1 rounded-full text-sm border transition ${
                               active
-                                ? "bg-[#00437b]/10 text-[var(--primary)] border-[var(--primary)]/40"
-                                : "bg-[var(--surface-container-lowest)] text-[var(--on-surface-variant)] border-[var(--outline-variant)] hover:border-[var(--primary)]"
+                                ? "bg-[#00437b]/10 text-[var(--primary-text)] border-[var(--primary)]/40"
+                                : "bg-[var(--surface-container-lowest)] text-[var(--on-surface-variant)] border-[var(--outline-variant)] hover:border-[var(--primary-text)]"
                             }`}
                             title={active ? t("home.removeGenre") : t("home.addGenre")}
                           >
@@ -508,7 +411,7 @@ export default function Home() {
               <div className="flex items-center justify-center mt-6">
                 <button
                   onClick={() => setPage((p) => p + 1)}
-                  className="px-4 py-2 rounded border border-[var(--outline-variant)] text-[var(--primary)] hover:border-[var(--primary)]"
+                  className="px-4 py-2 rounded border border-[var(--outline-variant)] text-[var(--primary-text)] hover:border-[var(--primary-text)]"
                   title={t("home.loadMoreTitle")}
                 >
                   {t("home.loadMore")}

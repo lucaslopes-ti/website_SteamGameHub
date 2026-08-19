@@ -8,6 +8,59 @@
 /* Laranja SENAI: #F37021 | Branco: #FFFFFF | Cinza Claro: #F1F5F9 */
 
 :root {
+  --surface: #0a0f1d;
+  --surface-dim: #070a14;
+  --surface-bright: #10172a;
+  --surface-container-lowest: #0e1626;
+  --surface-container-low: #0a0f1d;
+  --surface-container: #151e33;
+  --surface-container-high: #1d2942;
+  --surface-container-highest: #263554;
+  --on-surface: #f8fafc;
+  --on-surface-variant: #94a3b8;
+  --inverse-surface: #f7f9fb;
+  --inverse-on-surface: #191c1e;
+  --outline: #475569;
+  --outline-variant: #334155;
+  --surface-tint: #004F9F;
+  --background: #0a0f1d;
+  --on-background: #f8fafc;
+  --primary: #004F9F;
+  --on-primary: #ffffff;
+  --primary-text: #38bdf8;
+  --primary-container: #002776;
+  --primary-container-text: #00A5E2;
+  --on-primary-container: #c1dcff;
+  --secondary: #F37021;
+  --secondary-container: #F37021;
+  --on-secondary-container: #020617;
+  --tertiary: #1e293b;
+  --tertiary-container: #334155;
+  --primary-fixed-dim: #00A5E2;
+  --error: #ef4444;
+
+  --primary-5: color-mix(in_srgb, var(--primary) 5%, transparent);
+  --primary-10: color-mix(in_srgb, var(--primary) 10%, transparent);
+  --primary-20: color-mix(in_srgb, var(--primary) 20%, transparent);
+  --secondary-10: color-mix(in_srgb, var(--secondary-container) 10%, transparent);
+  --secondary-20: color-mix(in_srgb, var(--secondary-container) 20%, transparent);
+  --outline-10: color-mix(in_srgb, var(--outline-variant) 30%, transparent);
+  --surface-glass: color-mix(in_srgb, var(--surface-container-lowest) 80%, transparent);
+
+  --foreground-rgb: 248, 250, 252;
+  --background-start-rgb: 10, 15, 29;
+  --background-end-rgb: 7, 10, 20;
+
+  --senai-blue: var(--primary);
+  --senai-blue-dark: var(--primary-container);
+  --senai-blue-light: var(--primary-fixed-dim);
+  --senai-orange: var(--secondary-container);
+  --senai-orange-light: #ffb785;
+  --senai-white: var(--surface-container-lowest);
+  --senai-gray-light: var(--surface-container-low);
+}
+
+html.light {
   --surface: #f7f9fb;
   --surface-dim: #d8dadc;
   --surface-bright: #f7f9fb;
@@ -27,7 +80,9 @@
   --on-background: #191c1e;
   --primary: #00437b;
   --on-primary: #ffffff;
+  --primary-text: #00437b;
   --primary-container: #005ba3;
+  --primary-container-text: #005ba3;
   --on-primary-container: #b6d3ff;
   --secondary: #954a00;
   --secondary-container: #fd8100;
@@ -37,28 +92,6 @@
   --primary-fixed-dim: #a3c9ff;
   --error: #ba1a1a;
 
-  --primary-5: color-mix(in_srgb, var(--primary) 5%, transparent);
-  --primary-10: color-mix(in_srgb, var(--primary) 10%, transparent);
-  --primary-20: color-mix(in_srgb, var(--primary) 20%, transparent);
-  --secondary-10: color-mix(in_srgb, var(--secondary-container) 10%, transparent);
-  --secondary-20: color-mix(in_srgb, var(--secondary-container) 20%, transparent);
-  --outline-10: color-mix(in_srgb, var(--outline-variant) 30%, transparent);
-  --surface-glass: color-mix(in_srgb, var(--surface-container-lowest) 80%, transparent);
-
-  --foreground-rgb: 25, 28, 30;
-  --background-start-rgb: 247, 249, 251;
-  --background-end-rgb: 242, 244, 246;
-
-  --senai-blue: var(--primary);
-  --senai-blue-dark: var(--primary-container);
-  --senai-blue-light: var(--primary-fixed-dim);
-  --senai-orange: var(--secondary-container);
-  --senai-orange-light: #ffb785;
-  --senai-white: var(--surface-container-lowest);
-  --senai-gray-light: var(--surface-container-low);
-}
-
-html.light {
   --foreground-rgb: 26, 32, 44;
   --background-start-rgb: 255, 255, 255;
   --background-end-rgb: 241, 245, 249;
@@ -74,7 +107,7 @@ body {
     rgb(var(--background-start-rgb));
   min-height: 100vh;
   transition: background 0.3s ease, color 0.3s ease;
-  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-plus-jakarta-sans), 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 /* Header liquid glass */
@@ -142,57 +175,7 @@ body {
   }
 }
 
-/* ========== LIGHT THEME OVERRIDES ========== */
-
-/* Background overrides */
-html.light .bg-senai-dark {
-  background-color: #ffffff !important;
-}
-
-html.light .bg-senai-blueDark {
-  background-color: #f8fafc !important;
-}
-
-html.light .bg-senai-blueDark\/80 {
-  background-color: rgba(248, 250, 252, 0.8) !important;
-}
-
-html.light .bg-senai-blueDark\/50 {
-  background-color: rgba(248, 250, 252, 0.5) !important;
-}
-
-html.light .bg-senai-dark\/98 {
-  background-color: rgba(255, 255, 255, 0.98) !important;
-}
-
-html.light .bg-senai-dark\/90 {
-  background-color: rgba(255, 255, 255, 0.9) !important;
-}
-
-html.light .bg-senai-blue {
-  background-color: #e8f0fe !important;
-}
-
-/* Text overrides */
-html.light .text-white {
-  color: #1a202c !important;
-}
-
-html.light .text-gray-300 {
-  color: #4a5568 !important;
-}
-
-html.light .text-gray-400 {
-  color: #718096 !important;
-}
-
-html.light .text-gray-500 {
-  color: #a0aec0 !important;
-}
-
-html.light .text-senai-orange {
-  color: #F37021 !important;
-}
+/* Legacy light-theme overrides were removed: the app intentionally runs dark. */
 
 /* Border overrides */
 html.light .border-senai-blue {
@@ -253,7 +236,7 @@ html.light .bg-senai-orange {
 }
 
 html.light .hover\:bg-senai-blue:hover {
-  background-color: #e8f0fe !important;
+  background-color: #002776 !important;
 }
 
 html.light .bg-senai-orange\/10 {
@@ -445,7 +428,7 @@ html {
   top: -40px;
   left: 0;
   background: #F37021;
-  color: #ffffff;
+  color: #020617;
   padding: 8px 16px;
   text-decoration: none;
   font-weight: bold;
@@ -469,15 +452,6 @@ html {
 /* Remover outline apenas para mouse, manter para teclado */
 *:focus:not(:focus-visible) {
   outline: none;
-}
-
-/* Acessibilidade WCAG - Contraste melhorado para textos */
-.text-gray-400 {
-  color: #718096; /* Contraste melhorado */
-}
-
-.text-gray-300 {
-  color: #4a5568; /* Contraste melhorado */
 }
 
 /* Acessibilidade WCAG - Botões e links interativos */
@@ -1031,16 +1005,6 @@ html.light .btn-neon:hover {
 
 .animate-float {
   animation: float 6s ease-in-out infinite;
-}
-
-html.light .glass {
-  background: rgba(255, 255, 255, 0.75);
-  border-color: rgba(0, 79, 159, 0.12);
-}
-
-html.light .glass-strong {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(0, 79, 159, 0.16);
 }
 
 html.light .grid-pattern {

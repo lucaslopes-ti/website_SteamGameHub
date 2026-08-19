@@ -58,6 +58,9 @@ docs/CONFIGURACAO_VERCEL_FIREBASE.md
 docs/GUIA_RAPIDO_FIREBASE.md
 .env*
 
+# local deepwork state
+.slim/deepwork/
+
 # scripts adicionais (questões, etc)
 scripts/*.json
 scripts/seed-saep-novas.ts

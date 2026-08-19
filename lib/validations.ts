@@ -12,7 +12,7 @@ export function isValidEmail(email: string): boolean {
 }
 
 /**
- * Valida URL
+ * Valida URL com protocolo http/https.
  */
 export function isValidUrl(url: string): boolean {
   if (!url || typeof url !== 'string') return false;
@@ -25,7 +25,34 @@ export function isValidUrl(url: string): boolean {
 }
 
 /**
- * Valida se a URL é de um serviço permitido (Google Drive, OneDrive, etc)
+ * Valida URL de imagem: aceita http/https ou caminho relativo local
+ * (ex.: `/uploads/games/...`). Nunca aceita `javascript:`, `data:` etc.
+ */
+export function isValidImageUrl(url: string): boolean {
+  if (!url || typeof url !== 'string') return false;
+  const trimmed = url.trim();
+  if (trimmed.startsWith('/') && !trimmed.startsWith('//')) {
+    return trimmed.length > 1;
+  }
+  return isValidUrl(trimmed);
+}
+
+/**
+ * Compara hostname com domínio permitido de forma EXATA ou de subdomínio
+ * filho. Nunca usa `includes` (evita `drive.google.com.evil.com` e
+ * `notdrive.google.com`).
+ */
+function isAllowedHostname(hostname: string, allowedDomains: string[]): boolean {
+  const host = hostname.toLowerCase().replace(/\.$/, '');
+  return allowedDomains.some((domain) => {
+    const d = domain.toLowerCase().replace(/\.$/, '');
+    return host === d || host.endsWith(`.${d}`);
+  });
+}
+
+/**
+ * Valida se a URL é de um serviço permitido (Google Drive, OneDrive, etc).
+ * O hostname deve ser exatamente o domínio permitido ou um subdomínio filho.
  */
 export function isValidDownloadUrl(url: string): boolean {
   if (!isValidUrl(url)) return false;
@@ -39,14 +66,15 @@ export function isValidDownloadUrl(url: string): boolean {
   ];
   try {
     const urlObj = new URL(url.trim());
-    return allowedDomains.some(domain => urlObj.hostname.includes(domain));
+    return isAllowedHostname(urlObj.hostname, allowedDomains);
   } catch {
     return false;
   }
 }
 
 /**
- * Valida se a URL é de um serviço de vídeo permitido (YouTube, Vimeo)
+ * Valida se a URL é de um serviço de vídeo permitido (YouTube, Vimeo).
+ * O hostname deve ser exatamente o domínio permitido ou um subdomínio filho.
  */
 export function isValidVideoUrl(url: string): boolean {
   if (!isValidUrl(url)) return false;
@@ -57,7 +85,7 @@ export function isValidVideoUrl(url: string): boolean {
   ];
   try {
     const urlObj = new URL(url.trim());
-    return allowedDomains.some(domain => urlObj.hostname.includes(domain));
+    return isAllowedHostname(urlObj.hostname, allowedDomains);
   } catch {
     return false;
   }
@@ -145,7 +173,8 @@ export function validateAuthorName(name: string): { valid: boolean; error?: stri
 }
 
 /**
- * Valida arrays de gêneros e tecnologias
+ * Valida arrays de gêneros e tecnologias.
+ * Cada elemento deve ser uma string não-vazia (após sanitização).
  */
 export function validateGameArrays(
   genres: string[],
@@ -154,19 +183,100 @@ export function validateGameArrays(
   if (!Array.isArray(genres) || genres.length === 0) {
     return { valid: false, error: 'Selecione pelo menos um gênero' };
   }
-  
+
   if (genres.length > 10) {
     return { valid: false, error: 'Máximo de 10 gêneros permitidos' };
   }
-  
+
   if (!Array.isArray(technologies) || technologies.length === 0) {
     return { valid: false, error: 'Selecione pelo menos uma tecnologia' };
   }
-  
+
   if (technologies.length > 10) {
     return { valid: false, error: 'Máximo de 10 tecnologias permitidas' };
   }
-  
+
+  if (!genres.every((g) => typeof g === 'string' && sanitizeText(g).length > 0)) {
+    return { valid: false, error: 'Gêneros inválidos' };
+  }
+
+  if (!technologies.every((t) => typeof t === 'string' && sanitizeText(t).length > 0)) {
+    return { valid: false, error: 'Tecnologias inválidas' };
+  }
+
+  return { valid: true };
+}
+
+/**
+ * Valida uma propriedade de array editável que ESTÁ presente no PATCH.
+ *
+ * A propriedade deve ser um array de itens válidos. Rejeita explicitamente
+ * `null`, string, objeto ou arrays inválidos — NUNCA normaliza entradas
+ * inválidas para `[]`. Ausência da propriedade (não chamar esta função)
+ * preserva o valor atual.
+ */
+export function validatePresentArray(
+  value: unknown,
+  options: {
+    maxItems: number;
+    maxItemLength: number;
+    itemValidator?: (item: string) => boolean;
+    error: string;
+  }
+): { valid: boolean; error?: string } {
+  if (!Array.isArray(value)) {
+    return { valid: false, error: options.error };
+  }
+  if (value.length > options.maxItems) {
+    return {
+      valid: false,
+      error: `Máximo de ${options.maxItems} itens permitidos`,
+    };
+  }
+  const itemsValid = value.every((item) => {
+    if (typeof item !== "string") return false;
+    const sanitized = sanitizeText(item, options.maxItemLength);
+    if (sanitized.length === 0) return false;
+    if (options.itemValidator && !options.itemValidator(item)) return false;
+    return true;
+  });
+  if (!itemsValid) return { valid: false, error: options.error };
+  return { valid: true };
+}
+
+/**
+ * Sanitiza um array de strings, removendo entradas vazias e limitando o
+ * tamanho de cada elemento.
+ */
+export function sanitizeStringArray(
+  values: unknown,
+  maxItems: number,
+  maxItemLength: number
+): string[] {
+  if (!Array.isArray(values)) return [];
+  return values
+    .filter((item): item is string => typeof item === 'string')
+    .map((item) => sanitizeText(item, maxItemLength))
+    .filter((item) => item.length > 0)
+    .slice(0, maxItems);
+}
+
+/**
+ * Valida array de screenshots: máximo 5 URLs de imagem válidas.
+ */
+export function validateScreenshots(
+  screenshots: unknown
+): { valid: boolean; error?: string } {
+  if (screenshots === undefined || screenshots === null) return { valid: true };
+  if (!Array.isArray(screenshots)) {
+    return { valid: false, error: 'Screenshots deve ser uma lista de URLs' };
+  }
+  if (screenshots.length > 5) {
+    return { valid: false, error: 'Máximo de 5 screenshots permitidos' };
+  }
+  if (!screenshots.every((url) => typeof url === 'string' && isValidImageUrl(url))) {
+    return { valid: false, error: 'Screenshot inválido. Use uma URL http(s) ou caminho local.' };
+  }
   return { valid: true };
 }
 

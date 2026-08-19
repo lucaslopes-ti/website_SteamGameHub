@@ -6,6 +6,7 @@ import { Heart } from "lucide-react";
 import { useAuth } from "./AuthProvider";
 import { useToast } from "./ToastProvider";
 import { useI18n } from "./I18nProvider";
+import { authedFetch } from "@/lib/client-auth";
 
 interface FavoriteButtonProps {
   gameId: string;
@@ -28,7 +29,7 @@ export default function FavoriteButton({ gameId, size = "md" }: Readonly<Favorit
   const checkFavorite = async () => {
     if (!user) return;
     try {
-      const response = await fetch(`/api/favorites?userId=${user.email}`);
+      const response = await authedFetch(`/api/favorites`);
       if (response.ok) {
         const data = await response.json();
         setIsFavorite(data.gameIds.includes(gameId));
@@ -47,8 +48,8 @@ export default function FavoriteButton({ gameId, size = "md" }: Readonly<Favorit
     setLoading(true);
     try {
       if (isFavorite) {
-        const response = await fetch(
-          `/api/favorites?gameId=${gameId}&userId=${user.email}`,
+        const response = await authedFetch(
+          `/api/favorites?gameId=${encodeURIComponent(gameId)}`,
           { method: "DELETE" }
         );
         if (response.ok) {
@@ -58,10 +59,10 @@ export default function FavoriteButton({ gameId, size = "md" }: Readonly<Favorit
           showToast(t("favorites.removeError"), "error");
         }
       } else {
-        const response = await fetch("/api/favorites", {
+        const response = await authedFetch("/api/favorites", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ gameId, userId: user.email }),
+          body: JSON.stringify({ gameId }),
         });
         if (response.ok) {
           setIsFavorite(true);

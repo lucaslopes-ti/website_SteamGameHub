@@ -1,103 +1,88 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readFile, writeFile } from "fs/promises";
-import { existsSync } from "fs";
-import path from "path";
-import { randomUUID } from "crypto";
-import { useLocalDatabase } from "@/lib/config";
+import { getAdminDb, serializeTimestamps } from "@/lib/firebase/admin";
+import { getAuthUser, requireAuth } from "@/lib/server-auth";
+import { loadVisibleGame } from "@/lib/game-access";
 
-const DOWNLOADS_FILE = path.join(process.cwd(), "data", "downloads.json");
-
-interface Download {
-  id: string;
-  gameId: string;
-  userId: string;
-  downloadedAt: string;
-}
-
-async function getDownloadsFromFile(): Promise<Download[]> {
-  if (!existsSync(DOWNLOADS_FILE)) {
-    return [];
-  }
-  const content = await readFile(DOWNLOADS_FILE, "utf-8");
-  try {
-    return JSON.parse(content);
-  } catch {
-    return [];
-  }
-}
-
-async function saveDownloadsToFile(downloads: Download[]) {
-  await writeFile(DOWNLOADS_FILE, JSON.stringify(downloads, null, 2));
-}
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { gameId, userId } = body;
+    const user = await getAuthUser(request);
+    const authError = requireAuth(user);
+    if (authError) return authError;
 
-    if (!gameId || !userId) {
+    const body = await request.json();
+    const gameId = body.gameId;
+    if (!gameId || typeof gameId !== "string") {
       return NextResponse.json(
-        { error: "gameId e userId são obrigatórios" },
+        { error: "gameId é obrigatório" },
         { status: 400 }
       );
     }
 
-    // Em produção (Vercel), usar Firestore
-    if (process.env.NODE_ENV === "production" || process.env.VERCEL || !useLocalDatabase()) {
-      const { db } = await import("@/lib/firebase/config");
-      const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
-
-      const downloadsRef = collection(db, "downloads");
-      const docRef = await addDoc(downloadsRef, {
-        gameId,
-        userId,
-        downloadedAt: serverTimestamp(),
-      });
-
-      return NextResponse.json({ success: true, download: { id: docRef.id, gameId, userId } }, { status: 201 });
+    const db = getAdminDb();
+    // Só registra download de jogos visíveis ao ator.
+    const loaded = await loadVisibleGame(db, gameId, user);
+    if (!loaded.exists || !loaded.visible) {
+      return NextResponse.json({ error: "Jogo não encontrado" }, { status: 404 });
     }
 
-    // Modo local (desenvolvimento)
-    const downloads = await getDownloadsFromFile();
-    const newDownload: Download = {
-      id: randomUUID(),
+    // Novos documentos sempre salvam UID + identificador legado (e-mail).
+    const docRef = await db.collection("downloads").add({
       gameId,
-      userId,
+      userId: user!.uid,
+      userEmail: user!.email ?? "",
       downloadedAt: new Date().toISOString(),
-    };
-    downloads.push(newDownload);
-    await saveDownloadsToFile(downloads);
-    return NextResponse.json({ success: true, download: newDownload }, { status: 201 });
+    });
+
+    return NextResponse.json(
+      { success: true, download: { id: docRef.id, gameId, userId: user!.uid } },
+      { status: 201 }
+    );
   } catch (error) {
-    return NextResponse.json({ error: "Erro ao registrar download" }, { status: 500 });
+    console.error("Erro ao registrar download:", error);
+    return NextResponse.json(
+      { error: "Erro ao registrar download" },
+      { status: 500 }
+    );
   }
 }
 
 export async function GET(request: NextRequest) {
   try {
-    const userId = request.nextUrl.searchParams.get("userId");
-    if (!userId) {
-      return NextResponse.json({ error: "userId é obrigatório" }, { status: 400 });
+    const user = await getAuthUser(request);
+    const authError = requireAuth(user);
+    if (authError) return authError;
+
+    // userId do cliente é IGNORADO — sempre usamos o UID do token.
+    // Downloads legados identificados por e-mail só são recuperados quando o
+    // e-mail do token está verificado.
+    const db = getAdminDb();
+    const downloadsRef = db.collection("downloads");
+    const queries = [downloadsRef.where("userId", "==", user!.uid).get()];
+    if (user!.emailVerified && user!.email) {
+      queries.push(downloadsRef.where("userId", "==", user!.email).get());
     }
 
-    // Em produção (Vercel), usar Firestore
-    if (process.env.NODE_ENV === "production" || process.env.VERCEL || !useLocalDatabase()) {
-      const { db } = await import("@/lib/firebase/config");
-      const { collection, query, where, getDocs, orderBy } = await import("firebase/firestore");
-
-      const downloadsRef = collection(db, "downloads");
-      const q = query(downloadsRef, where("userId", "==", userId), orderBy("downloadedAt", "desc"));
-      const snapshot = await getDocs(q);
-      const results = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      return NextResponse.json(results);
-    }
-
-    // Modo local (desenvolvimento)
-    const downloads = await getDownloadsFromFile();
-    const userDownloads = downloads.filter((d) => d.userId === userId);
-    return NextResponse.json(userDownloads);
+    const snaps = await Promise.all(queries);
+    const map = new Map<string, Record<string, unknown>>();
+    snaps.forEach((snap) =>
+      snap.docs.forEach((d) => {
+        if (!map.has(d.id)) {
+          map.set(d.id, {
+            id: d.id,
+            ...serializeTimestamps(d.data() as Record<string, unknown>),
+          });
+        }
+      })
+    );
+    return NextResponse.json(Array.from(map.values()));
   } catch (error) {
-    return NextResponse.json({ error: "Erro ao buscar downloads" }, { status: 500 });
+    console.error("Erro ao buscar downloads:", error);
+    return NextResponse.json(
+      { error: "Erro ao buscar downloads" },
+      { status: 500 }
+    );
   }
 }
-

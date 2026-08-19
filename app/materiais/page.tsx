@@ -18,7 +18,7 @@ export default function MateriaisPage() {
     return (
       <main className="container mx-auto px-4 py-12 max-w-3xl">
         <section className="rounded-xl border border-[var(--outline-10)] bg-[var(--surface-container-lowest)] p-8 text-center">
-          <div className="mx-auto mb-4 inline-flex items-center gap-2 rounded-full border border-[var(--primary-20)] bg-[var(--primary-10)] px-4 py-2 text-sm text-[var(--primary)]">
+          <div className="mx-auto mb-4 inline-flex items-center gap-2 rounded-full border border-[var(--primary-20)] bg-[var(--primary-10)] px-4 py-2 text-sm text-[var(--primary-text)]">
             <GraduationCap className="h-4 w-4" aria-hidden="true" />
             Área exclusiva para ex-alunos
           </div>
@@ -38,7 +38,7 @@ export default function MateriaisPage() {
             </Link>
             <Link
               href="/cadastro"
-              className="inline-flex items-center justify-center rounded-lg border border-[var(--primary)]/30 bg-[var(--primary-10)] px-6 py-3 font-semibold text-[var(--primary)] transition-colors hover:bg-[var(--primary-20)]"
+              className="inline-flex items-center justify-center rounded-lg border border-[var(--primary-text)]/30 bg-[var(--primary-10)] px-6 py-3 font-semibold text-[var(--primary-text)] transition-colors hover:bg-[var(--primary-20)]"
             >
               Criar conta
             </Link>
@@ -51,7 +51,7 @@ export default function MateriaisPage() {
   return (
     <main className="container mx-auto px-4 py-12 max-w-5xl">
       <header className="mb-8">
-        <div className="inline-flex items-center gap-2 rounded-full border border-[var(--outline-10)] bg-[var(--surface-container-low)] px-4 py-2 text-sm text-[var(--primary)]">
+        <div className="inline-flex items-center gap-2 rounded-full border border-[var(--outline-10)] bg-[var(--surface-container-low)] px-4 py-2 text-sm text-[var(--primary-text)]">
           <GraduationCap className="h-4 w-4" aria-hidden="true" />
           Área de apoio para ex-alunos
         </div>
@@ -85,7 +85,7 @@ export default function MateriaisPage() {
 
         <article className="rounded-xl border border-[var(--outline-10)] bg-[var(--surface-container-low)] p-6">
           <div className="mb-4 flex items-center gap-3 text-[var(--on-surface)]">
-            <ShieldCheck className="h-5 w-5 text-[var(--primary)]" aria-hidden="true" />
+            <ShieldCheck className="h-5 w-5 text-[var(--primary-text)]" aria-hidden="true" />
             <h2 className="text-xl font-semibold">Boas práticas</h2>
           </div>
           <ul className="space-y-2 text-[var(--on-surface-variant)] list-disc list-inside">

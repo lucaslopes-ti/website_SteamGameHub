@@ -289,7 +289,7 @@ export default function AdminSAEPPage() {
             </button>
             <button
               onClick={() => { setShowForm(true); setShowBatchImport(false); }}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-senai-orange text-white text-sm font-bold hover:bg-senai-orange/90 transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-senai-orange text-slate-950 text-sm font-bold hover:bg-senai-orange/90 transition-colors"
             >
               <Plus className="w-4 h-4" />
               Nova Questão
@@ -399,7 +399,7 @@ export default function AdminSAEPPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-3 rounded-xl bg-senai-orange text-white font-bold hover:bg-senai-orange/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-xl bg-senai-orange text-slate-950 font-bold hover:bg-senai-orange/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {submitting ? (
                   <>
@@ -462,7 +462,7 @@ export default function AdminSAEPPage() {
             <button
               onClick={handleBatchImport}
               disabled={submitting}
-              className="w-full py-3 rounded-xl bg-senai-blueLight text-white font-bold hover:bg-senai-blueLight/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-xl bg-senai-blueLight text-slate-950 font-bold hover:bg-senai-blueLight/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {submitting ? (
                 <>

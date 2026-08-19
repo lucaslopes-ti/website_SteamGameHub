@@ -314,7 +314,7 @@ export default function StatsPage() {
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 flex-1">
-                      <div className="w-8 h-8 bg-senai-blueLight rounded flex items-center justify-center text-white font-bold">
+                      <div className="w-8 h-8 bg-senai-blueLight rounded flex items-center justify-center text-slate-950 font-bold">
                         {index + 1}
                       </div>
                       <div className="flex-1">
@@ -358,7 +358,7 @@ export default function StatsPage() {
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 flex-1">
-                      <div className="w-8 h-8 bg-senai-orange rounded flex items-center justify-center text-white font-bold">
+                      <div className="w-8 h-8 bg-senai-orange rounded flex items-center justify-center text-slate-950 font-bold">
                         {index + 1}
                       </div>
                       <div className="flex-1">
@@ -399,7 +399,7 @@ export default function StatsPage() {
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 flex-1">
-                      <div className="w-8 h-8 bg-senai-blueLight rounded flex items-center justify-center text-white font-bold">
+                      <div className="w-8 h-8 bg-senai-blueLight rounded flex items-center justify-center text-slate-950 font-bold">
                         {index + 1}
                       </div>
                       <div className="flex-1">
@@ -468,7 +468,7 @@ export default function StatsPage() {
               topTechnologies.map(([tech, count], index) => (
                 <div key={tech} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className="w-6 h-6 bg-senai-blueLight rounded flex items-center justify-center text-white text-xs font-bold">
+                    <span className="w-6 h-6 bg-senai-blueLight rounded flex items-center justify-center text-slate-950 text-xs font-bold">
                       {index + 1}
                     </span>
                     <span className="text-white">{tech}</span>

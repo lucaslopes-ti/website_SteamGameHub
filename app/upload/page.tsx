@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Upload, Image as ImageIcon, FileText, CheckCircle, AlertCircle, Loader2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ToastProvider";
+import { authedFetch } from "@/lib/client-auth";
 
 export default function UploadPage() {
   const router = useRouter();
@@ -229,7 +230,7 @@ export default function UploadPage() {
       // Criar registro do jogo (com timeout)
       const gameController = new AbortController();
       const gameTimeoutId = setTimeout(() => gameController.abort(), 60 * 1000);
-      const gameResponse = await fetch("/api/games", {
+      const gameResponse = await authedFetch("/api/games", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -426,7 +427,7 @@ export default function UploadPage() {
                 aria-label={`${selectedGenres.includes(genre) ? "Selecionado" : "Não selecionado"}: ${genre}`}
                 className={`px-4 py-2 rounded transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-senai-orange focus-visible:outline-offset-2 ${
                   selectedGenres.includes(genre)
-                    ? "bg-senai-orange text-white"
+                    ? "bg-senai-orange text-slate-950"
                     : "bg-senai-dark text-gray-300 hover:bg-senai-blue"
                 }`}
               >
@@ -467,7 +468,7 @@ export default function UploadPage() {
                 aria-label={`${selectedTechnologies.includes(tech) ? "Selecionado" : "Não selecionado"}: ${tech}`}
                 className={`px-4 py-2 rounded transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-senai-blueLight focus-visible:outline-offset-2 ${
                   selectedTechnologies.includes(tech)
-                    ? "bg-senai-blueLight text-white"
+                    ? "bg-senai-blueLight text-slate-950"
                     : "bg-senai-dark text-gray-300 hover:bg-senai-blue"
                 }`}
               >
@@ -743,7 +744,7 @@ export default function UploadPage() {
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-senai-orange hover:bg-senai-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded font-semibold transition flex items-center justify-center gap-2"
+            className="flex-1 bg-senai-orange hover:bg-senai-blue disabled:opacity-50 disabled:cursor-not-allowed text-slate-950 hover:text-white px-6 py-3 rounded font-semibold transition flex items-center justify-center gap-2"
           >
             {loading ? (
               <>

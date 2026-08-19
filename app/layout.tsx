@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Orbitron, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -10,7 +10,15 @@ import { I18nProvider } from "@/components/I18nProvider";
 import SkipLinks from "@/components/SkipLinks";
 import VLibrasWidget from "@/components/VLibrasWidget";
 
-const inter = Inter({ subsets: ["latin"] });
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-plus-jakarta-sans",
+});
+
+const orbitron = Orbitron({
+  subsets: ["latin"],
+  variable: "--font-orbitron",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://senaigamehub.vercel.app"),
@@ -70,8 +78,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className="light">
-      <body className={inter.className}>
+    <html lang="pt-BR" className={`dark ${plusJakartaSans.variable} ${orbitron.variable}`}>
+      <body className={plusJakartaSans.className}>
         <ThemeProvider>
           <AuthProvider>
             <ToastProvider>

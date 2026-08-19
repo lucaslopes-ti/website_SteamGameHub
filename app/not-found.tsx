@@ -16,7 +16,7 @@ export default function NotFound() {
       </p>
       <Link
         href="/"
-        className="inline-flex items-center gap-2 bg-senai-orange hover:bg-senai-blue text-white px-6 py-3 rounded font-semibold transition"
+        className="inline-flex items-center gap-2 bg-senai-orange hover:bg-senai-blue text-slate-950 hover:text-white px-6 py-3 rounded font-semibold transition"
       >
         <Home className="w-5 h-5" />
         {t("notFound.backHome")}
