@@ -1,13 +1,23 @@
 # 🗄️ SQL Quest — Plataforma de Prática com SQL
 
-> Plataforma interativa e gamificada para aprendizado de SQL, inspirada no [Boot.dev](https://boot.dev).
-> Foco 100% em **prática hands-on** — o aluno aprende escrevendo queries, não assistindo vídeos.
+> Módulo interativo e gamificado para aprendizado de SQL, integrado ao **SENAI Games Hub**.
+> Inspirado no [Boot.dev](https://boot.dev) — foco 100% em **prática hands-on**.
 
 ---
 
 ## 📌 Visão Geral
 
-A **SQL Quest** é uma plataforma web onde o usuário progride por capítulos e lições resolvendo desafios de SQL diretamente no navegador. Cada lição apresenta um cenário com tabelas pré-populadas, um objetivo claro e um editor SQL integrado. O aluno escreve a query, executa, e o sistema valida automaticamente o resultado.
+A **SQL Quest** é um módulo dentro do projeto SteamGameHub (SENAI Games Hub) onde o aluno progride por capítulos e lições resolvendo desafios de SQL diretamente no navegador. Cada lição apresenta um cenário com tabelas pré-populadas, um objetivo claro e um editor SQL integrado.
+
+### Por que dentro do SteamGameHub?
+
+| Vantagem | Detalhe |
+|---|---|
+| **Mesmo domínio** | Rota `/sql-quest` no domínio já configurado na Vercel |
+| **Mesmo Firebase** | Firestore e Auth já configurados e rodando |
+| **Mesma autenticação** | Alunos já cadastrados podem usar diretamente |
+| **Mesma infraestrutura** | Vercel (região `gru1` - SP), sem custo extra de hosting |
+| **Mesmo projeto** | Padrão já usado: `atividade-mathquest`, `simulado-saep`, etc. |
 
 ### Princípios
 
@@ -28,6 +38,7 @@ A **SQL Quest** é uma plataforma web onde o usuário progride por capítulos e 
 - Autocomplete para palavras-chave SQL, tabelas e colunas
 - Execução de queries em tempo real usando **SQLite via WebAssembly (sql.js)**
 - Sem necessidade de instalar banco de dados local
+- 100% client-side — zero risco de segurança no servidor
 
 ### 2. Sistema de Lições
 - Cada lição contém:
@@ -42,8 +53,8 @@ A **SQL Quest** é uma plataforma web onde o usuário progride por capítulos e 
 - **XP (Experiência):** Ganhos por lição concluída, bonus por acertar de primeira
 - **Streaks:** Dias consecutivos de prática
 - **Conquistas/Badges:** Marcos especiais (ex: "Primeira JOIN", "100 queries executadas")
-- **Ranking:** Leaderboard semanal entre usuários
-- **Nível do Perfil:** Evolução visual do avatar/perfil
+- **Ranking:** Leaderboard semanal entre alunos
+- **Nível do Perfil:** Evolução visual do perfil
 
 ### 4. Assistente IA (Mentor SQL)
 - Chatbot integrado usando abordagem **Socrática**
@@ -227,69 +238,89 @@ A **SQL Quest** é uma plataforma web onde o usuário progride por capítulos e 
 
 ## 🏗️ Arquitetura Técnica
 
-### Stack Proposta
+### Stack — Integrada ao Projeto Existente
 
 ```
-┌─────────────────────────────────────────────┐
-│                  FRONTEND                    │
-│                                              │
-│  Next.js 14+ (App Router)                   │
-│  ├── TypeScript                              │
-│  ├── Tailwind CSS                            │
-│  ├── Monaco Editor (editor SQL)              │
-│  ├── sql.js (SQLite via WASM)                │
-│  ├── Framer Motion (animações)               │
-│  └── Zustand (estado global)                 │
-│                                              │
-├─────────────────────────────────────────────┤
-│                  BACKEND                     │
-│                                              │
-│  Next.js API Routes / Server Actions         │
-│  ├── Autenticação (NextAuth.js / Clerk)      │
-│  ├── Progresso do aluno                      │
-│  ├── Sistema de XP e Gamificação             │
-│  └── API de Lições (conteúdo em JSON/MDX)    │
-│                                              │
-├─────────────────────────────────────────────┤
-│                 DATABASE                     │
-│                                              │
-│  PostgreSQL (Supabase / Neon)                │
-│  ├── Usuários e autenticação                 │
-│  ├── Progresso e XP                          │
-│  ├── Rankings e conquistas                   │
-│  └── Conteúdo das lições (metadata)          │
-│                                              │
-├─────────────────────────────────────────────┤
-│               EXECUÇÃO SQL                   │
-│                                              │
-│  sql.js (client-side, WebAssembly)           │
-│  ├── Execução 100% no browser               │
-│  ├── Sem risco de segurança no server        │
-│  └── Databases temporários por lição         │
-│                                              │
-└─────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────┐
+│                  FRONTEND (já existe)                │
+│                                                      │
+│  Next.js 14 (App Router) — app/sql-quest/           │
+│  ├── TypeScript (já configurado)                     │
+│  ├── Tailwind CSS (já configurado)                   │
+│  ├── Monaco Editor (NOVO — editor SQL)               │
+│  ├── sql.js (NOVO — SQLite via WASM, client-side)    │
+│  └── Lucide React (já no projeto — ícones)           │
+│                                                      │
+├─────────────────────────────────────────────────────┤
+│                  BACKEND (já existe)                 │
+│                                                      │
+│  Next.js API Routes — app/api/sql-quest/            │
+│  ├── Autenticação (já existe — lib/auth.ts)          │
+│  ├── Progresso do aluno (NOVO)                       │
+│  ├── Sistema de XP e Gamificação (NOVO)              │
+│  └── API de Lições (NOVO — conteúdo em JSON)         │
+│                                                      │
+├─────────────────────────────────────────────────────┤
+│                 DATABASE (já existe)                 │
+│                                                      │
+│  Firebase Firestore (mesmo projeto)                  │
+│  ├── Coleção: sql_quest_progress                     │
+│  ├── Coleção: sql_quest_achievements                 │
+│  ├── Coleção: sql_quest_saved_queries                │
+│  └── Auth: mesmos usuários já cadastrados            │
+│                                                      │
+├─────────────────────────────────────────────────────┤
+│               EXECUÇÃO SQL (NOVO)                    │
+│                                                      │
+│  sql.js (client-side, WebAssembly)                   │
+│  ├── Execução 100% no browser do aluno               │
+│  ├── Sem risco de segurança no Firebase              │
+│  └── Databases temporários por lição                 │
+│                                                      │
+├─────────────────────────────────────────────────────┤
+│                HOSTING (já existe)                   │
+│                                                      │
+│  Vercel — região gru1 (São Paulo)                    │
+│  ├── Mesmo domínio: seudominio.vercel.app/sql-quest  │
+│  ├── Mesmo projeto na Vercel                         │
+│  └── Zero custo adicional de infra                   │
+│                                                      │
+└─────────────────────────────────────────────────────┘
 ```
+
+### Dependências Novas (a adicionar no package.json)
+
+```json
+{
+  "dependencies": {
+    "sql.js": "^1.10.0",
+    "@monaco-editor/react": "^4.6.0"
+  }
+}
+```
+
+> **Nota:** Todas as outras dependências (Next.js, React, Tailwind, Firebase, Lucide, etc.) já existem no projeto.
 
 ### Fluxo de uma Lição
 
 ```mermaid
 sequenceDiagram
     participant Aluno
-    participant Frontend
-    participant SQLjs as sql.js (WASM)
-    participant Backend
+    participant Frontend as Next.js (app/sql-quest)
+    participant SQLjs as sql.js (WASM - browser)
+    participant Firestore as Firebase Firestore
 
-    Aluno->>Frontend: Abre lição 5.1
-    Frontend->>Backend: GET /api/lessons/5-1
-    Backend-->>Frontend: { schema, seed_data, expected_result, hints }
+    Aluno->>Frontend: Abre /sql-quest/learn/5/1
+    Frontend->>Frontend: Carrega lesson JSON (import estático)
     Frontend->>SQLjs: Inicializa DB com schema + seed
-    Aluno->>Frontend: Escreve query no editor
+    Aluno->>Frontend: Escreve query no Monaco Editor
     Aluno->>Frontend: Clica "Executar"
     Frontend->>SQLjs: Executa query do aluno
     SQLjs-->>Frontend: Resultado da query
     Frontend->>Frontend: Compara resultado vs expected
     alt Query correta ✅
-        Frontend->>Backend: POST /api/progress (lesson_completed, xp)
+        Frontend->>Firestore: Salva progresso (sql_quest_progress)
+        Frontend->>Firestore: Atualiza XP do usuário
         Frontend->>Aluno: Parabéns! +50 XP 🎉
     else Query incorreta ❌
         Frontend->>Aluno: Resultado diferente do esperado
@@ -299,64 +330,216 @@ sequenceDiagram
 
 ---
 
-## 📁 Estrutura de Pastas (Proposta)
+## 📁 Estrutura de Pastas (dentro do projeto existente)
 
 ```
-sql-quest/
+website_SteamGameHub/
 ├── app/
-│   ├── (auth)/
-│   │   ├── login/
-│   │   └── register/
-│   ├── (platform)/
-│   │   ├── dashboard/          # Visão geral do progresso
+│   ├── sql-quest/                          # ← NOVA ROTA
+│   │   ├── page.tsx                        # Landing/hub do SQL Quest
+│   │   ├── layout.tsx                      # Layout específico do módulo
 │   │   ├── learn/
-│   │   │   ├── [chapter]/
-│   │   │   │   └── [lesson]/   # Página da lição com editor
-│   │   ├── sandbox/            # Prática livre
-│   │   ├── challenges/         # Desafios extras
-│   │   ├── leaderboard/        # Rankings
-│   │   └── profile/            # Perfil e conquistas
+│   │   │   ├── page.tsx                    # Lista de capítulos
+│   │   │   └── [chapter]/
+│   │   │       ├── page.tsx                # Lista de lições do capítulo
+│   │   │       └── [lesson]/
+│   │   │           └── page.tsx            # Página da lição com editor
+│   │   ├── sandbox/
+│   │   │   └── page.tsx                    # Prática livre
+│   │   ├── leaderboard/
+│   │   │   └── page.tsx                    # Rankings
+│   │   └── profile/
+│   │       └── page.tsx                    # Progresso e conquistas
+│   │
 │   ├── api/
-│   │   ├── lessons/
-│   │   ├── progress/
-│   │   ├── achievements/
-│   │   └── ai-mentor/
-│   ├── layout.tsx
-│   └── page.tsx                # Landing page
+│   │   └── sql-quest/                      # ← NOVAS APIs
+│   │       ├── progress/
+│   │       │   └── route.ts                # Salvar/buscar progresso
+│   │       ├── achievements/
+│   │       │   └── route.ts                # Conquistas
+│   │       └── leaderboard/
+│   │           └── route.ts                # Rankings
+│   │
+│   ├── atividade-mathquest/                # (já existe)
+│   ├── simulado-saep/                      # (já existe)
+│   └── ...
+│
 ├── components/
-│   ├── editor/
-│   │   ├── SQLEditor.tsx       # Editor Monaco configurado
-│   │   ├── ResultTable.tsx     # Tabela de resultados
-│   │   ├── SchemaViewer.tsx    # Visualização do schema
-│   │   └── QueryRunner.tsx     # Botão de execução
-│   ├── gamification/
-│   │   ├── XPBar.tsx
-│   │   ├── StreakCounter.tsx
-│   │   ├── AchievementBadge.tsx
-│   │   └── LevelIndicator.tsx
-│   ├── lesson/
-│   │   ├── LessonContent.tsx
-│   │   ├── HintSystem.tsx
-│   │   └── ProgressTracker.tsx
-│   └── ui/                     # Componentes genéricos
-├── content/
-│   └── lessons/
+│   └── sql-quest/                          # ← NOVOS COMPONENTES
+│       ├── SQLEditor.tsx                   # Monaco Editor configurado
+│       ├── ResultTable.tsx                 # Tabela de resultados
+│       ├── SchemaViewer.tsx                # Visualização do schema
+│       ├── QueryRunner.tsx                 # Botão de execução + validação
+│       ├── LessonContent.tsx               # Conteúdo da lição (MDX/texto)
+│       ├── HintSystem.tsx                  # Dicas progressivas
+│       ├── ProgressTracker.tsx             # Barra de progresso
+│       ├── XPBar.tsx                       # Barra de experiência
+│       ├── StreakCounter.tsx               # Contador de streak
+│       └── AchievementBadge.tsx            # Badges de conquista
+│
+├── data/
+│   └── sql-quest/                          # ← CONTEÚDO DAS LIÇÕES
+│       ├── chapters.json                   # Metadados dos capítulos
 │       ├── chapter-01/
-│       │   ├── lesson-01.json  # Schema + seed + expected
+│       │   ├── lesson-01.json              # { schema, seed, expected, hints }
 │       │   ├── lesson-02.json
 │       │   └── ...
 │       ├── chapter-02/
 │       └── ...
+│
 ├── lib/
-│   ├── sql-engine.ts           # Wrapper do sql.js
-│   ├── validator.ts            # Validação de resultados
-│   ├── xp-calculator.ts       # Cálculo de XP
-│   └── db.ts                   # Conexão PostgreSQL
-├── public/
-│   └── assets/
-├── prisma/
-│   └── schema.prisma           # Schema do banco principal
-└── package.json
+│   ├── sql-quest/                          # ← NOVA LIB
+│   │   ├── sql-engine.ts                   # Wrapper do sql.js
+│   │   ├── validator.ts                    # Validação de resultados
+│   │   ├── xp-calculator.ts               # Cálculo de XP
+│   │   └── achievements.ts                # Lógica de conquistas
+│   ├── firebase/                           # (já existe)
+│   └── ...
+│
+├── firestore.rules                         # ← ATUALIZAR com regras sql_quest
+└── ...
+```
+
+---
+
+## 🔥 Firestore — Coleções Novas
+
+### Regras (adicionar ao `firestore.rules`)
+
+```javascript
+// ==========================================
+// COLEÇÕES SQL QUEST
+// ==========================================
+
+// Progresso do aluno nas lições
+match /sql_quest_progress/{progressId} {
+  allow read: if request.auth != null
+    && resource.data.userId == request.auth.uid;
+  allow create: if request.auth != null
+    && request.resource.data.userId == request.auth.uid;
+  allow update: if request.auth != null
+    && resource.data.userId == request.auth.uid;
+  allow delete: if false;
+}
+
+// Conquistas disponíveis (metadata)
+match /sql_quest_achievements/{achievementId} {
+  allow read: if true;
+  allow write: if false; // Gerenciado via Admin SDK
+}
+
+// Conquistas desbloqueadas pelo aluno
+match /sql_quest_user_achievements/{docId} {
+  allow read: if true; // Ranking público
+  allow create: if request.auth != null;
+  allow update, delete: if false;
+}
+
+// Queries salvas no Sandbox
+match /sql_quest_saved_queries/{queryId} {
+  allow read: if resource.data.isPublic == true
+    || (request.auth != null && resource.data.userId == request.auth.uid);
+  allow create: if request.auth != null;
+  allow update, delete: if request.auth != null
+    && resource.data.userId == request.auth.uid;
+}
+```
+
+### Estrutura dos Documentos
+
+```typescript
+// sql_quest_progress/{progressId}
+interface LessonProgress {
+  userId: string;          // Firebase Auth UID
+  chapterNumber: number;
+  lessonNumber: number;
+  status: 'locked' | 'unlocked' | 'completed';
+  xpEarned: number;
+  attempts: number;
+  bestQuery: string;       // Melhor query do aluno
+  completedAt: Timestamp | null;
+  updatedAt: Timestamp;
+}
+
+// sql_quest_user_achievements/{docId}
+interface UserAchievement {
+  userId: string;
+  achievementId: string;
+  earnedAt: Timestamp;
+}
+
+// sql_quest_saved_queries/{queryId}
+interface SavedQuery {
+  userId: string;
+  title: string;
+  queryText: string;
+  description: string;
+  isPublic: boolean;
+  createdAt: Timestamp;
+}
+
+// Dados do usuário (campo novo no user existente ou subcoleção)
+interface SQLQuestProfile {
+  totalXp: number;
+  currentStreak: number;
+  maxStreak: number;
+  lastActiveDate: string;  // 'YYYY-MM-DD'
+  lessonsCompleted: number;
+  level: number;
+}
+```
+
+---
+
+## 📊 Formato das Lições (JSON)
+
+Cada lição é um arquivo JSON em `data/sql-quest/chapter-XX/lesson-XX.json`:
+
+```json
+{
+  "id": "5-1",
+  "chapter": 5,
+  "lesson": 1,
+  "title": "WHERE — Filtrando Resultados",
+  "description": "Aprenda a usar a cláusula WHERE para filtrar linhas da tabela.",
+  "difficulty": "easy",
+  "xpReward": 50,
+  "content": {
+    "explanation": "A cláusula `WHERE` é usada para filtrar registros...",
+    "example": {
+      "query": "SELECT * FROM users WHERE age > 18;",
+      "description": "Retorna apenas usuários maiores de 18 anos"
+    }
+  },
+  "schema": [
+    {
+      "tableName": "users",
+      "columns": [
+        { "name": "id", "type": "INTEGER", "primaryKey": true },
+        { "name": "name", "type": "TEXT" },
+        { "name": "age", "type": "INTEGER" },
+        { "name": "city", "type": "TEXT" }
+      ]
+    }
+  ],
+  "seedSQL": "INSERT INTO users VALUES (1, 'Ana', 25, 'São Paulo'); INSERT INTO users VALUES (2, 'Bruno', 17, 'Rio'); INSERT INTO users VALUES (3, 'João', 30, 'Curitiba'); INSERT INTO users VALUES (4, 'Maria', 15, 'Salvador');",
+  "challenge": {
+    "instruction": "Selecione todos os usuários com idade maior que 21.",
+    "expectedResult": {
+      "columns": ["id", "name", "age", "city"],
+      "rows": [
+        [1, "Ana", 25, "São Paulo"],
+        [3, "João", 30, "Curitiba"]
+      ]
+    },
+    "validationMode": "exact"
+  },
+  "hints": [
+    "Use a cláusula WHERE para filtrar resultados",
+    "O operador > significa 'maior que'",
+    "SELECT * FROM users WHERE age > 21;"
+  ]
+}
 ```
 
 ---
@@ -410,115 +593,71 @@ sql-quest/
 
 ---
 
-## 📊 Modelo de Dados (PostgreSQL)
-
-```sql
--- Usuários
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    email VARCHAR(255) UNIQUE NOT NULL,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    avatar_url TEXT,
-    total_xp INTEGER DEFAULT 0,
-    current_streak INTEGER DEFAULT 0,
-    max_streak INTEGER DEFAULT 0,
-    last_active_date DATE,
-    created_at TIMESTAMP DEFAULT NOW()
-);
-
--- Progresso nas lições
-CREATE TABLE lesson_progress (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id),
-    chapter_number INTEGER NOT NULL,
-    lesson_number INTEGER NOT NULL,
-    status VARCHAR(20) DEFAULT 'locked', -- locked, unlocked, completed
-    xp_earned INTEGER DEFAULT 0,
-    attempts INTEGER DEFAULT 0,
-    completed_at TIMESTAMP,
-    UNIQUE(user_id, chapter_number, lesson_number)
-);
-
--- Conquistas
-CREATE TABLE achievements (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(100) NOT NULL,
-    description TEXT,
-    icon_url TEXT,
-    xp_reward INTEGER DEFAULT 0,
-    condition_type VARCHAR(50), -- lessons_completed, streak, xp_total, etc.
-    condition_value INTEGER
-);
-
--- Conquistas do usuário
-CREATE TABLE user_achievements (
-    user_id UUID REFERENCES users(id),
-    achievement_id UUID REFERENCES achievements(id),
-    earned_at TIMESTAMP DEFAULT NOW(),
-    PRIMARY KEY (user_id, achievement_id)
-);
-
--- Queries salvas (sandbox)
-CREATE TABLE saved_queries (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id),
-    title VARCHAR(200),
-    query_text TEXT NOT NULL,
-    description TEXT,
-    is_public BOOLEAN DEFAULT false,
-    created_at TIMESTAMP DEFAULT NOW()
-);
-```
-
----
-
 ## 🚀 Roadmap
 
 ### Fase 1 — MVP (4-6 semanas)
-- [ ] Landing page
-- [ ] Autenticação (login/registro)
-- [ ] Capítulos 1-4 com lições funcionais
-- [ ] Editor SQL com execução via sql.js
-- [ ] Validação de resultados
-- [ ] Sistema básico de progresso
+- [ ] Rota `/sql-quest` com landing page do módulo
+- [ ] Navegação entre capítulos e lições
+- [ ] Capítulos 1-4 com lições funcionais (JSONs)
+- [ ] Editor SQL (Monaco Editor) com execução via sql.js
+- [ ] Validação automática de resultados
+- [ ] Progresso salvo no Firestore
+- [ ] Regras do Firestore atualizadas
 
 ### Fase 2 — Gamificação (2-3 semanas)
-- [ ] Sistema de XP
-- [ ] Streaks diários
-- [ ] Conquistas/Badges
-- [ ] Leaderboard
+- [ ] Sistema de XP com cálculo por lição
+- [ ] Streaks diários (dias consecutivos)
+- [ ] Conquistas/Badges desbloqueáveis
+- [ ] Leaderboard entre alunos
 
 ### Fase 3 — Conteúdo Completo (3-4 semanas)
-- [ ] Capítulos 5-11
+- [ ] Capítulos 5-11 (JSONs das lições)
 - [ ] Desafios finais (Capítulo 12)
 - [ ] Sistema de dicas progressivas
-- [ ] Schema viewer visual
+- [ ] Schema viewer visual (diagrama ER)
 
 ### Fase 4 — Recursos Avançados (4-6 semanas)
-- [ ] Sandbox livre
-- [ ] Assistente IA (Mentor SQL)
-- [ ] Compartilhamento de queries
-- [ ] Modo escuro/claro
+- [ ] Sandbox livre (criar tabelas, importar CSV)
+- [ ] Assistente IA (Mentor SQL socrático)
+- [ ] Salvar e compartilhar queries
 - [ ] Responsividade mobile
 
 ### Fase 5 — Escala (contínuo)
-- [ ] Mais bancos de dados (PostgreSQL, MySQL)
-- [ ] Desafios da comunidade
+- [ ] Suporte a mais dialetos SQL (PostgreSQL, MySQL)
+- [ ] Desafios criados pela comunidade/professor
 - [ ] Certificados de conclusão
-- [ ] API pública
 - [ ] Internacionalização (PT-BR / EN)
 
 ---
 
-## 📝 Notas
+## 💰 Custo de Infraestrutura
 
-- **Execução client-side:** Usar `sql.js` (SQLite compilado para WASM) garante que toda execução SQL acontece no browser do aluno, sem riscos de segurança no servidor.
-- **Conteúdo como dados:** Lições são arquivos JSON que contêm schema, seed data, query esperada e dicas. Isso facilita contribuições e manutenção.
+| Recurso | Custo | Observação |
+|---|---|---|
+| Vercel (hosting) | **$0** | Já pago / tier gratuito |
+| Firebase Auth | **$0** | Já configurado, mesmos usuários |
+| Firestore | **$0 ~ baixo** | Free tier: 50k leituras/dia, 20k escritas/dia |
+| sql.js (WASM) | **$0** | Executa no browser, zero custo de servidor |
+| Monaco Editor | **$0** | Open source (MIT) |
+| **Total** | **$0** | Sem custo adicional na fase MVP |
+
+> **Nota sobre Firestore:** O progresso é salvo apenas quando o aluno completa uma lição (1 escrita). Leituras acontecem ao carregar o dashboard. Com turmas de ~30 alunos, o free tier do Firestore é mais que suficiente.
+
+---
+
+## 📝 Notas Técnicas
+
+- **Execução client-side:** `sql.js` (SQLite compilado para WASM) roda inteiramente no browser. O Firebase/Firestore NÃO executa queries SQL dos alunos — só armazena progresso e dados de gamificação.
+- **Conteúdo como dados:** Lições são arquivos JSON estáticos importados pelo Next.js. Sem necessidade de API para servir conteúdo.
+- **Segurança:** Nenhuma query do aluno chega ao servidor. O Firestore tem regras que garantem que cada aluno só acessa seus próprios dados.
+- **Consistência com o projeto:** Segue os mesmos padrões de `atividade-mathquest` e `simulado-saep` — rota dedicada, componentes isolados, dados no Firestore.
 - **Inspiração:** Boot.dev, SQLBolt, W3Schools SQL, HackerRank SQL, LeetCode Database.
 
 ---
 
 > **Status:** 📋 Planejamento
+> **Projeto:** SENAI Games Hub (website_SteamGameHub)
+> **Rota:** `/sql-quest`
 > **Autor:** Lucas Silva
 > **Data:** Setembro 2026
 > **Licença:** MIT
