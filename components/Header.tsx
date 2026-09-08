@@ -17,6 +17,7 @@ import {
   Rocket,
   Trophy,
   GraduationCap,
+  Database,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "./AuthProvider";
@@ -153,6 +154,10 @@ export default function Header() {
             <Link href="/materiais" className="px-3 py-2 text-sm font-medium text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors">
               Materiais
             </Link>
+            <Link href="/sql-quest" className="px-3 py-2 text-sm font-medium text-[var(--on-surface-variant)] hover:text-[var(--secondary-container)] transition-colors flex items-center gap-1">
+              <Database className="w-3.5 h-3.5" />
+              SQL SenaiUdi
+            </Link>
             <Link href="/stats" className="px-3 py-2 text-sm font-medium text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors">
               {t("header.stats")}
             </Link>
@@ -245,6 +250,10 @@ export default function Header() {
             <Link href="/materiais" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-low)] transition-colors">
               <BookOpen className="w-5 h-5" />
               <span className="font-medium">Materiais</span>
+            </Link>
+            <Link href="/sql-quest" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-low)] transition-colors">
+              <Database className="w-5 h-5" />
+              <span className="font-medium">SQL SenaiUdi</span>
             </Link>
             <Link href="/stats" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-low)] transition-colors">
               <span className="font-medium">{t("header.stats")}</span>

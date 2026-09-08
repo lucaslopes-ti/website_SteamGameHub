@@ -70,6 +70,15 @@ service cloud.firestore {
     }
 
     // ==========================================
+    // COLEÇÃO DE PROGRESSO SQL QUEST (sql_quest_progress)
+    // Acesso exclusivo via API Admin (server) — app/api/sql-quest/progress.
+    // Clientes NÃO acessam direto; o UID é derivado do token no servidor.
+    // ==========================================
+    match /sql_quest_progress/{progressId} {
+      allow read, write: if false;
+    }
+
+    // ==========================================
     // COLEÇÃO DE QUESTÕES SAEP (saep_questions)
     // ==========================================
     match /saep_questions/{questionId} {

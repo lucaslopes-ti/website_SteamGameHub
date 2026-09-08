@@ -1,4 +1,4 @@
-# 🗄️ SQL Quest — Plataforma de Prática com SQL
+# 🗄️ SQL SenaiUdi — Plataforma de Prática com SQL
 
 > Módulo interativo e gamificado para aprendizado de SQL, integrado ao **SENAI Games Hub**.
 > Inspirado no [Boot.dev](https://boot.dev) — foco 100% em **prática hands-on**.
@@ -7,7 +7,7 @@
 
 ## 📌 Visão Geral
 
-A **SQL Quest** é um módulo dentro do projeto SteamGameHub (SENAI Games Hub) onde o aluno progride por capítulos e lições resolvendo desafios de SQL diretamente no navegador. Cada lição apresenta um cenário com tabelas pré-populadas, um objetivo claro e um editor SQL integrado.
+A **SQL SenaiUdi** é um módulo dentro do projeto SteamGameHub (SENAI Games Hub) onde o aluno progride por capítulos e lições resolvendo desafios de SQL diretamente no navegador. Cada lição apresenta um cenário com tabelas pré-populadas, um objetivo claro e um editor SQL integrado.
 
 ### Por que dentro do SteamGameHub?
 
@@ -336,7 +336,7 @@ sequenceDiagram
 website_SteamGameHub/
 ├── app/
 │   ├── sql-quest/                          # ← NOVA ROTA
-│   │   ├── page.tsx                        # Landing/hub do SQL Quest
+│   │   ├── page.tsx                        # Landing/hub do SQL SenaiUdi
 │   │   ├── layout.tsx                      # Layout específico do módulo
 │   │   ├── learn/
 │   │   │   ├── page.tsx                    # Lista de capítulos
@@ -563,7 +563,7 @@ Cada lição é um arquivo JSON em `data/sql-quest/chapter-XX/lesson-XX.json`:
 
 ```
 ┌──────────────────────────────────────────────────┐
-│  📖 SQL Quest    Cap.5 > Lição 1    🔥 5 dias   │
+│  📖 SQL SenaiUdi    Cap.5 > Lição 1    🔥 5 dias   │
 ├─────────────────────┬────────────────────────────┤
 │                     │                            │
 │  CONTEÚDO           │  EDITOR SQL                │

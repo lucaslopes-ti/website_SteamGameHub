@@ -45,6 +45,12 @@ public/uploads/games/*
 data/*
 !data/.gitkeep
 
+# conteúdo da SQL Quest (rastreável — apenas os arquivos do catálogo)
+!data/sql-quest/
+data/sql-quest/*
+!data/sql-quest/lessons.ts
+!data/sql-quest/chapters.ts
+
 # documentação explicativa (não necessária no repo)
 DEPLOY.md
 MIGRACAO.md
