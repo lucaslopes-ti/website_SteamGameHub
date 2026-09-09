@@ -1,8 +1,8 @@
 ---
 id: joins-02
 title: "Namespacing em tabelas"
-summary: "Especifique a tabela de cada coluna e use apelidos (aliases) para deixar o resultado legível."
-chapter: 5
+summary: "Especifique a tabela de cada coluna e use apelidos (aliases) para deixar o resultado legÃ­vel."
+chapter: 10
 chapterSlug: joins
 lesson: 2
 difficulty: intermediario
@@ -14,7 +14,7 @@ hints:
   - "Ordene por country_name em ordem crescente."
   - "SELECT users.name, users.age, countries.name AS country_name FROM users INNER JOIN countries ON countries.country_code = users.country_code ORDER BY country_name ASC;"
 references:
-  - label: "SQLite — JOIN"
+  - label: "SQLite â€” JOIN"
     url: "https://www.sqlite.org/lang_select.html"
 setupSql: |
   CREATE TABLE users (
@@ -101,7 +101,7 @@ challenge:
 
 ## Contexto
 
-Ao trabalhar com várias tabelas, você pode especificar a qual tabela um campo
+Ao trabalhar com vÃ¡rias tabelas, vocÃª pode especificar a qual tabela um campo
 pertence usando um ponto (`.`). Por exemplo:
 
 ```sql
@@ -118,8 +118,8 @@ da tabela `classes`.
 
 ### Apelidos (aliases)
 
-Também podemos dar **apelidos** às colunas do resultado com `AS`, deixando o
-resultado mais legível:
+TambÃ©m podemos dar **apelidos** Ã s colunas do resultado com `AS`, deixando o
+resultado mais legÃ­vel:
 
 ```sql
 SELECT countries.name AS country_name FROM countries;

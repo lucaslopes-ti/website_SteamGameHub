@@ -17,7 +17,7 @@ chapters:
     slug: crud
     title: "CRUD: inserir, atualizar e excluir registros"
     description: "Ler dados é só o começo. Neste capítulo você aprende as quatro operações básicas de um banco — criar, ler, atualizar e excluir — com INSERT, UPDATE, DELETE e consultas com COUNT, WHERE e DISTINCT."
-  - number: 5
+  - number: 10
     slug: joins
     title: "Juntando tabelas com JOIN"
     description: "Os dados do Senai Pay estão espalhados em várias tabelas. Aprenda a combiná-los com INNER JOIN, LEFT JOIN, RIGHT JOIN e FULL JOIN para montar relatórios completos sobre usuários, países e transações."

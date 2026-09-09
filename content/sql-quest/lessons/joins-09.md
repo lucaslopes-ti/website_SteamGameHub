@@ -1,8 +1,8 @@
 ---
 id: joins-09
-title: "Prática: página de perfil"
-summary: "Combine múltiplos JOINs para montar o perfil completo de um usuário do Senai Pay."
-chapter: 5
+title: "PrÃ¡tica: pÃ¡gina de perfil"
+summary: "Combine mÃºltiplos JOINs para montar o perfil completo de um usuÃ¡rio do Senai Pay."
+chapter: 10
 chapterSlug: joins
 lesson: 9
 difficulty: intermediario
@@ -11,10 +11,10 @@ prerequisites:
   - joins-08
 hints:
   - "Junte users com countries e com transactions."
-  - "Filtre apenas transações bem-sucedidas (was_successful = true)."
-  - "Filtre o usuário com id 6 e agrupe por users.id."
+  - "Filtre apenas transaÃ§Ãµes bem-sucedidas (was_successful = true)."
+  - "Filtre o usuÃ¡rio com id 6 e agrupe por users.id."
 references:
-  - label: "SQLite — JOIN"
+  - label: "SQLite â€” JOIN"
     url: "https://www.sqlite.org/lang_select.html"
 setupSql: |
   CREATE TABLE users (
@@ -75,24 +75,24 @@ setupSql: |
   );
 
   INSERT INTO transactions (id, user_id, recipient_id, sender_id, note, amount, was_successful) VALUES
-    (1, 9, NULL, 4, 'Testando transação!', 10.50, true),
-    (2, 5, 10, NULL, 'Valeu pelo almoço!', 9.56, true),
+    (1, 9, NULL, 4, 'Testando transaÃ§Ã£o!', 10.50, true),
+    (2, 5, 10, NULL, 'Valeu pelo almoÃ§o!', 9.56, true),
     (3, 6, NULL, 2, 'Problemas com o carro', 256.21, false),
-    (4, 7, 8, NULL, 'Feliz aniversário!!', 50, true),
+    (4, 7, 8, NULL, 'Feliz aniversÃ¡rio!!', 50, true),
     (5, 9, NULL, 11, 'Draft de cartas', 50, false),
-    (6, 6, 4, NULL, 'Almoço com os amigos', 12.56, true),
-    (7, 6, NULL, 12, 'Te devolvendo o almoço', 12.22, false),
-    (8, 9, 6, NULL, 'Pausa do almoço', 24.89, true),
-    (9, 1, NULL, 13, 'Valeu pelo almoço de ontem', 10.00, true),
-    (10, 6, 14, NULL, 'Pizza de 5 reais no almoço', 5.00, true),
-    (11, 8, NULL, 2, 'Almoço estava ótimo, valeu!', 47.42, true),
-    (12, 13, 4, NULL, 'Encontro para almoçar, bora de novo', 16.91, false),
-    (13, 6, 14, NULL, 'Não sei quanto foi o almoço, aqui tem 20', 20.00, true),
-    (14, 2, 13, NULL, 'Feliz aniversário, mano! Bora almoçar', 100.00, true),
-    (15, 6, NULL, 17, 'Divisão da conta da API', 88.40, true),
-    (16, 6, 1, NULL, 'Café e croissant', 7.75, true),
+    (6, 6, 4, NULL, 'AlmoÃ§o com os amigos', 12.56, true),
+    (7, 6, NULL, 12, 'Te devolvendo o almoÃ§o', 12.22, false),
+    (8, 9, 6, NULL, 'Pausa do almoÃ§o', 24.89, true),
+    (9, 1, NULL, 13, 'Valeu pelo almoÃ§o de ontem', 10.00, true),
+    (10, 6, 14, NULL, 'Pizza de 5 reais no almoÃ§o', 5.00, true),
+    (11, 8, NULL, 2, 'AlmoÃ§o estava Ã³timo, valeu!', 47.42, true),
+    (12, 13, 4, NULL, 'Encontro para almoÃ§ar, bora de novo', 16.91, false),
+    (13, 6, 14, NULL, 'NÃ£o sei quanto foi o almoÃ§o, aqui tem 20', 20.00, true),
+    (14, 2, 13, NULL, 'Feliz aniversÃ¡rio, mano! Bora almoÃ§ar', 100.00, true),
+    (15, 6, NULL, 17, 'DivisÃ£o da conta da API', 88.40, true),
+    (16, 6, 1, NULL, 'CafÃ© e croissant', 7.75, true),
     (17, 6, NULL, 11, 'Bilhete do monotrilho', 65.00, false),
-    (18, 14, 6, NULL, 'Taxa do táxi compartilhado', 14.20, true),
+    (18, 14, 6, NULL, 'Taxa do tÃ¡xi compartilhado', 14.20, true),
     (19, 15, NULL, 4, 'Reembolso de assinatura', 42.42, true),
     (20, 16, 12, NULL, 'Lanches da noite de jogos', 19.90, false),
     (21, 17, NULL, 5, 'Reembolso de taxa de atraso', 3.33, true),
@@ -150,7 +150,7 @@ tables:
         type: BOOLEAN
 challenge:
   kind: exact
-  instruction: "Escreva uma consulta que retorne, para o usuário de id 6: o id, o nome, a idade, o username, o nome do país (renomeado para `country_name`) e a soma dos valores de todas as transações bem-sucedidas (renomeada para `balance`)."
+  instruction: "Escreva uma consulta que retorne, para o usuÃ¡rio de id 6: o id, o nome, a idade, o username, o nome do paÃ­s (renomeado para `country_name`) e a soma dos valores de todas as transaÃ§Ãµes bem-sucedidas (renomeada para `balance`)."
   expectedColumns:
     - id
     - name
@@ -165,12 +165,12 @@ challenge:
 
 ## Contexto
 
-Os JOINs levam um tempo para acostumar, mas a chave para entendê-los e usá-los
-com eficiência é a **prática**!
+Os JOINs levam um tempo para acostumar, mas a chave para entendÃª-los e usÃ¡-los
+com eficiÃªncia Ã© a **prÃ¡tica**!
 
-### Múltiplos JOINs
+### MÃºltiplos JOINs
 
-Para incorporar dados de mais de duas tabelas, você pode utilizar vários JOINs
+Para incorporar dados de mais de duas tabelas, vocÃª pode utilizar vÃ¡rios JOINs
 para executar consultas mais complexas:
 
 ```sql
@@ -182,20 +182,20 @@ INNER JOIN regions ON departments.region_id = regions.id;
 
 ### O perfil do Senai Pay
 
-O time de frontend está finalizando a página de perfil do Senai Pay. Precisamos
+O time de frontend estÃ¡ finalizando a pÃ¡gina de perfil do Senai Pay. Precisamos
 escrever uma consulta que retorne todos os dados de que eles precisam para o
-perfil de um usuário individual.
+perfil de um usuÃ¡rio individual.
 
 ## Sua vez
 
 Escreva uma consulta que retorne os seguintes campos:
 
-- O `id` do usuário
-- O `name` do usuário
-- A `age` do usuário
-- O `username` do usuário
-- O nome do país do usuário, renomeado para `country_name`
-- A soma dos valores de todas as transações **bem-sucedidas** do usuário,
+- O `id` do usuÃ¡rio
+- O `name` do usuÃ¡rio
+- A `age` do usuÃ¡rio
+- O `username` do usuÃ¡rio
+- O nome do paÃ­s do usuÃ¡rio, renomeado para `country_name`
+- A soma dos valores de todas as transaÃ§Ãµes **bem-sucedidas** do usuÃ¡rio,
   renomeada para `balance`
 
-Retorne apenas um único registro de usuário — especificamente o de `id` 6.
+Retorne apenas um Ãºnico registro de usuÃ¡rio â€” especificamente o de `id` 6.

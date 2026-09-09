@@ -31,7 +31,7 @@ describe("catálogo — capítulos", () => {
   });
 
   it("está ordenado por número e tem metadados completos", () => {
-    expect(chapters.map((c) => c.number)).toEqual([1, 2, 3, 4, 5]);
+    expect(chapters.map((c) => c.number)).toEqual([1, 2, 3, 4, 10]);
     expect(chapters.map((c) => c.slug)).toEqual([
       "select",
       "tabelas",
@@ -59,7 +59,7 @@ describe("catálogo — lições", () => {
   it("tem 48 lições (7+10+8+13+10)", () => {
     expect(totalLessons).toBe(48);
     expect(getLessonCount()).toBe(totalLessons);
-    expect(getLessonsPerChapter()).toEqual({ 1: 7, 2: 10, 3: 8, 4: 13, 5: 10 });
+    expect(getLessonsPerChapter()).toEqual({ 1: 7, 2: 10, 3: 8, 4: 13, 10: 10 });
   });
 
   it("todas as lições têm ids semânticos únicos e pertencem a um capítulo conhecido", () => {
@@ -113,15 +113,15 @@ describe("catálogo — lições", () => {
     expect(getLesson(4, 10)?.challenge.kind).toBe("data");
     expect(getLesson(4, 12)?.challenge.kind).toBe("exact");
     expect(getLesson(4, 13)?.challenge.kind).toBe("data");
-    // Cap. 5 — JOINs
-    expect(getLesson(5, 1)?.challenge.kind).toBe("exact");
-    expect(getLesson(5, 4)?.challenge.kind).toBe("theory");
-    expect(getLesson(5, 6)?.challenge.kind).toBe("quiz");
+    // Cap. 10 — JOINs
+    expect(getLesson(10, 1)?.challenge.kind).toBe("exact");
+    expect(getLesson(10, 4)?.challenge.kind).toBe("theory");
+    expect(getLesson(10, 6)?.challenge.kind).toBe("quiz");
   });
 
   it("getLesson valida faixa e posição", () => {
     expect(getLesson(1, 1)?.id).toBe("select-01");
-    expect(getLesson(5, 10)?.id).toBe("joins-10");
+    expect(getLesson(10, 10)?.id).toBe("joins-10");
     expect(getLesson(99, 1)).toBeNull();
     expect(getLesson(1, 0)).toBeNull();
     expect(getLesson(1, 99)).toBeNull();
@@ -158,7 +158,7 @@ describe("catálogo — navegação", () => {
   it("getNextLesson atravessa a fronteira entre capítulos", () => {
     expect(getNextLesson(1, 7)?.id).toBe("tabelas-01");
     expect(getNextLesson(3, 8)?.id).toBe("crud-01");
-    expect(getNextLesson(5, 10)).toBeNull();
+    expect(getNextLesson(10, 10)).toBeNull();
   });
 
   it("getPreviousLesson atravessa a fronteira entre capítulos", () => {

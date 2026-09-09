@@ -57,7 +57,7 @@ describe("resolveLessonId", () => {
 
   it("resolve ids posicionais por capítulo/lição", () => {
     expect(resolveLessonId("4-13")).toBe("crud-13");
-    expect(resolveLessonId("5-1")).toBe("joins-01");
+    expect(resolveLessonId("10-1")).toBe("joins-01");
   });
 
   it("devolve null para ids sem correspondência", () => {

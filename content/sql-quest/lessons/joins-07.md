@@ -1,8 +1,8 @@
 ---
 id: joins-07
 title: "Quiz de JOINs (2)"
-summary: "Identifique qual tipo de JOIN mantém todos os usuários, mesmo sem transações."
-chapter: 5
+summary: "Identifique qual tipo de JOIN mantÃ©m todos os usuÃ¡rios, mesmo sem transaÃ§Ãµes."
+chapter: 10
 chapterSlug: joins
 lesson: 7
 difficulty: intermediario
@@ -11,7 +11,7 @@ prerequisites:
   - joins-06
 hints: []
 references:
-  - label: "SQLite — JOIN"
+  - label: "SQLite â€” JOIN"
     url: "https://www.sqlite.org/lang_select.html"
 challenge:
   kind: quiz
@@ -23,7 +23,7 @@ challenge:
         - "INNER JOIN"
         - "FULL JOIN"
       answer: 0
-      explanation: "Todos os usuários aparecem (mesmo sem transações), mas a transação do usuário 10 não aparece — é um LEFT JOIN."
+      explanation: "Todos os usuÃ¡rios aparecem (mesmo sem transaÃ§Ãµes), mas a transaÃ§Ã£o do usuÃ¡rio 10 nÃ£o aparece â€” Ã© um LEFT JOIN."
 ---
 
 ## Contexto

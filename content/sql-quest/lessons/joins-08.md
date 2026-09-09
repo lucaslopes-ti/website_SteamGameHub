@@ -1,8 +1,8 @@
 ---
 id: joins-08
 title: "Quiz de JOINs (3)"
-summary: "Identifique qual tipo de JOIN mantém todas as transações, mesmo sem usuário correspondente."
-chapter: 5
+summary: "Identifique qual tipo de JOIN mantÃ©m todas as transaÃ§Ãµes, mesmo sem usuÃ¡rio correspondente."
+chapter: 10
 chapterSlug: joins
 lesson: 8
 difficulty: intermediario
@@ -11,7 +11,7 @@ prerequisites:
   - joins-07
 hints: []
 references:
-  - label: "SQLite — JOIN"
+  - label: "SQLite â€” JOIN"
     url: "https://www.sqlite.org/lang_select.html"
 challenge:
   kind: quiz
@@ -23,7 +23,7 @@ challenge:
         - "INNER JOIN"
         - "FULL JOIN"
       answer: 0
-      explanation: "Todas as transações aparecem (inclusive a do usuário 10, sem usuário correspondente), mas usuários sem transações não aparecem — é um RIGHT JOIN."
+      explanation: "Todas as transaÃ§Ãµes aparecem (inclusive a do usuÃ¡rio 10, sem usuÃ¡rio correspondente), mas usuÃ¡rios sem transaÃ§Ãµes nÃ£o aparecem â€” Ã© um RIGHT JOIN."
 ---
 
 ## Contexto
