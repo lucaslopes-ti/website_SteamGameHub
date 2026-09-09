@@ -17,7 +17,7 @@ import { authedFetch } from "@/lib/client-auth";
 
 export default function GameDetailPage() {
   const params = useParams();
-  const { user, isAuthenticated, loading: authLoading } = useAuth();
+  const { loading: authLoading } = useAuth();
   const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedScreenshot, setSelectedScreenshot] = useState<string | null>(null);
@@ -87,6 +87,19 @@ export default function GameDetailPage() {
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
+  };
+
+  // Registra o download (autenticado ou anônimo) para alimentar as métricas.
+  const registerDownload = async (gameId: string) => {
+    try {
+      await authedFetch("/api/downloads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ gameId }),
+      });
+    } catch (error) {
+      console.error("Erro ao registrar download:", error);
+    }
   };
 
   if (loading) {
@@ -160,22 +173,7 @@ export default function GameDetailPage() {
                 <a
                   href={`/uploads/games/${game.executableFile}`}
                   download={game.executableFileName || game.executableFile}
-                  onClick={async () => {
-                    // Registrar download se usuário estiver logado
-                    if (isAuthenticated && user) {
-                      try {
-                        await authedFetch("/api/downloads", {
-                          method: "POST",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({
-                            gameId: game.id,
-                          }),
-                        });
-                      } catch (error) {
-                        console.error("Erro ao registrar download:", error);
-                      }
-                    }
-                  }}
+                  onClick={() => registerDownload(game.id)}
                   className="flex items-center gap-2 bg-senai-blueLight hover:bg-green-600 text-slate-950 hover:text-slate-950 px-6 py-3 rounded font-semibold transition"
                 >
                   <Download className="w-5 h-5" />
@@ -191,6 +189,7 @@ export default function GameDetailPage() {
                 <Link
                   href={game.downloadLink}
                   target="_blank"
+                  onClick={() => registerDownload(game.id)}
                   className="flex items-center gap-2 bg-senai-blueLight hover:bg-green-600 text-slate-950 hover:text-slate-950 px-6 py-3 rounded font-semibold transition"
                 >
                   <Download className="w-5 h-5" />

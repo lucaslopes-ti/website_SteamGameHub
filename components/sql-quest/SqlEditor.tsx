@@ -20,7 +20,22 @@ function SimpleSqlEditor({
   height = "280px",
 }: SqlEditorProps) {
   const id = useId();
+  const gutterRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const lines = value.split("\n");
+
+  // Mantém a coluna de números acompanhando a rolagem vertical do textarea.
+  // Como gutter e textarea têm a mesma altura de linha (leading-6 = 24px) e o
+  // mesmo padding vertical, espelhar o scrollTop garante alinhamento exato.
+  // O soft wrap fica desativado (wrap="off") para que cada linha lógica ocupe
+  // exatamente uma linha visual — sem quebras de linha a numeração não pode se
+  // desalinhar do conteúdo (comportamento equivalente ao do Monaco).
+  const syncScroll = () => {
+    const gutter = gutterRef.current;
+    const textarea = textareaRef.current;
+    if (gutter && textarea) gutter.scrollTop = textarea.scrollTop;
+  };
+
   return (
     <div
       className="flex rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] overflow-hidden font-mono text-sm"
@@ -29,21 +44,28 @@ function SimpleSqlEditor({
       <label htmlFor={id} className="sr-only">
         Editor SQL
       </label>
-      <div className="select-none bg-[var(--surface-container-high)] px-3 py-3 text-right text-[var(--outline)] text-xs leading-6 border-r border-[var(--outline-variant)]">
+      <div
+        ref={gutterRef}
+        aria-hidden="true"
+        className="select-none overflow-hidden bg-[var(--surface-container-high)] px-3 py-3 text-right text-[var(--outline)] text-xs leading-6 border-r border-[var(--outline-variant)]"
+      >
         {lines.map((_, i) => (
           <div key={i}>{i + 1}</div>
         ))}
       </div>
       <textarea
+        ref={textareaRef}
         id={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onScroll={syncScroll}
         disabled={disabled}
         spellCheck={false}
         autoCapitalize="off"
         autoComplete="off"
         autoCorrect="off"
-        className="flex-1 resize-none bg-transparent p-3 leading-6 text-[var(--on-surface)] outline-none disabled:opacity-60"
+        wrap="off"
+        className="flex-1 resize-none overflow-auto bg-transparent p-3 leading-6 text-[var(--on-surface)] outline-none disabled:opacity-60"
         style={{ tabSize: 2 }}
       />
     </div>

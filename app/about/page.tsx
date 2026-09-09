@@ -1,7 +1,79 @@
 "use client";
 
-import { Info, Users, Target, Award } from "lucide-react";
+import { Info, Users, Target, Award, Check } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
+
+type Accent = "primary" | "secondary" | "cyan" | "neutral";
+
+const accentStyles: Record<
+  Accent,
+  { chip: string; icon: string; hover: string }
+> = {
+  primary: {
+    chip: "bg-[var(--primary-10)] ring-1 ring-[var(--primary-container-text)]/30",
+    icon: "text-[var(--primary-text)]",
+    hover: "hover:border-[var(--primary-container-text)]/50",
+  },
+  secondary: {
+    chip: "bg-[var(--secondary-10)] ring-1 ring-[var(--secondary)]/30",
+    icon: "text-[var(--secondary)]",
+    hover: "hover:border-[var(--secondary)]/50",
+  },
+  cyan: {
+    chip: "bg-[var(--primary-10)] ring-1 ring-[var(--primary-fixed-dim)]/40",
+    icon: "text-[var(--primary-fixed-dim)]",
+    hover: "hover:border-[var(--primary-fixed-dim)]/50",
+  },
+  neutral: {
+    chip: "bg-[var(--surface-container-low)] ring-1 ring-[var(--outline-10)]",
+    icon: "text-[var(--on-surface-variant)]",
+    hover: "hover:border-[var(--outline)]/60",
+  },
+};
+
+function AboutCard({
+  accent,
+  icon: Icon,
+  eyebrow,
+  title,
+  children,
+}: {
+  accent: Accent;
+  icon: typeof Target;
+  eyebrow: string;
+  title?: string;
+  children: React.ReactNode;
+}) {
+  const styles = accentStyles[accent];
+  return (
+    <article
+      className={`stagger-item rounded-2xl border border-[var(--outline-10)] bg-[var(--surface-container-lowest)] p-6 transition-colors duration-200 ${styles.hover}`}
+    >
+      <div className="flex items-start gap-3.5">
+        <div
+          className={`mt-0.5 inline-flex shrink-0 items-center justify-center rounded-xl p-2.5 ring-1 ${styles.chip}`}
+        >
+          <Icon
+            aria-hidden="true"
+            className={`h-5 w-5 ${styles.icon}`}
+            strokeWidth={2.1}
+          />
+        </div>
+        <div>
+          <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--outline)]">
+            {eyebrow}
+          </p>
+          {title && (
+            <h3 className="mt-1 text-lg font-bold text-[var(--on-surface)]">
+              {title}
+            </h3>
+          )}
+        </div>
+      </div>
+      <div className="mt-5">{children}</div>
+    </article>
+  );
+}
 
 export default function AboutPage() {
   const { t } = useI18n();
@@ -71,11 +143,11 @@ export default function AboutPage() {
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-12 gap-10 items-start">
           <div className="lg:col-span-5 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--surface-container-low)] border border-[var(--outline-10)] text-xs font-semibold uppercase tracking-[0.2em] text-[var(--secondary)]">
+            <div className="stagger-item inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--surface-container-low)] border border-[var(--outline-10)] text-xs font-semibold uppercase tracking-[0.2em] text-[var(--secondary)]">
               SENAI Game Hub
             </div>
 
-            <div className="space-y-3">
+            <div className="stagger-item space-y-3">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--primary-text)]">
                 {t("aboutPage.title")}
               </h1>
@@ -84,17 +156,19 @@ export default function AboutPage() {
               </h2>
             </div>
 
-            <p className="text-lg text-[var(--on-surface-variant)] leading-relaxed">
+            <p className="stagger-item text-lg text-[var(--on-surface-variant)] leading-relaxed max-w-prose">
               {t("aboutPage.whatIsText")}
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-[var(--outline-10)]">
+            {/* Faixa de indicadores: um único painel com divisores, em vez de
+                três mini-cards que repetem a mesma caixa da seção ao lado. */}
+            <div className="stagger-item grid grid-cols-3 divide-x divide-[var(--outline-10)] rounded-2xl border border-[var(--outline-10)] bg-[var(--surface-container-lowest)] text-center overflow-hidden">
               {indicators.map((item) => (
-                <div key={item.label} className="bg-[var(--surface-container-lowest)] rounded-xl p-4 text-center border border-[var(--outline-10)]">
-                  <div className="text-[var(--primary-text)] font-bold text-2xl">
+                <div key={item.label} className="px-2 py-4">
+                  <div className="font-display text-2xl font-bold text-[var(--primary-text)]">
                     {item.value}
                   </div>
-                  <div className="text-[11px] uppercase tracking-widest text-[var(--on-surface-variant)]">
+                  <div className="mt-1 text-[11px] uppercase tracking-widest text-[var(--on-surface-variant)]">
                     {item.label}
                   </div>
                 </div>
@@ -104,81 +178,102 @@ export default function AboutPage() {
 
           <div className="lg:col-span-7">
             <div className="grid sm:grid-cols-2 gap-6">
-              <div className="bg-[var(--surface-container-lowest)] rounded-2xl p-6 border border-[var(--outline-10)] transition-all hover:border-[var(--secondary-container)]">
-                <div className="flex items-start gap-4">
-                  <div className="mt-1 inline-flex items-center justify-center rounded-2xl p-3 bg-[var(--primary-10)] ring-1 ring-[var(--primary)]/30 shadow-sm">
-                    <Target className="w-6 h-6 text-[var(--primary-text)]" strokeWidth={2.1} />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-[var(--on-surface)] mb-3">{t("aboutPage.objectivesTitle")}</h3>
-                    <ul className="text-[var(--on-surface-variant)] space-y-2 list-disc list-inside">
-                      {objectives.map((objective) => (
-                        <li key={objective}>{objective}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </div>
+              <AboutCard
+                accent="primary"
+                icon={Target}
+                eyebrow={t("aboutPage.kickerObjectives")}
+                title={t("aboutPage.objectivesTitle")}
+              >
+                <ul className="space-y-2.5">
+                  {objectives.map((objective) => (
+                    <li
+                      key={objective}
+                      className="flex items-start gap-2.5"
+                    >
+                      <Check
+                        aria-hidden="true"
+                        strokeWidth={2.5}
+                        className="mt-0.5 h-4 w-4 shrink-0 text-[var(--primary-text)]"
+                      />
+                      <span className="text-sm leading-relaxed text-[var(--on-surface-variant)]">
+                        {objective}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </AboutCard>
 
-              <div className="bg-[var(--surface-container-lowest)] rounded-2xl p-6 border border-[var(--outline-10)] transition-all hover:border-[var(--primary-container)]/60">
-                <div className="flex items-start gap-4">
-                  <div className="mt-1 inline-flex items-center justify-center rounded-2xl p-3 bg-[var(--primary-10)] ring-1 ring-[var(--primary)]/30 shadow-sm">
-                    <Users className="w-6 h-6 text-[var(--primary-container)]" strokeWidth={2.1} />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-[var(--on-surface)] mb-3">{t("aboutPage.howItWorksTitle")}</h3>
-                    <ol className="text-[var(--on-surface-variant)] space-y-3 list-decimal list-inside">
-                      {steps.map((step) => (
-                        <li key={step.title}>
-                          <strong className="text-[var(--on-surface)]">{step.title}</strong> {step.text}
-                        </li>
-                      ))}
-                    </ol>
-                  </div>
-                </div>
-              </div>
+              <AboutCard
+                accent="secondary"
+                icon={Users}
+                eyebrow={t("aboutPage.kickerHowItWorks")}
+                title={t("aboutPage.howItWorksTitle")}
+              >
+                <ol className="space-y-4">
+                  {steps.map((step, index) => (
+                    <li key={step.title} className="flex gap-3">
+                      <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[var(--secondary-10)] ring-1 ring-[var(--secondary)]/30 font-mono text-xs font-bold text-[var(--secondary)]">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <p className="text-sm leading-relaxed text-[var(--on-surface-variant)]">
+                        <strong className="font-semibold text-[var(--on-surface)]">
+                          {step.title}
+                        </strong>{" "}
+                        {step.text}
+                      </p>
+                    </li>
+                  ))}
+                </ol>
+              </AboutCard>
 
-              <div className="bg-[var(--surface-container-lowest)] rounded-2xl p-6 sm:col-span-2 border border-[var(--outline-10)] transition-all hover:border-[var(--primary)]/60">
-                <div className="flex items-start gap-4">
-                  <div className="mt-1 inline-flex items-center justify-center rounded-2xl p-3 bg-[var(--primary-10)] ring-1 ring-[var(--primary)]/30 shadow-sm">
-                    <Award className="w-6 h-6 text-[var(--secondary)]" strokeWidth={2.1} />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-[var(--on-surface)] mb-3">{t("aboutPage.techTitle")}</h3>
-                    <p className="text-[var(--on-surface-variant)] mb-3">
-                      {t("aboutPage.techIntro")}
-                    </p>
-                    <ul className="text-[var(--on-surface-variant)] space-y-2">
-                      {techItems.map((item) => (
-                        <li key={item.label}>
-                          <strong className="text-[var(--on-surface)]">{item.label}</strong> {item.value}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+              <AboutCard
+                accent="cyan"
+                icon={Award}
+                eyebrow={t("aboutPage.kickerTech")}
+                title={t("aboutPage.techTitle")}
+              >
+                <p className="mb-4 text-sm text-[var(--on-surface-variant)]">
+                  {t("aboutPage.techIntro")}
+                </p>
+                <div className="space-y-3.5">
+                  {techItems.map((item) => (
+                    <div
+                      key={item.label}
+                      className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between"
+                    >
+                      <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--primary-fixed-dim)]">
+                        {item.label}
+                      </span>
+                      <span className="text-sm text-[var(--on-surface-variant)]">
+                        {item.value}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
+              </AboutCard>
 
-        <div className="mt-10">
-          <div className="bg-[var(--surface-container-lowest)] rounded-2xl p-6 border border-[var(--outline-10)]">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-              <div className="inline-flex items-center justify-center rounded-2xl p-3 bg-[var(--secondary-10)] ring-1 ring-[var(--secondary-container)]/40 shadow-sm">
-                <Info className="w-6 h-6 text-[var(--secondary)]" strokeWidth={2.1} />
-              </div>
-              <p className="text-[var(--on-surface-variant)] text-center sm:text-left">
-                {t("aboutPage.educationalNotice")}
-              </p>
-            </div>
-            <div className="border-t border-[var(--outline-10)] pt-4 mt-4 text-center">
-              <p className="text-[var(--on-surface-variant)]">
-                <strong className="text-[var(--secondary)]">{t("aboutPage.developedBy")}</strong> Lucas Lopes
-              </p>
-              <p className="text-[var(--outline)] text-sm mt-2">
-                {t("aboutPage.rights", { year: new Date().getFullYear() })}
-              </p>
+              <AboutCard
+                accent="neutral"
+                icon={Info}
+                eyebrow={t("aboutPage.kickerNotice")}
+              >
+                <p className="text-sm leading-relaxed text-[var(--on-surface-variant)]">
+                  {t("aboutPage.educationalNotice")}
+                </p>
+                <div className="mt-5 border-t border-[var(--outline-10)] pt-4">
+                  <p className="text-sm text-[var(--on-surface-variant)]">
+                    <strong className="font-semibold text-[var(--secondary)]">
+                      {t("aboutPage.developedBy")}
+                    </strong>{" "}
+                    Lucas Lopes
+                  </p>
+                  <p className="mt-1.5 text-xs text-[var(--outline)]">
+                    {t("aboutPage.rights", {
+                      year: new Date().getFullYear(),
+                    })}
+                  </p>
+                </div>
+              </AboutCard>
             </div>
           </div>
         </div>
@@ -186,4 +281,3 @@ export default function AboutPage() {
     </section>
   );
 }
-

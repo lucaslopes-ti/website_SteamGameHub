@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import DOMPurify from "dompurify";
+import { marked } from "marked";
 import {
   ArrowLeft,
   ArrowRight,
@@ -101,6 +103,11 @@ function neutralScaffold(lesson: SQLLesson): string {
       ? lesson.challenge.instruction
       : lesson.summary;
   return `-- ${instruction}\n-- Escreva sua consulta SQL abaixo.\n\n`;
+}
+
+function formatTheory(markdown: string): string {
+  const html = marked.parse(markdown);
+  return DOMPurify.sanitize(typeof html === "string" ? html : "");
 }
 
 interface LessonClientProps {
@@ -213,6 +220,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
   const quizQuestions = lesson.challenge.kind === "quiz" ? lesson.challenge.questions : [];
   const quizComplete = isQuiz && quizQuestions.length > 0 && quizQuestions.every((_, index) => quizAnswers[index] !== undefined);
   const quizPassed = isQuiz && quizComplete && quizQuestions.every((question, index) => quizAnswers[index] === question.answer);
+  const theoryHtml = formatTheory(lesson.explanation);
 
   const completeNonSqlLesson = async () => {
     if (!unlocked || completed) return;
@@ -279,9 +287,9 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
       </div>
 
       <main className="mx-auto max-w-7xl px-4 py-6 md:px-6">
-        <div className="grid gap-5 lg:grid-cols-[minmax(280px,0.8fr)_minmax(0,1.35fr)] lg:items-start">
+        <div className="grid gap-5 lg:grid-cols-2 lg:items-start">
           {/* Painel esquerdo: teoria */}
-          <div className="space-y-6">
+          <div className="min-w-0 space-y-6">
             <section className="rounded-3xl border border-[var(--primary)]/25 bg-[var(--primary-10)]/35 p-6 shadow-lg shadow-[var(--primary)]/5">
               <h2 className="mb-3 flex items-center gap-2 text-lg font-bold">
                 <Sparkles className="h-5 w-5 text-[var(--secondary)]" />
@@ -295,21 +303,10 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                 <Database className="h-5 w-5 text-[var(--primary-text)]" />
                 Teoria
               </h2>
-              <div className="prose prose-invert prose-sm max-w-none text-[var(--on-surface-variant)]">
-                {lesson.explanation.split("\n\n").map((paragraph, idx) => (
-                  <p key={idx} className="mb-3">
-                    {paragraph.split("`").map((part, pidx) =>
-                      pidx % 2 === 1 ? (
-                        <code key={pidx} className="rounded bg-[var(--surface-container-high)] px-1 py-0.5 font-mono text-xs text-[var(--primary-text)]">
-                          {part}
-                        </code>
-                      ) : (
-                        part
-                      )
-                    )}
-                  </p>
-                ))}
-              </div>
+              <div
+                className="max-w-none text-sm leading-7 text-[var(--on-surface-variant)] [&>*:first-child]:mt-0 [&_a]:font-semibold [&_a]:text-[var(--primary-text)] [&_blockquote]:my-4 [&_blockquote]:border-l-2 [&_blockquote]:border-[var(--secondary)] [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-[var(--surface-container-high)] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-xs [&_code]:text-[var(--primary-text)] [&_h1]:mb-3 [&_h1]:mt-6 [&_h1]:font-display [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:leading-tight [&_h2]:mb-3 [&_h2]:mt-6 [&_h2]:font-display [&_h2]:text-xl [&_h2]:font-bold [&_h2]:leading-tight [&_h3]:mb-2 [&_h3]:mt-5 [&_h3]:font-bold [&_h3]:text-lg [&_li]:pl-1 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-5 [&_p]:my-3 [&_pre]:my-4 [&_pre]:overflow-x-auto [&_pre]:rounded-xl [&_pre]:border [&_pre]:border-[var(--outline-variant)]/40 [&_pre]:bg-[var(--surface-container-lowest)] [&_pre]:p-4 [&_pre_code]:block [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-sm [&_pre_code]:leading-6 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5"
+                dangerouslySetInnerHTML={{ __html: theoryHtml }}
+              />
             </section>
 
             <section className="rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-6">
@@ -362,7 +359,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
           </div>
 
           {/* Painel direito: prática */}
-          <div className="relative flex flex-col gap-4">
+          <div className="relative flex min-w-0 flex-col gap-4">
             {!unlocked && (
               <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-2xl border border-[var(--outline-variant)]/40 bg-[var(--surface)]/90 p-6 text-center backdrop-blur-sm">
                 <Lock className="h-12 w-12 text-[var(--outline)]" />

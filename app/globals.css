@@ -114,6 +114,8 @@ body {
 /* Fundo translúcido estável: sem blobs animados nem decoração em movimento em
    uma superfície que está sempre visível. A troca de cor no scroll fica no CSS. */
 .header-liquid {
+  position: relative;
+  z-index: 1;
   backdrop-filter: blur(14px) saturate(1.2);
   -webkit-backdrop-filter: blur(14px) saturate(1.2);
   transition: background-color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;

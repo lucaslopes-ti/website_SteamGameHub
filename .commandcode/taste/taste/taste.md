@@ -6,3 +6,5 @@
 - Prefers tooling/skills to be installed globally so they are available in any of his projects, not scoped to just the current one. Confidence: 0.9
 - Uses multiple AI coding tools (Command Code and OpenCode, etc.) and wants the same skills/config available in all of them — shared across assistants, not siloed in one. Confidence: 0.8
 - Prefers installing the complete set of a tool/skill (all skills in a repo, not just the subset advertised) — "completo". Confidence: 0.8
+- Wants engagement/usage metrics (downloads, views, stats) to track real user actions even for anonymous visitors — analytics shouldn't be gated behind login/having a management control in place. Confidence: 0.6
+- When improving page design/UI, expects the work to follow a design system / "skill.md" / design-skill guidelines — applying site-wide design tokens, distinct color roles per card (60/30/10), consistent hierarchy, and keeping new styles consistent with the rest of the site rather than inventing ad-hoc styles. Confidence: 0.7

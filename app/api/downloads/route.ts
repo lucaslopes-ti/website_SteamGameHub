@@ -9,8 +9,9 @@ export const dynamic = "force-dynamic";
 export async function POST(request: NextRequest) {
   try {
     const user = await getAuthUser(request);
-    const authError = requireAuth(user);
-    if (authError) return authError;
+    // Downloads são registrados também para visitantes anônimos; quando
+    // autenticado, o UID/e-mail do token são salvos junto (GET do histórico
+    // continua exigindo login).
 
     const body = await request.json();
     const gameId = body.gameId;
@@ -28,16 +29,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Jogo não encontrado" }, { status: 404 });
     }
 
-    // Novos documentos sempre salvam UID + identificador legado (e-mail).
+    // Novos documentos sempre salvam UID + identificador legado (e-mail)
+    // quando há sessão; sem sessão, guarda apenas o jogo e a data.
     const docRef = await db.collection("downloads").add({
       gameId,
-      userId: user!.uid,
-      userEmail: user!.email ?? "",
+      ...(user
+        ? { userId: user.uid, userEmail: user.email ?? "" }
+        : { anonymous: true }),
       downloadedAt: new Date().toISOString(),
     });
 
     return NextResponse.json(
-      { success: true, download: { id: docRef.id, gameId, userId: user!.uid } },
+      {
+        success: true,
+        download: { id: docRef.id, gameId, userId: user?.uid ?? null },
+      },
       { status: 201 }
     );
   } catch (error) {
