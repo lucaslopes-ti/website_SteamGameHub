@@ -399,7 +399,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
               </div>
             )}
 
-            {isSqlChallenge && <section className="flex min-h-0 flex-col rounded-3xl border border-[var(--primary)]/30 bg-[var(--surface-container-low)]/60 shadow-xl shadow-black/20 lg:h-[clamp(20rem,50vh,42rem)] lg:shrink-0">
+            {isSqlChallenge && <section className="rounded-3xl border border-[var(--primary)]/30 bg-[var(--surface-container-low)]/60 shadow-xl shadow-black/20">
               <div className="flex items-center justify-between border-b border-[var(--outline-variant)]/20 px-4 py-3">
                 <span className="flex items-center gap-2 text-sm font-semibold text-[var(--on-surface-variant)]">
                   <Database className="h-4 w-4" />
@@ -448,12 +448,12 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                 </div>
               )}
 
-              <div className="h-[300px] min-h-0 w-full shrink-0 p-4 lg:h-auto lg:flex-1">
+              <div className="w-full p-4">
                 <SqlEditor
                   value={code}
                   onChange={setCode}
                   disabled={!unlocked || executing}
-                  height="100%"
+                  height="clamp(17.5rem,34vh,25rem)"
                 />
               </div>
 

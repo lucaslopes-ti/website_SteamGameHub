@@ -26,17 +26,19 @@ import {
 
 describe("catálogo — capítulos", () => {
   it("define exatamente os capítulos esperados", () => {
-    expect(totalChapters).toBe(5);
-    expect(getChapterCount()).toBe(5);
+    expect(totalChapters).toBe(7);
+    expect(getChapterCount()).toBe(7);
   });
 
   it("está ordenado por número e tem metadados completos", () => {
-    expect(chapters.map((c) => c.number)).toEqual([1, 2, 3, 4, 10]);
+    expect(chapters.map((c) => c.number)).toEqual([1, 2, 3, 4, 5, 7, 10]);
     expect(chapters.map((c) => c.slug)).toEqual([
       "select",
       "tabelas",
       "restricoes",
       "crud",
+      "filtros",
+      "agregacao",
       "joins",
     ]);
     for (const chapter of chapters) {
@@ -56,10 +58,18 @@ describe("catálogo — capítulos", () => {
 });
 
 describe("catálogo — lições", () => {
-  it("tem 48 lições (7+10+8+13+10)", () => {
-    expect(totalLessons).toBe(48);
+  it("tem 68 lições (7+10+8+13+11+9+10)", () => {
+    expect(totalLessons).toBe(68);
     expect(getLessonCount()).toBe(totalLessons);
-    expect(getLessonsPerChapter()).toEqual({ 1: 7, 2: 10, 3: 8, 4: 13, 10: 10 });
+    expect(getLessonsPerChapter()).toEqual({
+      1: 7,
+      2: 10,
+      3: 8,
+      4: 13,
+      5: 11,
+      7: 9,
+      10: 10,
+    });
   });
 
   it("todas as lições têm ids semânticos únicos e pertencem a um capítulo conhecido", () => {
@@ -113,6 +123,14 @@ describe("catálogo — lições", () => {
     expect(getLesson(4, 10)?.challenge.kind).toBe("data");
     expect(getLesson(4, 12)?.challenge.kind).toBe("exact");
     expect(getLesson(4, 13)?.challenge.kind).toBe("data");
+    // Cap. 5 — filtros, operadores e curingas
+    expect(getLesson(5, 1)?.challenge.kind).toBe("exact");
+    expect(getLesson(5, 10)?.challenge.kind).toBe("quiz");
+    expect(getLesson(5, 11)?.challenge.kind).toBe("exact");
+    // Cap. 7 — funções de agregação
+    expect(getLesson(7, 1)?.challenge.kind).toBe("exact");
+    expect(getLesson(7, 7)?.challenge.kind).toBe("exact");
+    expect(getLesson(7, 9)?.challenge.kind).toBe("exact");
     // Cap. 10 — JOINs
     expect(getLesson(10, 1)?.challenge.kind).toBe("exact");
     expect(getLesson(10, 4)?.challenge.kind).toBe("theory");
@@ -131,6 +149,8 @@ describe("catálogo — lições", () => {
   it("getLessonById resolve ids semânticos", () => {
     expect(getLessonById("select-01")?.id).toBe("select-01");
     expect(getLessonById("tabelas-03")?.chapter).toBe(2);
+    expect(getLessonById("filtros-11")?.chapter).toBe(5);
+    expect(getLessonById("agregacao-09")?.chapter).toBe(7);
     expect(getLessonById("joins-10")?.lesson).toBe(10);
     expect(getLessonById("abc")).toBeNull();
     expect(getLessonById("")).toBeNull();
