@@ -210,7 +210,7 @@ export const translations: Record<Language, TranslationMap> = {
     "aboutPage.kickerNotice": "Educacional",
 
     "login.title": "Entrar",
-    "login.subtitle": "Acesso restrito para professores e administradores",
+    "login.subtitle": "Acesso para alunos, professores e administradores",
     "login.formAria": "Formulário de login",
     "login.invalidCredentials": "E-mail ou senha incorretos",
     "login.error": "Erro ao fazer login",
@@ -472,7 +472,7 @@ export const translations: Record<Language, TranslationMap> = {
     "aboutPage.kickerNotice": "Educational",
 
     "login.title": "Sign in",
-    "login.subtitle": "Restricted access for teachers and administrators",
+    "login.subtitle": "Access for students, teachers, and administrators",
     "login.formAria": "Login form",
     "login.invalidCredentials": "Invalid email or password",
     "login.error": "Error signing in",

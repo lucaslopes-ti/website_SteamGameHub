@@ -230,8 +230,8 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
   };
 
   return (
-    <div className="min-h-screen bg-[var(--surface)] text-[var(--on-surface)]">
-      <div className="border-b border-[var(--outline-variant)]/20 bg-[var(--surface-container-low)]/40">
+    <div className="min-h-screen bg-[var(--surface)] text-[var(--on-surface)] lg:flex lg:h-[calc(100vh-64px)] lg:flex-col lg:overflow-hidden">
+      <div className="shrink-0 border-b border-[var(--outline-variant)]/20 bg-[var(--surface-container-low)]/40">
         <div className="mx-auto max-w-7xl px-4 py-6 md:px-6">
           <nav aria-label="Breadcrumb" className="mb-4">
             <ol className="flex flex-wrap items-center gap-2 text-sm text-[var(--on-surface-variant)]">
@@ -286,10 +286,10 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
         </div>
       </div>
 
-      <main className="mx-auto max-w-7xl px-4 py-6 md:px-6">
-        <div className="grid gap-5 lg:grid-cols-2 lg:items-start">
+      <main className="mx-auto flex w-full max-w-7xl flex-col px-4 py-6 md:px-6 lg:min-h-0 lg:max-w-none lg:flex-1 lg:overflow-hidden">
+        <div className="grid gap-5 lg:min-h-0 lg:flex-1 lg:grid-cols-2 lg:items-stretch">
           {/* Painel esquerdo: teoria */}
-          <div className="min-w-0 space-y-6">
+          <div className="min-w-0 space-y-6 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pr-2">
             <section className="rounded-3xl border border-[var(--primary)]/25 bg-[var(--primary-10)]/35 p-6 shadow-lg shadow-[var(--primary)]/5">
               <h2 className="mb-3 flex items-center gap-2 text-lg font-bold">
                 <Sparkles className="h-5 w-5 text-[var(--secondary)]" />
@@ -297,6 +297,19 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
               </h2>
               <p className="text-[var(--on-surface-variant)]">{instruction}</p>
             </section>
+
+            {lesson.id === "select-01" && (
+              <figure className="overflow-hidden rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-3 shadow-lg shadow-black/10">
+                <img
+                  src="/uploads/images/sql_logos.png"
+                  alt="Logotipos relacionados à linguagem SQL e bancos de dados"
+                  className="h-auto w-full rounded-xl object-cover"
+                />
+                <figcaption className="px-1 pt-3 text-center text-xs leading-5 text-[var(--on-surface-variant)]">
+                  SQL conecta dados, consultas e decisões em um único idioma.
+                </figcaption>
+              </figure>
+            )}
 
             <section className="rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-6">
               <h2 className="mb-3 flex items-center gap-2 text-lg font-bold">
@@ -359,7 +372,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
           </div>
 
           {/* Painel direito: prática */}
-          <div className="relative flex min-w-0 flex-col gap-4">
+          <div className="relative flex min-w-0 flex-col gap-4 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pr-2">
             {!unlocked && (
               <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-2xl border border-[var(--outline-variant)]/40 bg-[var(--surface)]/90 p-6 text-center backdrop-blur-sm">
                 <Lock className="h-12 w-12 text-[var(--outline)]" />
@@ -379,7 +392,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
               </div>
             )}
 
-            {isSqlChallenge && <section className="flex flex-col rounded-3xl border border-[var(--primary)]/30 bg-[var(--surface-container-low)]/60 shadow-xl shadow-black/20">
+            {isSqlChallenge && <section className="flex min-h-0 flex-col rounded-3xl border border-[var(--primary)]/30 bg-[var(--surface-container-low)]/60 shadow-xl shadow-black/20 lg:flex-1">
               <div className="flex items-center justify-between border-b border-[var(--outline-variant)]/20 px-4 py-3">
                 <span className="flex items-center gap-2 text-sm font-semibold text-[var(--on-surface-variant)]">
                   <Database className="h-4 w-4" />
@@ -425,12 +438,12 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                   </button>
                 </div>
               ) : (
-                <div className="p-4">
+                <div className="h-[300px] min-h-0 p-4 lg:flex lg:h-auto lg:flex-1">
                   <SqlEditor
                     value={code}
                     onChange={setCode}
                     disabled={!unlocked || engineLoading || executing}
-                    height="300px"
+                    height="100%"
                   />
                 </div>
               )}

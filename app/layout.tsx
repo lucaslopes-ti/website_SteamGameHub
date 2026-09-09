@@ -22,9 +22,6 @@ const orbitron = Orbitron({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://senaigamehub.vercel.app"),
-  alternates: {
-    canonical: "/",
-  },
   title: {
     default: "SENAI Dr. Celso Charuri Game HUB",
     template: "%s | SENAI Game HUB"
