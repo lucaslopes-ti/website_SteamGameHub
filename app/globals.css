@@ -110,31 +110,17 @@ body {
   font-family: var(--font-plus-jakarta-sans), 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
-/* Header liquid glass */
+/* ========== HEADER ========== */
+/* Fundo translúcido estável: sem blobs animados nem decoração em movimento em
+   uma superfície que está sempre visível. A troca de cor no scroll fica no CSS. */
 .header-liquid {
-  position: relative;
-  overflow: hidden;
   backdrop-filter: blur(14px) saturate(1.2);
   -webkit-backdrop-filter: blur(14px) saturate(1.2);
   transition: background-color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
 }
 
-.header-liquid::before {
-  content: "";
-  position: absolute;
-  inset: -40% 0 -60% 0;
-  background:
-    radial-gradient(180px 120px at 12% 12%, rgba(255, 255, 255, 0.45), transparent 70%),
-    radial-gradient(240px 160px at 86% 0%, rgba(0, 165, 226, 0.4), transparent 75%),
-    radial-gradient(260px 200px at 50% 100%, rgba(255, 255, 255, 0.3), transparent 70%);
-  opacity: 0.45;
-  transform: translate3d(-6%, -8%, 0);
-  animation: liquidShift 18s ease-in-out infinite;
-  pointer-events: none;
-}
-
 .header-liquid--top {
-  background-color: color-mix(in_srgb, var(--surface-container-lowest) 90%, transparent);
+  background-color: color-mix(in_srgb, var(--surface-container-lowest) 72%, transparent);
   border-bottom: 1px solid var(--outline-10);
 }
 
@@ -151,28 +137,86 @@ body {
   --secondary-container: #ffa24a;
   --on-secondary-container: #4b2400;
   --outline-10: color-mix(in_srgb, #a8bfdc 30%, transparent);
-  background: linear-gradient(120deg, rgba(4, 33, 68, 0.78), rgba(0, 79, 159, 0.55));
+  background: linear-gradient(120deg, rgba(4, 33, 68, 0.85), rgba(0, 79, 159, 0.6));
   border-bottom: 1px solid rgba(128, 160, 200, 0.35);
-  box-shadow: 0 16px 40px rgba(0, 24, 56, 0.25);
+  box-shadow: 0 16px 40px rgba(0, 24, 56, 0.22);
 }
 
-.header-liquid--scrolled::before {
-  opacity: 0.7;
+/* Busca do header: realce no focus-within em vez de anel pesado */
+.hd-search-field {
+  height: 2.5rem;
+  width: 100%;
+  border-radius: 0.5rem;
+  background-color: color-mix(in_srgb, var(--surface-container-lowest) 88%, transparent);
+  border: 1px solid var(--outline-10);
+  color: var(--on-surface);
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
-@keyframes liquidShift {
-  0% {
-    transform: translate3d(-6%, -8%, 0) scale(1);
-    opacity: 0.45;
+.hd-search-field::placeholder {
+  color: color-mix(in_srgb, var(--outline) 85%, transparent);
+}
+
+.hd-search-field:hover {
+  border-color: color-mix(in_srgb, var(--outline) 55%, transparent);
+}
+
+.hd-search:focus-within .hd-search-field {
+  background-color: var(--surface-container-lowest);
+  border-color: var(--secondary-container);
+  box-shadow: 0 0 0 3px color-mix(in_srgb, var(--secondary-container) 16%, transparent);
+}
+
+.hd-search-icon {
+  color: var(--outline);
+  transition: color 0.2s ease;
+}
+
+.hd-search:focus-within .hd-search-icon {
+  color: var(--secondary-container);
+}
+
+/* iOS: evita zoom automático ao focar (inputs < 16px disparam zoom) */
+@media (pointer: coarse) {
+  .hd-search-field {
+    font-size: 1rem;
   }
-  50% {
-    transform: translate3d(6%, 6%, 0) scale(1.06);
-    opacity: 0.7;
+}
+
+/* Menus flutuantes do header: entram a partir do trigger, 160ms ease-out */
+.hd-menu {
+  opacity: 0;
+  transform: scale(0.96);
+  visibility: hidden;
+  transition:
+    opacity 0.16s cubic-bezier(0.23, 1, 0.32, 1),
+    transform 0.16s cubic-bezier(0.23, 1, 0.32, 1),
+    visibility 0.16s;
+}
+
+.hd-menu[data-open="true"] {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+}
+
+/* Painel mobile */
+@keyframes hdPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
   }
-  100% {
-    transform: translate3d(-6%, -8%, 0) scale(1);
-    opacity: 0.45;
+  to {
+    opacity: 1;
+    transform: none;
   }
+}
+
+.hd-panel-in {
+  animation: hdPanelIn 0.2s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 /* Legacy light-theme overrides were removed: the app intentionally runs dark. */

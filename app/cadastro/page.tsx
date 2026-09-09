@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AlertCircle, UserPlus } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
+import { getAuthRedirectFromSearch } from "@/lib/auth-redirect";
 
 export default function CadastroPage() {
   const router = useRouter();
@@ -40,7 +41,7 @@ export default function CadastroPage() {
       return;
     }
 
-    router.push("/materiais");
+    router.push(getAuthRedirectFromSearch(window.location.search));
   };
 
   const handleGoogleLogin = async () => {
@@ -55,7 +56,7 @@ export default function CadastroPage() {
       return;
     }
 
-    router.push("/materiais");
+    router.push(getAuthRedirectFromSearch(window.location.search));
   };
 
   return (

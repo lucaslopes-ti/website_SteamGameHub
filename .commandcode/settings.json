@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "powershell",
+      "Shell(copy:*)",
+      "Shell(npx tsc --noEmit)",
+      "Shell(if:*)",
+      "Shell(else:*)",
+      "Shell(npm:*)",
+      "Shell(npx --yes --package typescript@5.4.5 tsc --noEmit)",
+      "Shell(npx --yes --package typescript@5.4.5 tsc --noEmit 2 >& 1)",
+      "Shell(findstr:*)",
+      "Shell(:PATH:*)",
+      "Shell(Select-Object:*)",
+      "Shell(powershell -NoProfile -Command \"Get-Content 'C:\\Users\\Lucas\\AppData\\Local\\Temp\\commandcode\\shellout\\2026-09-09T00-06-46-622Z-s0jk32da.log' | Select-Object -Last 25\")"
+    ],
+    "deny": [],
+    "defaultMode": "default"
+  }
+}

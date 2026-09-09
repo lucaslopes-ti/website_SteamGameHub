@@ -6,6 +6,7 @@ import { useAuth } from "@/components/AuthProvider";
 import Link from "next/link";
 import { LogIn, AlertCircle } from "lucide-react";
 import { useI18n } from "@/components/I18nProvider";
+import { getAuthRedirectFromSearch } from "@/lib/auth-redirect";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,7 +25,7 @@ export default function LoginPage() {
     try {
       const success = await login(email, password);
       if (success) {
-        router.push("/materiais");
+        router.push(getAuthRedirectFromSearch(window.location.search));
       } else {
         setError(t("login.invalidCredentials"));
       }
@@ -42,7 +43,7 @@ export default function LoginPage() {
     try {
       const success = await loginWithGoogle();
       if (success) {
-        router.push("/materiais");
+        router.push(getAuthRedirectFromSearch(window.location.search));
       } else {
         setError("Não foi possível entrar com Google.");
       }

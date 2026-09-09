@@ -55,11 +55,24 @@ export interface SQLSchemaSnapshot {
 }
 
 /**
+ * Estado final de uma tabela após a execução da query do aluno (desafios de
+ * mutação/data-state: INSERT, UPDATE, DELETE). Capturado pelo motor via
+ * `SELECT *` na tabela declarada.
+ */
+export interface SQLTableState {
+  name: string;
+  /** Nomes das colunas na ordem declarada da tabela. */
+  columns: string[];
+  /** Linhas do estado final (valores já serializáveis). */
+  rows: SQLValue[][];
+}
+
+/**
  * Resultado normalizado da execução de uma query.
  *
  * `columns`/`rows` refletem APENAS o primeiro result set retornado (o que será
  * exibido como tabela). `schema` é preenchido pelo motor quando a lição é um
- * desafio de estrutura (DDL).
+ * desafio de estrutura (DDL); `tables` quando é um desafio de mutação/data.
  */
 export interface SQLExecutionResult {
   success: boolean;
@@ -71,6 +84,8 @@ export interface SQLExecutionResult {
   rows: SQLValue[][];
   rowCount: number;
   schema: SQLSchemaSnapshot | null;
+  /** Estado final das tabelas declaradas (preenchido em desafios "data"). */
+  tables?: SQLTableState[];
 }
 
 // ---------------------------------------------------------------------------
@@ -111,9 +126,29 @@ export interface SQLExpectedTable {
 }
 
 /**
+ * Expectativa de estado final de uma tabela em desafios "data"
+ * (INSERT/UPDATE/DELETE): compara colunas (na ordem) e linhas (multiset por
+ * padrão) do estado final da tabela após a query do aluno.
+ */
+export interface SQLExpectedTableState {
+  name: string;
+  /** Colunas esperadas, NA ORDEM em que devem aparecer. */
+  columns: string[];
+  /** Linhas esperadas do estado final. */
+  rows: SQLValue[][];
+  /**
+   * Quando true, a ordem das linhas importa (ex.: após um ORDER BY explícito).
+   * Padrão: false (linhas são comparadas como multiset, ignorando a ordem).
+   */
+  orderSensitive?: boolean;
+}
+
+/**
  * Desafio de uma lição:
  * - `exact`: compara colunas e linhas do resultado com o esperado.
  * - `schema`: valida a estrutura do banco após a execução (DDL).
+ * - `data`: compara o estado final das tabelas declaradas após a execução
+ *   (mutação/data-state — INSERT, UPDATE, DELETE).
  */
 export type SQLChallenge =
   | {
@@ -133,13 +168,19 @@ export type SQLChallenge =
       kind: "schema";
       instruction: string;
       expectedTables: SQLExpectedTable[];
+    }
+  | {
+      kind: "data";
+      instruction: string;
+      /** Tabelas cujo estado final deve ser comparado após a query. */
+      expectedTables: SQLExpectedTableState[];
     };
 
 /** Resultado da validação (feedback amigável em PT-BR). */
 export interface SQLValidationResult {
   passed: boolean;
-  /** `exact` | `schema` para lições executadas; `error` quando a query falhou. */
-  mode: "exact" | "schema" | "error";
+  /** `exact` | `schema` | `data` para lições executadas; `error` quando a query falhou. */
+  mode: "exact" | "schema" | "data" | "error";
   /** Mensagem principal para o aluno. */
   message: string;
   /** Detalhes granulares (usados para exibir a lista de problemas). */

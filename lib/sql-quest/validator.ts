@@ -1,11 +1,14 @@
 /**
  * Validador da SQL Quest — lógica pura, sem dependência de sql.js/Firebase.
  *
- * Suporta dois tipos de desafio:
+ * Suporta três tipos de desafio:
  * - `exact`: o resultado do aluno deve ter as MESMAS colunas (na ordem) e as
  *   mesmas linhas do esperado.
  * - `schema`: a estrutura do banco (snapshot) deve conter as tabelas,
  *   colunas e restrições esperadas.
+ * - `data`: o estado final das tabelas declaradas (após INSERT/UPDATE/DELETE)
+ *   deve ter as mesmas colunas (na ordem) e as mesmas linhas do esperado
+ *   (multiset por padrão; ordem apenas quando `orderSensitive`).
  *
  * Todas as mensagens de retorno são em PT-BR e prontas para exibição.
  */
@@ -343,6 +346,63 @@ function validateSchema(
 }
 
 // ---------------------------------------------------------------------------
+// Validação do modo "data" (estado final de tabelas — mutação/data-state)
+// ---------------------------------------------------------------------------
+
+function validateData(
+  challenge: Extract<SQLChallenge, { kind: "data" }>,
+  result: SQLExecutionResult
+): SQLValidationResult {
+  const details: string[] = [];
+  const actualTables = result.tables ?? [];
+
+  for (const expected of challenge.expectedTables) {
+    const actual = actualTables.find(
+      (table) => table.name.toLowerCase() === expected.name.toLowerCase()
+    );
+
+    if (!actual) {
+      details.push(
+        `A tabela "${expected.name}" não existe no banco após a execução.`
+      );
+      continue;
+    }
+
+    const headerError = compareHeaders(expected.columns, actual.columns);
+    if (headerError) {
+      details.push(`Na tabela "${expected.name}": ${headerError}`);
+      continue;
+    }
+
+    const rowsOk =
+      expected.orderSensitive === true
+        ? rowsEqualInOrder(expected.rows, actual.rows)
+        : rowsEqualIgnoreOrder(expected.rows, actual.rows);
+    if (!rowsOk) {
+      details.push(
+        `Na tabela "${expected.name}", as linhas não conferem: eram esperadas ${expected.rows.length} linha(s) e foram encontradas ${actual.rows.length}.`
+      );
+    }
+  }
+
+  if (details.length > 0) {
+    return {
+      passed: false,
+      mode: "data",
+      message:
+        "O estado final das tabelas ainda não confere com o esperado. Revise os itens abaixo.",
+      details,
+    };
+  }
+  return {
+    passed: true,
+    mode: "data",
+    message: "Parabéns! O estado final das tabelas está correto.",
+    details: [],
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Ponto de entrada
 // ---------------------------------------------------------------------------
 
@@ -370,6 +430,8 @@ export function validateLessonResult(
       return validateExact(lesson.challenge, result);
     case "schema":
       return validateSchema(lesson.challenge, result);
+    case "data":
+      return validateData(lesson.challenge, result);
     default:
       return {
         passed: false,

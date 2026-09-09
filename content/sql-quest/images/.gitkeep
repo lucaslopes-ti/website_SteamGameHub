@@ -1,0 +1,5 @@
+# Imagens locais da SQL Quest.
+
+Coloque aqui as imagens referenciadas no front matter das unidades
+(`images[].src`, caminho relativo a este diretório). Exemplos em
+`fixtures/valid/images/`.

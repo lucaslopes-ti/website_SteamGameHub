@@ -27,6 +27,7 @@ import type {
   SQLTableSchema,
   SQLColumnSchema,
   SQLForeignKeySchema,
+  SQLTableState,
 } from "./types";
 import { validateLessonResult } from "./validator";
 
@@ -198,6 +199,33 @@ function buildSchemaSnapshot(db: SqlJsDatabase): SQLSchemaSnapshot {
   return { tables };
 }
 
+/**
+ * Captura o estado final de uma tabela (colunas na ordem declarada + linhas)
+ * via `SELECT *`. Devolve `null` quando a tabela não existe ou o nome não é um
+ * identificador seguro (o validador reporta a tabela como ausente).
+ */
+function buildTableState(
+  db: SqlJsDatabase,
+  tableName: string
+): SQLTableState | null {
+  if (!IDENTIFIER_RE.test(tableName)) return null;
+  try {
+    const quoted = `"${tableName}"`;
+    const results = db.exec(`SELECT * FROM ${quoted};`);
+    const first = results && results[0];
+    if (!first) return { name: tableName, columns: [], rows: [] };
+    return {
+      name: tableName,
+      columns: first.columns.slice(),
+      rows: first.values.map((row) =>
+        row.map((cell) => normalizeCell(cell as RawSqlCell))
+      ),
+    };
+  } catch {
+    return null;
+  }
+}
+
 /** Converte erros crus do SQLite em mensagens amigáveis (PT-BR). */
 function readableSqlError(error: unknown): string {
   const raw = error instanceof Error ? error.message : String(error);
@@ -245,8 +273,34 @@ function emptyResult(error: string | null): SQLExecutionResult {
  *
  * Retorna SEMPRE `{ result, validation }` (nunca lança). O cliente só precisa
  * chamar esta função para obter a tabela de resultados e o veredito.
+ *
+ * Guarda de runtime: SQL NUNCA executa fora do navegador. Em ambiente sem
+ * `window` (ex.: servidor), devolve `success: false` com mensagem clara.
  */
 export async function executeLessonQuery(
+  lesson: SQLLesson,
+  sqlText: string
+): Promise<SQLExecutionResponse> {
+  if (typeof window === "undefined") {
+    const result = emptyResult(
+      "A execução de SQL está disponível apenas no navegador (client-side)."
+    );
+    return { result, validation: validateLessonResult(lesson, result) };
+  }
+
+  const SQL = await loadSqlJs();
+  return executeLessonQueryWithSqlJs(SQL, lesson, sqlText);
+}
+
+/**
+ * Núcleo de execução com uma instância já carregada do sql.js.
+ *
+ * Exportado como seam de teste (permite integração realista com sql.js em
+ * Jest/Node). O runtime público (`executeLessonQuery`) mantém a guarda de
+ * navegador; este núcleo não deve ser usado fora de testes.
+ */
+export async function executeLessonQueryWithSqlJs(
+  SQL: SqlJsStatic,
   lesson: SQLLesson,
   sqlText: string
 ): Promise<SQLExecutionResponse> {
@@ -254,13 +308,6 @@ export async function executeLessonQuery(
   let db: SqlJsDatabase | null = null;
 
   try {
-    if (typeof window === "undefined") {
-      throw new Error(
-        "A execução de SQL está disponível apenas no navegador (client-side)."
-      );
-    }
-
-    const SQL = await loadSqlJs();
     db = new SQL.Database();
     db.run("PRAGMA foreign_keys = ON;");
 
@@ -287,11 +334,22 @@ export async function executeLessonQuery(
     result.success = false;
     result.error = readableSqlError(error);
   } finally {
-    if (lesson.challenge.kind === "schema" && result.success && db) {
-      try {
-        result.schema = buildSchemaSnapshot(db);
-      } catch {
-        result.schema = { tables: [] };
+    if (result.success && db) {
+      if (lesson.challenge.kind === "schema") {
+        try {
+          result.schema = buildSchemaSnapshot(db);
+        } catch {
+          result.schema = { tables: [] };
+        }
+      } else if (lesson.challenge.kind === "data") {
+        // Estado final das tabelas declaradas (INSERT/UPDATE/DELETE).
+        try {
+          result.tables = lesson.challenge.expectedTables
+            .map((expected) => buildTableState(db!, expected.name))
+            .filter((state): state is SQLTableState => state !== null);
+        } catch {
+          result.tables = [];
+        }
       }
     }
     if (db) {
@@ -315,4 +373,5 @@ export type {
   SQLValidationResult,
   SQLValue,
   SQLSchemaSnapshot,
+  SQLTableState,
 } from "./types";

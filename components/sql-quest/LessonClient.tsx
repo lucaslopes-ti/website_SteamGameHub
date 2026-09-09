@@ -212,7 +212,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
           <nav aria-label="Breadcrumb" className="mb-4">
             <ol className="flex flex-wrap items-center gap-2 text-sm text-[var(--on-surface-variant)]">
               <li>
-                <Link href="/sql-quest" className="transition-colors hover:text-[var(--primary-text)]">
+                <Link href="/sql-quest" className="transition-colors [@media(hover:hover)_and_(pointer:fine)]:hover:text-[var(--primary-text)]">
                   SQL SenaiUdi
                 </Link>
               </li>
@@ -220,7 +220,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
               <li>
                 <Link
                   href={`/sql-quest/learn/${lesson.chapter}`}
-                  className="transition-colors hover:text-[var(--primary-text)]"
+                  className="transition-colors [@media(hover:hover)_and_(pointer:fine)]:hover:text-[var(--primary-text)]"
                 >
                   Capítulo {lesson.chapter}
                 </Link>
@@ -234,14 +234,15 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
 
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
-              <h1 className="font-display text-2xl font-bold md:text-3xl">{lesson.title}</h1>
+              <div className="flex flex-wrap items-center gap-3"><span className="rounded-full bg-[var(--primary-10)] px-2.5 py-1 text-xs font-bold uppercase tracking-[0.14em] text-[var(--primary-text)]">Lição {lesson.chapter}.{lesson.lesson}</span><span className="rounded-full bg-[var(--secondary)]/10 px-2.5 py-1 text-xs font-bold text-[var(--secondary)]">+{lesson.xpReward} XP</span></div>
+              <h1 className="mt-3 font-display text-3xl font-bold tracking-tight md:text-4xl">{lesson.title}</h1>
               <p className="mt-1 text-[var(--on-surface-variant)]">{lesson.summary}</p>
             </div>
             <div className="flex items-center gap-2">
               {previous && (
                 <Link
                   href={`/sql-quest/learn/${previous.chapter}/${previous.lesson}`}
-                  className="inline-flex items-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] px-4 py-2 text-sm font-medium text-[var(--on-surface)] transition-colors hover:bg-[var(--surface-container-high)]"
+                  className="inline-flex items-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] px-4 py-2 text-sm font-medium text-[var(--on-surface)] transition-[background-color,border-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media([@media(hover:hover)_and_(pointer:fine)]:hover:hover)_and_(pointer:fine)]:[@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--surface-container-high)]"
                 >
                   <ArrowLeft className="h-4 w-4" />
                   Anterior
@@ -250,7 +251,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
               {next && (
                 <Link
                   href={`/sql-quest/learn/${next.chapter}/${next.lesson}`}
-                  className="inline-flex items-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] px-4 py-2 text-sm font-medium text-[var(--on-surface)] transition-colors hover:bg-[var(--surface-container-high)]"
+                  className="inline-flex items-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] px-4 py-2 text-sm font-medium text-[var(--on-surface)] transition-[background-color,border-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media([@media(hover:hover)_and_(pointer:fine)]:hover:hover)_and_(pointer:fine)]:[@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--surface-container-high)]"
                 >
                   Próxima
                   <ArrowRight className="h-4 w-4" />
@@ -262,10 +263,10 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
       </div>
 
       <main className="mx-auto max-w-7xl px-4 py-6 md:px-6">
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]">
+        <div className="grid gap-5 lg:grid-cols-[minmax(280px,0.8fr)_minmax(0,1.35fr)] lg:items-start">
           {/* Painel esquerdo: teoria */}
           <div className="space-y-6">
-            <section className="rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-6">
+            <section className="rounded-3xl border border-[var(--primary)]/25 bg-[var(--primary-10)]/35 p-6 shadow-lg shadow-[var(--primary)]/5">
               <h2 className="mb-3 flex items-center gap-2 text-lg font-bold">
                 <Sparkles className="h-5 w-5 text-[var(--secondary)]" />
                 Objetivo
@@ -335,7 +336,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                   type="button"
                   onClick={revealHint}
                   disabled={!unlocked}
-                  className="mt-4 inline-flex items-center gap-2 rounded-lg border border-[var(--secondary-20)] bg-[var(--secondary-10)] px-4 py-2 text-sm font-semibold text-[var(--secondary)] transition-colors hover:bg-[var(--secondary-20)] disabled:cursor-not-allowed disabled:opacity-50"
+                  className="mt-4 inline-flex items-center gap-2 rounded-lg border border-[var(--secondary-20)] bg-[var(--secondary-10)] px-4 py-2 text-sm font-semibold text-[var(--secondary)] transition-[background-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media([@media(hover:hover)_and_(pointer:fine)]:hover:hover)_and_(pointer:fine)]:[@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--secondary-20)] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <Lightbulb className="h-4 w-4" />
                   Mostrar próxima dica
@@ -365,7 +366,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
               </div>
             )}
 
-            <section className="flex flex-col rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40">
+            <section className="flex flex-col rounded-3xl border border-[var(--primary)]/30 bg-[var(--surface-container-low)]/60 shadow-xl shadow-black/20">
               <div className="flex items-center justify-between border-b border-[var(--outline-variant)]/20 px-4 py-3">
                 <span className="flex items-center gap-2 text-sm font-semibold text-[var(--on-surface-variant)]">
                   <Database className="h-4 w-4" />
@@ -373,7 +374,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                 </span>
                 {engineLoading && (
                   <span className="inline-flex items-center gap-2 text-xs font-medium text-[var(--primary-text)]">
-                    <span className="h-2 w-2 animate-pulse rounded-full bg-[var(--primary-text)]" />
+                    <span className="h-2 w-2 animate-pulse rounded-full bg-[var(--primary-text)] motion-reduce:animate-none" />
                     Inicializando motor
                   </span>
                 )}
@@ -426,11 +427,11 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                   type="button"
                   onClick={handleRun}
                   disabled={!unlocked || engineLoading || !!engineError || executing || !code.trim()}
-                  className="inline-flex items-center gap-2 rounded-lg bg-[var(--secondary-container)] px-5 py-2.5 text-sm font-bold text-[var(--on-secondary-container)] shadow-md transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-lg bg-[var(--secondary-container)] px-5 py-2.5 text-sm font-bold text-[var(--on-secondary-container)] shadow-md transition-transform duration-[160ms] ease-out active:scale-[0.97] [@media([@media(hover:hover)_and_(pointer:fine)]:hover:hover)_and_(pointer:fine)]:[@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {executing ? (
                     <>
-                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--on-secondary-container)] border-t-transparent" />
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--on-secondary-container)] border-t-transparent motion-reduce:animate-none" />
                       Executando...
                     </>
                   ) : (
@@ -445,14 +446,14 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                   type="button"
                   onClick={handleReset}
                   disabled={executing}
-                  className="inline-flex items-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] px-4 py-2.5 text-sm font-semibold text-[var(--on-surface)] transition-colors hover:bg-[var(--surface-container-high)] disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] px-4 py-2.5 text-sm font-semibold text-[var(--on-surface)] transition-[background-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media([@media(hover:hover)_and_(pointer:fine)]:hover:hover)_and_(pointer:fine)]:[@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--surface-container-high)] disabled:opacity-50"
                 >
                   <RotateCcw className="h-4 w-4" />
                   Reiniciar
                 </button>
 
                 <div className="ml-auto text-xs font-medium text-[var(--on-surface-variant)]">
-                  {lesson.xpReward} XP disponíveis
+                  {lesson.xpReward} XP nesta lição
                 </div>
               </div>
             </section>

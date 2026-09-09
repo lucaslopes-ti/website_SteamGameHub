@@ -56,16 +56,14 @@ export default function Footer() {
       <div className="container mx-auto px-4 py-16">
         <div className="grid lg:grid-cols-12 gap-10">
           <div className="lg:col-span-5 space-y-5">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-lg bg-[var(--surface-container-lowest)] border border-[var(--outline-10)] flex items-center justify-center shadow-sm">
-                <Image
-                  src="/uploads/images/logo_senaigamehub.png"
-                  alt="SENAI Game Hub"
-                  width={36}
-                  height={36}
-                  className="object-contain"
-                />
-              </div>
+            <div className="flex items-center gap-3">
+              <Image
+                src="/uploads/images/logo_senaigamehub_correta.png"
+                alt="SENAI Game Hub"
+                width={44}
+                height={50}
+                className="h-11 w-auto object-contain"
+              />
               <div className="leading-tight">
                 <div className="font-display font-bold text-lg text-[var(--primary)]">SENAI Game Hub</div>
                 <div className="text-[10px] text-[var(--on-surface-variant)] font-mono uppercase tracking-wider">

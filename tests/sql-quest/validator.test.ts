@@ -434,3 +434,219 @@ describe("validador — células (helpers)", () => {
     expect(validateLessonResult(lesson, no).passed).toBe(false);
   });
 });
+
+describe("validador — modo data (estado final de tabelas)", () => {
+  const dataLesson = makeLesson({
+    kind: "data",
+    instruction: "insira um cliente",
+    expectedTables: [
+      {
+        name: "clientes",
+        columns: ["id", "nome", "saldo"],
+        rows: [
+          [1, "Ana", 100],
+          [2, "Bruno", 250.5],
+        ],
+      },
+    ],
+  });
+
+  it("passa quando o estado final confere (multiset, ordem ignorada)", () => {
+    const result = makeResult({
+      tables: [
+        {
+          name: "clientes",
+          columns: ["id", "nome", "saldo"],
+          rows: [
+            [2, "Bruno", 250.5],
+            [1, "Ana", 100],
+          ],
+        },
+      ],
+    });
+    const validation = validateLessonResult(dataLesson, result);
+    expect(validation.passed).toBe(true);
+    expect(validation.mode).toBe("data");
+  });
+
+  it("reprova quando faltam linhas (INSERT incompleto)", () => {
+    const result = makeResult({
+      tables: [
+        {
+          name: "clientes",
+          columns: ["id", "nome", "saldo"],
+          rows: [[1, "Ana", 100]],
+        },
+      ],
+    });
+    const validation = validateLessonResult(dataLesson, result);
+    expect(validation.passed).toBe(false);
+    expect(validation.details.join(" ")).toMatch(/linhas não conferem/);
+  });
+
+  it("reprova quando há linhas a mais (DELETE insuficiente)", () => {
+    const result = makeResult({
+      tables: [
+        {
+          name: "clientes",
+          columns: ["id", "nome", "saldo"],
+          rows: [
+            [1, "Ana", 100],
+            [2, "Bruno", 250.5],
+            [3, "Carla", 0],
+          ],
+        },
+      ],
+    });
+    expect(validateLessonResult(dataLesson, result).passed).toBe(false);
+  });
+
+  it("reprova quando uma linha tem valores errados (UPDATE errado)", () => {
+    const result = makeResult({
+      tables: [
+        {
+          name: "clientes",
+          columns: ["id", "nome", "saldo"],
+          rows: [
+            [1, "Ana", 999],
+            [2, "Bruno", 250.5],
+          ],
+        },
+      ],
+    });
+    expect(validateLessonResult(dataLesson, result).passed).toBe(false);
+  });
+
+  it("reprova quando a tabela não existe no estado final", () => {
+    const result = makeResult({ tables: [] });
+    const validation = validateLessonResult(dataLesson, result);
+    expect(validation.passed).toBe(false);
+    expect(validation.details.join(" ")).toMatch(/não existe/);
+  });
+
+  it("reprova quando as colunas não conferem (ordem importa)", () => {
+    const result = makeResult({
+      tables: [
+        {
+          name: "clientes",
+          columns: ["id", "saldo", "nome"],
+          rows: [
+            [1, 100, "Ana"],
+            [2, 250.5, "Bruno"],
+          ],
+        },
+      ],
+    });
+    const validation = validateLessonResult(dataLesson, result);
+    expect(validation.passed).toBe(false);
+    expect(validation.details.join(" ")).toMatch(/coluna/i);
+  });
+
+  it("trata número e string numérica como equivalentes", () => {
+    const result = makeResult({
+      tables: [
+        {
+          name: "clientes",
+          columns: ["id", "nome", "saldo"],
+          rows: [
+            [1, "Ana", "100"],
+            [2, "Bruno", "250.5"],
+          ],
+        },
+      ],
+    });
+    expect(validateLessonResult(dataLesson, result).passed).toBe(true);
+  });
+
+  it("respeita orderSensitive quando habilitado", () => {
+    const orderedLesson = makeLesson({
+      kind: "data",
+      instruction: "ordem importa",
+      expectedTables: [
+        {
+          name: "clientes",
+          columns: ["id", "nome"],
+          rows: [
+            [1, "Ana"],
+            [2, "Bruno"],
+          ],
+          orderSensitive: true,
+        },
+      ],
+    });
+    const reversed = makeResult({
+      tables: [
+        {
+          name: "clientes",
+          columns: ["id", "nome"],
+          rows: [
+            [2, "Bruno"],
+            [1, "Ana"],
+          ],
+        },
+      ],
+    });
+    expect(validateLessonResult(orderedLesson, reversed).passed).toBe(false);
+
+    const correct = makeResult({
+      tables: [
+        {
+          name: "clientes",
+          columns: ["id", "nome"],
+          rows: [
+            [1, "Ana"],
+            [2, "Bruno"],
+          ],
+        },
+      ],
+    });
+    expect(validateLessonResult(orderedLesson, correct).passed).toBe(true);
+  });
+
+  it("valida múltiplas tabelas declaradas", () => {
+    const lesson = makeLesson({
+      kind: "data",
+      instruction: "mova o saldo",
+      expectedTables: [
+        {
+          name: "clientes",
+          columns: ["id", "nome", "saldo"],
+          rows: [[1, "Ana", 0]],
+        },
+        {
+          name: "transferencias",
+          columns: ["id", "valor"],
+          rows: [[1, 100]],
+        },
+      ],
+    });
+    const ok = makeResult({
+      tables: [
+        {
+          name: "transferencias",
+          columns: ["id", "valor"],
+          rows: [[1, 100]],
+        },
+        {
+          name: "clientes",
+          columns: ["id", "nome", "saldo"],
+          rows: [[1, "Ana", 0]],
+        },
+      ],
+    });
+    expect(validateLessonResult(lesson, ok).passed).toBe(true);
+
+    const missing = makeResult({
+      tables: [
+        {
+          name: "clientes",
+          columns: ["id", "nome", "saldo"],
+          rows: [[1, "Ana", 0]],
+        },
+      ],
+    });
+    const validation = validateLessonResult(lesson, missing);
+    expect(validation.passed).toBe(false);
+    expect(validation.details.join(" ")).toMatch(/transferencias/);
+  });
+});

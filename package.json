@@ -12,7 +12,8 @@
     "migrate:firebase": "tsx scripts/migrate-to-firebase.ts",
     "test:firebase": "tsx scripts/test-firebase-connection.ts",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "validate:sql-quest-content": "tsx scripts/sql-quest-validate-content.ts"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",

@@ -6,18 +6,14 @@ import { authedFetch } from "@/lib/client-auth";
 import { lessons } from "@/lib/sql-quest/catalog";
 
 /**
- * Chave base para o localStorage. O progresso é separado POR CONTA:
- * - visitante anônimo → chave fixa `sql-quest-progress-v1`;
- * - usuário autenticado → chave `sql-quest-progress-v1:<uid>`.
+ * Progresso da SQL Quest — persistência 100% server-side.
  *
- * Isso evita contaminação entre contas e garante que o progresso anônimo NÃO
- * seja migrado automaticamente para uma conta ao fazer login.
+ * - O progresso NÃO depende de localStorage (nem anônimo, nem por conta).
+ * - A única fonte de verdade é a API `/api/sql-quest/progress`, que persiste
+ *   um documento por UID autenticado via Firebase Admin (Firestore).
+ * - Sem UID autenticado o hook devolve estado vazio e `complete()` é um no-op:
+ *   o guard do módulo (`SqlQuestGuard`) bloqueia o acesso às missões.
  */
-const ANON_STORAGE_KEY = "sql-quest-progress-v1";
-
-function storageKeyFor(uid: string | null): string {
-  return uid ? `${ANON_STORAGE_KEY}:${uid}` : ANON_STORAGE_KEY;
-}
 
 /** Mapa oficial de XP por lição (fonte única de verdade). */
 const XP_BY_LESSON: Record<string, number> = Object.fromEntries(
@@ -52,42 +48,10 @@ function normalizeLessonIds(value: unknown): string[] {
   return value.filter((item): item is string => typeof item === "string");
 }
 
-function loadFromStorage(key: string): ProgressState {
-  if (typeof window === "undefined") return { completedLessonIds: [], totalXP: 0 };
-  try {
-    const raw = window.localStorage.getItem(key);
-    if (!raw) return { completedLessonIds: [], totalXP: 0 };
-    const parsed = JSON.parse(raw) as Partial<ProgressState & { completedLessons?: unknown }>;
-    // Oficial: `completedLessonIds`. Fallback tolerante a chaves anteriores.
-    const ids = normalizeLessonIds(
-      Array.isArray(parsed.completedLessonIds)
-        ? parsed.completedLessonIds
-        : parsed.completedLessons
-    );
-    return {
-      completedLessonIds: ids,
-      // XP derivado do catálogo (ignora qualquer totalXP salvo).
-      totalXP: computeTotalXp(ids),
-    };
-  } catch {
-    return { completedLessonIds: [], totalXP: 0 };
-  }
-}
-
-function saveToStorage(key: string, state: ProgressState) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(key, JSON.stringify(state));
-  } catch {
-    // localStorage pode estar indisponível em modo privado; ignoramos.
-  }
-}
-
 interface RemoteProgressResponse {
+  uid?: unknown;
   completedLessonIds?: unknown;
   completedLessons?: unknown;
-  totalXp?: unknown;
-  totalXP?: unknown;
 }
 
 function resolveLessonIdsFromRemote(remote: RemoteProgressResponse): string[] {
@@ -100,52 +64,65 @@ function resolveLessonIdsFromRemote(remote: RemoteProgressResponse): string[] {
   return [];
 }
 
+const EMPTY_STATE: ProgressState = { completedLessonIds: [], totalXP: 0 };
+
 export function useSqlProgress() {
   const { user, isAuthenticated } = useAuth();
   // uid da conta autenticada (ou null para visitante anônimo).
   const uid = isAuthenticated && user ? user.id : null;
-  const storageKey = storageKeyFor(uid);
 
-  const [state, setState] = useState<ProgressState>({
-    completedLessonIds: [],
-    totalXP: 0,
-  });
+  const [state, setState] = useState<ProgressState>(EMPTY_STATE);
   const [loaded, setLoaded] = useState(false);
 
-  // Mantém o estado mais recente disponível para callbacks assíncronos.
+  // Mantém o estado mais recente disponível de forma síncrona para callbacks
+  // assíncronos (evita leituras obsoletas em `complete`).
   const stateRef = useRef(state);
-  useEffect(() => {
-    stateRef.current = state;
-  }, [state]);
+  const applyState = useCallback((next: ProgressState) => {
+    stateRef.current = next;
+    setState(next);
+  }, []);
 
-  // Carrega o progresso local da conta correspondente (UID ou anônimo).
+  // Carrega o progresso do servidor (única fonte de verdade) para o UID
+  // autenticado. Visitante anônimo: estado vazio, sem qualquer persistência.
   useEffect(() => {
+    if (!uid) {
+      applyState(EMPTY_STATE);
+      setLoaded(true);
+      return;
+    }
+
+    let cancelled = false;
     setLoaded(false);
-    const local = loadFromStorage(storageKey);
-    setState(local);
-    setLoaded(true);
-  }, [storageKey]);
-
-  // Sincronização opcional quando autenticado: mescla o local (da conta) com o
-  // remoto, derivando XP do catálogo. O progresso anônimo NUNCA entra aqui.
-  useEffect(() => {
-    if (!uid) return;
     authedFetch("/api/sql-quest/progress")
       .then(async (res) => {
-        if (!res.ok) return;
+        if (cancelled) return;
+        if (!res.ok) {
+          applyState(EMPTY_STATE);
+          setLoaded(true);
+          return;
+        }
         const remote = (await res.json()) as RemoteProgressResponse;
-        const remoteIds = resolveLessonIdsFromRemote(remote);
-        setState((prev) => {
-          const mergedIds = Array.from(new Set([...prev.completedLessonIds, ...remoteIds]));
-          const next = { completedLessonIds: mergedIds, totalXP: computeTotalXp(mergedIds) };
-          saveToStorage(storageKey, next);
-          return next;
-        });
+        // Defesa: ignora resposta que não pertença ao UID atual (evita
+        // contaminação entre contas mesmo em caso de bug no servidor).
+        if (remote.uid && remote.uid !== uid) {
+          applyState(EMPTY_STATE);
+          setLoaded(true);
+          return;
+        }
+        const ids = resolveLessonIdsFromRemote(remote);
+        applyState({ completedLessonIds: ids, totalXP: computeTotalXp(ids) });
+        setLoaded(true);
       })
       .catch(() => {
-        // Falha silenciosa: o localStorage mantém a experiência funcionando.
+        if (cancelled) return;
+        applyState(EMPTY_STATE);
+        setLoaded(true);
       });
-  }, [uid, storageKey]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [uid, applyState]);
 
   const isCompleted = useCallback(
     (chapter: number, lesson: number) =>
@@ -167,51 +144,44 @@ export function useSqlProgress() {
 
   const completedCount = state.completedLessonIds.length;
   const totalLessons = lessons.length;
-  const progressPercent = totalLessons ? Math.round((completedCount / totalLessons) * 100) : 0;
+  const progressPercent = totalLessons
+    ? Math.round((completedCount / totalLessons) * 100)
+    : 0;
 
   const complete = useCallback(
     async (chapter: number, lesson: number) => {
       const id = lessonId(chapter, lesson);
 
-      // Atualização local otimista (funciona sem login e offline).
-      setState((prev) => {
-        if (prev.completedLessonIds.includes(id)) return prev;
-        const nextIds = [...prev.completedLessonIds, id];
-        const next = { completedLessonIds: nextIds, totalXP: computeTotalXp(nextIds) };
-        saveToStorage(storageKey, next);
-        return next;
-      });
-
-      // Visitante anônimo: apenas local (sem sincronização).
+      // Sem UID autenticado não há persistência. O guard do módulo bloqueia o
+      // acesso às missões, então este caminho não ocorre em uso normal.
       if (!uid) return;
 
-      try {
-        const latest = stateRef.current;
-        const nextIds = latest.completedLessonIds.includes(id)
-          ? latest.completedLessonIds
-          : [...latest.completedLessonIds, id];
+      const latest = stateRef.current;
+      const nextIds = latest.completedLessonIds.includes(id)
+        ? latest.completedLessonIds
+        : [...latest.completedLessonIds, id];
 
+      try {
         const res = await authedFetch("/api/sql-quest/progress", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ completedLessonIds: nextIds }),
         });
 
-        // Aplica a resposta AUTORITATIVA do servidor ao estado e ao
-        // localStorage (o servidor valida a progressão e o XP).
+        // Aplica a resposta AUTORITATIVA do servidor (que valida a progressão
+        // linear e deriva o XP do catálogo).
         if (res.ok) {
           const authoritative = (await res.json()) as RemoteProgressResponse;
+          if (authoritative.uid && authoritative.uid !== uid) return;
           const authoritativeIds = resolveLessonIdsFromRemote(authoritative);
           const ids = authoritativeIds.length ? authoritativeIds : nextIds;
-          const next = { completedLessonIds: ids, totalXP: computeTotalXp(ids) };
-          setState(next);
-          saveToStorage(storageKey, next);
+          applyState({ completedLessonIds: ids, totalXP: computeTotalXp(ids) });
         }
       } catch {
         // Falha silenciosa; a próxima navegação/sincronização tenta de novo.
       }
     },
-    [uid, storageKey]
+    [uid, applyState]
   );
 
   return {
