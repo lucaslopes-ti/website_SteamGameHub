@@ -107,7 +107,14 @@ function neutralScaffold(lesson: SQLLesson): string {
 
 function formatTheory(markdown: string): string {
   const html = marked.parse(markdown);
-  return DOMPurify.sanitize(typeof html === "string" ? html : "");
+  const formatted = typeof html === "string" ? html : "";
+  const practiceHeadingClass =
+    "border-l-4 border-[var(--secondary)] bg-[var(--secondary-10)] px-4 py-3 text-[var(--secondary)] shadow-sm shadow-[var(--secondary)]/10";
+  const highlighted = formatted.replace(
+    /<h2>\s*Sua vez\s*<\/h2>/g,
+    `<h2 class="${practiceHeadingClass}">Sua vez</h2>`
+  );
+  return DOMPurify.sanitize(highlighted);
 }
 
 interface LessonClientProps {
@@ -287,7 +294,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
       </div>
 
       <main className="mx-auto flex w-full max-w-7xl flex-col px-4 py-6 md:px-6 lg:min-h-0 lg:max-w-none lg:flex-1 lg:overflow-hidden">
-        <div className="grid gap-5 lg:min-h-0 lg:flex-1 lg:grid-cols-2 lg:items-stretch">
+        <div className="grid gap-5 lg:min-h-0 lg:flex-1 lg:grid-cols-2 lg:grid-rows-[minmax(0,1fr)] lg:items-stretch">
           {/* Painel esquerdo: teoria */}
           <div className="min-w-0 space-y-6 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pr-2">
             <section className="rounded-3xl border border-[var(--primary)]/25 bg-[var(--primary-10)]/35 p-6 shadow-lg shadow-[var(--primary)]/5">

@@ -1,7 +1,7 @@
 ---
 id: joins-03
 title: "LEFT JOIN"
-summary: "Aprenda a manter todos os registros da tabela da esquerda, mesmo sem correspondÃªncia na direita."
+summary: "Aprenda a manter todos os registros da tabela da esquerda, mesmo sem correspondência na direita."
 chapter: 10
 chapterSlug: joins
 lesson: 3
@@ -12,9 +12,9 @@ prerequisites:
 hints:
   - "Use LEFT JOIN entre users e transactions."
   - "Agrupe por users.id e some os valores com SUM."
-  - "NÃ£o use apelidos de tabela nesta consulta."
+  - "Não use apelidos de tabela nesta consulta."
 references:
-  - label: "SQLite â€” JOIN"
+  - label: "SQLite — JOIN"
     url: "https://www.sqlite.org/lang_select.html"
 setupSql: |
   CREATE TABLE users (
@@ -47,10 +47,10 @@ setupSql: |
   );
 
   INSERT INTO transactions (id, user_id, recipient_id, sender_id, note, amount, was_successful) VALUES
-    (1, 1, NULL, 4, 'Testando transaÃ§Ã£o!', 10.50, true),
-    (2, 3, 10, NULL, 'Valeu pelo almoÃ§o!', 9.56, true),
+    (1, 1, NULL, 4, 'Testando transação!', 10.50, true),
+    (2, 3, 10, NULL, 'Valeu pelo almoço!', 9.56, true),
     (3, 1, NULL, 2, 'Problemas com o carro', 256.21, false),
-    (4, 10, 2, NULL, 'Feliz aniversÃ¡rio!!', 50, true);
+    (4, 10, 2, NULL, 'Feliz aniversário!!', 50, true);
 tables:
   - name: users
     columns:
@@ -95,7 +95,7 @@ tables:
         type: BOOLEAN
 challenge:
   kind: exact
-  instruction: "Junte as tabelas `users` e `transactions` com LEFT JOIN em `users.id = transactions.user_id`. Retorne o nome do usuÃ¡rio (como `name`), a soma dos valores das transaÃ§Ãµes (como `transaction_sum`) e a contagem de transaÃ§Ãµes (como `transaction_count`). Agrupe por `users.id` e ordene pela soma em ordem decrescente. UsuÃ¡rios sem transaÃ§Ãµes tambÃ©m devem aparecer. NÃ£o use apelidos de tabela."
+  instruction: "Junte as tabelas `users` e `transactions` com LEFT JOIN em `users.id = transactions.user_id`. Retorne o nome do usuário (como `name`), a soma dos valores das transações (como `transaction_sum`) e a contagem de transações (como `transaction_count`). Agrupe por `users.id` e ordene pela soma em ordem decrescente. Usuários sem transações também devem aparecer. Não use apelidos de tabela."
   expectedColumns:
     - name
     - transaction_sum
@@ -114,13 +114,13 @@ challenge:
 ## Contexto
 
 Um `LEFT JOIN` retorna **todos** os registros da tabela da esquerda (table_a),
-independentemente de haver correspondÃªncia na tabela da direita (table_b).
-TambÃ©m retorna os registros correspondentes da tabela da direita, quando
+independentemente de haver correspondência na tabela da direita (table_b).
+Também retorna os registros correspondentes da tabela da direita, quando
 existem.
 
 ### Apelidos de tabela
 
-Um truque para facilitar a escrita da consulta Ã© definir um **apelido** para
+Um truque para facilitar a escrita da consulta é definir um **apelido** para
 cada tabela:
 
 ```sql
@@ -132,26 +132,26 @@ FROM
   LEFT JOIN departments d ON e.department_id = d.id;
 ```
 
-Repare nas declaraÃ§Ãµes simples `e` e `d` para `employees` e `departments`.
+Repare nas declarações simples `e` e `d` para `employees` e `departments`.
 Alguns desenvolvedores fazem isso para deixar as consultas menos verbosas.
-Neste curso, porÃ©m, **nÃ£o use apelidos de tabela** â€” nomes completos sÃ£o mais
-fÃ¡ceis de entender.
+Neste curso, porém, **não use apelidos de tabela** — nomes completos são mais
+fáceis de entender.
 
-### O relatÃ³rio do Senai Pay
+### O relatório do Senai Pay
 
-O time do Senai Pay precisa de um relatÃ³rio com todas as transaÃ§Ãµes que um
-usuÃ¡rio jÃ¡ fez. UsuÃ¡rios **sem** transaÃ§Ãµes tambÃ©m devem aparecer no relatÃ³rio
-â€” por isso usamos `LEFT JOIN`.
+O time do Senai Pay precisa de um relatório com todas as transações que um
+usuário já fez. Usuários **sem** transações também devem aparecer no relatório
+— por isso usamos `LEFT JOIN`.
 
 ## Sua vez
 
 Junte as tabelas `users` e `transactions` em `users.id = transactions.user_id`.
 Sua consulta deve retornar os seguintes 3 campos:
 
-- O nome do usuÃ¡rio, como `name`
-- A soma de todos os valores das transaÃ§Ãµes dele, como `transaction_sum`
-- A contagem de todas as transaÃ§Ãµes dele, como `transaction_count`
+- O nome do usuário, como `name`
+- A soma de todos os valores das transações dele, como `transaction_sum`
+- A contagem de todas as transações dele, como `transaction_count`
 
-Agrupe os dados pelo `id` do usuÃ¡rio. Ordene os dados pela soma em ordem
-decrescente. Garanta que usuÃ¡rios sem transaÃ§Ãµes tambÃ©m apareÃ§am. **NÃ£o use
+Agrupe os dados pelo `id` do usuário. Ordene os dados pela soma em ordem
+decrescente. Garanta que usuários sem transações também apareçam. **Não use
 apelidos de tabela.**

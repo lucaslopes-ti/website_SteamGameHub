@@ -11,7 +11,7 @@ prerequisites:
   - joins-04
 hints: []
 references:
-  - label: "SQLite â€” JOIN"
+  - label: "SQLite — JOIN"
     url: "https://www.sqlite.org/lang_select.html"
 ---
 
@@ -19,7 +19,7 @@ references:
 
 Um `FULL JOIN` combina o conjunto de resultados do `LEFT JOIN` e do `RIGHT
 JOIN`. Ele retorna **todos** os registros de ambas as tabelas (table_a e
-table_b), independentemente de haver correspondÃªncia.
+table_b), independentemente de haver correspondência.
 
 ### Comparando os tipos de JOIN
 
@@ -47,15 +47,15 @@ Considere as tabelas abaixo:
 - **LEFT JOIN:** todas as linhas de `employees` (Margaret aparece com
   `dept_name` NULL).
 - **RIGHT JOIN:** todas as linhas de `departments` (Design aparece sem
-  funcionÃ¡rios).
-- **FULL JOIN:** tudo â€” Margaret (sem departamento) e Design (sem
-  funcionÃ¡rios) sÃ³ aparecem quando chegamos ao `FULL JOIN`.
+  funcionários).
+- **FULL JOIN:** tudo — Margaret (sem departamento) e Design (sem
+  funcionários) só aparecem quando chegamos ao `FULL JOIN`.
 
-> **Nota sobre o SQLite:** o SQLite nÃ£o implementa `FULL JOIN` nativamente. Na
-> prÃ¡tica, combinamos `LEFT JOIN` e `RIGHT JOIN` (ou usamos `UNION`) para
+> **Nota sobre o SQLite:** o SQLite não implementa `FULL JOIN` nativamente. Na
+> prática, combinamos `LEFT JOIN` e `RIGHT JOIN` (ou usamos `UNION`) para
 > obter o mesmo resultado.
 
-## ObservaÃ§Ã£o
+## Observação
 
-Esta Ã© uma unidade de **teoria**: nÃ£o hÃ¡ desafio executÃ¡vel. Leia o conteÃºdo e
-siga para a prÃ³xima unidade.
+Esta é uma unidade de **teoria**: não há desafio executável. Leia o conteúdo e
+siga para a próxima unidade.

@@ -156,7 +156,10 @@ export default function SqlEditor(props: SqlEditorProps) {
   if (mode === "fallback") return <SimpleSqlEditor {...props} />;
 
   return (
-    <div className="relative">
+    // O contêiner propaga a altura recebida (inclusive "100%") para o Monaco:
+    // sem isso, o <section> interno com height:100% resolve contra um pai de
+    // altura auto/0 e o editor fica sem área clicável/digitável.
+    <div className="relative min-h-0" style={{ height: props.height || "280px" }}>
       <MonacoErrorBoundary fallback={<SimpleSqlEditor {...props} />}>
         <MonacoEditor
           {...props}

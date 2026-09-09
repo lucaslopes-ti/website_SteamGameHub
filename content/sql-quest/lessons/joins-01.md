@@ -1,7 +1,7 @@
 ---
 id: joins-01
-title: "IntroduÃ§Ã£o aos JOINs"
-summary: "Aprenda a consultar vÃ¡rias tabelas ao mesmo tempo com INNER JOIN."
+title: "Introdução aos JOINs"
+summary: "Aprenda a consultar várias tabelas ao mesmo tempo com INNER JOIN."
 chapter: 10
 chapterSlug: joins
 lesson: 1
@@ -11,10 +11,10 @@ prerequisites:
   - crud-13
 hints:
   - "Use INNER JOIN entre users e countries, nessa ordem."
-  - "A condiÃ§Ã£o de junÃ§Ã£o Ã© countries.country_code = users.country_code."
+  - "A condição de junção é countries.country_code = users.country_code."
   - "SELECT * FROM users INNER JOIN countries ON countries.country_code = users.country_code;"
 references:
-  - label: "SQLite â€” JOIN"
+  - label: "SQLite — JOIN"
     url: "https://www.sqlite.org/lang_select.html"
 setupSql: |
   CREATE TABLE users (
@@ -83,7 +83,7 @@ tables:
         type: TEXT
 challenge:
   kind: exact
-  instruction: "Escreva um INNER JOIN entre `users` e `countries` (nessa ordem), retornando todos os campos das duas tabelas. A junÃ§Ã£o deve ser feita pelo campo `country_code`."
+  instruction: "Escreva um INNER JOIN entre `users` e `countries` (nessa ordem), retornando todos os campos das duas tabelas. A junção deve ser feita pelo campo `country_code`."
   expectedColumns:
     - id
     - name
@@ -108,20 +108,20 @@ challenge:
 
 ## Contexto
 
-Os **JOINs** sÃ£o um dos recursos mais importantes do SQL. Eles nos permitem
+Os **JOINs** são um dos recursos mais importantes do SQL. Eles nos permitem
 usar os relacionamentos que configuramos entre as tabelas: em resumo, os JOINs
-permitem consultar **vÃ¡rias tabelas ao mesmo tempo**.
+permitem consultar **várias tabelas ao mesmo tempo**.
 
 ### INNER JOIN
 
-O tipo de JOIN mais simples e comum Ã© o `INNER JOIN`. Por padrÃ£o, um comando
-`JOIN` Ã© um `INNER JOIN`. Ele retorna todos os registros da tabela A que tÃªm
+O tipo de JOIN mais simples e comum é o `INNER JOIN`. Por padrão, um comando
+`JOIN` é um `INNER JOIN`. Ele retorna todos os registros da tabela A que têm
 registros correspondentes na tabela B.
 
-### A clÃ¡usula ON
+### A cláusula ON
 
 Para fazer um JOIN, precisamos dizer ao banco como "combinar" as linhas de cada
-tabela. A clÃ¡usula `ON` especifica as colunas de cada tabela que devem ser
+tabela. A cláusula `ON` especifica as colunas de cada tabela que devem ser
 comparadas.
 
 Quando o mesmo nome de coluna existe nas duas tabelas, precisamos especificar
@@ -136,32 +136,32 @@ INNER JOIN departments ON employees.department_id = departments.id;
 
 Nesta consulta:
 
-- `employees.department_id` se refere Ã  coluna `department_id` da tabela
+- `employees.department_id` se refere à coluna `department_id` da tabela
   `employees`;
-- `departments.id` se refere Ã  coluna `id` da tabela `departments`;
-- A clÃ¡usula `ON` garante que as linhas sejam combinadas com base nessas
+- `departments.id` se refere à coluna `id` da tabela `departments`;
+- A cláusula `ON` garante que as linhas sejam combinadas com base nessas
   colunas, criando um relacionamento entre as duas tabelas.
 
-O `INNER` afeta apenas o **nÃºmero de linhas** retornadas, nÃ£o o nÃºmero de
+O `INNER` afeta apenas o **número de linhas** retornadas, não o número de
 colunas. O `SELECT *` garante que todas as colunas das duas tabelas sejam
-incluÃ­das.
+incluídas.
 
-### Por que isso Ã© importante?
+### Por que isso é importante?
 
 Em muitos bancos, tabelas diferentes podem ter colunas com o mesmo nome, como
-`id`. Se vocÃª nÃ£o especificar o nome da tabela (ou apelido) para uma coluna, o
-banco nÃ£o saberÃ¡ qual coluna usar no JOIN. Por exemplo, escrever `ON id = id`
-nÃ£o funciona, porque o banco nÃ£o consegue distinguir as colunas `id` de cada
+`id`. Se você não especificar o nome da tabela (ou apelido) para uma coluna, o
+banco não saberá qual coluna usar no JOIN. Por exemplo, escrever `ON id = id`
+não funciona, porque o banco não consegue distinguir as colunas `id` de cada
 tabela.
 
 ### O contexto do Senai Pay
 
-O time de frontend estÃ¡ trabalhando em uma pÃ¡gina de perfil e gostaria de
-exibir o **nome do paÃ­s** do usuÃ¡rio em vez de apenas o cÃ³digo de duas letras.
-Vamos comeÃ§ar escrevendo um JOIN simples entre as tabelas `users` e
+O time de frontend está trabalhando em uma página de perfil e gostaria de
+exibir o **nome do país** do usuário em vez de apenas o código de duas letras.
+Vamos começar escrevendo um JOIN simples entre as tabelas `users` e
 `countries`.
 
 ## Sua vez
 
 Escreva um `INNER JOIN` entre `users` e `countries`, nessa ordem. Retorne todos
-os campos das duas tabelas. A junÃ§Ã£o deve ser feita pelo campo `country_code`.
+os campos das duas tabelas. A junção deve ser feita pelo campo `country_code`.

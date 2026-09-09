@@ -11,7 +11,7 @@ prerequisites:
   - joins-05
 hints: []
 references:
-  - label: "SQLite â€” JOIN"
+  - label: "SQLite — JOIN"
     url: "https://www.sqlite.org/lang_select.html"
 challenge:
   kind: quiz
@@ -23,7 +23,7 @@ challenge:
         - "INNER JOIN"
         - "FULL JOIN"
       answer: 1
-      explanation: "O resultado contÃ©m apenas usuÃ¡rios com transaÃ§Ãµes correspondentes (David e John) e apenas transaÃ§Ãµes com usuÃ¡rios existentes â€” Ã© um INNER JOIN."
+      explanation: "O resultado contém apenas usuários com transações correspondentes (David e John) e apenas transações com usuários existentes — é um INNER JOIN."
 ---
 
 ## Contexto

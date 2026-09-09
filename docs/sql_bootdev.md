@@ -1455,11 +1455,557 @@ Assignment
 Write an SQL statement to update the country_code value from 'USA' to 'US' for all applicable user records. Ensure that only those records initially marked with 'USA' are changed!
 
 
+CHAPTER 5
+
+AS Clause in SQL
+Sometimes we need to structure the data we return from our queries in a specific way. An AS clause allows us to "alias" a piece of data in our query. The alias exists only for the duration of the query.
+
+AS Keyword
+The following queries return the same data:
+
+SELECT
+  employee_id AS id,
+  employee_name AS name
+FROM
+  employees;
+
+SELECT
+  employee_id,
+  employee_name
+FROM
+  employees;
+
+The difference is that the results from the aliased query would have column names id and name instead of employee_id and employee_name.
+
+Throughout the course, use aliases only when requested.
+
+Assignment
+A user has asked us to find all the transactions on their account from their grandmother. We thought it would be fun to rename the note field to birthday_message because we noticed all the transactions from Grandma are birthday messages.
+
+Return the amount and note fields from the transactions table where the sender_id is 10 (Grandma).
+The note field should be renamed to birthday_message.
+
+
+LESSON 2
+
+SQL Functions
+SQL is a programming language, and like nearly all programming languages, it supports functions. We can use functions and aliases to calculate new columns in a query. This is similar to how you might use formulas in Excel.
+
+A calculated column is a new column that doesn't exist in the original table but is created on the fly when you run a query.
+
+The IIF Function
+In SQLite, the IIF function works like a ternary expression. For example:
+
+IIF(carA > carB, 'Car A is bigger', 'Car B is bigger')
+
+If carA is greater than carB, this statement evaluates to the string 'Car A is bigger'. Otherwise, it evaluates to 'Car B is bigger'.
+
+Here's how we can use IIF() and a directive alias to add a new calculated column to our result set:
+
+SELECT
+  quantity,
+  IIF(quantity < 10, 'Order more', 'In Stock') AS directive
+FROM
+  products;
+
+quantity	directive
+4	Order more
+25	In Stock
+Assignment
+We need to look through CashPal's transaction data and determine whether or not any of the transactions need to be audited.
+
+Return all the data from the transactions table, and add an extra column at the end with the alias audit.
+
+If a row's was_successful field is true, the audit field should say 'No action required'.
+If a row's was_successful field is false, the audit field should say 'Perform an audit'.
+Tip
+
+
+LESSON 3
+
+Between
+We can check if values are between two numbers using the WHERE clause in an intuitive way! The WHERE clause doesn't always have to be used to specify specific IDs or values. We can also use it to help narrow down our result set. Here's an example:
+
+SELECT
+  employee_name,
+  salary
+FROM
+  employees
+WHERE
+  salary BETWEEN 30000 AND 60000;
+
+This query returns all the employees name and salary fields for any rows where the salary is BETWEEN 30,000 and 60,000 inclusively! We can also query results that are NOT BETWEEN two specified values.
+
+SELECT
+  product_name,
+  quantity
+FROM
+  products
+WHERE
+  quantity NOT BETWEEN 20 AND 100;
+
+This query returns all the product names and quantities where the quantity was not between 20 and 100 (meaning it excludes 20 and 100). We can use conditionals to make the results of our query as specific as we need them to be.
+
+Assignment
+We need to see how many young adults are using CashPal!
+
+Query our users table to return the name and age fields of all users BETWEEN the ages of 18 and 30.
+
+LESSON 4
+
+Distinct
+Sometimes we want to retrieve records from a table without getting back any duplicates.
+
+For example, we may want to know all the different companies our employees have worked at previously, but we don't want to see the same company multiple times in the report.
+
+SELECT DISTINCT
+SQL offers us the DISTINCT keyword that removes duplicate records from the resulting query.
+
+SELECT DISTINCT
+  previous_company
+FROM
+  employees;
+
+This only returns one row for each unique previous_company value.
+
+Assignment
+CashPal executives want to know which countries we have customers in. We store country_code data as a column on the users table.
+
+Run a DISTINCT query to get all the unique country_codes from the users table.
+
+
+LESSON 5
+
+Logical Operators – AND
+We often need to use multiple conditions to retrieve the exact information we want. We can begin to structure much more complex queries by using multiple conditions together to narrow down the search results of our query.
+
+The logical AND operator can be used to narrow down our result sets even more!
+
+AND Operator
+SELECT
+  product_name,
+  quantity,
+  shipment_status
+FROM
+  products
+WHERE
+  shipment_status = 'pending'
+  AND quantity BETWEEN 0 and 10;
+
+This only retrieves records where both the shipment_status is "pending" AND the quantity is between 0 and 10.
+
+Comparison Operators
+All of the following operators are supported in SQL. The = is the main one to watch out for – it's not == like in many other languages! SQLite does allow for ==, but it's not a good habit to get into, as other dialects of SQL will not recognize == as valid syntax.
+
+=
+<
+>
+<=
+>=
+<> or !=
+Assignment
+The legal restrictions in Canada have changed! The way we have to handle Canadian minors' CashPal transactions is more tightly regulated. We need to find all of those users, so we can see how many this change affects!
+
+Write a query that retrieves all columns for users in the users table who are from Canada (CA) and under the age of 18.
+
+LESSON 6
+
+OR
+As you've probably guessed, if the logical AND operator is supported, the OR operator is probably supported as well.
+
+SELECT
+  product_name,
+  quantity,
+  shipment_status
+FROM
+  products
+WHERE
+  shipment_status = 'out of stock'
+  OR quantity BETWEEN 10 and 100;
+
+This query retrieves records where either the shipment_status condition or the quantity condition is met.
+
+Order of Operations
+You can group logical operations with parentheses to specify the order of operations.
+
+(
+  this
+  AND that
+)
+OR the_other
+
+Assignment
+The laws have changed again! Now we need to see how many affected users meet these criteria:
+
+Users who are from the United States or Canada, and are under 18
+
+Write a query that retrieves the count of all users (aliased to junior_count) who match the conditions above.
+
+
+LESSON 7
+
+In
+Another variation to the WHERE clause we can use is the IN operator. IN returns true if the first operand matches any of the values in the second operand, and false otherwise. The IN operator is a shorthand for multiple OR conditions.
+
+These two queries are equivalent:
+
+SELECT
+  product_name,
+  shipment_status
+FROM
+  products
+WHERE
+  shipment_status IN ('shipped', 'preparing', 'out of stock');
+
+SELECT
+  product_name,
+  shipment_status
+FROM
+  products
+WHERE
+  shipment_status = 'shipped'
+  OR shipment_status = 'preparing'
+  OR shipment_status = 'out of stock';
+
+Hopefully, you're starting to see how querying specific data using fine-tuned SQL clauses helps reveal important insights! The larger a table becomes, the harder it becomes to analyze without proper queries.
+
+Assignment
+We want to know which of our users are from the United States, Canada, or Mexico.
+
+Write a SELECT statement that returns the name, age, and country_code fields for every user in the users table with a country_code of US, CA, or MX.
+
+
+LESSON 8
+
+Like
+Sometimes we don't have the luxury of knowing exactly what it is we need to query. Have you ever wanted to look up a song or a video but you only remember part of the name? SQL offers us an option for when we're in situations LIKE this.
+
+The LIKE keyword allows for the use of the % and _ wildcard operators. Let's focus on % first.
+
+% Operator
+The % operator will match zero or more characters. We can use this operator within our query string to find more than just exact matches, depending on where we place it.
+
+Product Starts With “banana”
+SELECT
+  *
+FROM
+  products
+WHERE
+  product_name LIKE 'banana%';
+
+Product Ends With “banana”
+SELECT
+  *
+FROM
+  products
+WHERE
+  product_name LIKE '%banana';
+
+Product Contains “banana”
+SELECT
+  *
+FROM
+  products
+WHERE
+  product_name LIKE '%banana%';
+
+Assignment
+Our HR team is dealing with a ticket from one of our users, but they're having trouble pulling up their record in the database. They are pretty sure the user's name starts with Bo.
+
+Write a query that returns all fields for records in the users table where the user's name starts with Bo.
+
+Tip
+The LIKE operator expects a string value. Make sure the statement you are comparing against is wrapped in quotes, or SQL will think you're referring to a column!
+
+LESSON 9
+
+Underscore Operator
+As discussed, the % wildcard operator matches zero or more characters. The _ wildcard operator, on the other hand, matches only a single character.
+
+SELECT
+  *
+FROM
+  products
+WHERE
+  product_name LIKE '_oot';
+
+The query above matches products like:
+
+boot
+root
+foot
+SELECT
+  *
+FROM
+  products
+WHERE
+  product_name LIKE '__oot';
+
+The query above matches products like:
+
+shoot
+groot
+Assignment
+HR has been able to narrow down their query further! They want a report of all user data from the users table for users whose names start with Bo and are exactly 5 characters long.
+
+
+LESSON 10
+
+Wildcards Quiz
+Example 1
+SELECT
+  *
+from
+  users
+WHERE
+  name LIKE 'or_%';
+
+Example 2
+SELECT
+  *
+from
+  users
+WHERE
+  name LIKE '__ing';
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the Master of Code and Casting, can assist... for a price.
+
+Ask Boots a question...
 
 
 
 
 
+1
+
+2
+
+Question 1
+Not answered
+Which describes the values that match example 1?
+
+1
+
+Values that start with 'or', and have 3 characters exactly.
+
+2
+
+Values that start with 'or', and are at least 3 characters in length.
+
+3
+
+Values that end with 'or', and are at least 3 characters in length.
+
+4
+
+Values that end in 'or', and have 3 characters exactly.
+
+
+
+Question 2
+Not answered
+Which would NOT match example 2?
+
+1
+
+thing
+
+2
+
+sling
+
+3
+
+singing
+
+4
+
+bling
+
+LESSON 11
+
+Query Practice – Discount Program
+CashPal has launched two discount programs:
+
+All users older than 55 will qualify for a senior discount.
+Users from Canada (country_code 'CA') qualify for a Canada Day discount.
+Users who qualify for either discount will get 10% off.
+
+Assignment
+Write a query that returns every user from the users table, including all columns, plus an additional column named discount_percent.
+
+The discount_percent column should have an integer value of 10 or 0, depending on whether the user matches any discount condition listed above.
+
+CHAPTER 7 - AGREGATE FUNCTIONS
+
+What Are Aggregations? An "aggregation" is a single value that's derived by combining several other values. We performed an aggregation earlier when we used the COUNT statement to count the number of records in a table.
+
+Why Aggregations? Data stored in a database should generally be stored raw. When we need to calculate some additional data from the raw data, we can use an aggregation.
+
+Take the following COUNT aggregation as an example:
+
+SELECT COUNT(*) FROM products WHERE quantity = 0;
+
+This query returns the number of products that have a quantity of 0. We could store a count of the products in a separate database table, and increment/decrement it whenever we make changes to the products table – but that would be redundant.
+
+It's much simpler to store the products in a single place (we call this a single source of truth) and run an aggregation when we need to derive additional information from the raw data.
+
+Assignment The front-end team is building a dashboard page in CashPal. We need to be able to provide them the number of successful transactions for a given user.
+
+Return the number of transactions where the user_id is 6 and was_successful is true. (Remember to use the * wildcard unless otherwise specified to pass the lesson.)
+
+LESSON 2 - SUM
+
+SUM The SUM aggregation function returns the sum of a set of values.
+
+For example, the query below returns a single record containing a single field. The returned value is equal to the total salary being collected by all of the employees in the employees table.
+
+SELECT SUM(salary) FROM employees;
+
+Which returns:
+
+SUM(SALARY) 2483 Assignment We need to be able to calculate the current balance for a given user because we don't (yet) store the running balance on each individual transaction record.
+
+Write a query that returns the SUM aggregation of the amounts for all of Bob's successful transactions (user_id is 9). Check the file 001_up.sql for more details about the table.
+
+LESSON 3 - MAX
+
+MAX As you might expect, the MAX function retrieves the largest value from a set of values. For example:
+
+SELECT MAX(price) FROM products;
+
+This query looks through all the rows in the products table and returns the largest price value. Remember, it only returns the price, not the rest of the record! You always need to specify each field you want a query to return.
+
+Assignment Use a MAX aggregation to return the age of our oldest CashPal user who is also an admin. Alias the returned column so that it's just named age.
+
+LESSON 4 - MIN
+
+MIN The MIN function works the same as the MAX function but finds the lowest value instead of the highest value.
+
+SELECT product_name, MIN(price) FROM products;
+
+This query returns the product_name and the price fields of the record with the lowest price.
+
+Assignment Use a MIN aggregation to find only the age of our youngest CashPal user in the United States in the users table. The country_code of the United States is US. Alias the returned column so that it's just named age.
+
+LESSON 5 - GROUP BY
+
+GROUP BY There are times when we need to group data based on specific values.
+
+SQL offers the GROUP BY clause, which can group rows that have similar values into "summary" rows. It returns one row for each group. The interesting part is that each group can have an aggregation function applied to it that operates only on the grouped data.
+
+Example of GROUP BY Imagine that we have a database with songs and albums:
+
+song_id title album_id 1 Crawl 10 2 Oakland 10 3 Bonfire 11 4 Fire Fly 11 5 Heartbeat 11 6 Sober 12 If we want to see how many songs are on each album, we can use a query like this:
+
+SELECT album_id, COUNT(song_id) AS song_count FROM songs GROUP BY album_id;
+
+This query retrieves a count of all the songs on each album. One record is returned per album, and they each have their own count:
+
+album_id song_count 10 2 11 3 12 1 Assignment Let's get the balance of each user with successful transactions, all in a single query!
+
+Use the SUM aggregation with the GROUP BY clause. The row for each user should contain the user_id and their balance – an aliased sum of successful transaction amounts.
+
+LESSON 6 - AVERAGE
+
+Average Just like we may want to find the minimum or maximum values within a dataset, sometimes we need to know the average!
+
+SQL offers us the AVG() function. Similar to MAX(), AVG() calculates the average of all non-NULL values.
+
+SELECT AVG(song_length) FROM songs;
+
+This query returns the average song_length in the songs table.
+
+Assignment Our marketing team is trying to determine the best marketing channels to advertise through, but they need more information about our current users. They want to know the average age of users in the United States.
+
+Return a single value representing the average age of all users whose country_code is US.
+
+LESSON 7 - HAVING
+
+HAVING When we need to filter the results of a GROUP BY query even further, we can use the HAVING clause. HAVING specifies a search condition for a group.
+
+The HAVING clause is similar to the WHERE clause, but it operates on groups after they've been grouped, rather than rows before they've been grouped.
+
+SELECT album_id, COUNT(id) AS count FROM songs GROUP BY album_id HAVING COUNT(id) > 5;
+
+This query returns the album_id and count of its songs, but only for albums with more than 5 songs.
+
+Assignment A new page in the CashPal app allows users to see how much money they've spent on a specific kind of transaction, and alerts them if that amount is fairly large. Let's write a query on the transactions table that returns the total amount spent by each user on lunch when that balance is greater than 20.
+
+Your query should:
+
+Return a sender_id (the person spending money) and a balance. The balance is the SUM() of all amounts. Don't return any rows that have a NULL sender_id. Only return transactions that were successful. The note must contain the word lunch to be part of the aggregation. Group by sender_id. The aggregated balance must be greater than 20. Order the results by the balance in ascending order.
+
+HAVING vs. WHERE in SQL It's common for developers to get confused about the difference between the HAVING and WHERE clauses – they're pretty similar after all.
+
+The difference, though, is straightforward enough:
+
+A WHERE condition is applied to all the data in a query before it's grouped by a GROUP BY clause. A HAVING condition is applied only to the grouped rows that are returned after a GROUP BY is applied. This means that if you want to filter based on the result of an aggregation, you need to use HAVING. If you want to filter on a value that's present in the raw data, you should use a simple WHERE clause.
+
+Example for Questions SELECT class_id, COUNT(id) AS class_size FROM students WHERE ... GROUP BY class_id HAVING ...
+
+Boots Spellbook Lessons Boots Need help? I, Boots the Undercaffeinated and Overfed, can assist... for a price.
+
+Ask Boots a question...
+
+1
+
+2
+
+Question 1 Not answered In the example, should you use a WHERE or a HAVING clause to filter down to specific class_id values?
+
+1
+
+WHERE
+
+2
+
+HAVING
+
+Question 2 Not answered In the example, should you use a WHERE or a HAVING clause to filter down classes of a particular size?
+
+1
+
+WHERE
+
+2
+
+HAVING
+
+LESSON 9 - ROUND
+
+ROUND Sometimes we need to round some numbers, particularly when working with the results of an aggregation. We can use the ROUND() function to get the job done.
+
+The SQL ROUND() function allows you to specify both the value you wish to round and the degree of precision to be applied:
+
+ROUND(value, precision)
+
+If no precision is given, SQL will round the value to the nearest whole value:
+
+SELECT ROUND(AVG(song_length)) FROM songs;
+
+This query returns the average song_length from the songs table, rounded to the nearest whole number.
+
+If we do provide a precision, SQL will round to that many decimal places:
+
+SELECT ROUND(AVG(song_length), 1) FROM songs;
+
+The same query, but rounded to a single decimal place.
+
+Assignment Fix the query so that it returns the average as a whole number. Rename the resulting column to round_age.
+
+LESSON 10 - PRACTICE
+
+Query Practice – Average Ages The CashPal marketing team was able to optimize their advertising with the help of the user data we pulled. However, they now want you to query the average age of users for each country that the business operates in, not just the United States.
+
+Assignment Write an SQL statement that returns two columns, the country_code and the average age of users for records with that country_code. The marketing team has asked that we round the average to the nearest whole number and rename the column that contains the average age to average_age.
 
 
 CH10 JOINS

@@ -17,6 +17,14 @@ chapters:
     slug: crud
     title: "CRUD: inserir, atualizar e excluir registros"
     description: "Ler dados é só o começo. Neste capítulo você aprende as quatro operações básicas de um banco — criar, ler, atualizar e excluir — com INSERT, UPDATE, DELETE e consultas com COUNT, WHERE e DISTINCT."
+  - number: 5
+    slug: filtros
+    title: "Filtros, operadores e curingas"
+    description: "Deixe as consultas do Senai Pay mais precisas: crie colunas calculadas com aliases e funções, filtre com BETWEEN, DISTINCT, AND, OR e IN, e busque padrões de texto com LIKE e os curingas % e _."
+  - number: 7
+    slug: agregacao
+    title: "Funções de agregação"
+    description: "Dados crus são ótimos, mas relatórios precisam de resumos. Neste capítulo você aprende a calcular totais, médias, mínimos e máximos com COUNT, SUM, MAX, MIN, AVG, GROUP BY, HAVING e ROUND para responder às perguntas do time de negócios do Senai Pay."
   - number: 10
     slug: joins
     title: "Juntando tabelas com JOIN"
