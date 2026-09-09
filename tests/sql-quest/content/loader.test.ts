@@ -52,6 +52,18 @@ describe("loadContentDirectory", () => {
     const teoria = bundle.lessons.find((l) => l.id === "teoria-01");
     expect(teoria?.challenge).toBeUndefined();
     expect(teoria?.images[0].alt).toBeTruthy();
+
+    const data = bundle.lessons.find((l) => l.id === "crud-data");
+    expect(data?.challenge?.kind).toBe("data");
+    if (data?.challenge?.kind === "data") {
+      expect(data.challenge.expectedTables[0].name).toBe("users");
+      expect(data.challenge.expectedTables[0].columns).toEqual(["id", "name"]);
+      expect(data.challenge.expectedTables[0].rows).toEqual([
+        [1, "Ana"],
+        [2, "Bruno"],
+      ]);
+      expect(data.challenge.expectedTables[0].orderSensitive).toBe(false);
+    }
   });
 
   it("coleta erros de parse por arquivo sem lançar", () => {

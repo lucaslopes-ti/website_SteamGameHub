@@ -4,8 +4,10 @@
  * Cobre a regra de progresso:
  * - visitante anônimo: estado vazio e `complete()` NÃO chama a API (não há
  *   persistência em localStorage anônimo);
- * - usuário autenticado: carrega o progresso do servidor (GET);
- * - `complete()` envia PUT e aplica a resposta autoritativa do servidor;
+ * - usuário autenticado: carrega o progresso do servidor (GET) com ids
+ *   SEMÂNTICOS e deriva XP corretamente;
+ * - `complete()` envia PUT com ids semânticos e aplica a resposta autoritativa;
+ * - respostas legadas/posicionais são aceitas e migradas para ids semânticos;
  * - resposta de outro UID é ignorada (defesa contra contaminação entre contas).
  *
  * @jest-environment jsdom
@@ -14,7 +16,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import { useSqlProgress } from "@/components/sql-quest/useSqlProgress";
-import { lessons } from "@/lib/sql-quest/catalog";
+import { getLessonById } from "@/lib/sql-quest/catalog";
 
 const mockUseAuth = jest.fn();
 jest.mock("@/components/AuthProvider", () => ({
@@ -26,7 +28,8 @@ jest.mock("@/lib/client-auth", () => ({
   authedFetch: (...args: unknown[]) => mockAuthedFetch(...args),
 }));
 
-const xpOf = (id: string) => lessons.find((l) => l.id === id)?.xpReward ?? 0;
+// Resolve XP por id semântico OU posicional/legado (ex.: "1-1" → select-01).
+const xpOf = (id: string) => getLessonById(id)?.xpReward ?? 0;
 
 function Harness({ chapter, lesson }: { chapter: number; lesson: number }) {
   const { loaded, completedCount, totalXP, isCompleted, isUnlocked, complete } =
@@ -68,7 +71,30 @@ describe("useSqlProgress — persistência por UID autenticado", () => {
     expect(screen.getByTestId("count").textContent).toBe("0");
   });
 
-  it("autenticado: carrega o progresso do servidor (GET)", async () => {
+  it("autenticado: carrega progresso semântico do servidor e deriva XP", async () => {
+    mockUseAuth.mockReturnValue({
+      user: { id: "u-1" },
+      isAuthenticated: true,
+      loading: false,
+    });
+    mockAuthedFetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({ uid: "u-1", completedLessonIds: ["select-01"] }),
+    });
+
+    render(<Harness chapter={1} lesson={1} />);
+
+    await waitFor(() =>
+      expect(screen.getByTestId("loaded").textContent).toBe("true")
+    );
+    expect(mockAuthedFetch).toHaveBeenCalledWith("/api/sql-quest/progress");
+    expect(screen.getByTestId("count").textContent).toBe("1");
+    expect(screen.getByTestId("completed").textContent).toBe("true");
+    // XP derivado do catálogo a partir do id semântico.
+    expect(screen.getByTestId("xp").textContent).toBe(String(xpOf("select-01")));
+  });
+
+  it("aceita resposta legada/posicional e migra para ids semânticos", async () => {
     mockUseAuth.mockReturnValue({
       user: { id: "u-1" },
       isAuthenticated: true,
@@ -84,13 +110,13 @@ describe("useSqlProgress — persistência por UID autenticado", () => {
     await waitFor(() =>
       expect(screen.getByTestId("loaded").textContent).toBe("true")
     );
-    expect(mockAuthedFetch).toHaveBeenCalledWith("/api/sql-quest/progress");
     expect(screen.getByTestId("count").textContent).toBe("1");
-    expect(screen.getByTestId("xp").textContent).toBe(String(xpOf("1-1")));
     expect(screen.getByTestId("completed").textContent).toBe("true");
+    // XP correto mesmo com resposta posicional (resolvido para select-01).
+    expect(screen.getByTestId("xp").textContent).toBe(String(xpOf("select-01")));
   });
 
-  it("complete() envia PUT e aplica a resposta autoritativa", async () => {
+  it("complete() envia PUT com id semântico e aplica a resposta autoritativa", async () => {
     mockUseAuth.mockReturnValue({
       user: { id: "u-1" },
       isAuthenticated: true,
@@ -103,7 +129,7 @@ describe("useSqlProgress — persistência por UID autenticado", () => {
       })
       .mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ uid: "u-1", completedLessonIds: ["1-1"] }),
+        json: async () => ({ uid: "u-1", completedLessonIds: ["select-01"] }),
       });
 
     render(<Harness chapter={1} lesson={1} />);
@@ -120,10 +146,11 @@ describe("useSqlProgress — persistência por UID autenticado", () => {
       "/api/sql-quest/progress",
       expect.objectContaining({
         method: "PUT",
-        body: JSON.stringify({ completedLessonIds: ["1-1"] }),
+        body: JSON.stringify({ completedLessonIds: ["select-01"] }),
       })
     );
-    expect(screen.getByTestId("xp").textContent).toBe(String(xpOf("1-1")));
+    expect(screen.getByTestId("completed").textContent).toBe("true");
+    expect(screen.getByTestId("xp").textContent).toBe(String(xpOf("select-01")));
   });
 
   it("ignora resposta de outro UID (defesa contra contaminação entre contas)", async () => {
@@ -134,7 +161,7 @@ describe("useSqlProgress — persistência por UID autenticado", () => {
     });
     mockAuthedFetch.mockResolvedValue({
       ok: true,
-      json: async () => ({ uid: "u-2", completedLessonIds: ["1-1"] }),
+      json: async () => ({ uid: "u-2", completedLessonIds: ["select-01"] }),
     });
 
     render(<Harness chapter={1} lesson={1} />);

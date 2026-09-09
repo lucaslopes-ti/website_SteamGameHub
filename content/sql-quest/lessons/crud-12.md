@@ -1,7 +1,7 @@
 ---
 id: crud-12
-title: "Prática: contando usuários"
-summary: "Use COUNT para descobrir quantos usuários existem no banco do Senai Pay."
+title: "Prática: contagem condicional"
+summary: "Combine COUNT com WHERE para contar apenas os usuários de um país específico."
 chapter: 4
 chapterSlug: crud
 lesson: 12
@@ -10,8 +10,9 @@ xp: 50
 prerequisites:
   - crud-11
 hints:
-  - "Use a função agregada COUNT."
-  - "SELECT COUNT(*) FROM users;"
+  - "Use COUNT(*) com uma cláusula WHERE."
+  - "Filtre por country_code = 'US'."
+  - "SELECT COUNT(*) FROM users WHERE country_code = 'US';"
 references:
   - label: "SQLite — Aggregates"
     url: "https://www.sqlite.org/lang_aggfunc.html"
@@ -33,7 +34,12 @@ setupSql: |
     (4, 'Ram', 42, 'IN', 'Ram11c', 'queryNinja', false),
     (5, 'Hunter', 30, 'US', 'Hdev92', 'backendDev', false),
     (6, 'Allan', 27, 'US', 'Alires', 'adminPass1', true),
-    (7, 'Al', 39, 'JP', 'quickCoder', 'snake_case', false);
+    (7, 'Lance', 20, 'US', 'LanChr', 'lancePass', false),
+    (8, 'Tiffany', 28, 'US', 'Tifferoon', 'autoincrement', true),
+    (9, 'Aiko', 31, 'JP', 'AikoOps', 'sakuraCloud7', false),
+    (10, 'Marta', 36, 'ES', 'MartaDBA', 'oliveSQLtree', true),
+    (11, 'Kwame', 24, 'GH', 'KDev24', 'accraAPI', false),
+    (12, 'Noah', 41, 'AU', 'NoahRoot', 'koalaKernel', true);
 tables:
   - name: users
     columns:
@@ -60,24 +66,25 @@ tables:
         type: BOOLEAN
 challenge:
   kind: exact
-  instruction: "Escreva uma consulta que conte quantos usuários existem na tabela `users`."
+  instruction: "Escreva uma consulta SQL que retorne a contagem de todos os registros da tabela `users` cujo `country_code` seja igual a 'US'."
   expectedColumns:
     - COUNT(*)
   expectedRows:
-    - [7]
+    - [4]
   orderSensitive: false
 ---
 
 ## Contexto
 
-O time do Senai Pay quer saber quantos usuários estão cadastrados na
-plataforma. Para isso, usamos a função agregada `COUNT`, que colapsa todas as
-linhas em um único valor: a quantidade de registros.
-
-```sql
-SELECT COUNT(*) FROM users;
-```
+O Senai Pay tem um painel no site que mostra estatísticas sobre onde os
+usuários estão localizados. Um membro do time de QA está preocupado porque o
+número de usuários localizados nos EUA parece pequeno.
 
 ## Sua vez
 
-Escreva uma consulta que conte quantos usuários existem na tabela `users`.
+Escreva uma consulta SQL que retorne a contagem de **todos** os registros da
+tabela `users` cujo `country_code` seja igual a `'US'`.
+
+Lembre-se: queremos saber o número total de registros, então podemos usar o
+coringa (`*`) em `COUNT(*)`. Embora você normalmente pudesse usar a coluna `id`,
+ou seja, `COUNT(id)`, nesta tarefa use o coringa.

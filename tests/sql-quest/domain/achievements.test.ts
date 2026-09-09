@@ -23,7 +23,7 @@ describe("evaluateAchievements", () => {
 
   it("primeira lição → first-lesson e first-streak", () => {
     const earned = evaluateAchievements({
-      completedLessonIds: ["1-1"],
+      completedLessonIds: ["select-01"],
       totalXp: 50,
       streak: 1,
     });
@@ -66,25 +66,25 @@ describe("evaluateAchievements", () => {
 
   it("limiares de XP", () => {
     expect(
-      evaluateAchievements({ completedLessonIds: ["1-1"], totalXp: 100, streak: 1 })
+      evaluateAchievements({ completedLessonIds: ["select-01"], totalXp: 100, streak: 1 })
     ).toContain("xp-100");
     expect(
-      evaluateAchievements({ completedLessonIds: ["1-1"], totalXp: 99, streak: 1 })
+      evaluateAchievements({ completedLessonIds: ["select-01"], totalXp: 99, streak: 1 })
     ).not.toContain("xp-100");
     expect(
-      evaluateAchievements({ completedLessonIds: ["1-1"], totalXp: 300, streak: 1 })
+      evaluateAchievements({ completedLessonIds: ["select-01"], totalXp: 300, streak: 1 })
     ).toContain("xp-300");
   });
 
   it("limiares de streak", () => {
     expect(
-      evaluateAchievements({ completedLessonIds: ["1-1"], totalXp: 0, streak: 3 })
+      evaluateAchievements({ completedLessonIds: ["select-01"], totalXp: 0, streak: 3 })
     ).toContain("streak-3");
     expect(
-      evaluateAchievements({ completedLessonIds: ["1-1"], totalXp: 0, streak: 7 })
+      evaluateAchievements({ completedLessonIds: ["select-01"], totalXp: 0, streak: 7 })
     ).toContain("streak-7");
     expect(
-      evaluateAchievements({ completedLessonIds: ["1-1"], totalXp: 0, streak: 2 })
+      evaluateAchievements({ completedLessonIds: ["select-01"], totalXp: 0, streak: 2 })
     ).not.toContain("streak-3");
   });
 

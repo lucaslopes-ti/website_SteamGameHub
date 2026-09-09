@@ -152,6 +152,33 @@ function asChallenge(v: unknown): SQLContentChallenge | undefined {
         : [],
     };
   }
+  if (v.kind === "data") {
+    return {
+      kind: "data",
+      instruction: typeof v.instruction === "string" ? v.instruction : "",
+      expectedTables: Array.isArray(v.expectedTables)
+        ? v.expectedTables.filter(isRecord).map((t) => ({
+            name: typeof t.name === "string" ? t.name : "",
+            columns: Array.isArray(t.columns)
+              ? t.columns.filter((x): x is string => typeof x === "string")
+              : [],
+            rows: Array.isArray(t.rows)
+              ? t.rows
+                  .filter((r): r is unknown[] => Array.isArray(r))
+                  .map((r) =>
+                    r.map((cell) =>
+                      cell === null || typeof cell === "string" || typeof cell === "number"
+                        ? cell
+                        : null
+                    )
+                  )
+              : [],
+            orderSensitive:
+              typeof t.orderSensitive === "boolean" ? t.orderSensitive : undefined,
+          }))
+        : [],
+    };
+  }
   if (v.kind === "quiz") {
     return {
       kind: "quiz",

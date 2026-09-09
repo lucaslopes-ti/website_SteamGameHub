@@ -1,7 +1,7 @@
 ---
 id: crud-09
 title: "O perigo de excluir dados"
-summary: "Conheça os padrões que protegem sistemas reais contra exclusões acidentais."
+summary: "Conheça backups e soft deletes, as estratégias para proteger dados valiosos."
 chapter: 4
 chapterSlug: crud
 lesson: 9
@@ -17,41 +17,56 @@ challenge:
   kind: quiz
   instruction: "Responda às perguntas abaixo."
   questions:
-    - prompt: "Qual padrão marca linhas como excluídas sem removê-las de verdade?"
+    - prompt: "Você ____ deve ter backups automatizados de um banco de dados de produção."
       options:
-        - "Hard delete"
-        - "Soft delete com uma coluna deleted_at"
-        - "Backup diário"
-        - "Cache em memória"
-      answer: 1
-      explanation: "O soft delete usa uma coluna (ex.: deleted_at) para marcar a linha como excluída."
-    - prompt: "Qual prática ajuda a evitar um DELETE sem WHERE em produção?"
+        - "Às vezes"
+        - "Nunca"
+        - "Quase nunca"
+        - "Quase sempre"
+      answer: 3
+      explanation: "Backups automatizados são essenciais para proteger dados valiosos contra erros de desenvolvimento."
+    - prompt: "Um soft delete é quando você ____"
       options:
-        - "Rodar um SELECT antes com o mesmo WHERE para pré-visualizar as linhas"
-        - "Nunca usar WHERE no DELETE"
-        - "Excluir a tabela e recriar"
-        - "Usar DELETE em todas as tabelas ao mesmo tempo"
+        - "Marca uma linha como excluída em vez de remover os dados de verdade"
+        - "Exclui alguns dados, mas eles não são removidos do banco por 30 dias"
+        - "Exclui dados pedindo gentilmente ao banco, geralmente com um 'por favor'"
+        - "Exclui dados de um snapshot"
       answer: 0
-      explanation: "Pré-visualizar com SELECT e depois usar o mesmo WHERE reduz o risco de apagar linhas demais."
+      explanation: "No soft delete, marcamos a linha (ex.: com uma data em deleted_at) e ignoramos linhas marcadas nas consultas."
 ---
 
 ## Contexto
 
-`DELETE` é irreversível dentro do próprio banco. Sistemas de produção se
-protegem com:
+Excluir dados pode ser uma operação perigosa. Uma vez removidos, os dados podem
+ser muito difíceis — se não impossíveis — de restaurar! Vamos falar sobre
+algumas formas comuns de engenheiros backend protegerem contra a perda de dados
+valiosos de clientes.
 
-- **Soft deletes**: uma coluna `deleted_at` marca as linhas em vez de removê-las;
-- **Backups** antes de operações destrutivas;
-- **Permissões restritas**: a maioria dos usuários da aplicação não pode
-  executar `DELETE`;
-- **Foreign keys com `ON DELETE RESTRICT`**, impedindo linhas órfãs
-  relacionadas.
+> **Dica:** ao escrever um DELETE manual, primeiro rode um `SELECT` com a mesma
+> cláusula `WHERE` para pré-visualizar as linhas afetadas.
 
-### Lição do mundo real
+### Estratégia 1 — Backups
 
-Um administrador rodou um script sem `WHERE` e perdeu dados de clientes; a
-recuperação levou dias. **Regra de ouro:** primeiro rode um `SELECT` para
-pré-visualizar as linhas e depois faça o `DELETE` com o mesmo `WHERE`.
+Se você usa um serviço de nuvem, deve sempre ativar backups automatizados. Eles
+tiram um snapshot automático de todo o banco em algum intervalo e o mantêm por
+algum tempo. O banco do Senai Pay tem um snapshot de backup diário, retido por
+30 dias. Se alguém acidentalmente rodar uma consulta que exclua dados valiosos,
+podemos restaurar a partir do backup.
+
+Você deve ter uma estratégia de backup para bancos de dados de produção.
+
+### Estratégia 2 — Soft Deletes
+
+Um "soft delete" é quando você não exclui os dados do banco de verdade, mas
+apenas "marca" os dados como excluídos. Por exemplo, você pode definir uma data
+`deleted_at` na linha que quer excluir. Depois, nas suas consultas, você ignora
+qualquer coisa que tenha uma data `deleted_at` definida. A ideia é que isso
+permite que sua aplicação se comporte como se estivesse excluindo dados, mas
+você sempre pode voltar e restaurar qualquer dado removido.
+
+Você provavelmente só deve usar soft delete se tiver um motivo específico para
+isso. Backups automatizados devem ser "suficientes" para a maioria das
+aplicações que só querem se proteger contra erros de desenvolvimento.
 
 ## Sua vez
 

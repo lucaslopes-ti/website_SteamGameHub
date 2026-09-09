@@ -7,10 +7,15 @@
  *
  * Fica em um módulo próprio (e não dentro da route) porque arquivos de rota do
  * Next.js não podem exportar funções auxiliares — apenas handlers HTTP.
+ *
+ * Os ids podem chegar em qualquer formato (semântico "select-01", legado
+ * "1-1" ou posicional "capitulo-licao"); todas as funções resolvem para o id
+ * semântico canônico antes de validar/calcular.
  */
-import { lessons } from "../../data/sql-quest/lessons";
+import { lessons } from "./catalog";
+import { resolveLessonId, resolveLessonIds } from "./content/migrate";
 
-/** Ordem oficial da trilha (ids na ordem de conclusão). */
+/** Ordem oficial da trilha (ids semânticos na ordem de conclusão). */
 const orderedIds = lessons.map((l) => l.id);
 
 /** Mapa oficial de XP por lição (fonte única de verdade). */
@@ -18,30 +23,40 @@ const xpById = new Map(lessons.map((l) => [l.id, l.xpReward]));
 
 /**
  * Soma o XP apenas pelas lições do catálogo (nunca confia no cliente).
- * Ids desconhecidos são ignorados.
+ * Ids desconhecidos (ou sem correspondência) são ignorados.
  */
 export function computeTotalXp(lessonIds: string[]): number {
   let total = 0;
   for (const id of lessonIds) {
-    total += xpById.get(id) ?? 0;
+    const resolved = resolveLessonId(id, lessons);
+    total += resolved ? (xpById.get(resolved) ?? 0) : 0;
   }
   return total;
 }
 
 /**
- * Valida completions como uma progressão linear:
+ * Valida completions como uma progressão linear baseada em DELTA:
  * - não permite remoção de conclusões existentes;
- * - não aceita saltos nem novas lições fora da próxima disponível — o conjunto
- *   final precisa ser um prefixo contíguo da trilha em ordem;
+ * - permite no máximo UMA nova lição por requisição;
+ * - a nova lição deve ser a PRIMEIRA não concluída na ordem oficial da trilha
+ *   (preenche lacunas em ordem — necessário para progresso migrado do catálogo
+ *   legado, que pode pular lições novas da trilha);
  * - devolve o conjunto final VALIDADO (única fonte de XP).
+ *
+ * Ids legados/posicionais são resolvidos para ids semânticos antes da
+ * validação.
  */
 export function validateCompletions(
   previous: string[],
   incoming: string[]
 ): { ok: true; final: string[] } | { ok: false; error: string } {
+  // Resolve ambos os conjuntos para ids semânticos canônicos (ordem oficial).
+  const prev = resolveLessonIds(previous, lessons);
+  const inc = resolveLessonIds(incoming, lessons);
+
   // 1) Não permitir remoção de conclusões existentes.
-  for (const id of previous) {
-    if (!incoming.includes(id)) {
+  for (const id of prev) {
+    if (!inc.includes(id)) {
       return {
         ok: false,
         error: "Não é possível remover conclusões já salvas.",
@@ -49,13 +64,20 @@ export function validateCompletions(
     }
   }
 
-  // 2) Conjunto final = união, ordenado pela ordem oficial da trilha.
-  const merged = Array.from(new Set([...previous, ...incoming]));
-  const sorted = orderedIds.filter((id) => merged.includes(id));
+  // 2) No máximo UMA nova lição por requisição.
+  const newIds = inc.filter((id) => !prev.includes(id));
+  if (newIds.length > 1) {
+    return {
+      ok: false,
+      error:
+        "Conclua uma lição por vez: envie apenas a próxima lição da trilha nesta requisição.",
+    };
+  }
 
-  // 3) Deve ser um prefixo contíguo (sem saltos / fora da próxima disponível).
-  for (let i = 0; i < sorted.length; i++) {
-    if (sorted[i] !== orderedIds[i]) {
+  // 3) A nova lição deve ser a primeira não concluída na ordem oficial.
+  if (newIds.length === 1) {
+    const nextId = orderedIds.find((id) => !prev.includes(id));
+    if (newIds[0] !== nextId) {
       return {
         ok: false,
         error:
@@ -64,5 +86,5 @@ export function validateCompletions(
     }
   }
 
-  return { ok: true, final: sorted };
+  return { ok: true, final: inc };
 }

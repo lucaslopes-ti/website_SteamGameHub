@@ -18,9 +18,14 @@ for (const lesson of lessons) {
   );
 }
 
+/** Mapa id semântico da lição → número do capítulo (para `chapterOf`). */
+const chapterByLessonId = new Map<string, number>();
+for (const lesson of lessons) {
+  chapterByLessonId.set(lesson.id, lesson.chapter);
+}
+
 function chapterOf(id: string): number {
-  const match = /^(\d+)-/.exec(id);
-  return match ? Number(match[1]) : 0;
+  return chapterByLessonId.get(id) ?? 0;
 }
 
 function isChapterComplete(completedLessonIds: string[], chapter: number): boolean {
@@ -31,7 +36,7 @@ function isChapterComplete(completedLessonIds: string[], chapter: number): boole
 }
 
 export interface AchievementState {
-  /** Ids de lições concluídas (formato "chapter-lesson"). */
+  /** Ids de lições concluídas (ids semânticos do catálogo). */
   completedLessonIds: string[];
   /** XP total derivado do catálogo. */
   totalXp: number;

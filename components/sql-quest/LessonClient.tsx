@@ -128,6 +128,8 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
   } | null>(null);
   const [revealedHints, setRevealedHints] = useState(0);
   const [justSolved, setJustSolved] = useState(false);
+  const [quizAnswers, setQuizAnswers] = useState<Record<number, number>>({});
+  const [quizSubmitted, setQuizSubmitted] = useState(false);
 
   const completed = isCompleted(lesson.chapter, lesson.lesson);
   const unlocked = isUnlocked(lesson.chapter, lesson.lesson);
@@ -151,6 +153,8 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
     setValidation(null);
     setRevealedHints(0);
     setJustSolved(false);
+    setQuizAnswers({});
+    setQuizSubmitted(false);
     startEngine();
   }, [lesson, startEngine]);
 
@@ -201,9 +205,21 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
   };
 
   const instruction =
-    lesson.challenge.kind === "exact" || lesson.challenge.kind === "schema"
-      ? lesson.challenge.instruction
-      : lesson.summary;
+    "instruction" in lesson.challenge ? lesson.challenge.instruction : lesson.summary;
+
+  const isSqlChallenge = lesson.challenge.kind === "exact" || lesson.challenge.kind === "schema" || lesson.challenge.kind === "data";
+  const isQuiz = lesson.challenge.kind === "quiz";
+  const isTheory = lesson.challenge.kind === "theory";
+  const quizQuestions = lesson.challenge.kind === "quiz" ? lesson.challenge.questions : [];
+  const quizComplete = isQuiz && quizQuestions.length > 0 && quizQuestions.every((_, index) => quizAnswers[index] !== undefined);
+  const quizPassed = isQuiz && quizComplete && quizQuestions.every((question, index) => quizAnswers[index] === question.answer);
+
+  const completeNonSqlLesson = async () => {
+    if (!unlocked || completed) return;
+    if (isQuiz && !quizPassed) return;
+    await complete(lesson.chapter, lesson.lesson);
+    setJustSolved(true);
+  };
 
   return (
     <div className="min-h-screen bg-[var(--surface)] text-[var(--on-surface)]">
@@ -242,7 +258,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
               {previous && (
                 <Link
                   href={`/sql-quest/learn/${previous.chapter}/${previous.lesson}`}
-                  className="inline-flex items-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] px-4 py-2 text-sm font-medium text-[var(--on-surface)] transition-[background-color,border-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media([@media(hover:hover)_and_(pointer:fine)]:hover:hover)_and_(pointer:fine)]:[@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--surface-container-high)]"
+                  className="inline-flex items-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] px-4 py-2 text-sm font-medium text-[var(--on-surface)] transition-[background-color,border-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--surface-container-high)]"
                 >
                   <ArrowLeft className="h-4 w-4" />
                   Anterior
@@ -251,7 +267,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
               {next && (
                 <Link
                   href={`/sql-quest/learn/${next.chapter}/${next.lesson}`}
-                  className="inline-flex items-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] px-4 py-2 text-sm font-medium text-[var(--on-surface)] transition-[background-color,border-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media([@media(hover:hover)_and_(pointer:fine)]:hover:hover)_and_(pointer:fine)]:[@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--surface-container-high)]"
+                  className="inline-flex items-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] px-4 py-2 text-sm font-medium text-[var(--on-surface)] transition-[background-color,border-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--surface-container-high)]"
                 >
                   Próxima
                   <ArrowRight className="h-4 w-4" />
@@ -336,7 +352,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                   type="button"
                   onClick={revealHint}
                   disabled={!unlocked}
-                  className="mt-4 inline-flex items-center gap-2 rounded-lg border border-[var(--secondary-20)] bg-[var(--secondary-10)] px-4 py-2 text-sm font-semibold text-[var(--secondary)] transition-[background-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media([@media(hover:hover)_and_(pointer:fine)]:hover:hover)_and_(pointer:fine)]:[@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--secondary-20)] disabled:cursor-not-allowed disabled:opacity-50"
+                  className="mt-4 inline-flex items-center gap-2 rounded-lg border border-[var(--secondary-20)] bg-[var(--secondary-10)] px-4 py-2 text-sm font-semibold text-[var(--secondary)] transition-[background-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--secondary-20)] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <Lightbulb className="h-4 w-4" />
                   Mostrar próxima dica
@@ -366,7 +382,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
               </div>
             )}
 
-            <section className="flex flex-col rounded-3xl border border-[var(--primary)]/30 bg-[var(--surface-container-low)]/60 shadow-xl shadow-black/20">
+            {isSqlChallenge && <section className="flex flex-col rounded-3xl border border-[var(--primary)]/30 bg-[var(--surface-container-low)]/60 shadow-xl shadow-black/20">
               <div className="flex items-center justify-between border-b border-[var(--outline-variant)]/20 px-4 py-3">
                 <span className="flex items-center gap-2 text-sm font-semibold text-[var(--on-surface-variant)]">
                   <Database className="h-4 w-4" />
@@ -427,7 +443,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                   type="button"
                   onClick={handleRun}
                   disabled={!unlocked || engineLoading || !!engineError || executing || !code.trim()}
-                  className="inline-flex items-center gap-2 rounded-lg bg-[var(--secondary-container)] px-5 py-2.5 text-sm font-bold text-[var(--on-secondary-container)] shadow-md transition-transform duration-[160ms] ease-out active:scale-[0.97] [@media([@media(hover:hover)_and_(pointer:fine)]:hover:hover)_and_(pointer:fine)]:[@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-lg bg-[var(--secondary-container)] px-5 py-2.5 text-sm font-bold text-[var(--on-secondary-container)] shadow-md transition-transform duration-[160ms] ease-out active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {executing ? (
                     <>
@@ -446,7 +462,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                   type="button"
                   onClick={handleReset}
                   disabled={executing}
-                  className="inline-flex items-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] px-4 py-2.5 text-sm font-semibold text-[var(--on-surface)] transition-[background-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media([@media(hover:hover)_and_(pointer:fine)]:hover:hover)_and_(pointer:fine)]:[@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--surface-container-high)] disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] px-4 py-2.5 text-sm font-semibold text-[var(--on-surface)] transition-[background-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--surface-container-high)] disabled:opacity-50"
                 >
                   <RotateCcw className="h-4 w-4" />
                   Reiniciar
@@ -456,7 +472,17 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                   {lesson.xpReward} XP nesta lição
                 </div>
               </div>
-            </section>
+            </section>}
+
+            {isQuiz && (
+              <section className="rounded-3xl border border-[var(--secondary)]/30 bg-[var(--surface-container-low)]/60 p-5 shadow-xl shadow-black/20 sm:p-6" aria-labelledby="quiz-heading">
+                <div className="mb-6 flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--secondary)]">Quiz de revisão</p><h2 id="quiz-heading" className="mt-2 text-xl font-bold">Escolha a melhor resposta</h2></div><span className="rounded-full bg-[var(--secondary)]/10 px-3 py-1 text-xs font-bold text-[var(--secondary)]">{Object.keys(quizAnswers).length}/{quizQuestions.length}</span></div>
+                <div className="space-y-6">{quizQuestions.map((question, questionIndex) => <fieldset key={`${lesson.id}-question-${questionIndex}`} className="space-y-3"><legend className="text-sm font-semibold leading-6">{questionIndex + 1}. {question.prompt}</legend><div className="grid gap-2">{question.options.map((option, optionIndex) => { const selected = quizAnswers[questionIndex] === optionIndex; const correct = quizSubmitted && optionIndex === question.answer; const wrong = quizSubmitted && selected && !correct; return <label key={`${lesson.id}-question-${questionIndex}-option-${optionIndex}`} className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3 text-sm transition-[border-color,background-color,transform] duration-[160ms] ease-out active:scale-[0.99] ${correct ? "border-emerald-400/50 bg-emerald-500/10" : wrong ? "border-red-400/50 bg-red-500/10" : selected ? "border-[var(--primary)]/60 bg-[var(--primary-10)]" : "border-[var(--outline-variant)]/30 bg-[var(--surface-container-lowest)] [@media(hover:hover)_and_(pointer:fine)]:hover:border-[var(--primary)]/50"}`}><input type="radio" name={`${lesson.id}-question-${questionIndex}`} checked={selected} onChange={() => !quizSubmitted && setQuizAnswers((current) => ({ ...current, [questionIndex]: optionIndex }))} disabled={quizSubmitted} className="mt-0.5 accent-[var(--primary)]" />{option}</label>; })}</div>{quizSubmitted && question.explanation && <p className="text-sm leading-6 text-[var(--on-surface-variant)]">{question.explanation}</p>}</fieldset>)}</div>
+                {!quizSubmitted ? <button type="button" onClick={() => { setQuizSubmitted(true); if (quizPassed) void completeNonSqlLesson(); }} disabled={!quizComplete || !unlocked} className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[var(--secondary-container)] px-5 py-3 text-sm font-bold text-[var(--on-secondary-container)] transition-[transform,opacity] duration-[160ms] ease-out active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50">Verificar respostas</button> : <div className={`mt-7 rounded-2xl border p-4 ${quizPassed ? "border-emerald-400/30 bg-emerald-500/10" : "border-red-400/30 bg-red-500/10"}`} role="status" aria-live="polite"><p className="font-bold">{quizPassed ? "Tudo certo!" : "Quase lá."}</p><p className="mt-1 text-sm text-[var(--on-surface-variant)]">{quizPassed ? `+${lesson.xpReward} XP conquistados.` : "Revise as respostas e tente novamente."}</p>{!quizPassed && <button type="button" onClick={() => setQuizSubmitted(false)} className="mt-3 text-sm font-bold text-[var(--primary-text)]">Tentar novamente</button>}</div>}
+              </section>
+            )}
+
+            {isTheory && <section className="rounded-3xl border border-[var(--primary)]/30 bg-[var(--surface-container-low)]/60 p-6 shadow-xl shadow-black/20"><div className="flex items-start gap-4"><div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--primary-10)]"><Sparkles className="h-5 w-5 text-[var(--primary-text)]" /></div><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--primary-text)]">Leitura concluída?</p><h2 className="mt-1 text-xl font-bold">Marque esta teoria como vista</h2><p className="mt-2 text-sm leading-6 text-[var(--on-surface-variant)]">Não há editor nesta unidade. Quando estiver pronto, confirme para liberar a próxima lição.</p></div></div><button type="button" onClick={completeNonSqlLesson} disabled={!unlocked || completed} className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[var(--secondary-container)] px-5 py-3 text-sm font-bold text-[var(--on-secondary-container)] transition-[transform,opacity] duration-[160ms] ease-out active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50">{completed ? "Teoria concluída" : "Concluir teoria"}<CheckCircle2 className="h-4 w-4" /></button></section>}
 
             {validation && (
               <div

@@ -9,16 +9,23 @@
 import type { DocumentReference, Transaction } from "firebase-admin/firestore";
 import { getLessonById, lessons } from "../catalog";
 import { computeTotalXp, validateCompletions } from "../progress";
+import { migrateLessonIds } from "../content/migrate";
 import { computeStreak, dateKeyInSaoPaulo } from "../domain/streak";
 import { evaluateAchievements, newlyEarned } from "../domain/achievements";
 
 export const PROGRESS_COLLECTION = "sql_quest_progress";
 
-/** Ordem oficial da trilha (ids na ordem de conclusão). */
+/** Ordem oficial da trilha (ids semânticos na ordem de conclusão). */
 const officialOrder = lessons.map((l) => l.id);
 
 export interface ProgressDoc {
   uid: string;
+  /**
+   * Ids de lição concluídas no formato SEMÂNTICO do catálogo (ex.:
+   * "select-01"). O armazenamento e a API operam com ids semânticos; ids
+   * legados/posicionais ("1-1") são aceitos na entrada e migrados para o
+   * formato canônico (ver `sanitizeLessonIds`).
+   */
   completedLessonIds: string[];
   totalXp: number;
   updatedAt: string;
@@ -46,7 +53,12 @@ export function emptyProgressDoc(uid: string): ProgressDoc {
   };
 }
 
-/** Normaliza um valor bruto do Firestore em um ProgressDoc seguro. */
+/**
+ * Normaliza um valor bruto do Firestore em um ProgressDoc seguro.
+ *
+ * O armazenamento e o `ProgressDoc` exposto usam ids SEMÂNTICOS canônicos;
+ * ids legados/posicionais armazenados são migrados na leitura (nunca zerados).
+ */
 export function parseProgressDoc(uid: string, data: Record<string, unknown>): ProgressDoc {
   const base = emptyProgressDoc(uid);
   const completedLessonIds = sanitizeLessonIds(data.completedLessonIds);
@@ -70,25 +82,28 @@ export function parseProgressDoc(uid: string, data: Record<string, unknown>): Pr
   };
 }
 
-/** Mantém apenas ids de lições conhecidas no catálogo, na ordem oficial. */
+/**
+ * Mantém apenas ids de lições conhecidas no catálogo, na ordem oficial da
+ * trilha. Aceita ids semânticos, legados ("1-1") e posicionais; devolve SEMPRE
+ * ids semânticos canônicos (formato de armazenamento). Não trunca o conjunto:
+ * progresso migrado pode ter lacunas, preenchidas em ordem pela validação
+ * baseada em delta.
+ */
 export function sanitizeLessonIds(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
-  const known = new Set<string>();
-  for (const item of value) {
-    if (typeof item === "string" && getLessonById(item)) known.add(item);
-  }
-  return officialOrder.filter((id) => known.has(id));
+  const ids = value.filter((item): item is string => typeof item === "string");
+  return migrateLessonIds(ids, lessons);
 }
 
 /** Erro de validação de progresso que aborta a transação com 400. */
 export class ProgressValidationError extends Error {}
 
 /**
- * Valida a atualização como progressão linear estrita:
+ * Valida a atualização como progressão linear estrita (baseada em delta):
  * - preserva conclusões existentes (proíbe remoção);
- * - o conjunto final precisa ser um prefixo contíguo da trilha (proíbe saltos);
- * - permite no máximo UMA nova lição por requisição — a próxima na ordem do
- *   catálogo (o cliente envia a lista completa; o servidor decide o delta).
+ * - permite no máximo UMA nova lição por requisição — sempre a primeira não
+ *   concluída na ordem do catálogo (o cliente envia a lista completa; o
+ *   servidor decide o delta e preenche lacunas de progresso migrado em ordem).
  */
 export function validateProgressUpdate(
   previous: string[],

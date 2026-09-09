@@ -1,13 +1,19 @@
 /**
  * Catálogo da SQL Quest — ponto único de acesso ao conteúdo.
  *
- * Agrega os metadados dos capítulos e as lições estáticas e expõe helpers de
+ * Agrega os metadados dos capítulos e as lições do catálogo GERADO
+ * (`data/sql-quest/generated.ts`, produzido a partir de
+ * `content/sql-quest/lessons/*.md` em tempo de build) e expõe helpers de
  * navegação. Camada pura: pode ser importada por API routes (servidor),
- * páginas (cliente) e testes Jest, sem depender de sql.js nem Firebase.
+ * páginas (cliente) e testes Jest, sem depender de sql.js, Firebase nem de
+ * fs/loader Node-only.
  */
 import type { SQLLesson, SQLChapter } from "./types";
-import { chapters as chapterDefinitions } from "../../data/sql-quest/chapters";
-import { lessons as lessonDefinitions } from "../../data/sql-quest/lessons";
+import {
+  chapters as chapterDefinitions,
+  lessons as lessonDefinitions,
+} from "../../data/sql-quest/generated";
+import { resolveLessonId } from "./content/migrate";
 
 /** Capítulos da trilha (já ordenados por número). */
 export const chapters: SQLChapter[] = [...chapterDefinitions].sort(
@@ -68,12 +74,17 @@ export function getLesson(
   );
 }
 
-/** Retorna a lição pelo id no formato "capitulo-licao" (ex.: "2-3"). */
+/**
+ * Retorna a lição pelo id. Aceita:
+ * - ids semânticos do catálogo (ex.: "select-01");
+ * - ids legados/posicionais "capitulo-licao" (ex.: "1-1"), resolvidos via a
+ *   migração explícita dos 12 ids antigos.
+ */
 export function getLessonById(id: string): SQLLesson | null {
   if (typeof id !== "string") return null;
-  const match = /^(\d+)-(\d+)$/.exec(id.trim());
-  if (!match) return null;
-  return getLesson(Number(match[1]), Number(match[2]));
+  const resolved = resolveLessonId(id, lessons);
+  if (!resolved) return null;
+  return lessons.find((l) => l.id === resolved) ?? null;
 }
 
 /** Próxima lição na ordem da trilha (ou `null` se a atual for a última). */

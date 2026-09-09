@@ -9,7 +9,7 @@
  */
 import { NextRequest } from "next/server";
 import { createFakeDb, type FakeDb } from "./fake-firestore";
-import { lessons } from "@/lib/sql-quest/catalog";
+import { lessons, getLessonById } from "@/lib/sql-quest/catalog";
 
 const mockGetAuthUser = jest.fn();
 jest.mock("@/lib/server-auth", () => ({
@@ -24,7 +24,8 @@ jest.mock("@/lib/firebase/admin", () => ({
 
 import { GET, PUT } from "@/app/api/sql-quest/progress/route";
 
-const xpOf = (id: string) => lessons.find((l) => l.id === id)?.xpReward ?? 0;
+// Resolve XP por id semântico OU posicional/legado (ex.: "1-1" → select-01).
+const xpOf = (id: string) => getLessonById(id)?.xpReward ?? 0;
 
 const student = {
   uid: "u-student",
@@ -78,6 +79,43 @@ describe("GET /api/sql-quest/progress", () => {
     expect(body.streak).toBe(0);
     expect(body.achievements).toEqual([]);
   });
+
+  it("migra progresso legado (ids 'capitulo-licao') para o catálogo semântico", async () => {
+    // Documento antigo armazenado com ids legados "1-1"/"1-2".
+    mockDbHolder.db!.collection("sql_quest_progress").doc("u-student").set({
+      uid: "u-student",
+      completedLessonIds: ["1-1", "1-2"],
+      totalXp: 90,
+      updatedAt: "2026-09-08T12:00:00.000Z",
+      streak: 1,
+      lastActivityDate: "2026-09-08",
+      achievements: ["first-lesson"],
+    });
+    const res = await GET(makeGetRequest());
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    // A resposta devolve ids SEMÂNTICOS; o progresso legado é migrado, não zerado.
+    expect(body.completedLessonIds).toEqual(["select-01", "select-02"]);
+    expect(body.lessonCount).toBe(2);
+    expect(body.totalXp).toBe(90);
+  });
+
+  it("devolve ids semânticos para progresso já armazenado em formato semântico", async () => {
+    mockDbHolder.db!.collection("sql_quest_progress").doc("u-student").set({
+      uid: "u-student",
+      completedLessonIds: ["select-01", "select-02"],
+      totalXp: 90,
+      updatedAt: "2026-09-08T12:00:00.000Z",
+      streak: 1,
+      lastActivityDate: "2026-09-08",
+      achievements: ["first-lesson"],
+    });
+    const res = await GET(makeGetRequest());
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.completedLessonIds).toEqual(["select-01", "select-02"]);
+    expect(body.totalXp).toBe(90);
+  });
 });
 
 describe("PUT /api/sql-quest/progress", () => {
@@ -103,6 +141,28 @@ describe("PUT /api/sql-quest/progress", () => {
     expect(body.lastActivityDate).toBeTruthy();
     expect(body.achievements).toContain("first-lesson");
     expect(body.newAchievements).toContain("first-lesson");
+    // A resposta devolve ids SEMÂNTICOS (formato canônico do catálogo).
+    expect(body.completedLessonIds).toEqual(["select-01"]);
+  });
+
+  it("aceita ids semânticos no PUT e armazena o formato canônico", async () => {
+    const res = await PUT(makePutRequest({ completedLessonIds: ["select-01"] }));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.completedLessonIds).toEqual(["select-01"]);
+    expect(body.totalXp).toBe(xpOf("select-01"));
+    // O armazenamento usa ids semânticos canônicos.
+    const stored = mockDbHolder.db!.collection("sql_quest_progress").doc("u-student");
+    const snap = await stored.get();
+    expect(snap.data()!.completedLessonIds).toEqual(["select-01"]);
+  });
+
+  it("migra ids legados no PUT para o armazenamento semântico", async () => {
+    const res = await PUT(makePutRequest({ completedLessonIds: ["1-1"] }));
+    expect(res.status).toBe(200);
+    const stored = mockDbHolder.db!.collection("sql_quest_progress").doc("u-student");
+    const snap = await stored.get();
+    expect(snap.data()!.completedLessonIds).toEqual(["select-01"]);
   });
 
   it("é idempotente: repetir a mesma lição não acumula XP nem streak", async () => {

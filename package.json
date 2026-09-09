@@ -5,6 +5,8 @@
   "author": "Lucas Lopes",
   "description": "Repositório de jogos desenvolvidos pelos alunos do curso Técnico em Programação de Jogos Digitais do SENAI Dr. Celso Charuri",
   "scripts": {
+    "predev": "npm run generate:sql-quest-catalog",
+    "prebuild": "npm run generate:sql-quest-catalog",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -13,7 +15,9 @@
     "test:firebase": "tsx scripts/test-firebase-connection.ts",
     "test": "jest",
     "test:watch": "jest --watch",
-    "validate:sql-quest-content": "tsx scripts/sql-quest-validate-content.ts"
+    "generate:sql-quest-catalog": "tsx scripts/sql-quest-generate-catalog.ts",
+    "validate:sql-quest-content": "tsx scripts/sql-quest-validate-content.ts",
+    "validate:sql-quest-catalog": "tsx scripts/sql-quest-check-generated.ts"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",

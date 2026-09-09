@@ -1,53 +1,67 @@
 ---
 id: crud-01
-title: "O que é CRUD?"
-summary: "Conheça as quatro operações básicas de armazenamento persistente: criar, ler, atualizar e excluir."
+title: "CRUD: as quatro operações básicas"
+summary: "Entenda o que é CRUD e use SELECT para ler todos os dados de uma tabela."
 chapter: 4
 chapterSlug: crud
 lesson: 1
 difficulty: iniciante
-xp: 30
+xp: 40
 prerequisites:
   - restricoes-08
-hints: []
+hints:
+  - "READ (ler) é o mesmo que recuperar dados."
+  - "Use SELECT * para ler todos os campos de todos os registros."
+  - "SELECT * FROM crud;"
 references:
-  - label: "SQLite — Lang"
-    url: "https://www.sqlite.org/lang.html"
+  - label: "SQLite — SELECT"
+    url: "https://www.sqlite.org/lang_select.html"
+setupSql: |
+  CREATE TABLE crud (c TEXT, r TEXT, u TEXT, d TEXT);
+
+  INSERT INTO crud (c, r, u, d) VALUES
+    ('CREATE = CREATE', 'READ = SELECT', 'UPDATE = UPDATE', 'DELETE = DELETE');
+tables:
+  - name: crud
+    columns:
+      - name: c
+        type: TEXT
+      - name: r
+        type: TEXT
+      - name: u
+        type: TEXT
+      - name: d
+        type: TEXT
 challenge:
-  kind: quiz
-  instruction: "Responda às perguntas abaixo."
-  questions:
-    - prompt: "Qual instrução SQL cria um novo registro?"
-      options:
-        - "SELECT"
-        - "INSERT"
-        - "DELETE"
-        - "UPDATE"
-      answer: 1
-      explanation: "INSERT adiciona novos registros (Create)."
-    - prompt: "O que significa a sigla CRUD?"
-      options:
-        - "Create, Read, Update, Delete"
-        - "Copy, Run, Undo, Debug"
-        - "Create, Remove, Update, Drop"
-        - "Count, Read, Use, Delete"
-      answer: 0
-      explanation: "CRUD são as quatro operações básicas de armazenamento persistente."
+  kind: exact
+  instruction: "Determine qual comando SQL é usado para uma operação READ e use-o para ler todos os campos de todos os registros da tabela `crud`."
+  expectedColumns:
+    - c
+    - r
+    - u
+    - d
+  expectedRows:
+    - ["CREATE = CREATE", "READ = SELECT", "UPDATE = UPDATE", "DELETE = DELETE"]
+  orderSensitive: false
 ---
 
 ## Contexto
 
-**CRUD** é a sigla para *Create, Read, Update, Delete* — as quatro operações
-básicas de armazenamento persistente:
+**CRUD** é um acrônimo que descreve as quatro formas básicas de uma aplicação
+trabalhar com dados armazenados: **CREATE**, **READ**, **UPDATE** e **DELETE**.
+Essas quatro operações são a base de quase todo banco de dados e se conectam
+diretamente a muita funcionalidade real de aplicações:
 
-- **Create** (criar): `INSERT` — adiciona novos registros.
-- **Read** (ler): `SELECT` — consulta registros.
-- **Update** (atualizar): `UPDATE` — modifica registros existentes.
-- **Delete** (excluir): `DELETE` — remove registros.
+- **CREATE**: cadastrar um novo usuário, publicar um comentário.
+- **READ**: carregar o perfil de um usuário, ver uma lista de produtos.
+- **UPDATE**: editar um comentário, trocar sua senha.
+- **DELETE**: remover uma publicação, encerrar uma conta.
 
-Todo sistema que guarda dados — do Senai Pay a uma lista de compras — depende
-dessas quatro operações. Neste capítulo vamos dominar cada uma delas.
+No Senai Pay, criamos uma tabela chamada `crud` — uma tabela de brinquedo usada
+para praticar entrevistas. Cada coluna guarda o nome do comando SQL
+correspondente a uma operação.
 
 ## Sua vez
 
-Responda às perguntas do desafio.
+Determine qual comando SQL pode ser usado para uma operação **READ** e use-o
+para ler todos os campos de todos os registros da tabela `crud`!

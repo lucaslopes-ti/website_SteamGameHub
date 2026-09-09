@@ -143,12 +143,26 @@ export interface SQLExpectedTableState {
   orderSensitive?: boolean;
 }
 
+/** Pergunta de um desafio quiz (múltipla escolha, sem execução de SQL). */
+export interface SQLQuizQuestion {
+  /** Enunciado da pergunta. */
+  prompt: string;
+  /** Opções de resposta (ao menos 2). */
+  options: string[];
+  /** Índice (0-based) da opção correta. */
+  answer: number;
+  /** Explicação exibida após responder (opcional). */
+  explanation?: string;
+}
+
 /**
  * Desafio de uma lição:
  * - `exact`: compara colunas e linhas do resultado com o esperado.
  * - `schema`: valida a estrutura do banco após a execução (DDL).
  * - `data`: compara o estado final das tabelas declaradas após a execução
  *   (mutação/data-state — INSERT, UPDATE, DELETE).
+ * - `quiz`: perguntas de múltipla escolha (sem execução de SQL).
+ * - `theory`: unidade apenas narrativa (sem desafio executável).
  */
 export type SQLChallenge =
   | {
@@ -174,6 +188,16 @@ export type SQLChallenge =
       instruction: string;
       /** Tabelas cujo estado final deve ser comparado após a query. */
       expectedTables: SQLExpectedTableState[];
+    }
+  | {
+      kind: "quiz";
+      instruction: string;
+      questions: SQLQuizQuestion[];
+    }
+  | {
+      kind: "theory";
+      /** Instrução/resumo exibido como objetivo da unidade. */
+      instruction: string;
     };
 
 /** Resultado da validação (feedback amigável em PT-BR). */
@@ -199,14 +223,16 @@ export interface SQLExecutionResponse {
 
 /** Uma lição prática da trilha. */
 export interface SQLLesson {
-  /** Identificador estável, ex.: "2-3" (capítulo-lição). */
+  /** Identificador semântico estável, ex.: "select-01". */
   id: string;
   chapter: number;
+  /** Slug do capítulo (ex.: "select"), espelha `SQLChapter.slug`. */
+  chapterSlug: string;
   lesson: number;
   title: string;
   /** Resumo curto usado em listas/cards. */
   summary: string;
-  difficulty: "iniciante" | "intermediario";
+  difficulty: "iniciante" | "intermediario" | "avancado";
   /** XP concedido ao concluir (fonte oficial — nunca confiar no cliente). */
   xpReward: number;
   /** Conteúdo teórico da lição (markdown simples). */
@@ -223,6 +249,12 @@ export interface SQLLesson {
   challenge: SQLChallenge;
   /** Dicas liberadas progressivamente. */
   hints: string[];
+  /** Ids semânticos de lições que devem ser concluídas antes. */
+  prerequisites: string[];
+  /** Referências SQL (documentação oficial / link de apoio). */
+  references: { label: string; url: string }[];
+  /** Metadados das imagens usadas na unidade (alt + caminho local seguro). */
+  images: { alt: string; src: string }[];
 }
 
 /** Metadados de um capítulo da trilha. */

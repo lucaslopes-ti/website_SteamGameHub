@@ -883,6 +883,585 @@ Non-Relational Database
 Non-Relational Database
 
 
+CHAPTER 4 - LESSON 1
+
+CRUD
+CRUD is an acronym that describes the four basic ways applications work with stored data: CREATE, READ, UPDATE, and DELETE. These four operations are the bread and butter of nearly every database and map directly to a lot of real-world application functionality:
+
+CREATE: sign up a new user, post a comment
+READ: load a user's profile, view a list of products
+UPDATE: edit a comment, change your password
+DELETE: remove a post, close an account
+Assignment
+We've created a table for you called crud, it's a toy table we're using for interview practice at CashPal.
+
+Determine which SQL command can be used for a READ operation and use it to read all the fields in all the records in the crud table!
+
+Hint
+Reading data is just another way of saying retrieving data.
+
+CREATE TABLE crud (c TEXT, r TEXT, u TEXT, d TEXT);
+
+INSERT INTO
+  crud (c, r, u, d)
+VALUES
+  ('CREATE = CREATE', 'READ = SELECT', 'UPDATE = UPDATE', 'DELETE = DELETE');
+
+LESSON 2
+
+Insert Statement
+Tables are pretty useless without data in them! In SQL we can add records to a table using an INSERT INTO statement. When using an INSERT statement we must first specify the table we are inserting the record into, followed by the fields within that table we want to add VALUES to.
+
+Example INSERT INTO statement:
+
+INSERT INTO
+  employees (id, name, title)
+VALUES
+  (1, 'Allan', 'Engineer');
+
+Assignment
+Let's start manually adding some of the records to our users table!
+
+Take a look at the CREATE TABLE statement in the setup code in the up.sql tab for the users table structure, and use that information to insert the following records into the table:
+
+Record 1
+id: 1
+name: 'David'
+age: 34
+country_code: 'US'
+username: 'DavidDev'
+password: 'insertPractice'
+is_admin: false
+Record 2
+id: 2
+name: 'Samantha'
+age: 29
+country_code: 'BR'
+username: 'Sammy93'
+password: 'addingRecords!'
+is_admin: false
+
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  age INTEGER NOT NULL,
+  country_code TEXT NOT NULL,
+  username TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL,
+  is_admin BOOLEAN
+);SELECT
+  *
+FROM
+  users;
+
+LESSON 3
+
+Auto Increment
+Many dialects of SQL support an AUTO INCREMENT feature. When inserting records into a table with AUTO INCREMENT enabled, the database will assign the next value automatically. In SQLite, an integer id field that has the PRIMARY KEY constraint will auto-increment by default!
+
+IDs
+Depending on how your database is set up, you may be using traditional ids or you may be using UUIDs. SQL doesn't support auto-incrementing a uuid, so if your database is using them your server will have to handle the changing uuids for each record.
+
+Using AUTO INCREMENT in SQLite
+We are using traditional ids in our database, so we can take advantage of the auto-increment feature. Different dialects of SQL will implement this feature differently, but in SQLite any column that has the INTEGER PRIMARY KEY constraint will auto-increment! So we can omit the id field within the INSERT statement and allow the database to automatically add that field for us!
+
+Assignment
+Let's add some more records into our users table, but allow the database to automatically increment the id field. Add the following records to the database:
+
+Record 1
+name: 'Lance'
+age: 20
+country_code: 'US'
+username: 'LanChr'
+password: 'bootdevisbest'
+is_admin: false
+Record 2
+name: 'Tiffany'
+age: 28
+country_code: 'US'
+username: 'Tifferoon'
+password: 'autoincrement'
+is_admin: true
+
+Manual Entry
+Manually INSERTing every single record in a database would be an extremely time-consuming task! Working with raw SQL as we are now is not super common when designing backend systems.
+
+When working with SQL within a software system, like a backend web application, you'll typically have access to a programming language such as Go or Python. For example, a backend server written in Go can use string concatenation to dynamically create SQL statements, and that's usually how it's done!
+
+sqlQuery := fmt.Sprintf(`
+INSERT INTO users(name, age, country_code)
+VALUES ('%s', %v, '%s');
+`, user.Name, user.Age, user.CountryCode)
+
+SQL Injection
+The example above is an oversimplification of what really happens when you access a database using Go code. In essence, it's correct. String interpolation is how production systems access databases. That said, it must be done carefully to not be a security vulnerability. We'll talk more about that later!
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the Fearless Friday Deployer, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+
+
+1
+
+2
+
+Question 1
+Not answered
+Every time someone creates an account on boot.dev Allan or Lane has to manually add them to the database by hand-writing a SQL query
+
+1
+
+True
+
+2
+
+False
+
+
+Question 2
+Not answered
+Within backend systems, SQL queries are typically ____
+
+1
+
+Written by hand
+
+2
+
+Generated by code
+
+
+LESSON 5
+Count
+We can use a SELECT statement to get a count of the records within a table. This can be very useful when we need to know how many records there are, but we don't particularly care what's in them.
+
+Here's an example in SQLite:
+
+SELECT
+  COUNT(*)
+FROM
+  employees;
+
+The * in this case refers to a column name. We don't care about the count of a specific column – we want to know the number of total records, so we can use the wildcard (*).
+
+Assignment
+Our business strategy team at CashPal wants to know how many users of the app we have. We can't use the id number to calculate the count because user accounts can be deleted!
+
+Use a COUNT(*) statement to retrieve the number of records in the users table.
+
+In this course, stick to using * with COUNT unless the instructions specifically say to count a particular column.
+
+
+LESSON 6
+
+WHERE Clause
+In order to keep learning about CRUD operations in SQL, we need to learn how to make the instructions we send to the database more specific. SQL accepts a WHERE statement within a query that allows us to be very specific with our instructions.
+
+If we were unable to specify the record we wanted to READ, UPDATE, or DELETE making queries to a database would be very frustrating, and very inefficient.
+
+Using a WHERE Clause
+Say we had over 9000 records in our users table. We often want to look at specific user data within that table without retrieving all the other records in the table. We can use a SELECT statement followed by a WHERE clause to specify which records to retrieve. The SELECT statement stays the same, we just add the WHERE clause to the end of the SELECT. Here's an example:
+
+SELECT
+  name
+FROM
+  users
+WHERE
+  power_level >= 9000;
+
+This will select only the name field of any user within the users table WHERE the power_level field is greater than or equal to 9000.
+
+Assignment
+We need to know the username of all the users in our users table that have admin privileges! Retrieve them.
+
+Check the up migration file (001_up.sql) to see which fields exist.
+
+0001_UP.SQL
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  age INTEGER NOT NULL,
+  country_code TEXT NOT NULL,
+  username TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL,
+  is_admin BOOLEAN
+);
+
+INSERT INTO
+  users (id, name, age, country_code, username, password, is_admin)
+VALUES
+  (1, 'David', 34, 'US', 'DavidDev', 'insertPractice', false);
+
+INSERT INTO
+  users (id, name, age, country_code, username, password, is_admin)
+VALUES
+  (2, 'Samantha', 29, 'BR', 'Sammy93', 'addingRecords!', false);
+
+INSERT INTO
+  users (id, name, age, country_code, username, password, is_admin)
+VALUES
+  (3, 'John', 39, 'CA', 'Jjdev21', 'welovebootdev', false);
+
+INSERT INTO
+  users (id, name, age, country_code, username, password, is_admin)
+VALUES
+  (4, 'Ram', 42, 'IN', 'Ram11c', 'thisSQLcourserocks', false);
+
+INSERT INTO
+  users (id, name, age, country_code, username, password, is_admin)
+VALUES
+  (5, 'Hunter', 30, 'US', 'Hdev92', 'backendDev', false);
+
+INSERT INTO
+  users (id, name, age, country_code, username, password, is_admin)
+VALUES
+  (6, 'Allan', 27, 'US', 'Alires', 'iLoveB00tdev', true);
+
+INSERT INTO
+  users (name, age, country_code, username, password, is_admin)
+VALUES
+  ('Lance', 20, 'US', 'LanChr', 'b00tdevisbest', false);
+
+INSERT INTO
+  users (name, age, country_code, username, password, is_admin)
+VALUES
+  ('Tiffany', 28, 'US', 'Tifferoon', 'autoincrement', true);
+
+INSERT INTO
+  users (name, age, country_code, username, password, is_admin)
+VALUES
+  ('Aiko', 31, 'JP', 'AikoOps', 'sakuraCloud7', false);
+
+INSERT INTO
+  users (name, age, country_code, username, password, is_admin)
+VALUES
+  ('Marta', 36, 'ES', 'MartaDBA', 'oliveSQLtree', true);
+
+INSERT INTO
+  users (name, age, country_code, username, password, is_admin)
+VALUES
+  ('Kwame', 24, 'GH', 'KDev24', 'accraAPI', false);
+
+INSERT INTO
+  users (name, age, country_code, username, password, is_admin)
+VALUES
+  ('Noah', 41, 'AU', 'NoahRoot', 'koalaKernel', true);
+
+
+LESSON 7
+
+Finding NULL Values
+You can use a WHERE clause to filter values by whether or not they're NULL.
+
+IS NULL
+SELECT
+  name
+FROM
+  users
+WHERE
+  first_name IS NULL;
+
+IS NOT NULL
+SELECT
+  name
+FROM
+  users
+WHERE
+  first_name IS NOT NULL;
+
+Assignment
+The way we store transactions at CashPal is interesting. The user identified by user_id is the "owner" of each transaction. Because user_id already identifies the owner, only the user on the other side needs another ID:
+
+If the owner receives money, sender_id identifies the sender and recipient_id is NULL.
+If the owner sends money, recipient_id identifies the recipient and sender_id is NULL.
+From the transactions table, select all columns for transactions where the owner is receiving money.
+
+
+
+lESSON 8
+
+DELETE
+When a user deletes their account on Twitter, or deletes a comment on a YouTube video, that data needs to be removed from its respective database.
+
+DELETE Statement
+A DELETE statement removes all records from a table that match the WHERE clause. As an example:
+
+DELETE FROM employees
+WHERE
+  id = 251;
+
+This DELETE statement removes all records from the employees table that have an id of 251!
+
+Assignment
+Samantha, one of our CashPal users, has opted to delete her account and stop using our app... which makes us sad. Anyways, we need to remove her record from the database!
+
+Delete Samantha's record from the user table.
+
+LESSON 9
+
+Danger of Deleting Data
+Deleting data can be a dangerous operation. Once removed, data can be really hard if not impossible to restore! Let's talk about a couple of common ways back-end engineers protect against losing valuable customer data.
+
+When writing a manual DELETE, first run a SELECT with the same WHERE clause to preview the affected rows.
+
+Click to hide video
+
+Strategy 1 – Backups
+If you're using a cloud-service like GCP's Cloud SQL or AWS's RDS you should always turn on automated backups. They take an automatic snapshot of your entire database on some interval, and keep it around for some length of time.
+
+The Boot.dev database has a backup snapshot taken daily, and we retain those backups for 30 days. If I ever accidentally run a query that deletes valuable data, I can restore it from the backup.
+
+You should have a backup strategy for production databases.
+
+Strategy 2 – Soft Deletes
+A "soft delete" is when you don't actually delete data from your database, but instead just "mark" the data as deleted. For example, you might set a deleted_at date on the row you want to delete. Then, in your queries you ignore anything that has a deleted_at date set. The idea is that this allows your application to behave as if it's deleting data, but you can always go back and restore any data that's been removed.
+
+You should probably only soft-delete if you have a specific reason to do so. Automated backups should be "good enough" for most applications that are just interested in protecting against developer mistakes.
+
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the Lover of Salmon, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+
+
+1
+
+2
+
+Question 1
+Not answered
+You should ____ have automated backups being taken of a production database
+
+1
+
+Sometimes
+
+2
+
+Never
+
+3
+
+Almost never
+
+4
+
+Almost always
+
+
+Question 2
+Not answered
+A soft-delete is where you ____
+
+1
+
+Mark a row as deleted instead of actually removing the data
+
+2
+
+Delete some data, but it's not actually removed from the database for 30 days
+
+3
+
+Delete some data by asking your database in a nice soothing voice. Usually with a 'please'.
+
+4
+
+Delete data from a snapshot
+
+LESSON 10
+
+Update Query in SQL
+Whenever you update your profile picture or change your password online, you are changing the data in a field on a table in a database! Imagine if every time you accidentally messed up a tweet on Twitter, you had to delete the entire tweet and post a new one instead of just editing it...
+
+... well, that's a bad example.
+
+Update Statement
+The UPDATE statement in SQL allows us to update the fields of a record. We can even update many records depending on how we write the statement.
+
+An UPDATE statement specifies the table that needs to be updated, followed by the fields and their new values by using the SET keyword. Lastly a WHERE clause indicates the record(s) to update.
+
+UPDATE employees
+SET
+  job_title = 'Backend Engineer',
+  salary = 150000
+WHERE
+  id = 251;
+
+Assignment
+We need to update Lane's record in our user table. He founded CashPal, but he's not even recognized as an admin!
+
+UPDATE Lane's record within the users table so that the is_admin field is set to true!
+
+LESSON 11
+
+Object-Relational Mapping (ORMs)
+An Object-Relational Mapping or an ORM for short, is a tool that allows you to perform CRUD operations on a database using a traditional programming language. These typically come in the form of a library or framework that you would use in your backend code.
+
+The primary benefit an ORM provides is that it maps your database records to in-memory objects. For example, in Go we might have a struct that we use in our code:
+
+type User struct {
+    ID int
+    Name string
+    IsAdmin bool
+}
+
+This struct definition conveniently represents a database table called users, and an instance of the struct represents a row in the table.
+
+Example: Using an ORM
+Using an ORM we might be able to write simple code like this:
+
+user := User{
+    ID: 10,
+    Name: "Lane",
+    IsAdmin: false,
+}
+
+// generates a SQL statement and runs it,
+// creating a new record in the users table
+db.Create(user)
+
+Example: Using Straight SQL
+Using straight SQL we typically need to write more code and handle things a bit more manually:
+
+user := User{
+    ID: 10,
+    Name: "Lane",
+    IsAdmin: false,
+}
+
+db.Exec("INSERT INTO users (id, name, is_admin) VALUES (?, ?, ?);",
+    user.ID, user.Name, user.IsAdmin)
+
+Should You Use an ORM?
+That depends! An ORM typically trades control for simplicity.
+
+Using straight SQL you can take full advantage of the power of the SQL language. Using an ORM, you're limited by whatever functionality the ORM has. If you run into issues with a specific query, it can be harder to debug with an ORM because you have to dig through the framework's code and documentation to figure out how the underlying queries are being generated.
+
+I recommend doing projects both ways so that you can learn about the trade-offs. At the end of the day, when you're working on a team of developers it will be a team decision.
+
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the Primeval 10x Developer, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+
+
+1
+
+2
+
+3
+
+Question 1
+Not answered
+When using an ORM, you ____
+
+1
+
+Write a lot of raw SQL
+
+2
+
+Call methods and functions made available via the ORM's API
+
+One advantage of an ORM is that it...
+
+1
+
+Makes your code less verbose
+
+2
+
+Is easier to debug at a low-level
+
+3
+
+Gives you more control over your database
+
+4
+
+Ensures faster queries
+
+
+Question 3
+Not answered
+Should you use an ORM?
+
+1
+
+It depends on the project/team
+
+2
+
+Always
+
+3
+
+Almost never
+
+4
+
+Almost always
+
+LESSON 12
+
+Query Practice – User Count
+CashPal has a dashboard on its website that shows statistics on where users are located. One of your QA team members is concerned because the number of users located in the US looks pretty small.
+
+Assignment
+Write an SQL query that returns the count of every record from the users table that has their country_code equal to US.
+
+Remember, we want to know the number of total records, so we can use the wildcard (*) in COUNT(*). While you could normally use the id column, i.e. COUNT(id), for this assignment stick with the wildcard.
+
+
+
+
+LESSON 13
+
+Query Practice – Country Codes
+Using our previous query, we've noticed that some of the records were incorrectly saved with a country_code value of USA instead of US.
+
+Assignment
+Write an SQL statement to update the country_code value from 'USA' to 'US' for all applicable user records. Ensure that only those records initially marked with 'USA' are changed!
+
+
+
+
+
+
+
+
+
 CH10 JOINS
 L1
 

@@ -1,64 +1,103 @@
 ---
 id: crud-10
 title: "Atualizando registros com UPDATE"
-summary: "Aprenda a modificar registros existentes com UPDATE e a proteger-se com WHERE."
+summary: "Use UPDATE com SET e WHERE para modificar campos de um registro específico."
 chapter: 4
 chapterSlug: crud
 lesson: 10
 difficulty: iniciante
-xp: 30
+xp: 50
 prerequisites:
   - crud-09
-hints: []
+hints:
+  - "Use UPDATE users SET is_admin = true seguido de WHERE."
+  - "Filtre pelo nome: WHERE name = 'Lane'."
+  - "UPDATE users SET is_admin = true WHERE name = 'Lane';"
 references:
   - label: "SQLite — UPDATE"
     url: "https://www.sqlite.org/lang_update.html"
+setupSql: |
+  CREATE TABLE users (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    age INTEGER NOT NULL,
+    country_code TEXT NOT NULL,
+    username TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    is_admin BOOLEAN
+  );
+
+  INSERT INTO users (id, name, age, country_code, username, password, is_admin) VALUES
+    (1, 'David', 34, 'US', 'DavidDev', 'insertPractice', false),
+    (2, 'Lane', 27, 'US', 'wagslane', 'update_me', false),
+    (3, 'Tiffany', 28, 'US', 'Tifferoon', 'autoincrement', true);
+tables:
+  - name: users
+    columns:
+      - name: id
+        type: INTEGER
+        primaryKey: true
+      - name: name
+        type: TEXT
+        notNull: true
+      - name: age
+        type: INTEGER
+        notNull: true
+      - name: country_code
+        type: TEXT
+        notNull: true
+      - name: username
+        type: TEXT
+        unique: true
+        notNull: true
+      - name: password
+        type: TEXT
+        notNull: true
+      - name: is_admin
+        type: BOOLEAN
 challenge:
-  kind: quiz
-  instruction: "Responda às perguntas abaixo."
-  questions:
-    - prompt: "Qual cláusula protege um UPDATE de alterar todas as linhas da tabela?"
-      options:
-        - "WHERE"
-        - "ORDER BY"
-        - "LIMIT"
-        - "GROUP BY"
-      answer: 0
-      explanation: "Sem WHERE, o UPDATE altera todas as linhas."
-    - prompt: "Qual é a forma básica do comando UPDATE?"
-      options:
-        - "UPDATE tabela SET coluna = valor WHERE condição"
-        - "UPDATE tabela WHERE condição SET coluna = valor"
-        - "SET tabela UPDATE coluna = valor WHERE condição"
-        - "UPDATE coluna SET tabela = valor WHERE condição"
-      answer: 0
-      explanation: "A forma é UPDATE tabela SET coluna = valor WHERE condição."
+  kind: data
+  instruction: "Atualize o registro do Lane na tabela `users` para que o campo `is_admin` seja definido como true."
+  expectedTables:
+    - name: users
+      columns: [id, name, age, country_code, username, password, is_admin]
+      rows:
+        - [1, "David", 34, "US", "DavidDev", "insertPractice", 0]
+        - [2, "Lane", 27, "US", "wagslane", "update_me", 1]
+        - [3, "Tiffany", 28, "US", "Tifferoon", "autoincrement", 1]
+      orderSensitive: false
 ---
 
 ## Contexto
 
-`UPDATE` altera registros existentes. A forma básica é:
+Sempre que você atualiza sua foto de perfil ou troca sua senha online, você está
+mudando os dados de um campo em uma tabela de um banco! Imagine se toda vez que
+você errasse uma publicação em uma rede social, tivesse que excluir a publicação
+inteira e postar uma nova em vez de apenas editá-la...
+
+### Instrução UPDATE
+
+A instrução `UPDATE` no SQL nos permite atualizar os campos de um registro.
+Podemos até atualizar muitos registros dependendo de como escrevemos a
+instrução.
+
+Uma instrução `UPDATE` especifica a tabela que precisa ser atualizada, seguida
+dos campos e seus novos valores usando a palavra-chave `SET`. Por fim, uma
+cláusula `WHERE` indica o(s) registro(s) a atualizar.
 
 ```sql
-UPDATE tabela SET coluna = valor WHERE condição;
+UPDATE employees
+SET
+  job_title = 'Backend Engineer',
+  salary = 150000
+WHERE
+  id = 251;
 ```
-
-Exemplo:
-
-```sql
-UPDATE users SET age = 32 WHERE id = 8;
-```
-
-Sem `WHERE`, **todas** as linhas são atualizadas. Você também pode atualizar
-várias colunas de uma vez:
-
-```sql
-UPDATE users SET age = 32, country_code = 'JP' WHERE id = 8;
-```
-
-> **Nota (MySQL):** o modo *safe-update* pode recusar `UPDATE`/`DELETE` sem uma
-> coluna de chave no `WHERE` — um guarda-corpo contra acidentes.
 
 ## Sua vez
 
-Responda às perguntas do desafio.
+Precisamos atualizar o registro do Lane na tabela `users`. Ele fundou o Senai
+Pay, mas nem é reconhecido como administrador!
+
+Atualize o registro do Lane na tabela `users` para que o campo `is_admin` seja
+definido como `true`!

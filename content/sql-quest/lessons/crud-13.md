@@ -1,7 +1,7 @@
 ---
 id: crud-13
-title: "Prática: códigos de país distintos"
-summary: "Use DISTINCT para listar os códigos de país presentes na tabela de usuários sem repetições."
+title: "Prática: atualização condicional"
+summary: "Use UPDATE com WHERE para corrigir apenas os registros com um valor específico."
 chapter: 4
 chapterSlug: crud
 lesson: 13
@@ -10,11 +10,12 @@ xp: 50
 prerequisites:
   - crud-12
 hints:
-  - "Use a palavra-chave DISTINCT após o SELECT."
-  - "SELECT DISTINCT country_code FROM users;"
+  - "Use UPDATE users SET country_code = 'US' seguido de WHERE."
+  - "Filtre apenas os registros com country_code = 'USA'."
+  - "UPDATE users SET country_code = 'US' WHERE country_code = 'USA';"
 references:
-  - label: "SQLite — SELECT DISTINCT"
-    url: "https://www.sqlite.org/lang_select.html"
+  - label: "SQLite — UPDATE"
+    url: "https://www.sqlite.org/lang_update.html"
 setupSql: |
   CREATE TABLE users (
     id INTEGER PRIMARY KEY,
@@ -27,13 +28,10 @@ setupSql: |
   );
 
   INSERT INTO users (id, name, age, country_code, username, password, is_admin) VALUES
-    (1, 'David', 34, 'US', 'DavidDev', 'insertPractice', false),
+    (1, 'David', 34, 'USA', 'DavidDev', 'insertPractice', false),
     (2, 'Samantha', 29, 'BR', 'Sammy93', 'addingRecords!', false),
-    (3, 'John', 39, 'CA', 'Jjdev21', 'sqlMaster2024', false),
-    (4, 'Ram', 42, 'IN', 'Ram11c', 'queryNinja', false),
-    (5, 'Hunter', 30, 'US', 'Hdev92', 'backendDev', false),
-    (6, 'Allan', 27, 'US', 'Alires', 'adminPass1', true),
-    (7, 'Al', 39, 'JP', 'quickCoder', 'snake_case', false);
+    (3, 'Hunter', 30, 'USA', 'Hdev92', 'backendDev', false),
+    (4, 'Aiko', 31, 'JP', 'AikoOps', 'sakuraCloud7', false);
 tables:
   - name: users
     columns:
@@ -59,32 +57,26 @@ tables:
       - name: is_admin
         type: BOOLEAN
 challenge:
-  kind: exact
-  instruction: "Escreva uma consulta que retorne os códigos de país distintos presentes na tabela `users`."
-  expectedColumns:
-    - country_code
-  expectedRows:
-    - ["US"]
-    - ["BR"]
-    - ["CA"]
-    - ["IN"]
-    - ["JP"]
-  orderSensitive: false
+  kind: data
+  instruction: "Escreva uma instrução SQL para atualizar o valor de `country_code` de 'USA' para 'US' em todos os registros aplicáveis. Garanta que apenas os registros marcados com 'USA' sejam alterados."
+  expectedTables:
+    - name: users
+      columns: [id, name, age, country_code, username, password, is_admin]
+      rows:
+        - [1, "David", 34, "US", "DavidDev", "insertPractice", 0]
+        - [2, "Samantha", 29, "BR", "Sammy93", "addingRecords!", 0]
+        - [3, "Hunter", 30, "US", "Hdev92", "backendDev", 0]
+        - [4, "Aiko", 31, "JP", "AikoOps", "sakuraCloud7", 0]
+      orderSensitive: false
 ---
 
 ## Contexto
 
-O time do Senai Pay quer saber de quais países vêm os usuários. Como vários
-usuários podem ser do mesmo país, precisamos listar os códigos de país **sem
-repetições**.
-
-A palavra-chave `DISTINCT` remove valores duplicados do resultado:
-
-```sql
-SELECT DISTINCT country_code FROM users;
-```
+Usando a consulta anterior, notamos que alguns registros foram salvos
+incorretamente com um valor de `country_code` igual a `'USA'` em vez de `'US'`.
 
 ## Sua vez
 
-Escreva uma consulta que retorne os códigos de país distintos presentes na
-tabela `users`.
+Escreva uma instrução SQL para atualizar o valor de `country_code` de `'USA'`
+para `'US'` em todos os registros de usuário aplicáveis. Garanta que **apenas**
+os registros inicialmente marcados com `'USA'` sejam alterados!

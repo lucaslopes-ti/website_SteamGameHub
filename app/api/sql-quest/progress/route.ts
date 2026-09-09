@@ -23,6 +23,10 @@ export const dynamic = "force-dynamic";
  * - O userId é SEMPRE derivado do token — nunca é aceito no corpo da requisição.
  * - O PUT aceita APENAS o payload explícito `{ completedLessonIds: string[] }`
  *   (a lista completa de ids que o cliente acredita ter concluído).
+ * - IDs: a API opera e responde com ids SEMÂNTICOS do catálogo (ex.:
+ *   "select-01"). Ids legados/posicionais ("1-1") são aceitos na entrada e
+ *   migrados para o formato canônico no servidor — progresso legado nunca é
+ *   zerado.
  * - O XP é calculado EXCLUSIVAMENTE a partir do catálogo no servidor; o valor
  *   enviado pelo cliente é ignorado. Conclusão repetida é idempotente (não
  *   acumula XP nem streak).

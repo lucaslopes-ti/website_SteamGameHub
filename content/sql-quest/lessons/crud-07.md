@@ -1,51 +1,107 @@
 ---
 id: crud-07
 title: "Encontrando valores NULL"
-summary: "Aprenda a usar IS NULL e IS NOT NULL para encontrar valores ausentes."
+summary: "Use IS NULL e IS NOT NULL para filtrar registros com valores ausentes."
 chapter: 4
 chapterSlug: crud
 lesson: 7
 difficulty: iniciante
-xp: 30
+xp: 40
 prerequisites:
   - crud-06
-hints: []
+hints:
+  - "Quando o dono RECEBE dinheiro, sender_id identifica quem enviou e recipient_id é NULL."
+  - "Filtre com WHERE sender_id IS NOT NULL."
+  - "SELECT * FROM transactions WHERE sender_id IS NOT NULL;"
 references:
   - label: "SQLite — NULL"
     url: "https://www.sqlite.org/lang_expr.html"
+setupSql: |
+  CREATE TABLE transactions (
+    id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    recipient_id INTEGER,
+    sender_id INTEGER,
+    note TEXT,
+    amount REAL
+  );
+
+  INSERT INTO transactions (id, user_id, recipient_id, sender_id, note, amount) VALUES
+    (1, 1, NULL, 4, 'Recebi um pagamento', 50.00),
+    (2, 2, 5, NULL, 'Enviei dinheiro', 25.50),
+    (3, 3, NULL, 1, 'Recebi outro pagamento', 12.75),
+    (4, 4, 2, NULL, 'Paguei o almoço', 30.00);
+tables:
+  - name: transactions
+    columns:
+      - name: id
+        type: INTEGER
+        primaryKey: true
+      - name: user_id
+        type: INTEGER
+        notNull: true
+      - name: recipient_id
+        type: INTEGER
+      - name: sender_id
+        type: INTEGER
+      - name: note
+        type: TEXT
+      - name: amount
+        type: REAL
 challenge:
-  kind: quiz
-  instruction: "Responda às perguntas abaixo."
-  questions:
-    - prompt: "Qual operador encontra linhas onde uma coluna não tem valor?"
-      options:
-        - "= NULL"
-        - "IS NULL"
-        - "== NULL"
-        - "NULL()"
-      answer: 1
-      explanation: "Comparar com = ou <> nunca encontra NULL; use IS NULL."
-    - prompt: "O que NULL significa em SQL?"
-      options:
-        - "O número zero"
-        - "Uma string vazia"
-        - "Ausência de valor"
-        - "O valor booleano falso"
-      answer: 2
-      explanation: "NULL indica que o valor está ausente — não é zero nem string vazia."
+  kind: exact
+  instruction: "Da tabela `transactions`, selecione todas as colunas das transações em que o dono está RECEBENDO dinheiro (ou seja, sender_id não é NULL)."
+  expectedColumns:
+    - id
+    - user_id
+    - recipient_id
+    - sender_id
+    - note
+    - amount
+  expectedRows:
+    - [1, 1, null, 4, "Recebi um pagamento", 50.0]
+    - [3, 3, null, 1, "Recebi outro pagamento", 12.75]
+  orderSensitive: false
 ---
 
 ## Contexto
 
-`NULL` significa "sem valor" — não é zero e não é uma string vazia. Comparar
-com `=` ou `<>` **nunca** encontra NULL. Use `IS NULL` e `IS NOT NULL`:
+Você pode usar uma cláusula `WHERE` para filtrar valores por serem ou não NULL.
+
+### IS NULL
 
 ```sql
-SELECT * FROM users WHERE country_code IS NULL;
-
-SELECT * FROM users WHERE country_code IS NOT NULL;
+SELECT
+  name
+FROM
+  users
+WHERE
+  first_name IS NULL;
 ```
+
+### IS NOT NULL
+
+```sql
+SELECT
+  name
+FROM
+  users
+WHERE
+  first_name IS NOT NULL;
+```
+
+### Como o Senai Pay armazena transações
+
+A forma como armazenamos transações no Senai Pay é interessante. O usuário
+identificado por `user_id` é o "dono" de cada transação. Como `user_id` já
+identifica o dono, apenas o usuário do outro lado precisa de outro ID:
+
+- Se o dono **recebe** dinheiro, `sender_id` identifica quem enviou e
+  `recipient_id` é NULL.
+- Se o dono **envia** dinheiro, `recipient_id` identifica quem recebeu e
+  `sender_id` é NULL.
 
 ## Sua vez
 
-Responda às perguntas do desafio.
+Da tabela `transactions`, selecione todas as colunas das transações em que o
+dono está **recebendo** dinheiro.

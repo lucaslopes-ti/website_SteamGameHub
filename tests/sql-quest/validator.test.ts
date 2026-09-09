@@ -21,6 +21,7 @@ function makeLesson(challenge: SQLChallenge): SQLLesson {
   return {
     id: "x-x",
     chapter: 1,
+    chapterSlug: "select",
     lesson: 1,
     title: "Teste",
     summary: "Teste",
@@ -32,6 +33,9 @@ function makeLesson(challenge: SQLChallenge): SQLLesson {
     tables: [],
     challenge,
     hints: [],
+    prerequisites: [],
+    references: [],
+    images: [],
   };
 }
 

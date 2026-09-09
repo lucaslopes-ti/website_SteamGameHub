@@ -369,6 +369,8 @@ function validateChallenge(
         validateExpectedTable(t, `challenge.expectedTables[${idx}]`, file, issues)
       );
     }
+  } else if (value.kind === "data") {
+    validateDataChallenge(value, file, issues);
   } else if (value.kind === "quiz") {
     validateQuizChallenge(value, file, issues);
   } else {
@@ -427,6 +429,70 @@ function validateQuizChallenge(
     }
     if (q.explanation !== undefined && !isNonEmptyString(q.explanation)) {
       err(`${qf}.explanation deve ser uma string não vazia.`, qf);
+    }
+  });
+}
+
+/**
+ * Valida um desafio `data` (estado final de tabelas após INSERT/UPDATE/DELETE):
+ * `expectedTables` não vazia; cada tabela com `name`, `columns` (na ordem) e
+ * `rows` (células string/número/null); `orderSensitive` booleano opcional.
+ */
+function validateDataChallenge(
+  value: Record<string, unknown>,
+  file: string,
+  issues: SQLContentIssue[]
+): void {
+  const err = (message: string, field?: string) => {
+    issues.push(issue(file, message, field));
+  };
+
+  if (!Array.isArray(value.expectedTables) || value.expectedTables.length === 0) {
+    err(
+      "'challenge.expectedTables' deve ser uma lista não vazia de tabelas esperadas.",
+      "challenge.expectedTables"
+    );
+    return;
+  }
+
+  value.expectedTables.forEach((t, idx) => {
+    const tf = `challenge.expectedTables[${idx}]`;
+    if (!isRecord(t)) {
+      err(`${tf} deve ser um objeto { name, columns, rows }.`, tf);
+      return;
+    }
+    if (!isNonEmptyString(t.name)) {
+      err(`${tf}.name ausente ou vazio.`, tf);
+    }
+    if (!Array.isArray(t.columns) || t.columns.length === 0) {
+      err(`${tf}.columns deve ser uma lista não vazia de nomes de colunas.`, tf);
+    } else {
+      t.columns.forEach((c, ci) => {
+        if (!isNonEmptyString(c)) {
+          err(`${tf}.columns[${ci}] deve ser uma string não vazia.`, tf);
+        }
+      });
+    }
+    if (!Array.isArray(t.rows)) {
+      err(`${tf}.rows deve ser uma lista de linhas.`, tf);
+    } else {
+      t.rows.forEach((row, ri) => {
+        if (!Array.isArray(row)) {
+          err(`${tf}.rows[${ri}] deve ser uma lista de valores.`, tf);
+        } else {
+          row.forEach((cell, ci) => {
+            if (!(cell === null || typeof cell === "string" || typeof cell === "number")) {
+              err(
+                `${tf}.rows[${ri}][${ci}] deve ser string, número ou null.`,
+                tf
+              );
+            }
+          });
+        }
+      });
+    }
+    if (t.orderSensitive !== undefined && typeof t.orderSensitive !== "boolean") {
+      err(`${tf}.orderSensitive deve ser booleano.`, tf);
     }
   });
 }

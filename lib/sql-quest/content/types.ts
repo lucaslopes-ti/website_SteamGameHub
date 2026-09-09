@@ -46,6 +46,24 @@ export interface SQLContentExpectedTable {
   forbidColumns?: string[];
 }
 
+/**
+ * Estado final esperado de uma tabela em desafios `data` (INSERT/UPDATE/
+ * DELETE): compara colunas (na ordem) e linhas (multiset por padrão) do
+ * estado final da tabela após a query do aluno.
+ */
+export interface SQLContentExpectedTableState {
+  name: string;
+  /** Colunas esperadas, NA ORDEM em que devem aparecer. */
+  columns: string[];
+  /** Linhas esperadas do estado final. */
+  rows: SQLContentValue[][];
+  /**
+   * Quando true, a ordem das linhas importa (ex.: após um ORDER BY explícito).
+   * Padrão: false (linhas são comparadas como multiset, ignorando a ordem).
+   */
+  orderSensitive?: boolean;
+}
+
 /** Pergunta de um desafio quiz (múltipla escolha). */
 export interface SQLContentQuizQuestion {
   /** Enunciado da pergunta. */
@@ -62,6 +80,8 @@ export interface SQLContentQuizQuestion {
  * Desafio de uma unidade (espelha o contrato do runtime):
  * - `exact`: compara colunas e linhas do resultado com o esperado.
  * - `schema`: valida a estrutura do banco após a execução (DDL).
+ * - `data`: compara o estado final das tabelas declaradas após a execução
+ *   (mutação/data-state — INSERT, UPDATE, DELETE).
  * - `quiz`: perguntas de múltipla escolha (sem execução de SQL).
  *
  * Unidades **theory** (sem desafio executável) simplesmente omitem `challenge`.
@@ -81,6 +101,12 @@ export type SQLContentChallenge =
       kind: "schema";
       instruction: string;
       expectedTables: SQLContentExpectedTable[];
+    }
+  | {
+      kind: "data";
+      instruction: string;
+      /** Tabelas cujo estado final deve ser comparado após a query. */
+      expectedTables: SQLContentExpectedTableState[];
     }
   | {
       kind: "quiz";

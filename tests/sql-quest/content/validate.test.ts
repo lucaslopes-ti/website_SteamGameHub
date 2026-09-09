@@ -61,6 +61,13 @@ describe("validateLessonDocument — lições válidas", () => {
     expect(validateLessonDocument(data, body, "quiz-01.md")).toEqual([]);
   });
 
+  it("aceita uma lição com desafio data (estado final)", () => {
+    const { data, body } = readLesson(
+      path.join(FIXTURES, "valid", "lessons", "crud-data.md")
+    );
+    expect(validateLessonDocument(data, body, "crud-data.md")).toEqual([]);
+  });
+
   it("aceita uma unidade theory (sem challenge) com imagens", () => {
     const { data, body } = readLesson(
       path.join(FIXTURES, "valid", "lessons", "teoria-01.md")
@@ -93,6 +100,16 @@ describe("validateLessonDocument — lições inválidas", () => {
   it("rejeita expectedRows malformado", () => {
     const issues = issuesForInvalidLesson("bad-rows.md");
     expect(issues.some((i) => i.field === "challenge.expectedRows")).toBe(true);
+  });
+
+  it("rejeita data com rows malformado", () => {
+    const issues = issuesForInvalidLesson("bad-data.md");
+    expect(issues.some((i) => i.field?.startsWith("challenge.expectedTables"))).toBe(true);
+  });
+
+  it("rejeita data com columns vazias", () => {
+    const issues = issuesForInvalidLesson("bad-data-columns.md");
+    expect(issues.some((i) => i.field?.startsWith("challenge.expectedTables"))).toBe(true);
   });
 
   it("rejeita corpo Markdown vazio", () => {

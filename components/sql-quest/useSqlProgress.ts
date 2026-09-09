@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { authedFetch } from "@/lib/client-auth";
 import { lessons } from "@/lib/sql-quest/catalog";
+import { resolveLessonId, resolveLessonIds } from "@/lib/sql-quest/content/migrate";
 
 /**
  * Progresso da SQL Quest — persistência 100% server-side.
@@ -13,6 +14,12 @@ import { lessons } from "@/lib/sql-quest/catalog";
  *   um documento por UID autenticado via Firebase Admin (Firestore).
  * - Sem UID autenticado o hook devolve estado vazio e `complete()` é um no-op:
  *   o guard do módulo (`SqlQuestGuard`) bloqueia o acesso às missões.
+ *
+ * IDs: o hook opera INTERNAMENTE com ids SEMÂNTICOS do catálogo (ex.:
+ * "select-01"). A API responde ids semânticos; respostas legadas/posicionais
+ * ("1-1") são aceitas e migradas para o formato canônico na leitura. A
+ * interface pública (`isCompleted`/`isUnlocked`/`complete` por capítulo+lição)
+ * é preservada para os consumidores existentes.
  */
 
 /** Mapa oficial de XP por lição (fonte única de verdade). */
@@ -22,25 +29,31 @@ const XP_BY_LESSON: Record<string, number> = Object.fromEntries(
 
 /**
  * Deriva o total de XP EXCLUSIVAMENTE dos ids de lição do catálogo.
+ * Aceita ids semânticos, legados e posicionais (resolve antes de somar).
  * Nunca confia em um valor de XP armazenado ou enviado pelo cliente.
  */
 export function computeTotalXp(lessonIds: string[]): number {
   let total = 0;
   for (const id of lessonIds) {
-    total += XP_BY_LESSON[id] ?? 0;
+    const resolved = resolveLessonId(id, lessons);
+    total += resolved ? (XP_BY_LESSON[resolved] ?? 0) : 0;
   }
   return total;
 }
 
 interface ProgressState {
-  /** Ids de lição concluídos (formato oficial da API: "chapter-lesson"). */
+  /** Ids de lição concluídos (ids SEMÂNTICOS do catálogo, ex.: "select-01"). */
   completedLessonIds: string[];
   /** XP total derivado do catálogo (mantido como `totalXP` para compatibilidade local). */
   totalXP: number;
 }
 
-function lessonId(chapter: number, lesson: number) {
-  return `${chapter}-${lesson}`;
+/** Resolve capítulo+lição para o id semântico canônico do catálogo. */
+function lessonId(chapter: number, lesson: number): string | null {
+  const found = lessons.find(
+    (l) => l.chapter === chapter && l.lesson === lesson
+  );
+  return found ? found.id : null;
 }
 
 function normalizeLessonIds(value: unknown): string[] {
@@ -54,14 +67,17 @@ interface RemoteProgressResponse {
   completedLessons?: unknown;
 }
 
+/**
+ * Extrai os ids da resposta da API e resolve para ids semânticos canônicos
+ * (aceita respostas legadas/posicionais por compatibilidade).
+ */
 function resolveLessonIdsFromRemote(remote: RemoteProgressResponse): string[] {
-  if (Array.isArray(remote.completedLessonIds)) {
-    return normalizeLessonIds(remote.completedLessonIds);
-  }
-  if (Array.isArray(remote.completedLessons)) {
-    return normalizeLessonIds(remote.completedLessons);
-  }
-  return [];
+  const raw = Array.isArray(remote.completedLessonIds)
+    ? normalizeLessonIds(remote.completedLessonIds)
+    : Array.isArray(remote.completedLessons)
+    ? normalizeLessonIds(remote.completedLessons)
+    : [];
+  return resolveLessonIds(raw, lessons);
 }
 
 const EMPTY_STATE: ProgressState = { completedLessonIds: [], totalXP: 0 };
@@ -125,8 +141,10 @@ export function useSqlProgress() {
   }, [uid, applyState]);
 
   const isCompleted = useCallback(
-    (chapter: number, lesson: number) =>
-      state.completedLessonIds.includes(lessonId(chapter, lesson)),
+    (chapter: number, lesson: number) => {
+      const id = lessonId(chapter, lesson);
+      return id !== null && state.completedLessonIds.includes(id);
+    },
     [state.completedLessonIds]
   );
 
@@ -154,7 +172,7 @@ export function useSqlProgress() {
 
       // Sem UID autenticado não há persistência. O guard do módulo bloqueia o
       // acesso às missões, então este caminho não ocorre em uso normal.
-      if (!uid) return;
+      if (!uid || id === null) return;
 
       const latest = stateRef.current;
       const nextIds = latest.completedLessonIds.includes(id)
