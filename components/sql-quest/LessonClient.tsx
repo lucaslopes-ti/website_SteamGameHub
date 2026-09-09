@@ -379,7 +379,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
           </div>
 
           {/* Painel direito: prática */}
-          <div className="relative flex min-w-0 flex-col gap-4 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pr-2">
+          <div className="relative flex min-w-0 flex-col gap-4 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pr-2 lg:[&>*]:shrink-0">
             {!unlocked && (
               <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-2xl border border-[var(--outline-variant)]/40 bg-[var(--surface)]/90 p-6 text-center backdrop-blur-sm">
                 <Lock className="h-12 w-12 text-[var(--outline)]" />
@@ -399,7 +399,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
               </div>
             )}
 
-            {isSqlChallenge && <section className="flex min-h-0 flex-col rounded-3xl border border-[var(--primary)]/30 bg-[var(--surface-container-low)]/60 shadow-xl shadow-black/20 lg:flex-1">
+            {isSqlChallenge && <section className="flex min-h-0 flex-col rounded-3xl border border-[var(--primary)]/30 bg-[var(--surface-container-low)]/60 shadow-xl shadow-black/20 lg:h-[clamp(20rem,50vh,42rem)] lg:shrink-0">
               <div className="flex items-center justify-between border-b border-[var(--outline-variant)]/20 px-4 py-3">
                 <span className="flex items-center gap-2 text-sm font-semibold text-[var(--on-surface-variant)]">
                   <Database className="h-4 w-4" />
@@ -448,7 +448,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                 </div>
               )}
 
-              <div className="h-[300px] min-h-0 w-full p-4 lg:h-auto lg:flex-1">
+              <div className="h-[300px] min-h-0 w-full shrink-0 p-4 lg:h-auto lg:flex-1">
                 <SqlEditor
                   value={code}
                   onChange={setCode}
