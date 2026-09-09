@@ -99,7 +99,7 @@ function HintCard({ hint, index }: { hint: string; index: number }) {
  */
 function neutralScaffold(lesson: SQLLesson): string {
   const instruction =
-    lesson.challenge.kind === "exact" || lesson.challenge.kind === "schema"
+    lesson.challenge.kind === "exact" || lesson.challenge.kind === "schema" || lesson.challenge.kind === "data"
       ? lesson.challenge.instruction
       : lesson.summary;
   return `-- ${instruction}\n-- Escreva sua consulta SQL abaixo.\n\n`;
@@ -419,11 +419,13 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                 )}
               </div>
 
-              {engineError ? (
-                <div
-                  role="alert"
-                  className="flex flex-col items-start gap-4 p-6"
-                >
+              <div className="mx-4 mt-4 rounded-2xl border border-[var(--secondary)]/35 bg-[var(--secondary-10)]/45 p-4">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--secondary)]">Tarefa</p>
+                <p className="mt-2 text-sm leading-6 text-[var(--on-surface)]">{instruction}</p>
+              </div>
+
+              {engineError && (
+                <div role="alert" className="flex flex-col items-start gap-4 p-6">
                   <div className="flex items-start gap-3">
                     <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-400" />
                     <div>
@@ -444,16 +446,16 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                     Tentar novamente
                   </button>
                 </div>
-              ) : (
-                <div className="h-[300px] min-h-0 p-4 lg:flex lg:h-auto lg:flex-1">
-                  <SqlEditor
-                    value={code}
-                    onChange={setCode}
-                    disabled={!unlocked || engineLoading || executing}
-                    height="100%"
-                  />
-                </div>
               )}
+
+              <div className="h-[300px] min-h-0 w-full p-4 lg:h-auto lg:flex-1">
+                <SqlEditor
+                  value={code}
+                  onChange={setCode}
+                  disabled={!unlocked || executing}
+                  height="100%"
+                />
+              </div>
 
               <div className="flex flex-wrap items-center gap-3 border-t border-[var(--outline-variant)]/20 px-4 py-3">
                 <button

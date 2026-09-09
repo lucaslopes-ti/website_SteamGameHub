@@ -1,7 +1,14 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import { Component, ReactNode, useEffect, useId, useRef, useState } from "react";
+import {
+  Component,
+  CSSProperties,
+  ReactNode,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from "react";
 // O loader do Monaco é o mesmo usado internamente por @monaco-editor/react
 // (já instalado como dependência transitiva — nenhuma dependência nova).
 import loader from "@monaco-editor/loader";
@@ -11,6 +18,17 @@ interface SqlEditorProps {
   onChange: (value: string) => void;
   disabled?: boolean;
   height?: string;
+}
+
+/**
+ * Contrato dimensional único para todos os modos do editor. O layout externo
+ * entrega altura via `height` (inclusive "100%"); o piso de 280px garante que
+ * nenhum modo desapareça se a cadeia de porcentagens ainda não resolver. A
+ * largura é garantida em cada modo pelas classes `w-full min-w-0`, evitando o
+ * colapso horizontal dentro de flex/grid.
+ */
+function EditorDimensionsStyle(height: string): CSSProperties {
+  return { height, minHeight: "280px" };
 }
 
 function SimpleSqlEditor({
@@ -38,8 +56,8 @@ function SimpleSqlEditor({
 
   return (
     <div
-      className="flex rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] overflow-hidden font-mono text-sm"
-      style={{ height }}
+      className="flex w-full min-w-0 overflow-hidden rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] font-mono text-sm"
+      style={EditorDimensionsStyle(height)}
     >
       <label htmlFor={id} className="sr-only">
         Editor SQL
@@ -65,29 +83,12 @@ function SimpleSqlEditor({
         autoComplete="off"
         autoCorrect="off"
         wrap="off"
-        className="flex-1 resize-none overflow-auto bg-transparent p-3 leading-6 text-[var(--on-surface)] outline-none disabled:opacity-60"
+        className="min-w-0 flex-1 resize-none overflow-auto bg-transparent p-3 leading-6 text-[var(--on-surface)] outline-none disabled:opacity-60"
         style={{ tabSize: 2 }}
       />
     </div>
   );
 }
-
-function EditorSkeleton({ height = "280px" }: { height?: string }) {
-  return (
-    <div
-      className="animate-pulse rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)]"
-      style={{ height }}
-    />
-  );
-}
-
-const MonacoEditor = dynamic(
-  () => import("@monaco-editor/react").then((mod) => mod.Editor),
-  {
-    ssr: false,
-    loading: () => <EditorSkeleton />,
-  }
-);
 
 /** Tempo máximo de espera pelo Monaco antes de cair para o textarea. */
 const MONACO_TIMEOUT_MS = 8000;
@@ -109,82 +110,109 @@ class MonacoErrorBoundary extends Component<
   }
 }
 
+type MonacoModule = typeof import("@monaco-editor/react");
+
 export default function SqlEditor(props: SqlEditorProps) {
-  const [mode, setMode] = useState<"loading" | "monaco" | "fallback">("loading");
+  const resolvedHeight = props.height || "280px";
+  // Enquanto o Monaco não está pronto (modo loading) e quando o fallback é
+  // decidido, renderizamos o SimpleSqlEditor funcional com o valor real — ele
+  // nunca sai do DOM entre esses dois estados, preservando foco e rolagem.
+  const [EditorComponent, setEditorComponent] =
+    useState<MonacoModule["Editor"] | null>(null);
+  const [fallback, setFallback] = useState(false);
   const mountedRef = useRef(false);
+  // Depois que o timeout (ou um erro do loader) decide pelo fallback, uma
+  // resolução tardia do loader não pode mais substituir o editor funcional
+  // por um Monaco que chegou fora do prazo — o usuário pode já estar digitando.
+  const stickWithFallbackRef = useRef(false);
 
   // Pré-carrega o Monaco. Se falhar (CDN/CSP bloqueado) ou demorar demais,
   // usa o textarea como fallback real — o editor continua funcional.
   useEffect(() => {
     let cancelled = false;
-    const timeout = setTimeout(() => {
-      if (!cancelled) setMode((m) => (m === "loading" ? "fallback" : m));
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+    const commitToFallback = () => {
+      if (cancelled || stickWithFallbackRef.current) return;
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = undefined;
+      stickWithFallbackRef.current = true;
+      setFallback(true);
+    };
+
+    timeoutId = setTimeout(() => {
+      // Timeout estourou: permanece no fallback. O guard
+      // `stickWithFallbackRef` garante que o `.then` do loader, se resolver
+      // depois, não troque o fallback por um Monaco atrasado.
+      commitToFallback();
     }, MONACO_TIMEOUT_MS);
 
     loader
       .init()
-      .then(() => {
-        if (!cancelled) {
-          clearTimeout(timeout);
-          setMode("monaco");
-        }
+      .then(async () => {
+        if (cancelled || stickWithFallbackRef.current) return;
+        const mod = await import("@monaco-editor/react");
+        if (cancelled || stickWithFallbackRef.current) return;
+        if (timeoutId) clearTimeout(timeoutId);
+        timeoutId = undefined;
+        setEditorComponent(() => mod.Editor);
       })
-      .catch(() => {
-        if (!cancelled) {
-          clearTimeout(timeout);
-          setMode("fallback");
-        }
-      });
+      .catch(() => commitToFallback());
 
     return () => {
       cancelled = true;
-      clearTimeout(timeout);
+      if (timeoutId) clearTimeout(timeoutId);
     };
   }, []);
 
-  // Se o Monaco estiver em "monaco" mas nunca montar (ex.: chunk local falhou),
-  // cai para o textarea após o timeout.
+  // Se o Monaco estiver pronto mas nunca montar de fato (ex.: chunk local
+  // falhou), cai para o textarea após o timeout.
   useEffect(() => {
-    if (mode !== "monaco") return;
+    if (!EditorComponent || fallback) return;
     const timeout = setTimeout(() => {
-      if (!mountedRef.current) setMode("fallback");
+      if (!mountedRef.current) setFallback(true);
     }, MONACO_TIMEOUT_MS);
     return () => clearTimeout(timeout);
-  }, [mode]);
+  }, [EditorComponent, fallback]);
 
-  if (mode === "loading") return <EditorSkeleton height={props.height} />;
-  if (mode === "fallback") return <SimpleSqlEditor {...props} />;
+  if (!fallback && EditorComponent) {
+    return (
+      // O contêiner propaga a altura recebida (inclusive "100%") para o Monaco:
+      // sem isso, o <section> interno com height:100% resolve contra um pai de
+      // altura auto/0 e o editor fica sem área clicável/digitável. `w-full
+      // min-w-0` impede o colapso horizontal dentro de flex/grid, e o piso de
+      // 280px mantém o contrato dimensional dos demais modos.
+      <div
+        className="relative w-full min-w-0 min-h-[280px]"
+        style={{ height: resolvedHeight }}
+      >
+        <MonacoErrorBoundary fallback={<SimpleSqlEditor {...props} />}>
+          <EditorComponent
+            value={props.value}
+            language="sql"
+            theme="vs-dark"
+            height={resolvedHeight}
+            options={{
+              minimap: { enabled: false },
+              lineNumbers: "on",
+              scrollBeyondLastLine: false,
+              automaticLayout: true,
+              fontSize: 14,
+              fontFamily: "DM Mono, monospace",
+              readOnly: props.disabled,
+              padding: { top: 12, bottom: 12 },
+            }}
+            onMount={() => {
+              mountedRef.current = true;
+            }}
+            onChange={(value) => props.onChange(value || "")}
+          />
+        </MonacoErrorBoundary>
+      </div>
+    );
+  }
 
-  return (
-    // O contêiner propaga a altura recebida (inclusive "100%") para o Monaco:
-    // sem isso, o <section> interno com height:100% resolve contra um pai de
-    // altura auto/0 e o editor fica sem área clicável/digitável.
-    <div
-      className="relative min-h-[280px]"
-      style={{ height: props.height || "280px" }}
-    >
-      <MonacoErrorBoundary fallback={<SimpleSqlEditor {...props} />}>
-        <MonacoEditor
-          {...props}
-          language="sql"
-          theme="vs-dark"
-          height={props.height || "280px"}
-          options={{
-            minimap: { enabled: false },
-            lineNumbers: "on",
-            scrollBeyondLastLine: false,
-            automaticLayout: true,
-            fontSize: 14,
-            fontFamily: "DM Mono, monospace",
-            readOnly: props.disabled,
-            padding: { top: 12, bottom: 12 },
-          }}
-          onMount={() => {
-            mountedRef.current = true;
-          }}
-          onChange={(value) => props.onChange(value || "")}
-        />
-      </MonacoErrorBoundary>
-    </div>
-  );
+  // Loading (enquanto o Monaco inicializa) e fallback usam o mesmo editor
+  // funcional com o valor real — nunca um skeleton vazio.
+  return <SimpleSqlEditor {...props} />;
 }
