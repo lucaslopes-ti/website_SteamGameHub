@@ -13,6 +13,7 @@ interface FakeRef {
   __collection: string;
   get: () => Promise<{ exists: boolean; data: () => Record<string, unknown> | null }>;
   set: (data: unknown, opts?: { merge?: boolean }) => Promise<void>;
+  create: (data: unknown) => Promise<void>;
   update: (data: Record<string, unknown>) => Promise<void>;
   delete: () => Promise<void>;
 }
@@ -36,6 +37,15 @@ export function createFakeDb(initial?: Store) {
       } else {
         store[collectionName][id] = record;
       }
+    },
+    create: async (data) => {
+      if (store[collectionName]?.[id]) {
+        const error = new Error("Document already exists");
+        (error as { code?: unknown }).code = "already-exists";
+        throw error;
+      }
+      store[collectionName] = store[collectionName] ?? {};
+      store[collectionName][id] = data as Record<string, unknown>;
     },
     update: async (data) => {
       store[collectionName] = store[collectionName] ?? {};
@@ -85,6 +95,14 @@ export function createFakeDb(initial?: Store) {
       };
       return query;
     },
+    get: async () => {
+      const docs = Object.entries(store[name] ?? {}).map(([id, data]) => ({
+        id,
+        exists: true,
+        data: () => data,
+      }));
+      return { docs, empty: docs.length === 0, size: docs.length };
+    },
   });
 
   const db = {
@@ -95,12 +113,23 @@ export function createFakeDb(initial?: Store) {
         data: () => store[ref.__collection]?.[ref.id] ?? null,
       })),
     runTransaction: async (fn: (tx: unknown) => Promise<void>) => {
+      // Simula a regra do Firestore real: TODAS as leituras devem ocorrer
+      // antes de qualquer escrita dentro da transação.
+      let wrote = false;
       const tx = {
-        get: async (ref: FakeRef) => ({
-          exists: Boolean(store[ref.__collection]?.[ref.id]),
-          data: () => store[ref.__collection]?.[ref.id] ?? null,
-        }),
+        get: async (ref: FakeRef) => {
+          if (wrote) {
+            throw new Error(
+              "Firestore: leituras devem ocorrer antes de escritas na transação"
+            );
+          }
+          return {
+            exists: Boolean(store[ref.__collection]?.[ref.id]),
+            data: () => store[ref.__collection]?.[ref.id] ?? null,
+          };
+        },
         set: async (ref: FakeRef, data: unknown, opts?: { merge?: boolean }) => {
+          wrote = true;
           store[ref.__collection] = store[ref.__collection] ?? {};
           const record = data as Record<string, unknown>;
           if (opts?.merge) {

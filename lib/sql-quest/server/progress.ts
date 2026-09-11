@@ -28,6 +28,12 @@ export interface ProgressDoc {
    */
   completedLessonIds: string[];
   totalXp: number;
+  /**
+   * XP já gasto na loja de recompensas (débito apenas na aprovação de pedidos).
+   * Inicializado em 0 para documentos novos e preservado nas atualizações de
+   * progresso. Mantém-se separado de `totalXp` (XP/leaderboard não mudam).
+   */
+  spentXp: number;
   updatedAt: string;
   streak: number;
   lastActivityDate: string | null;
@@ -43,6 +49,7 @@ export function emptyProgressDoc(uid: string): ProgressDoc {
     uid,
     completedLessonIds: [],
     totalXp: 0,
+    spentXp: 0,
     updatedAt: "",
     streak: 0,
     lastActivityDate: null,
@@ -69,6 +76,12 @@ export function parseProgressDoc(uid: string, data: Record<string, unknown>): Pr
       typeof data.totalXp === "number" && Number.isFinite(data.totalXp)
         ? data.totalXp
         : computeTotalXp(completedLessonIds),
+    spentXp:
+      typeof data.spentXp === "number" &&
+      Number.isFinite(data.spentXp) &&
+      data.spentXp >= 0
+        ? data.spentXp
+        : 0,
     updatedAt: typeof data.updatedAt === "string" ? data.updatedAt : "",
     streak: typeof data.streak === "number" && data.streak >= 0 ? data.streak : 0,
     lastActivityDate:
@@ -189,12 +202,21 @@ export async function applyCompletion(
     achievements
   );
 
+  // Preserva o XP gasto na loja (ou inicializa 0 em documentos novos).
+  const spentXp =
+    typeof existing.spentXp === "number" &&
+    Number.isFinite(existing.spentXp) &&
+    existing.spentXp >= 0
+      ? existing.spentXp
+      : 0;
+
   tx.set(
     ref,
     {
       uid: ref.id,
       completedLessonIds: merged,
       totalXp,
+      spentXp,
       updatedAt,
       streak: streakState.streak,
       lastActivityDate: streakState.lastActivityDate,

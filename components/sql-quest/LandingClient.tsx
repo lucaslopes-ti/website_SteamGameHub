@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { ArrowRight, CheckCircle2, Code2, Database, Lock, RefreshCw, Sparkles, Trophy, Users, Zap } from "lucide-react";
+import { ArrowRight, CheckCircle2, Code2, Database, Lock, RefreshCw, ShoppingBag, Sparkles, Trophy, Users, Zap } from "lucide-react";
 import { authedFetch } from "@/lib/client-auth";
 import { chapters, lessons } from "@/lib/sql-quest/catalog";
 import { useSqlProgress } from "./useSqlProgress";
@@ -132,7 +132,7 @@ export default function LandingClient() {
 
           <aside className="relative rounded-3xl border border-[var(--outline-variant)]/40 bg-[var(--surface-container-lowest)]/85 p-6 shadow-2xl shadow-black/20 backdrop-blur">
             <div className="mb-5 flex items-start justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--on-surface-variant)]">Seu painel</p><p className="mt-1 text-2xl font-bold">{progressPercent}% explorado</p></div><Trophy className="h-6 w-6 text-[var(--secondary)]" /></div>
-            <ProgressBar percent={progressPercent} />
+            <ProgressBar percent={progressPercent} /><Link href="/sql-quest/loja" className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[var(--secondary)]/35 bg-[var(--secondary)]/10 px-4 py-3 text-sm font-bold text-[var(--secondary)]"><ShoppingBag className="h-4 w-4" /> Trocar XP por recompensas <ArrowRight className="h-4 w-4" /></Link>
             <div className="mt-5 grid grid-cols-2 gap-3"><div className="rounded-2xl bg-[var(--surface-container-high)] p-4"><p className="text-2xl font-bold text-[var(--primary-text)]">{completedCount}<span className="text-sm font-normal text-[var(--on-surface-variant)]">/{totalLessons}</span></p><p className="mt-1 text-xs text-[var(--on-surface-variant)]">lições concluídas</p></div><div className="rounded-2xl bg-[var(--surface-container-high)] p-4"><p className="text-2xl font-bold text-[var(--secondary)]">{totalXP}</p><p className="mt-1 text-xs text-[var(--on-surface-variant)]">XP acumulado</p></div></div>
             <p className="mt-5 flex items-center gap-2 text-xs text-[var(--on-surface-variant)]"><Database className="h-4 w-4 text-[var(--primary-text)]" /> Consultas reais, progresso no seu ritmo.</p>
           </aside>

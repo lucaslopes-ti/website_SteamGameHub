@@ -145,6 +145,34 @@ describe("PUT /api/sql-quest/progress", () => {
     expect(body.completedLessonIds).toEqual(["select-01"]);
   });
 
+  it("novo documento de progresso inicializa spentXp 0", async () => {
+    await PUT(makePutRequest({ completedLessonIds: ["1-1"] }));
+    const stored = mockDbHolder.db!.collection("sql_quest_progress").doc("u-student");
+    const snap = await stored.get();
+    expect(snap.data()!.spentXp).toBe(0);
+  });
+
+  it("preserva spentXp existente ao concluir novas lições", async () => {
+    mockDbHolder.db!.collection("sql_quest_progress").doc("u-student").set({
+      uid: "u-student",
+      completedLessonIds: ["select-01"],
+      totalXp: 50,
+      spentXp: 300, // já gasto na loja de recompensas
+      updatedAt: "2026-09-08T12:00:00.000Z",
+      streak: 1,
+      lastActivityDate: "2026-09-08",
+      achievements: [],
+    });
+
+    const res = await PUT(makePutRequest({ completedLessonIds: ["select-01", "select-02"] }));
+    expect(res.status).toBe(200);
+    const stored = mockDbHolder.db!.collection("sql_quest_progress").doc("u-student");
+    const snap = await stored.get();
+    expect(snap.data()!.spentXp).toBe(300);
+    // XP/leaderboard permanecem separados do gasto.
+    expect(snap.data()!.totalXp).toBe(xpOf("select-01") + xpOf("select-02"));
+  });
+
   it("aceita ids semânticos no PUT e armazena o formato canônico", async () => {
     const res = await PUT(makePutRequest({ completedLessonIds: ["select-01"] }));
     expect(res.status).toBe(200);
