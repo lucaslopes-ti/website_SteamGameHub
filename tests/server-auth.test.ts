@@ -5,6 +5,7 @@
  * - 401 para token ausente/inválido;
  * - 403 para papel/ownership insuficiente;
  * - custom claims `admin`/`role`;
+ * - allowlists server-side de UIDs exatos (case-sensitive);
  * - allowlists server-side de e-mails completos;
  * - NUNCA compara local-part (parte antes do @);
  * - ownership por UID ou e-mail exato.
@@ -54,6 +55,16 @@ jest.mock("@/lib/firebase/admin", () => ({
       }
       if (token === "unverified-owner") {
         return { uid: "u-owner4", email: "owner4@senai.com", email_verified: false };
+      }
+      if (token === "uid-admin") {
+        // Sem email_verified: o UID deve bastar.
+        return { uid: "AdminUid123", email: "qualquer@senai.com" };
+      }
+      if (token === "uid-teacher") {
+        return { uid: "TeacherUid456", email: "qualquer@senai.com" };
+      }
+      if (token === "uid-case") {
+        return { uid: "CaseSensitiveUID", email: "case@senai.com" };
       }
       throw new Error("unknown token");
     }),
@@ -149,6 +160,48 @@ describe("getAuthUser", () => {
     expect(user?.isAdmin).toBe(false);
     expect(user?.isStaff).toBe(false);
     delete process.env.ADMIN_EMAILS;
+  });
+
+  it("concede admin por UID exato em ADMIN_UIDS mesmo sem e-mail verificado", async () => {
+    process.env.ADMIN_UIDS = "AdminUid123";
+    const user = await getAuthUser(makeRequest("Bearer uid-admin"));
+    expect(user?.emailVerified).toBe(false);
+    expect(user?.isAdmin).toBe(true);
+    expect(user?.isTeacher).toBe(true);
+    expect(user?.isStaff).toBe(true);
+    delete process.env.ADMIN_UIDS;
+  });
+
+  it("concede teacher por UID exato em TEACHER_UIDS mesmo sem e-mail verificado", async () => {
+    process.env.TEACHER_UIDS = "TeacherUid456";
+    const user = await getAuthUser(makeRequest("Bearer uid-teacher"));
+    expect(user?.emailVerified).toBe(false);
+    expect(user?.isAdmin).toBe(false);
+    expect(user?.isTeacher).toBe(true);
+    expect(user?.isStaff).toBe(true);
+    delete process.env.TEACHER_UIDS;
+  });
+
+  it("aceita múltiplos UIDs separados por vírgula/ponto-e-vírgula", async () => {
+    process.env.ADMIN_UIDS = "outro-uid; AdminUid123 ,mais-um";
+    const user = await getAuthUser(makeRequest("Bearer uid-admin"));
+    expect(user?.isAdmin).toBe(true);
+    delete process.env.ADMIN_UIDS;
+  });
+
+  it("UID é comparado exatamente, preservando case", async () => {
+    process.env.ADMIN_UIDS = "casesensitiveuid";
+    const user = await getAuthUser(makeRequest("Bearer uid-case"));
+    expect(user?.isAdmin).toBe(false);
+    expect(user?.isStaff).toBe(false);
+    delete process.env.ADMIN_UIDS;
+  });
+
+  it("NÃO concede admin por UID quando não está em ADMIN_UIDS", async () => {
+    process.env.ADMIN_UIDS = "outro-uid";
+    const user = await getAuthUser(makeRequest("Bearer uid-admin"));
+    expect(user?.isAdmin).toBe(false);
+    delete process.env.ADMIN_UIDS;
   });
 
   it("custom claims continuam válidos mesmo sem e-mail verificado", async () => {

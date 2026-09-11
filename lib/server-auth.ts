@@ -7,8 +7,10 @@
  *
  * Papel é resolvido por:
  *   1. custom claims `admin` / `role` (se existirem);
- *   2. allowlists server-side de e-mails completos em `ADMIN_EMAILS` /
- *      `TEACHER_EMAILS` (compatibilidade).
+ *   2. allowlists server-side de UIDs exatos em `ADMIN_UIDS` / `TEACHER_UIDS`
+ *      (comparação case-sensitive, independente de verificação de e-mail);
+ *   3. allowlists server-side de e-mails completos em `ADMIN_EMAILS` /
+ *      `TEACHER_EMAILS` (compatibilidade; só quando o e-mail está verificado).
  *
  * Nunca comparamos a parte anterior ao `@` (local-part) e nunca confiamos em
  * papel/e-mail/UID vindos do corpo ou da query.
@@ -37,7 +39,20 @@ function parseEmailList(value?: string): string[] {
     .filter(Boolean);
 }
 
+/**
+ * Parser de UIDs. Preserva o case (UIDs do Firebase são case-sensitive) e
+ * aceita listas separadas por vírgula ou ponto-e-vírgula.
+ */
+function parseUidList(value?: string): string[] {
+  if (!value) return [];
+  return value
+    .split(/[;,]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 function resolveRole(
+  uid: string,
   email: string | null,
   claims: Record<string, unknown>,
   emailVerified: boolean
@@ -51,7 +66,14 @@ function resolveRole(
     return "admin";
   }
 
-  // 2. Allowlists server-side de e-mails completos (compatibilidade).
+  // 2. Allowlists server-side de UIDs exatos. Comparação case-sensitive e
+  //    independente de verificação de e-mail.
+  const adminUids = parseUidList(process.env.ADMIN_UIDS);
+  const teacherUids = parseUidList(process.env.TEACHER_UIDS);
+  if (adminUids.includes(uid)) return "admin";
+  if (teacherUids.includes(uid)) return "teacher";
+
+  // 3. Allowlists server-side de e-mails completos (compatibilidade).
   //    Só são consideradas quando o e-mail do token está verificado.
   if (!email || !emailVerified) return "student";
   const adminEmails = parseEmailList(process.env.ADMIN_EMAILS);
@@ -80,6 +102,7 @@ export async function getAuthUser(
     const email = decoded.email ? decoded.email.toLowerCase() : null;
     const emailVerified = !!decoded.email_verified;
     const role = resolveRole(
+      decoded.uid,
       email,
       decoded as Record<string, unknown>,
       emailVerified
