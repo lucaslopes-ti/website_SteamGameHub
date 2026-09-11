@@ -97,19 +97,21 @@ export const ACHIEVEMENTS: AchievementDefinition[] = [
     icon: "🏆",
     earned: (s) => s.completedLessonIds.length >= totalLessons,
   },
+  // Marcos de XP recalibrados pelo fator 2120/3070 (arredondamento inteiro):
+  // 100 → 69 e 300 → 207. Os ids permanecem estáveis (persistência/retrocompat).
   {
     id: "xp-100",
-    title: "100 XP",
-    description: "Acumule 100 XP.",
+    title: "69 XP",
+    description: "Acumule 69 XP.",
     icon: "⚡",
-    earned: (s) => s.totalXp >= 100,
+    earned: (s) => s.totalXp >= 69,
   },
   {
     id: "xp-300",
-    title: "300 XP",
-    description: "Acumule 300 XP.",
+    title: "207 XP",
+    description: "Acumule 207 XP.",
     icon: "🔥",
-    earned: (s) => s.totalXp >= 300,
+    earned: (s) => s.totalXp >= 207,
   },
   {
     id: "first-streak",

@@ -86,8 +86,8 @@ describe("GET /api/sql-quest/profile", () => {
     const body = await res.json();
     expect(body.uid).toBe("u-student");
     expect(body.xp).toBe(150);
-    expect(body.level).toBe(2); // 150 XP → nível 2
-    expect(body.levelInfo.level).toBe(2);
+    expect(body.level).toBe(3); // 150 XP → nível 3 (69 XP/nível)
+    expect(body.levelInfo.level).toBe(3);
     expect(body.streak).toBe(2);
     expect(body.achievements).toContain("first-lesson");
     expect(body.lessonCount).toBe(2);

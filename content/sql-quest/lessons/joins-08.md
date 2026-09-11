@@ -6,7 +6,7 @@ chapter: 10
 chapterSlug: joins
 lesson: 8
 difficulty: intermediario
-xp: 40
+xp: 28
 prerequisites:
   - joins-07
 hints: []

@@ -10,17 +10,17 @@ describe("levelFromXp", () => {
     expect(levelFromXp(0)).toBe(1);
   });
 
-  it("nível 1 para XP abaixo de 100", () => {
-    expect(levelFromXp(99)).toBe(1);
+  it("nível 1 para XP abaixo de XP_PER_LEVEL", () => {
+    expect(levelFromXp(XP_PER_LEVEL - 1)).toBe(1);
   });
 
-  it("nível 2 a partir de 100 XP", () => {
-    expect(levelFromXp(100)).toBe(2);
-    expect(levelFromXp(199)).toBe(2);
+  it("nível 2 a partir de XP_PER_LEVEL", () => {
+    expect(levelFromXp(XP_PER_LEVEL)).toBe(2);
+    expect(levelFromXp(2 * XP_PER_LEVEL - 1)).toBe(2);
   });
 
-  it("nível 3 a partir de 200 XP", () => {
-    expect(levelFromXp(200)).toBe(3);
+  it("nível 3 a partir de 2 * XP_PER_LEVEL", () => {
+    expect(levelFromXp(2 * XP_PER_LEVEL)).toBe(3);
   });
 
   it("valores inválidos caem para nível 1", () => {
@@ -45,20 +45,21 @@ describe("xpForLevel", () => {
 
 describe("levelInfo", () => {
   it("devolve progresso dentro do nível", () => {
-    const info = levelInfo(150);
+    const currentXp = Math.floor(XP_PER_LEVEL / 2);
+    const info = levelInfo(XP_PER_LEVEL + currentXp);
     expect(info.level).toBe(2);
-    expect(info.currentXp).toBe(50);
+    expect(info.currentXp).toBe(currentXp);
     expect(info.xpForNext).toBe(XP_PER_LEVEL);
-    expect(info.progress).toBe(0.5);
+    expect(info.progress).toBeCloseTo(currentXp / XP_PER_LEVEL);
   });
 
   it("progresso 0 no início do nível", () => {
-    const info = levelInfo(100);
+    const info = levelInfo(XP_PER_LEVEL);
     expect(info.progress).toBe(0);
   });
 
   it("progresso ~1 no fim do nível", () => {
-    const info = levelInfo(199);
-    expect(info.progress).toBeCloseTo(0.99);
+    const info = levelInfo(2 * XP_PER_LEVEL - 1);
+    expect(info.progress).toBeCloseTo((XP_PER_LEVEL - 1) / XP_PER_LEVEL);
   });
 });

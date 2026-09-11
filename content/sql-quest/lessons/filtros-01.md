@@ -6,7 +6,7 @@ chapter: 5
 chapterSlug: filtros
 lesson: 1
 difficulty: iniciante
-xp: 40
+xp: 28
 prerequisites:
   - crud-13
 hints:

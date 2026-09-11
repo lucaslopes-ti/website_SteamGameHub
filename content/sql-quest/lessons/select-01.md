@@ -6,7 +6,7 @@ chapter: 1
 chapterSlug: select
 lesson: 1
 difficulty: iniciante
-xp: 50
+xp: 34
 prerequisites: []
 hints:
   - "Use o comando SELECT seguido do coringa *."

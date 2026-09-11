@@ -60,7 +60,7 @@ export const REWARD_PRODUCTS: readonly RewardProduct[] = [
     id: "keychain",
     name: "Chaveiro simples",
     description: "Chaveiro personalizado com o logo da SQL Quest.",
-    costXp: 500,
+    costXp: 345,
     initialStock: 5,
   },
   {
@@ -68,7 +68,7 @@ export const REWARD_PRODUCTS: readonly RewardProduct[] = [
     name: "Peça de personagem",
     description:
       "Peça de personagem impressa em 3D, conforme a descrição enviada no pedido.",
-    costXp: 1000,
+    costXp: 691,
     initialStock: 1,
   },
   {
@@ -76,7 +76,7 @@ export const REWARD_PRODUCTS: readonly RewardProduct[] = [
     name: "Objeto personalizado de até 12 cm",
     description:
       "Objeto personalizado impresso em 3D com até 12 cm, conforme a descrição enviada no pedido.",
-    costXp: 3000,
+    costXp: 2072,
     initialStock: 1,
   },
 ];

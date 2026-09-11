@@ -6,7 +6,7 @@ chapter: 5
 chapterSlug: filtros
 lesson: 11
 difficulty: intermediario
-xp: 60
+xp: 41
 prerequisites:
   - filtros-10
 hints:

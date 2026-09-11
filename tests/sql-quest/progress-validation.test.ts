@@ -151,4 +151,22 @@ describe("computeTotalXp — deriva XP do catálogo", () => {
   it("lista vazia → 0", () => {
     expect(computeTotalXp([])).toBe(0);
   });
+
+  it("soma integral do catálogo é exatamente 2120 (recalibração 2120/3070)", () => {
+    // Regra (maior resto / Hamilton): exato = xpAnterior × 2120/3070; base =
+    // floor(exato); as 2120 − Σbase unidades residuais vão (+1) às lições de
+    // maior parte fracionária, desempate pela ordem estável do caminho
+    // (nome de arquivo crescente).
+    const total = lessons.reduce((acc, l) => acc + l.xpReward, 0);
+    expect(total).toBe(2120);
+    expect(computeTotalXp(lessons.map((l) => l.id))).toBe(2120);
+  });
+
+  it("distribuição da recalibração por lição (maior resto)", () => {
+    const counts: Record<number, number> = {};
+    for (const lesson of lessons) {
+      counts[lesson.xpReward] = (counts[lesson.xpReward] ?? 0) + 1;
+    }
+    expect(counts).toEqual({ 21: 7, 28: 27, 34: 21, 35: 5, 41: 8 });
+  });
 });

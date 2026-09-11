@@ -6,7 +6,7 @@ chapter: 1
 chapterSlug: select
 lesson: 3
 difficulty: iniciante
-xp: 40
+xp: 28
 prerequisites:
   - select-02
 hints:

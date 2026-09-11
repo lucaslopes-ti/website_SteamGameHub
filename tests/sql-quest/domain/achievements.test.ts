@@ -66,13 +66,13 @@ describe("evaluateAchievements", () => {
 
   it("limiares de XP", () => {
     expect(
-      evaluateAchievements({ completedLessonIds: ["select-01"], totalXp: 100, streak: 1 })
+      evaluateAchievements({ completedLessonIds: ["select-01"], totalXp: 69, streak: 1 })
     ).toContain("xp-100");
     expect(
-      evaluateAchievements({ completedLessonIds: ["select-01"], totalXp: 99, streak: 1 })
+      evaluateAchievements({ completedLessonIds: ["select-01"], totalXp: 68, streak: 1 })
     ).not.toContain("xp-100");
     expect(
-      evaluateAchievements({ completedLessonIds: ["select-01"], totalXp: 300, streak: 1 })
+      evaluateAchievements({ completedLessonIds: ["select-01"], totalXp: 207, streak: 1 })
     ).toContain("xp-300");
   });
 

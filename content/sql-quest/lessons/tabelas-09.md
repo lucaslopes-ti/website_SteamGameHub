@@ -6,7 +6,7 @@ chapter: 2
 chapterSlug: tabelas
 lesson: 9
 difficulty: iniciante
-xp: 50
+xp: 34
 prerequisites:
   - tabelas-08
 hints:

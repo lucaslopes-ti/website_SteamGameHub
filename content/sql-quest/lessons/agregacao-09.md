@@ -6,7 +6,7 @@ chapter: 7
 chapterSlug: agregacao
 lesson: 9
 difficulty: intermediario
-xp: 60
+xp: 41
 prerequisites:
   - agregacao-08
 hints:

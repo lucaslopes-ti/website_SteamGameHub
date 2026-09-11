@@ -6,7 +6,7 @@ chapter: 4
 chapterSlug: crud
 lesson: 9
 difficulty: iniciante
-xp: 30
+xp: 21
 prerequisites:
   - crud-08
 hints: []

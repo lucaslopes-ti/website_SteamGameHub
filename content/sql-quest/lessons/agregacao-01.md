@@ -6,7 +6,7 @@ chapter: 7
 chapterSlug: agregacao
 lesson: 1
 difficulty: iniciante
-xp: 50
+xp: 35
 prerequisites:
   - crud-13
 hints:

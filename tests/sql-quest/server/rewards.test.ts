@@ -80,22 +80,22 @@ const admin = {
 };
 
 // Conjuntos de conclusões REAIS do catálogo (XP derivado via computeTotalXp).
-const LESSONS_400 = [
+const LESSONS_BELOW_KEYCHAIN = [
   "select-01", "select-02", "select-03", "select-04", "select-05",
   "select-06", "select-07", "tabelas-01", "tabelas-02",
-]; // 400 XP
-const LESSONS_540 = [
+]; // 276 XP (< custo 345 do chaveiro)
+const LESSONS_WITH_KEYCHAIN = [
   "select-01", "select-02", "select-03", "select-04", "select-05",
   "select-06", "select-07", "tabelas-01", "tabelas-02", "tabelas-03",
   "tabelas-04", "tabelas-05",
-]; // 540 XP
-const LESSONS_1000 = [
+]; // 372 XP (>= custo 345 do chaveiro)
+const LESSONS_WITH_CHARACTER_PIECE = [
   "select-01", "select-02", "select-03", "select-04", "select-05",
   "select-06", "select-07", "tabelas-01", "tabelas-02", "tabelas-03",
   "tabelas-04", "tabelas-05", "tabelas-06", "tabelas-07", "tabelas-08",
   "tabelas-09", "tabelas-10", "restricoes-01", "restricoes-02",
-  "restricoes-03", "restricoes-04", "restricoes-05",
-]; // 1000 XP
+  "restricoes-03", "restricoes-04", "restricoes-05", "restricoes-06",
+]; // 715 XP (>= custo 691 da peça de personagem)
 
 const xpFor = (ids: string[]) => computeTotalXp(ids);
 
@@ -149,7 +149,7 @@ function seedRequest(
     classId: null,
     itemId: "keychain",
     itemName: "Chaveiro simples",
-    costXp: 500,
+    costXp: 345,
     requestDetails: "Quero um chaveiro do logo.",
     status: "requested",
     createdAt: "2026-09-10T10:00:00.000Z",
@@ -220,7 +220,7 @@ describe("GET /api/sql-quest/rewards", () => {
 
   it("devolve catálogo fixo com estoque 1/5 e saldo derivado das conclusões", async () => {
     mockGetAuthUser.mockResolvedValue(student);
-    const { store } = seedProgress("u-student", LESSONS_1000, 500);
+    const { store } = seedProgress("u-student", LESSONS_WITH_CHARACTER_PIECE, 345);
     store["sql_quest_reward_stock"] = {
       keychain: { itemId: "keychain", initialStock: 5, remainingStock: 3, updatedAt: "2026-09-10T00:00:00.000Z" },
     };
@@ -230,29 +230,29 @@ describe("GET /api/sql-quest/rewards", () => {
     const body = await res.json();
 
     // XP derivado das conclusões reais (totalXp persistido = 999999 é ignorado).
-    expect(body.earnedXp).toBe(xpFor(LESSONS_1000));
-    expect(body.spentXp).toBe(500);
-    expect(body.xpBalance).toBe(xpFor(LESSONS_1000) - 500);
+    expect(body.earnedXp).toBe(xpFor(LESSONS_WITH_CHARACTER_PIECE));
+    expect(body.spentXp).toBe(345);
+    expect(body.xpBalance).toBe(xpFor(LESSONS_WITH_CHARACTER_PIECE) - 345);
 
     expect(body.items).toHaveLength(3);
     const keychain = body.items.find((i: { id: string }) => i.id === "keychain");
     expect(keychain).toMatchObject({
       id: "keychain",
       name: "Chaveiro simples",
-      costXp: 500,
+      costXp: 345,
       initialStock: 5,
       remainingStock: 3,
       requestStatus: null,
     });
     const piece = body.items.find((i: { id: string }) => i.id === "character-piece");
-    expect(piece).toMatchObject({ costXp: 1000, initialStock: 1, remainingStock: 1 });
+    expect(piece).toMatchObject({ costXp: 691, initialStock: 1, remainingStock: 1 });
     const object = body.items.find((i: { id: string }) => i.id === "object-12cm");
-    expect(object).toMatchObject({ costXp: 3000, initialStock: 1, remainingStock: 1 });
+    expect(object).toMatchObject({ costXp: 2072, initialStock: 1, remainingStock: 1 });
   });
 
   it("inicializa o inventário 5/1/1 uma única vez (create-only)", async () => {
     mockGetAuthUser.mockResolvedValue(student);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
 
     await getRewards(new NextRequest("http://localhost/api/sql-quest/rewards"));
     expect(store["sql_quest_reward_inventory"]["current"]).toMatchObject({
@@ -280,7 +280,7 @@ describe("GET /api/sql-quest/rewards", () => {
 
   it("inicialização parcial: lê tudo antes de escrever e cria apenas docs ausentes", async () => {
     mockGetAuthUser.mockResolvedValue(student);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     // Marca ausente + apenas o doc de keychain existente (parcialmente gasto).
     store["sql_quest_reward_stock"] = {
       keychain: { itemId: "keychain", initialStock: 5, remainingStock: 3, updatedAt: "2026-09-10T00:00:00.000Z" },
@@ -306,7 +306,7 @@ describe("GET /api/sql-quest/rewards", () => {
 
   it("estoque zero persistido é exibido como zero (não reinicia para o inicial)", async () => {
     mockGetAuthUser.mockResolvedValue(student);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     store["sql_quest_reward_stock"] = {
       keychain: { itemId: "keychain", initialStock: 5, remainingStock: 0, updatedAt: "2026-09-10T00:00:00.000Z" },
     };
@@ -320,7 +320,7 @@ describe("GET /api/sql-quest/rewards", () => {
 
   it("estoque maior que o catálogo é limitado ao catálogo", async () => {
     mockGetAuthUser.mockResolvedValue(student);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     store["sql_quest_reward_stock"] = {
       keychain: { itemId: "keychain", initialStock: 99, remainingStock: 99, updatedAt: "2026-09-10T00:00:00.000Z" },
     };
@@ -334,7 +334,7 @@ describe("GET /api/sql-quest/rewards", () => {
 
   it("doc de estoque ausente após a marca existir é exibido como 0 (nunca restaurado)", async () => {
     mockGetAuthUser.mockResolvedValue(student);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     seedMarker(store); // marca existe, mas os docs de estoque foram removidos
 
     const res = await getRewards(new NextRequest("http://localhost/api/sql-quest/rewards"));
@@ -348,7 +348,7 @@ describe("GET /api/sql-quest/rewards", () => {
 
   it("reflete o requestStatus do próprio aluno por produto", async () => {
     mockGetAuthUser.mockResolvedValue(student);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     seedRequest(store, "u-student_keychain", { status: "approved" });
 
     const res = await getRewards(new NextRequest("http://localhost/api/sql-quest/rewards"));
@@ -374,7 +374,7 @@ describe("POST /api/sql-quest/rewards/requests", () => {
 
   it("rejeita corpo inválido", async () => {
     mockGetAuthUser.mockResolvedValue(student);
-    seedProgress("u-student", LESSONS_540);
+    seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     const res = await createRequest(
       new NextRequest("http://localhost/api/sql-quest/rewards/requests", {
         method: "POST",
@@ -387,7 +387,7 @@ describe("POST /api/sql-quest/rewards/requests", () => {
 
   it("rejeita itemId ausente/desconhecido", async () => {
     mockGetAuthUser.mockResolvedValue(student);
-    seedProgress("u-student", LESSONS_540);
+    seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
 
     const missing = await createRequest(
       makeJsonRequest("http://localhost/api/sql-quest/rewards/requests", "POST", { requestDetails: "Quero um chaveiro." })
@@ -405,7 +405,7 @@ describe("POST /api/sql-quest/rewards/requests", () => {
 
   it("valida a descrição obrigatória (3–500 chars)", async () => {
     mockGetAuthUser.mockResolvedValue(student);
-    seedProgress("u-student", LESSONS_540);
+    seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
 
     const short = await createRequest(
       makeJsonRequest("http://localhost/api/sql-quest/rewards/requests", "POST", {
@@ -434,7 +434,7 @@ describe("POST /api/sql-quest/rewards/requests", () => {
 
   it("bloqueia criação com saldo insuficiente (409)", async () => {
     mockGetAuthUser.mockResolvedValue(student);
-    const { store } = seedProgress("u-student", LESSONS_400); // 400 XP < 500
+    const { store } = seedProgress("u-student", LESSONS_BELOW_KEYCHAIN); // 276 XP < 345
 
     const res = await createRequest(
       makeJsonRequest("http://localhost/api/sql-quest/rewards/requests", "POST", {
@@ -448,7 +448,7 @@ describe("POST /api/sql-quest/rewards/requests", () => {
 
   it("cria pedido requested sem descontar nem reservar, registrando classId", async () => {
     mockGetAuthUser.mockResolvedValue(student);
-    const { store } = seedProgress("u-student", LESSONS_540, 0, "class-1");
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN, 0, "class-1");
 
     const res = await createRequest(
       makeJsonRequest("http://localhost/api/sql-quest/rewards/requests", "POST", {
@@ -471,7 +471,7 @@ describe("POST /api/sql-quest/rewards/requests", () => {
 
   it("registra classId null quando o aluno não tem turma", async () => {
     mockGetAuthUser.mockResolvedValue(student);
-    seedProgress("u-student", LESSONS_540);
+    seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
 
     const res = await createRequest(
       makeJsonRequest("http://localhost/api/sql-quest/rewards/requests", "POST", {
@@ -486,7 +486,7 @@ describe("POST /api/sql-quest/rewards/requests", () => {
 
   it("ignora uid enviado no corpo (UID vem do token)", async () => {
     mockGetAuthUser.mockResolvedValue(student);
-    seedProgress("u-student", LESSONS_540);
+    seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
 
     const res = await createRequest(
       makeJsonRequest("http://localhost/api/sql-quest/rewards/requests", "POST", {
@@ -502,7 +502,7 @@ describe("POST /api/sql-quest/rewards/requests", () => {
 
   it("persiste studentName do token no pedido", async () => {
     mockGetAuthUser.mockResolvedValue({ ...student, name: "Maria Silva" });
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
 
     const res = await createRequest(
       makeJsonRequest("http://localhost/api/sql-quest/rewards/requests", "POST", {
@@ -520,7 +520,7 @@ describe("POST /api/sql-quest/rewards/requests", () => {
 
   it("usa fallback seguro Aluno quando o token não tem nome", async () => {
     mockGetAuthUser.mockResolvedValue({ ...student, name: null });
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
 
     const res = await createRequest(
       makeJsonRequest("http://localhost/api/sql-quest/rewards/requests", "POST", {
@@ -538,7 +538,7 @@ describe("POST /api/sql-quest/rewards/requests", () => {
 
   it("limite individual: no máximo um pedido por produto", async () => {
     mockGetAuthUser.mockResolvedValue(student);
-    seedProgress("u-student", LESSONS_1000);
+    seedProgress("u-student", LESSONS_WITH_CHARACTER_PIECE);
 
     const first = await createRequest(
       makeJsonRequest("http://localhost/api/sql-quest/rewards/requests", "POST", {
@@ -576,7 +576,7 @@ describe("GET /api/sql-quest/rewards/requests", () => {
 
   it("aluno vê apenas os próprios pedidos", async () => {
     mockGetAuthUser.mockResolvedValue(student);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     seedRequest(store, "u-student_keychain", { status: "approved" });
     seedRequest(store, "u-student2_keychain", { uid: "u-student2", status: "requested" });
 
@@ -590,7 +590,7 @@ describe("GET /api/sql-quest/rewards/requests", () => {
 
   it("scope=staff exige staff (aluno recebe 403)", async () => {
     mockGetAuthUser.mockResolvedValue(student);
-    seedProgress("u-student", LESSONS_540);
+    seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     const res = await listRequests(
       new NextRequest("http://localhost/api/sql-quest/rewards/requests?scope=staff")
     );
@@ -599,7 +599,7 @@ describe("GET /api/sql-quest/rewards/requests", () => {
 
   it("instrutor vê apenas pedidos cujo classId é de turma que ele instrui", async () => {
     mockGetAuthUser.mockResolvedValue(teacher);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     seedClass(store, "class-1", ["u-teacher"], ["u-student"]);
     seedClass(store, "class-2", ["u-other-teacher"], ["u-student"]);
     seedRequest(store, "u-student_keychain", { uid: "u-student", classId: "class-1", studentName: "Maria Silva" });
@@ -608,14 +608,14 @@ describe("GET /api/sql-quest/rewards/requests", () => {
       classId: "class-2",
       itemId: "character-piece",
       itemName: "Peça de personagem",
-      costXp: 1000,
+      costXp: 691,
     });
     seedRequest(store, "u-student_object-12cm", {
       uid: "u-student",
       classId: null,
       itemId: "object-12cm",
       itemName: "Objeto personalizado de até 12 cm",
-      costXp: 3000,
+      costXp: 2072,
     });
 
     const res = await listRequests(
@@ -630,7 +630,7 @@ describe("GET /api/sql-quest/rewards/requests", () => {
 
   it("admin vê todos os pedidos (inclusive sem turma)", async () => {
     mockGetAuthUser.mockResolvedValue(admin);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     seedRequest(store, "u-student_keychain", { uid: "u-student", classId: "class-1" });
     seedRequest(store, "u-student2_keychain", { uid: "u-student2", classId: null });
 
@@ -655,7 +655,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
 
   it("bloqueia aluno (403)", async () => {
     mockGetAuthUser.mockResolvedValue(student);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     seedRequest(store, "u-student_keychain");
 
     const res = await decideRequest(
@@ -667,7 +667,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
 
   it("404 para pedido inexistente", async () => {
     mockGetAuthUser.mockResolvedValue(admin);
-    seedProgress("u-student", LESSONS_540);
+    seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     const res = await decideRequest(
       makeJsonRequest("http://localhost/api/sql-quest/rewards/requests/nao-existe", "PATCH", { action: "approve" }),
       { params: { id: "nao-existe" } }
@@ -677,7 +677,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
 
   it("400 para ação inválida", async () => {
     mockGetAuthUser.mockResolvedValue(admin);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     seedRequest(store, "u-student_keychain");
 
     const res = await decideRequest(
@@ -689,7 +689,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
 
   it("instrutor decide pedido cujo classId é de turma que ele instrui", async () => {
     mockGetAuthUser.mockResolvedValue(teacher);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     seedClass(store, "class-1", ["u-teacher"], ["u-student"]);
     seedRequest(store, "u-student_keychain", { uid: "u-student", classId: "class-1" });
 
@@ -702,7 +702,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
 
   it("instrutor não decide pedido de turma que não instrui (403)", async () => {
     mockGetAuthUser.mockResolvedValue(teacher);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     seedClass(store, "class-1", ["u-other-teacher"], ["u-student"]);
     seedRequest(store, "u-student_keychain", { uid: "u-student", classId: "class-1" });
 
@@ -715,7 +715,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
 
   it("instrutor não decide pedido sem turma (403)", async () => {
     mockGetAuthUser.mockResolvedValue(teacher);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     seedRequest(store, "u-student_keychain", { uid: "u-student", classId: null });
 
     const res = await decideRequest(
@@ -727,7 +727,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
 
   it("aprovação atomiza débito de spentXp e decremento de estoque", async () => {
     mockGetAuthUser.mockResolvedValue(admin);
-    const { store } = seedProgress("u-student", LESSONS_540); // 540 XP
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN); // 372 XP
     seedRequest(store, "u-student_keychain");
 
     const res = await decideRequest(
@@ -741,7 +741,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
     expect(body.request.approvedAt).toBeTruthy();
     expect(body.idempotent).toBe(false);
 
-    expect(store["sql_quest_progress"]["u-student"].spentXp).toBe(500);
+    expect(store["sql_quest_progress"]["u-student"].spentXp).toBe(345);
     expect(store["sql_quest_reward_stock"]["keychain"]).toMatchObject({
       initialStock: 5,
       remainingStock: 4,
@@ -752,7 +752,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
 
   it("aprovação é idempotente: repetir não debita nem decrementa de novo", async () => {
     mockGetAuthUser.mockResolvedValue(admin);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     seedRequest(store, "u-student_keychain");
 
     const first = await decideRequest(
@@ -769,13 +769,13 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
     const body = await second.json();
     expect(body.idempotent).toBe(true);
 
-    expect(store["sql_quest_progress"]["u-student"].spentXp).toBe(500);
+    expect(store["sql_quest_progress"]["u-student"].spentXp).toBe(345);
     expect(store["sql_quest_reward_stock"]["keychain"].remainingStock).toBe(4);
   });
 
   it("inventário já inicializado não é re-executado (create-only, sem restaurar)", async () => {
     mockGetAuthUser.mockResolvedValue(admin);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     seedMarker(store);
     store["sql_quest_reward_stock"] = {
       keychain: { itemId: "keychain", initialStock: 5, remainingStock: 3, updatedAt: "2026-09-10T00:00:00.000Z" },
@@ -797,7 +797,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
 
   it("doc de estoque ausente após a marca existir bloqueia a aprovação (nunca restaura)", async () => {
     mockGetAuthUser.mockResolvedValue(admin);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     seedMarker(store); // marca existe, docs de estoque removidos
     seedRequest(store, "u-student_keychain");
 
@@ -814,7 +814,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
 
   it("saldo insuficiente bloqueia a aprovação sem mutar nada", async () => {
     mockGetAuthUser.mockResolvedValue(admin);
-    const { store } = seedProgress("u-student", LESSONS_400); // 400 XP < 500
+    const { store } = seedProgress("u-student", LESSONS_BELOW_KEYCHAIN); // 276 XP < 345
     seedRequest(store, "u-student_keychain");
 
     const res = await decideRequest(
@@ -829,7 +829,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
 
   it("spentXp inválido no progresso bloqueia a aprovação sem mutar", async () => {
     mockGetAuthUser.mockResolvedValue(admin);
-    const { store } = seedProgress("u-student", LESSONS_540, -5); // spentXp negativo
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN, -5); // spentXp negativo
     seedRequest(store, "u-student_keychain");
 
     const res = await decideRequest(
@@ -848,7 +848,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
     store["sql_quest_progress"] = {
       "u-student": {
         uid: "u-student",
-        completedLessonIds: LESSONS_540,
+        completedLessonIds: LESSONS_WITH_KEYCHAIN,
         totalXp: 999999,
         spentXp: "muitos", // campo PRESENTE e inválido
         updatedAt: "2026-09-08T12:00:00.000Z",
@@ -877,7 +877,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
     store["sql_quest_progress"] = {
       "u-student": {
         uid: "u-student",
-        completedLessonIds: LESSONS_540,
+        completedLessonIds: LESSONS_WITH_KEYCHAIN,
         totalXp: 999999,
         // SEM o campo spentXp (progresso legado anterior à loja).
         updatedAt: "2026-09-08T12:00:00.000Z",
@@ -896,7 +896,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
     );
     expect(res.status).toBe(200);
     // Débito normal a partir de spentXp = 0.
-    expect(store["sql_quest_progress"]["u-student"].spentXp).toBe(500);
+    expect(store["sql_quest_progress"]["u-student"].spentXp).toBe(345);
     expect(store["sql_quest_reward_stock"]["keychain"]).toMatchObject({
       initialStock: 5,
       remainingStock: 4,
@@ -905,11 +905,11 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
 
   it("estoque insuficiente (0) bloqueia a aprovação sem mutar nada", async () => {
     mockGetAuthUser.mockResolvedValue(admin);
-    const { store } = seedProgress("u-student", LESSONS_1000);
+    const { store } = seedProgress("u-student", LESSONS_WITH_CHARACTER_PIECE);
     seedRequest(store, "u-student_character-piece", {
       itemId: "character-piece",
       itemName: "Peça de personagem",
-      costXp: 1000,
+      costXp: 691,
     });
     store["sql_quest_reward_stock"] = {
       "character-piece": { itemId: "character-piece", initialStock: 1, remainingStock: 0, updatedAt: "2026-09-10T00:00:00.000Z" },
@@ -928,22 +928,22 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
 
   it("estoque 1: segundo aluno com pedido aprovado é bloqueado", async () => {
     mockGetAuthUser.mockResolvedValue(admin);
-    const { store } = seedProgress("u-student", LESSONS_1000);
+    const { store } = seedProgress("u-student", LESSONS_WITH_CHARACTER_PIECE);
     seedRequest(store, "u-student_character-piece", {
       uid: "u-student",
       itemId: "character-piece",
       itemName: "Peça de personagem",
-      costXp: 1000,
+      costXp: 691,
     });
     seedRequest(store, "u-student2_character-piece", {
       uid: "u-student2",
       itemId: "character-piece",
       itemName: "Peça de personagem",
-      costXp: 1000,
+      costXp: 691,
     });
     store["sql_quest_progress"]["u-student2"] = {
       uid: "u-student2",
-      completedLessonIds: LESSONS_1000,
+      completedLessonIds: LESSONS_WITH_CHARACTER_PIECE,
       totalXp: 999999,
       spentXp: 0,
     };
@@ -965,8 +965,8 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
 
   it("pedido corrompido (custo divergente do catálogo) falha fechado sem mutar", async () => {
     mockGetAuthUser.mockResolvedValue(admin);
-    const { store } = seedProgress("u-student", LESSONS_540);
-    seedRequest(store, "u-student_keychain", { costXp: 100 }); // catálogo = 500
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
+    seedRequest(store, "u-student_keychain", { costXp: 100 }); // catálogo = 345
 
     const res = await decideRequest(
       makeJsonRequest("http://localhost/api/sql-quest/rewards/requests/u-student_keychain", "PATCH", { action: "approve" }),
@@ -979,7 +979,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
 
   it("pedido corrompido (status desconhecido) falha fechado sem mutar", async () => {
     mockGetAuthUser.mockResolvedValue(admin);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     seedRequest(store, "u-student_keychain", { status: "pending" });
 
     const res = await decideRequest(
@@ -992,7 +992,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
 
   it("pedido corrompido (produto desconhecido) falha fechado sem mutar", async () => {
     mockGetAuthUser.mockResolvedValue(admin);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     seedRequest(store, "u-student_keychain", { itemId: "trophy", itemName: "Troféu" });
 
     const res = await decideRequest(
@@ -1005,7 +1005,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
 
   it("rejeição não debita nem mexe no estoque e é idempotente", async () => {
     mockGetAuthUser.mockResolvedValue(admin);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     seedRequest(store, "u-student_keychain");
 
     const first = await decideRequest(
@@ -1034,7 +1034,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
 
   it("fulfillment só a partir de approved e é idempotente", async () => {
     mockGetAuthUser.mockResolvedValue(admin);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     seedRequest(store, "u-student_keychain", { status: "approved", approvedAt: "2026-09-11T00:00:00.000Z", approvedBy: "u-admin" });
 
     const first = await decideRequest(
@@ -1056,7 +1056,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
 
   it("transições inválidas retornam 409", async () => {
     mockGetAuthUser.mockResolvedValue(admin);
-    const { store } = seedProgress("u-student", LESSONS_540);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     seedRequest(store, "u-student_keychain", { status: "rejected", rejectedAt: "2026-09-11T00:00:00.000Z", rejectedBy: "u-admin" });
 
     const approveRejected = await decideRequest(

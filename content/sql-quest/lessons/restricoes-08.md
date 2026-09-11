@@ -6,7 +6,7 @@ chapter: 3
 chapterSlug: restricoes
 lesson: 8
 difficulty: iniciante
-xp: 40
+xp: 28
 prerequisites:
   - restricoes-07
 hints: []

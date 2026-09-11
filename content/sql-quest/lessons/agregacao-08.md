@@ -6,7 +6,7 @@ chapter: 7
 chapterSlug: agregacao
 lesson: 8
 difficulty: iniciante
-xp: 50
+xp: 34
 prerequisites:
   - agregacao-07
 hints:

@@ -6,7 +6,7 @@ chapter: 5
 chapterSlug: filtros
 lesson: 9
 difficulty: iniciante
-xp: 40
+xp: 28
 prerequisites:
   - filtros-08
 hints:
