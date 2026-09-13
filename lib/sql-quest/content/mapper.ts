@@ -115,6 +115,7 @@ export function mapContentLesson(content: SQLContentLesson): SQLLesson {
     explanation: content.body,
     exampleSql: null,
     setupSql: content.setupSql,
+    starterSql: content.starterSql ?? null,
     tables: content.tables.map(mapContentTable),
     challenge: mapContentChallenge(content.challenge, content.summary),
     hints: content.hints,

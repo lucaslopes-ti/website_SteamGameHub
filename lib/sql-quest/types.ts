@@ -244,6 +244,8 @@ export interface SQLLesson {
    * Roda em um banco novo a cada execução.
    */
   setupSql: string;
+  /** SQL pré-carregado no editor (código a corrigir); null = scaffold neutro. */
+  starterSql: string | null;
   /** Schema inicial (para o SchemaViewer da UI). */
   tables: SQLTableSchema[];
   challenge: SQLChallenge;

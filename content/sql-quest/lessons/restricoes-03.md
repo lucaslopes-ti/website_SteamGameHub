@@ -26,6 +26,13 @@ setupSql: |
     password TEXT NOT NULL,
     is_admin BOOLEAN
   );
+starterSql: |
+  -- Corrija o segundo INSERT: ele usa o id 1, que já existe.
+  INSERT INTO users (id, name, age, country_code, username, password, is_admin) VALUES
+    (1, 'Rudolf', 33, 'DE', 'rudolf1234', 'thisisnotsecure', false),
+    (1, 'Jerry', 25, 'US', 'jerrysmith', 'mypasswordis1234', true);
+
+  SELECT * FROM users;
 tables:
   - name: users
     columns:

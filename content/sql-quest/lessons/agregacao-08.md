@@ -36,6 +36,9 @@ setupSql: |
     (8, 'Tiffany', 28, 'US', true),
     (9, 'Marta', 36, 'ES', true),
     (10, 'Noah', 41, 'AU', true);
+starterSql: |
+  -- Corrija a consulta para arredondar a média e renomeie a coluna para round_age.
+  SELECT AVG(age) AS round_age FROM users;
 tables:
   - name: users
     columns:

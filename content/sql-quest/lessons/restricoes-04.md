@@ -34,6 +34,13 @@ setupSql: |
     country_code TEXT NOT NULL,
     FOREIGN KEY (country_code) REFERENCES countries(country_code)
   );
+starterSql: |
+  -- Corrija o segundo INSERT: o código 'IND' não existe na tabela countries.
+  INSERT INTO users (id, name, country_code) VALUES
+    (1, 'Jerry', 'US'),
+    (2, 'Amit', 'IND');
+
+  SELECT * FROM users;
 tables:
   - name: countries
     columns:

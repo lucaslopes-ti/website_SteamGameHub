@@ -22,6 +22,7 @@ function makeLesson(overrides: Partial<SQLLesson> = {}): SQLLesson {
     xpReward: 50,
     explanation: "## Contexto\n\nTexto.",
     exampleSql: null,
+    starterSql: null,
     setupSql: "CREATE TABLE users (id INTEGER);",
     tables: [],
     challenge: {

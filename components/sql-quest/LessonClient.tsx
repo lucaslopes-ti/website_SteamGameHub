@@ -98,6 +98,11 @@ function HintCard({ hint, index }: { hint: string; index: number }) {
  * (já presente no array `hints` dos dados).
  */
 function neutralScaffold(lesson: SQLLesson): string {
+  // Lições "corrija o código" trazem o starterSql (código quebrado) pronto no
+  // editor; as demais partem de um comentário neutro com a instrução.
+  if (lesson.starterSql && lesson.starterSql.trim().length > 0) {
+    return lesson.starterSql;
+  }
   const instruction =
     lesson.challenge.kind === "exact" || lesson.challenge.kind === "schema" || lesson.challenge.kind === "data"
       ? lesson.challenge.instruction

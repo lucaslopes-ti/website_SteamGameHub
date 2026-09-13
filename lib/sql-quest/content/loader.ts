@@ -247,6 +247,10 @@ export function parseLesson(
     hints: asStringArray(data.hints),
     references: asReferences(data.references),
     setupSql: asString(data.setupSql, ""),
+    starterSql:
+      typeof data.starterSql === "string" && data.starterSql.trim().length > 0
+        ? data.starterSql
+        : undefined,
     tables: asTables(data.tables),
     challenge: asChallenge(data.challenge),
     images: asImages(data.images),

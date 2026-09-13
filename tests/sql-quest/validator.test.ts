@@ -29,6 +29,7 @@ function makeLesson(challenge: SQLChallenge): SQLLesson {
     xpReward: 50,
     explanation: "teste",
     exampleSql: null,
+    starterSql: null,
     setupSql: "",
     tables: [],
     challenge,

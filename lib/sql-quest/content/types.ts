@@ -179,6 +179,12 @@ export interface SQLContentLesson {
   references: SQLContentReference[];
   /** SQL executado para preparar o banco da lição (schema inicial + seed). */
   setupSql: string;
+  /**
+   * SQL pré-carregado no editor da lição. Normalmente contém o código
+   * (propositalmente quebrado) que o aluno deve corrigir. Quando ausente,
+   * o editor parte de um scaffold neutro com a instrução em comentário.
+   */
+  starterSql?: string;
   /** Schema inicial (para o SchemaViewer da UI). */
   tables: SQLContentTable[];
   /**
