@@ -1,6 +1,6 @@
 "use client";
 
-import { CSSProperties, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import DOMPurify from "dompurify";
@@ -129,6 +129,31 @@ function formatTheory(markdown: string): string {
 const NAV_BUTTON_CLASS =
   "inline-flex items-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] px-3 py-2 text-sm font-medium text-[var(--on-surface)] transition-[background-color,border-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--surface-container-high)]";
 
+/**
+ * Ajustes de "app shell" para a lição em desktop, escopados à presença do
+ * workspace (`data-sql-lesson-shell`) e sem tocar em outras telas:
+ *
+ * - Zera o `min-h-screen` global do `<main>` nesta rota para que a altura da
+ *   lição (`100dvh - cabeçalho`) não sofra um "fantasma" de rolagem.
+ * - Esconde o rodapé global apenas no desktop desta lição: como o rodapé é um
+ *   elemento posicionado posterior no DOM, ele poderia pintar sobre o
+ *   workspace; ocultá-lo é o comportamento esperado de uma tela de foco
+ *   (equivalente ao bootdev). No mobile o rodapé continua normal.
+ *
+ * É CSS puro (`:has`), sem `position: fixed` no workspace e sem travar o
+ * scroll global — o cabeçalho global permanece visível e sticky.
+ *
+ * A altura do workspace desconta o cabeçalho global (`6.125rem` = 4rem da
+ * barra + 2rem da faixa de novidades + 2px de bordas). O valor em `rem`
+ * acompanha o tamanho de fonte do usuário, como o próprio cabeçalho.
+ */
+const SQL_LESSON_SHELL_CSS = `
+  @media (min-width: 1024px) {
+    #main-content:has([data-sql-lesson-shell]) { min-height: 0; }
+    body:has([data-sql-lesson-shell]) #footer { display: none; }
+  }
+`;
+
 interface LessonClientProps {
   lesson: SQLLesson;
   previous: SQLLesson | null;
@@ -166,58 +191,6 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
 
   const completed = isCompleted(lesson.chapter, lesson.lesson);
   const unlocked = isUnlocked(lesson.chapter, lesson.lesson);
-
-  /**
-   * Altura real do cabeçalho global, medida em runtime. O workspace do desktop
-   * é ancorado logo abaixo dele (`position: fixed`), então usamos o valor px
-   * exato em vez de um `6rem` fixo que quebraria com zoom, fonte ou faixa de
-   * novidades. Mantém um piso seguro para o primeiro render (SSR).
-   */
-  const [headerOffset, setHeaderOffset] = useState(96);
-
-  useEffect(() => {
-    const header = document.querySelector<HTMLElement>('header[role="banner"]');
-    if (!header) return;
-    const update = () =>
-      setHeaderOffset(Math.round(header.getBoundingClientRect().height) || 96);
-    update();
-    let observer: ResizeObserver | undefined;
-    if (typeof ResizeObserver !== "undefined") {
-      observer = new ResizeObserver(update);
-      observer.observe(header);
-    }
-    window.addEventListener("resize", update);
-    return () => {
-      observer?.disconnect();
-      window.removeEventListener("resize", update);
-    };
-  }, []);
-
-  /**
-   * Em desktop a lição ocupa exatamente a viewport abaixo do cabeçalho e a
-   * página NÃO rola (o rodapé global fica fora de alcance). Em telas menores o
-   * fluxo volta a ser o normal, com a página rolando verticalmente.
-   */
-  useEffect(() => {
-    if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
-      return;
-    }
-    const query = window.matchMedia("(min-width: 1024px)");
-    const apply = () => {
-      const lock = query.matches;
-      document.documentElement.style.overflow = lock ? "hidden" : "";
-      document.body.style.overflow = lock ? "hidden" : "";
-    };
-    apply();
-    query.addEventListener("change", apply);
-    return () => {
-      query.removeEventListener("change", apply);
-      document.documentElement.style.overflow = "";
-      document.body.style.overflow = "";
-    };
-  }, []);
-
-  const rootStyle = { "--lesson-top": `${headerOffset}px` } as CSSProperties;
 
   const startEngine = useCallback(() => {
     setEngineLoading(true);
@@ -389,9 +362,10 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
 
   return (
     <div
-      className="flex min-h-screen flex-col bg-[var(--surface)] text-[var(--on-surface)] lg:fixed lg:inset-x-0 lg:bottom-0 lg:top-[var(--lesson-top)] lg:min-h-0 lg:overflow-hidden"
-      style={rootStyle}
+      data-sql-lesson-shell=""
+      className="flex min-h-screen flex-col bg-[var(--surface)] text-[var(--on-surface)] lg:h-[calc(100dvh-6.125rem)] lg:min-h-0 lg:overflow-hidden"
     >
+      <style dangerouslySetInnerHTML={{ __html: SQL_LESSON_SHELL_CSS }} />
       {/* Contexto compacto do módulo: navegação, título e progresso */}
       <header className="shrink-0 border-b border-[var(--outline-variant)]/25 bg-[var(--surface-container-low)]/55">
         <div className="flex flex-col gap-3 px-4 py-3 sm:px-5 lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:px-6">
