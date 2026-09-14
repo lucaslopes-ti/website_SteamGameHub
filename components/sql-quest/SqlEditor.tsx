@@ -56,7 +56,7 @@ function SimpleSqlEditor({
 
   return (
     <div
-      className="flex w-full min-w-0 overflow-hidden rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] font-mono text-sm"
+      className="flex w-full min-w-0 overflow-hidden rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] font-mono text-sm transition-colors focus-within:border-[var(--primary-text)]/60"
       style={EditorDimensionsStyle(height)}
     >
       <label htmlFor={id} className="sr-only">
@@ -183,7 +183,7 @@ export default function SqlEditor(props: SqlEditorProps) {
       // min-w-0` impede o colapso horizontal dentro de flex/grid, e o piso de
       // 280px mantém o contrato dimensional dos demais modos.
       <div
-        className="relative w-full min-w-0 min-h-[280px]"
+        className="relative w-full min-w-0 min-h-[280px] rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] transition-colors focus-within:border-[var(--primary-text)]/60"
         style={{ height: resolvedHeight }}
       >
         <MonacoErrorBoundary fallback={<SimpleSqlEditor {...props} />}>

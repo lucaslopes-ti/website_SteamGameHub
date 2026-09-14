@@ -8,13 +8,16 @@ import { marked } from "marked";
 import {
   ArrowLeft,
   ArrowRight,
+  BookOpen,
   CheckCircle2,
+  ChevronRight,
   Database,
   Lightbulb,
   Lock,
   Play,
   RotateCcw,
   Sparkles,
+  Table2,
   XCircle,
 } from "lucide-react";
 import { SQLLesson, SQLValue } from "@/lib/sql-quest/types";
@@ -122,6 +125,10 @@ function formatTheory(markdown: string): string {
   return DOMPurify.sanitize(highlighted);
 }
 
+/** Classes compartilhadas dos botões da barra de contexto (Anterior/Próxima). */
+const NAV_BUTTON_CLASS =
+  "inline-flex items-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] px-3 py-2 text-sm font-medium text-[var(--on-surface)] transition-[background-color,border-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--surface-container-high)]";
+
 interface LessonClientProps {
   lesson: SQLLesson;
   previous: SQLLesson | null;
@@ -130,7 +137,14 @@ interface LessonClientProps {
 
 export default function LessonClient({ lesson, previous, next }: LessonClientProps) {
   const router = useRouter();
-  const { isCompleted, isUnlocked, complete } = useSqlProgress();
+  const {
+    isCompleted,
+    isUnlocked,
+    complete,
+    completedCount,
+    totalLessons,
+    progressPercent,
+  } = useSqlProgress();
   const [code, setCode] = useState(() => neutralScaffold(lesson));
   const [engineLoading, setEngineLoading] = useState(true);
   const [engineError, setEngineError] = useState<string | null>(null);
@@ -241,184 +255,301 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
     setJustSolved(true);
   };
 
-  return (
-    <div className="min-h-screen bg-[var(--surface)] text-[var(--on-surface)] lg:flex lg:h-[calc(100vh-64px)] lg:flex-col lg:overflow-hidden">
-      <div className="shrink-0 border-b border-[var(--outline-variant)]/20 bg-[var(--surface-container-low)]/40">
-        <div className="mx-auto max-w-7xl px-4 py-6 md:px-6">
-          <nav aria-label="Breadcrumb" className="mb-4">
-            <ol className="flex flex-wrap items-center gap-2 text-sm text-[var(--on-surface-variant)]">
-              <li>
-                <Link href="/sql-quest" className="transition-colors [@media(hover:hover)_and_(pointer:fine)]:hover:text-[var(--primary-text)]">
-                  SQL SenaiUdi
-                </Link>
-              </li>
-              <li>/</li>
-              <li>
-                <Link
-                  href={`/sql-quest/learn/${lesson.chapter}`}
-                  className="transition-colors [@media(hover:hover)_and_(pointer:fine)]:hover:text-[var(--primary-text)]"
-                >
-                  Capítulo {lesson.chapter}
-                </Link>
-              </li>
-              <li>/</li>
-              <li className="font-medium text-[var(--on-surface)]" aria-current="page">
-                Lição {lesson.lesson}
-              </li>
-            </ol>
-          </nav>
-
-          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div>
-              <div className="flex flex-wrap items-center gap-3"><span className="rounded-full bg-[var(--primary-10)] px-2.5 py-1 text-xs font-bold uppercase tracking-[0.14em] text-[var(--primary-text)]">Lição {lesson.chapter}.{lesson.lesson}</span><span className="rounded-full bg-[var(--secondary)]/10 px-2.5 py-1 text-xs font-bold text-[var(--secondary)]">+{lesson.xpReward} XP</span></div>
-              <h1 className="mt-3 font-display text-3xl font-bold tracking-tight md:text-4xl">{lesson.title}</h1>
-              <p className="mt-1 text-[var(--on-surface-variant)]">{lesson.summary}</p>
+  /** Feedback de execução/conclusão — reaproveitado nos dois formatos de painel. */
+  const feedback = (
+    <>
+      {validation && (
+        <div
+          className={`rounded-2xl border p-4 ${
+            validation.passed
+              ? "border-emerald-500/30 bg-emerald-500/10"
+              : "border-red-500/30 bg-red-500/10"
+          }`}
+          role="status"
+          aria-live="polite"
+        >
+          <div className="flex items-start gap-3">
+            {validation.passed ? (
+              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" />
+            ) : (
+              <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-400" />
+            )}
+            <div className="flex-1">
+              <p className={`font-semibold ${validation.passed ? "text-emerald-400" : "text-red-400"}`}>
+                {validation.passed ? "Resposta correta!" : "Ops, algo deu errado"}
+              </p>
+              <p className="mt-1 text-sm text-[var(--on-surface-variant)]">{validation.message}</p>
+              {validation.details.length > 0 && (
+                <ul className="mt-2 list-inside list-disc text-sm text-[var(--on-surface-variant)]">
+                  {validation.details.map((detail, idx) => (
+                    <li key={idx}>{detail}</li>
+                  ))}
+                </ul>
+              )}
+              {validation.passed && (
+                <p className="mt-2 text-sm font-bold text-emerald-400">+{lesson.xpReward} XP</p>
+              )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {justSolved && next && (
+        <div className="rounded-2xl border border-[var(--primary)]/30 bg-[var(--primary-10)] p-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm font-semibold text-[var(--primary-text)]">
+              Lição concluída! Pronto para a próxima?
+            </p>
+            <button
+              type="button"
+              onClick={goToNext}
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--secondary-container)] px-4 py-2 text-sm font-bold text-[var(--on-secondary-container)]"
+            >
+              Próxima lição
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {result && !result.error && result.columns.length > 0 && (
+        <section className="rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-4">
+          <h3 className="mb-3 text-sm font-semibold text-[var(--on-surface-variant)]">
+            Resultado ({result.rows.length} {result.rows.length === 1 ? "linha" : "linhas"})
+          </h3>
+          <ResultTable columns={result.columns} rows={result.rows} />
+        </section>
+      )}
+
+      {result?.error && (
+        <section className="rounded-2xl border border-red-500/20 bg-red-500/5 p-4">
+          <h3 className="mb-2 text-sm font-semibold text-red-400">Erro na execução</h3>
+          <pre className="whitespace-pre-wrap rounded-lg bg-[var(--surface-container-lowest)] p-3 font-mono text-xs text-red-300">
+            {result.error}
+          </pre>
+        </section>
+      )}
+    </>
+  );
+
+  return (
+    <div className="flex min-h-screen flex-col bg-[var(--surface)] text-[var(--on-surface)] lg:h-[calc(100dvh-6rem)] lg:min-h-0 lg:overflow-hidden">
+      {/* Contexto compacto do módulo: navegação, título e progresso */}
+      <header className="shrink-0 border-b border-[var(--outline-variant)]/25 bg-[var(--surface-container-low)]/55">
+        <div className="flex flex-col gap-3 px-4 py-3 sm:px-5 lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:px-6">
+          <div className="min-w-0 flex-1">
+            <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-[var(--on-surface-variant)]">
+              <Link
+                href="/sql-quest"
+                className="shrink-0 transition-colors [@media(hover:hover)_and_(pointer:fine)]:hover:text-[var(--primary-text)]"
+              >
+                SQL SenaiUdi
+              </Link>
+              <ChevronRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-[var(--outline)]" />
+              <Link
+                href={`/sql-quest/learn/${lesson.chapter}`}
+                className="shrink-0 transition-colors [@media(hover:hover)_and_(pointer:fine)]:hover:text-[var(--primary-text)]"
+              >
+                Capítulo {lesson.chapter}
+              </Link>
+              <ChevronRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-[var(--outline)]" />
+              <span className="truncate font-medium text-[var(--on-surface)]" aria-current="page">
+                Lição {lesson.chapter}.{lesson.lesson}
+              </span>
+            </nav>
+
+            <div className="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
+              <h1 className="font-display text-lg font-bold tracking-tight sm:text-xl">{lesson.title}</h1>
+              <span className="rounded-full bg-[var(--secondary)]/10 px-2 py-0.5 text-[11px] font-bold text-[var(--secondary)]">
+                +{lesson.xpReward} XP
+              </span>
+              {completed && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-bold text-emerald-400">
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  Concluída
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between gap-3 sm:justify-end sm:gap-4">
+            <div className="hidden w-36 shrink-0 sm:block">
+              <div className="flex items-center justify-between text-[11px] text-[var(--on-surface-variant)]">
+                <span className="font-medium">
+                  {completedCount}/{totalLessons} lições
+                </span>
+                <span className="font-bold text-[var(--secondary)]">{progressPercent}%</span>
+              </div>
+              <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-[var(--surface-container-high)]">
+                <div
+                  className="h-full rounded-full bg-[var(--secondary)] transition-[width] duration-500 ease-out motion-reduce:transition-none"
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+            </div>
+
             <div className="flex items-center gap-2">
               {previous && (
                 <Link
                   href={`/sql-quest/learn/${previous.chapter}/${previous.lesson}`}
-                  className="inline-flex items-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] px-4 py-2 text-sm font-medium text-[var(--on-surface)] transition-[background-color,border-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--surface-container-high)]"
+                  aria-label={`Lição anterior: ${previous.title}`}
+                  className={NAV_BUTTON_CLASS}
                 >
                   <ArrowLeft className="h-4 w-4" />
-                  Anterior
+                  <span className="hidden sm:inline">Anterior</span>
                 </Link>
               )}
               {next && (
                 <Link
                   href={`/sql-quest/learn/${next.chapter}/${next.lesson}`}
-                  className="inline-flex items-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] px-4 py-2 text-sm font-medium text-[var(--on-surface)] transition-[background-color,border-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--surface-container-high)]"
+                  aria-label={`Próxima lição: ${next.title}`}
+                  className={NAV_BUTTON_CLASS}
                 >
-                  Próxima
+                  <span className="hidden sm:inline">Próxima</span>
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               )}
             </div>
           </div>
         </div>
-      </div>
+        <div
+          aria-hidden="true"
+          className="h-0.5 bg-gradient-to-r from-[var(--primary)] via-[var(--primary-fixed-dim)] to-[var(--secondary)] opacity-80"
+        />
+      </header>
 
-      <main className="mx-auto flex w-full max-w-7xl flex-col px-4 py-6 md:px-6 lg:min-h-0 lg:max-w-none lg:flex-1 lg:overflow-hidden">
-        <div className="grid gap-5 lg:min-h-0 lg:flex-1 lg:grid-cols-2 lg:grid-rows-[minmax(0,1fr)] lg:items-stretch">
-          {/* Painel esquerdo: teoria */}
-          <div className="min-w-0 space-y-6 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pr-2">
-            <section className="rounded-3xl border border-[var(--primary)]/25 bg-[var(--primary-10)]/35 p-6 shadow-lg shadow-[var(--primary)]/5">
-              <h2 className="mb-3 flex items-center gap-2 text-lg font-bold">
-                <Sparkles className="h-5 w-5 text-[var(--secondary)]" />
-                Objetivo
-              </h2>
-              <p className="text-[var(--on-surface-variant)]">{instruction}</p>
-            </section>
+      {/* Workspace: instruções à esquerda, prática à direita (empilhado no mobile) */}
+      <div className="flex min-h-0 flex-1 flex-col lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-stretch">
+        {/* Painel esquerdo: teoria */}
+        <section
+          aria-label="Conteúdo da lição"
+          className="min-w-0 space-y-4 border-b border-[var(--outline-variant)]/25 px-4 py-4 sm:px-6 sm:py-5 lg:min-h-0 lg:space-y-5 lg:overflow-y-auto lg:overscroll-contain lg:border-b-0 lg:py-5"
+        >
+          <section className="rounded-2xl border border-[var(--primary)]/25 bg-[var(--primary-10)]/35 p-5 shadow-lg shadow-[var(--primary)]/5">
+            <h2 className="mb-2 flex items-center gap-2 text-base font-bold">
+              <Sparkles className="h-5 w-5 text-[var(--secondary)]" />
+              Objetivo
+            </h2>
+            <p className="text-sm leading-6 text-[var(--on-surface-variant)]">{instruction}</p>
+          </section>
 
-            {lesson.id === "select-01" && (
-              <figure className="overflow-hidden rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-3 shadow-lg shadow-black/10">
-                <img
-                  src="/uploads/images/sql_logos.png"
-                  alt="Logotipos relacionados à linguagem SQL e bancos de dados"
-                  className="h-auto w-full rounded-xl object-cover"
-                />
-                <figcaption className="px-1 pt-3 text-center text-xs leading-5 text-[var(--on-surface-variant)]">
-                  SQL conecta dados, consultas e decisões em um único idioma.
-                </figcaption>
-              </figure>
-            )}
-
-            <section className="rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-6">
-              <h2 className="mb-3 flex items-center gap-2 text-lg font-bold">
-                <Database className="h-5 w-5 text-[var(--primary-text)]" />
-                Teoria
-              </h2>
-              <div
-                className="max-w-none text-sm leading-7 text-[var(--on-surface-variant)] [&>*:first-child]:mt-0 [&_a]:font-semibold [&_a]:text-[var(--primary-text)] [&_blockquote]:my-4 [&_blockquote]:border-l-2 [&_blockquote]:border-[var(--secondary)] [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-[var(--surface-container-high)] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-xs [&_code]:text-[var(--primary-text)] [&_h1]:mb-3 [&_h1]:mt-6 [&_h1]:font-display [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:leading-tight [&_h2]:mb-3 [&_h2]:mt-6 [&_h2]:font-display [&_h2]:text-xl [&_h2]:font-bold [&_h2]:leading-tight [&_h3]:mb-2 [&_h3]:mt-5 [&_h3]:font-bold [&_h3]:text-lg [&_li]:pl-1 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-5 [&_p]:my-3 [&_pre]:my-4 [&_pre]:overflow-x-auto [&_pre]:rounded-xl [&_pre]:border [&_pre]:border-[var(--outline-variant)]/40 [&_pre]:bg-[var(--surface-container-lowest)] [&_pre]:p-4 [&_pre_code]:block [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-sm [&_pre_code]:leading-6 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5"
-                dangerouslySetInnerHTML={{ __html: theoryHtml }}
+          {lesson.id === "select-01" && (
+            <figure className="overflow-hidden rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-3 shadow-lg shadow-black/10">
+              <img
+                src="/uploads/images/sql_logos.png"
+                alt="Logotipos relacionados à linguagem SQL e bancos de dados"
+                className="h-auto w-full rounded-xl object-cover"
               />
-            </section>
+              <figcaption className="px-1 pt-3 text-center text-xs leading-5 text-[var(--on-surface-variant)]">
+                SQL conecta dados, consultas e decisões em um único idioma.
+              </figcaption>
+            </figure>
+          )}
 
-            <section className="rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-6">
-              <h2 className="mb-3 flex items-center gap-2 text-lg font-bold">
-                <Database className="h-5 w-5 text-[var(--primary-text)]" />
-                Esquema
+          <section className="rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-5">
+            <h2 className="mb-3 flex items-center gap-2 text-base font-bold">
+              <BookOpen className="h-5 w-5 text-[var(--primary-text)]" />
+              Teoria
+            </h2>
+            <div
+              className="max-w-none text-sm leading-7 text-[var(--on-surface-variant)] [&>*:first-child]:mt-0 [&_a]:font-semibold [&_a]:text-[var(--primary-text)] [&_blockquote]:my-4 [&_blockquote]:border-l-2 [&_blockquote]:border-[var(--secondary)] [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-[var(--surface-container-high)] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-xs [&_code]:text-[var(--primary-text)] [&_h1]:mb-3 [&_h1]:mt-6 [&_h1]:font-display [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:leading-tight [&_h2]:mb-3 [&_h2]:mt-6 [&_h2]:font-display [&_h2]:text-xl [&_h2]:font-bold [&_h2]:leading-tight [&_h3]:mb-2 [&_h3]:mt-5 [&_h3]:font-bold [&_h3]:text-lg [&_li]:pl-1 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-5 [&_p]:my-3 [&_pre]:my-4 [&_pre]:overflow-x-auto [&_pre]:rounded-xl [&_pre]:border [&_pre]:border-[var(--outline-variant)]/40 [&_pre]:bg-[var(--surface-container-lowest)] [&_pre]:p-4 [&_pre_code]:block [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-sm [&_pre_code]:leading-6 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5"
+              dangerouslySetInnerHTML={{ __html: theoryHtml }}
+            />
+          </section>
+
+          <section className="rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-5">
+            <h2 className="mb-3 flex items-center gap-2 text-base font-bold">
+              <Table2 className="h-5 w-5 text-[var(--primary-text)]" />
+              Esquema
+            </h2>
+            <SchemaViewer
+              tables={lesson.tables.map((t) => ({
+                name: t.name,
+                columns: t.columns.map((c) => ({ name: c.name, type: c.type ?? "UNKNOWN" })),
+              }))}
+            />
+          </section>
+
+          <section className="rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-5">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="flex items-center gap-2 text-base font-bold">
+                <Lightbulb className="h-5 w-5 text-[var(--secondary)]" />
+                Dicas
               </h2>
-              <SchemaViewer
-                tables={lesson.tables.map((t) => ({
-                  name: t.name,
-                  columns: t.columns.map((c) => ({ name: c.name, type: c.type ?? "UNKNOWN" })),
-                }))}
-              />
-            </section>
+              <span className="text-xs font-medium text-[var(--on-surface-variant)]">
+                {revealedHints} de {lesson.hints.length}
+              </span>
+            </div>
 
-            <section className="rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-6">
-              <div className="mb-4 flex items-center justify-between">
-                <h2 className="flex items-center gap-2 text-lg font-bold">
-                  <Lightbulb className="h-5 w-5 text-[var(--secondary)]" />
-                  Dicas
-                </h2>
-                <span className="text-xs font-medium text-[var(--on-surface-variant)]">
-                  {revealedHints} de {lesson.hints.length}
-                </span>
-              </div>
-
-              <div className="space-y-3">
-                {lesson.hints.slice(0, revealedHints).map((hint, i) => (
-                  <HintCard key={i} hint={hint} index={i} />
-                ))}
-                {revealedHints === 0 && (
-                  <p className="text-sm text-[var(--on-surface-variant)]">
-                    As dicas são liberadas uma a cada clique. Use-as com moderação para não perder o desafio.
-                  </p>
-                )}
-              </div>
-
-              {revealedHints < lesson.hints.length && (
-                <button
-                  type="button"
-                  onClick={revealHint}
-                  disabled={!unlocked}
-                  className="mt-4 inline-flex items-center gap-2 rounded-lg border border-[var(--secondary-20)] bg-[var(--secondary-10)] px-4 py-2 text-sm font-semibold text-[var(--secondary)] transition-[background-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--secondary-20)] disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <Lightbulb className="h-4 w-4" />
-                  Mostrar próxima dica
-                </button>
-              )}
-            </section>
-          </div>
-
-          {/* Painel direito: prática */}
-          <div className="relative flex min-w-0 flex-col gap-4 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pr-2 lg:[&>*]:shrink-0">
-            {!unlocked && (
-              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-2xl border border-[var(--outline-variant)]/40 bg-[var(--surface)]/90 p-6 text-center backdrop-blur-sm">
-                <Lock className="h-12 w-12 text-[var(--outline)]" />
-                <h3 className="text-xl font-bold">Lição bloqueada</h3>
-                <p className="max-w-xs text-sm text-[var(--on-surface-variant)]">
-                  Complete a lição anterior para desbloquear esta prática.
+            <div className="space-y-3">
+              {lesson.hints.slice(0, revealedHints).map((hint, i) => (
+                <HintCard key={i} hint={hint} index={i} />
+              ))}
+              {revealedHints === 0 && (
+                <p className="text-sm text-[var(--on-surface-variant)]">
+                  As dicas são liberadas uma a cada clique. Use-as com moderação para não perder o desafio.
                 </p>
-                {previous && (
-                  <Link
-                    href={`/sql-quest/learn/${previous.chapter}/${previous.lesson}`}
-                    className="inline-flex items-center gap-2 rounded-lg bg-[var(--secondary-container)] px-5 py-2.5 text-sm font-bold text-[var(--on-secondary-container)]"
-                  >
-                    <ArrowLeft className="h-4 w-4" />
-                    Voltar para a lição anterior
-                  </Link>
-                )}
-              </div>
-            )}
+              )}
+            </div>
 
-            {lesson.setupSql.trim() && (
-              <details className="rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/60 p-4">
-                <summary className="cursor-pointer text-sm font-semibold text-[var(--on-surface)]">
-                  Código de setup
-                </summary>
-                <pre className="mt-3 overflow-x-auto rounded-xl bg-[var(--surface-container-high)] p-4 font-mono text-sm leading-6 text-[var(--on-surface)]">
-                  <code>{lesson.setupSql}</code>
-                </pre>
-              </details>
+            {revealedHints < lesson.hints.length && (
+              <button
+                type="button"
+                onClick={revealHint}
+                disabled={!unlocked}
+                className="mt-4 inline-flex items-center gap-2 rounded-lg border border-[var(--secondary-20)] bg-[var(--secondary-10)] px-4 py-2 text-sm font-semibold text-[var(--secondary)] transition-[background-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--secondary-20)] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <Lightbulb className="h-4 w-4" />
+                Mostrar próxima dica
+              </button>
             )}
+          </section>
+        </section>
 
-            {isSqlChallenge && <section className="rounded-3xl border border-[var(--primary)]/30 bg-[var(--surface-container-low)]/60 shadow-xl shadow-black/20">
-              <div className="flex items-center justify-between border-b border-[var(--outline-variant)]/20 px-4 py-3">
-                <span className="flex items-center gap-2 text-sm font-semibold text-[var(--on-surface-variant)]">
-                  <Database className="h-4 w-4" />
+        {/* Painel direito: prática */}
+        <section
+          aria-label="Área de prática"
+          className={
+            isSqlChallenge
+              ? "relative flex min-h-0 flex-1 flex-col gap-3 border-t border-[var(--outline-variant)]/25 bg-[var(--surface-container-lowest)]/30 p-3 sm:p-4 lg:gap-4 lg:overflow-hidden lg:border-l lg:border-t-0 lg:p-5"
+              : "relative min-h-0 flex-1 space-y-4 border-t border-[var(--outline-variant)]/25 bg-[var(--surface-container-lowest)]/30 p-4 sm:p-5 lg:overflow-y-auto lg:overscroll-contain lg:border-l lg:border-t-0"
+          }
+        >
+          {!unlocked && (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-2xl border border-[var(--outline-variant)]/40 bg-[var(--surface)]/90 p-6 text-center backdrop-blur-sm">
+              <Lock className="h-12 w-12 text-[var(--outline)]" />
+              <h3 className="text-xl font-bold">Lição bloqueada</h3>
+              <p className="max-w-xs text-sm text-[var(--on-surface-variant)]">
+                Complete a lição anterior para desbloquear esta prática.
+              </p>
+              {previous && (
+                <Link
+                  href={`/sql-quest/learn/${previous.chapter}/${previous.lesson}`}
+                  className="inline-flex items-center gap-2 rounded-lg bg-[var(--secondary-container)] px-5 py-2.5 text-sm font-bold text-[var(--on-secondary-container)]"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Voltar para a lição anterior
+                </Link>
+              )}
+            </div>
+          )}
+
+          {lesson.setupSql.trim() && (
+            <details className="shrink-0 rounded-xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/60 px-4 py-2.5">
+              <summary className="cursor-pointer text-xs font-semibold text-[var(--on-surface-variant)]">
+                Código de setup
+              </summary>
+              <pre className="mt-2 max-h-56 overflow-auto rounded-lg bg-[var(--surface-container-high)] p-3 font-mono text-xs leading-6 text-[var(--on-surface)]">
+                <code>{lesson.setupSql}</code>
+              </pre>
+            </details>
+          )}
+
+          {isSqlChallenge && (
+            <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-[var(--primary)]/30 bg-[var(--surface-container-low)]/60 shadow-xl shadow-black/20">
+              <div className="flex shrink-0 items-center justify-between gap-3 border-b border-[var(--outline-variant)]/25 bg-[var(--surface-container-high)]/40 px-4 py-2.5">
+                <span className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-[var(--on-surface-variant)]">
+                  <Database className="h-4 w-4 text-[var(--primary-text)]" />
                   Editor SQL
                 </span>
                 {engineLoading && (
@@ -435,13 +566,13 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                 )}
               </div>
 
-              <div className="mx-4 mt-4 rounded-2xl border border-[var(--secondary)]/35 bg-[var(--secondary-10)]/45 p-4">
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--secondary)]">Tarefa</p>
-                <p className="mt-2 text-sm leading-6 text-[var(--on-surface)]">{instruction}</p>
+              <div className="shrink-0 border-b border-[var(--outline-variant)]/25 bg-[var(--secondary-10)]/40 px-4 py-3">
+                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--secondary)]">Tarefa</p>
+                <p className="mt-1 text-sm leading-6 text-[var(--on-surface)]">{instruction}</p>
               </div>
 
               {engineError && (
-                <div role="alert" className="flex flex-col items-start gap-4 p-6">
+                <div role="alert" className="flex shrink-0 flex-col items-start gap-3 border-b border-[var(--outline-variant)]/25 p-4">
                   <div className="flex items-start gap-3">
                     <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-400" />
                     <div>
@@ -464,16 +595,17 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                 </div>
               )}
 
-              <div className="w-full p-4">
+              {/* O editor preenche todo o espaço vertical disponível no desktop. */}
+              <div className="h-[clamp(20rem,45vh,28rem)] min-h-0 p-3 sm:p-4 lg:h-auto lg:flex-1">
                 <SqlEditor
                   value={code}
                   onChange={setCode}
                   disabled={!unlocked || executing}
-                  height="clamp(17.5rem,34vh,25rem)"
+                  height="100%"
                 />
               </div>
 
-              <div className="flex flex-wrap items-center gap-3 border-t border-[var(--outline-variant)]/20 px-4 py-3">
+              <div className="flex shrink-0 flex-wrap items-center gap-3 border-t border-[var(--outline-variant)]/25 px-4 py-3">
                 <button
                   type="button"
                   onClick={handleRun}
@@ -507,92 +639,26 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                   {lesson.xpReward} XP nesta lição
                 </div>
               </div>
-            </section>}
+            </section>
+          )}
 
-            {isQuiz && (
-              <section className="rounded-3xl border border-[var(--secondary)]/30 bg-[var(--surface-container-low)]/60 p-5 shadow-xl shadow-black/20 sm:p-6" aria-labelledby="quiz-heading">
-                <div className="mb-6 flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--secondary)]">Quiz de revisão</p><h2 id="quiz-heading" className="mt-2 text-xl font-bold">Escolha a melhor resposta</h2></div><span className="rounded-full bg-[var(--secondary)]/10 px-3 py-1 text-xs font-bold text-[var(--secondary)]">{Object.keys(quizAnswers).length}/{quizQuestions.length}</span></div>
-                <div className="space-y-6">{quizQuestions.map((question, questionIndex) => <fieldset key={`${lesson.id}-question-${questionIndex}`} className="space-y-3"><legend className="text-sm font-semibold leading-6">{questionIndex + 1}. {question.prompt}</legend><div className="grid gap-2">{question.options.map((option, optionIndex) => { const selected = quizAnswers[questionIndex] === optionIndex; const correct = quizSubmitted && optionIndex === question.answer; const wrong = quizSubmitted && selected && !correct; return <label key={`${lesson.id}-question-${questionIndex}-option-${optionIndex}`} className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3 text-sm transition-[border-color,background-color,transform] duration-[160ms] ease-out active:scale-[0.99] ${correct ? "border-emerald-400/50 bg-emerald-500/10" : wrong ? "border-red-400/50 bg-red-500/10" : selected ? "border-[var(--primary)]/60 bg-[var(--primary-10)]" : "border-[var(--outline-variant)]/30 bg-[var(--surface-container-lowest)] [@media(hover:hover)_and_(pointer:fine)]:hover:border-[var(--primary)]/50"}`}><input type="radio" name={`${lesson.id}-question-${questionIndex}`} checked={selected} onChange={() => !quizSubmitted && setQuizAnswers((current) => ({ ...current, [questionIndex]: optionIndex }))} disabled={quizSubmitted} className="mt-0.5 accent-[var(--primary)]" />{option}</label>; })}</div>{quizSubmitted && question.explanation && <p className="text-sm leading-6 text-[var(--on-surface-variant)]">{question.explanation}</p>}</fieldset>)}</div>
-                {!quizSubmitted ? <button type="button" onClick={() => { setQuizSubmitted(true); if (quizPassed) void completeNonSqlLesson(); }} disabled={!quizComplete || !unlocked} className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[var(--secondary-container)] px-5 py-3 text-sm font-bold text-[var(--on-secondary-container)] transition-[transform,opacity] duration-[160ms] ease-out active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50">Verificar respostas</button> : <div className={`mt-7 rounded-2xl border p-4 ${quizPassed ? "border-emerald-400/30 bg-emerald-500/10" : "border-red-400/30 bg-red-500/10"}`} role="status" aria-live="polite"><p className="font-bold">{quizPassed ? "Tudo certo!" : "Quase lá."}</p><p className="mt-1 text-sm text-[var(--on-surface-variant)]">{quizPassed ? `+${lesson.xpReward} XP conquistados.` : "Revise as respostas e tente novamente."}</p>{!quizPassed && <button type="button" onClick={() => setQuizSubmitted(false)} className="mt-3 text-sm font-bold text-[var(--primary-text)]">Tentar novamente</button>}</div>}
-              </section>
-            )}
+          {isQuiz && (
+            <section className="rounded-3xl border border-[var(--secondary)]/30 bg-[var(--surface-container-low)]/60 p-5 shadow-xl shadow-black/20 sm:p-6" aria-labelledby="quiz-heading">
+              <div className="mb-6 flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--secondary)]">Quiz de revisão</p><h2 id="quiz-heading" className="mt-2 text-xl font-bold">Escolha a melhor resposta</h2></div><span className="rounded-full bg-[var(--secondary)]/10 px-3 py-1 text-xs font-bold text-[var(--secondary)]">{Object.keys(quizAnswers).length}/{quizQuestions.length}</span></div>
+              <div className="space-y-6">{quizQuestions.map((question, questionIndex) => <fieldset key={`${lesson.id}-question-${questionIndex}`} className="space-y-3"><legend className="text-sm font-semibold leading-6">{questionIndex + 1}. {question.prompt}</legend><div className="grid gap-2">{question.options.map((option, optionIndex) => { const selected = quizAnswers[questionIndex] === optionIndex; const correct = quizSubmitted && optionIndex === question.answer; const wrong = quizSubmitted && selected && !correct; return <label key={`${lesson.id}-question-${questionIndex}-option-${optionIndex}`} className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3 text-sm transition-[border-color,background-color,transform] duration-[160ms] ease-out active:scale-[0.99] ${correct ? "border-emerald-400/50 bg-emerald-500/10" : wrong ? "border-red-400/50 bg-red-500/10" : selected ? "border-[var(--primary)]/60 bg-[var(--primary-10)]" : "border-[var(--outline-variant)]/30 bg-[var(--surface-container-lowest)] [@media(hover:hover)_and_(pointer:fine)]:hover:border-[var(--primary)]/50"}`}><input type="radio" name={`${lesson.id}-question-${questionIndex}`} checked={selected} onChange={() => !quizSubmitted && setQuizAnswers((current) => ({ ...current, [questionIndex]: optionIndex }))} disabled={quizSubmitted} className="mt-0.5 accent-[var(--primary)]" />{option}</label>; })}</div>{quizSubmitted && question.explanation && <p className="text-sm leading-6 text-[var(--on-surface-variant)]">{question.explanation}</p>}</fieldset>)}</div>
+              {!quizSubmitted ? <button type="button" onClick={() => { setQuizSubmitted(true); if (quizPassed) void completeNonSqlLesson(); }} disabled={!quizComplete || !unlocked} className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[var(--secondary-container)] px-5 py-3 text-sm font-bold text-[var(--on-secondary-container)] transition-[transform,opacity] duration-[160ms] ease-out active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50">Verificar respostas</button> : <div className={`mt-7 rounded-2xl border p-4 ${quizPassed ? "border-emerald-400/30 bg-emerald-500/10" : "border-red-400/30 bg-red-500/10"}`} role="status" aria-live="polite"><p className="font-bold">{quizPassed ? "Tudo certo!" : "Quase lá."}</p><p className="mt-1 text-sm text-[var(--on-surface-variant)]">{quizPassed ? `+${lesson.xpReward} XP conquistados.` : "Revise as respostas e tente novamente."}</p>{!quizPassed && <button type="button" onClick={() => setQuizSubmitted(false)} className="mt-3 text-sm font-bold text-[var(--primary-text)]">Tentar novamente</button>}</div>}
+            </section>
+          )}
 
-            {isTheory && <section className="rounded-3xl border border-[var(--primary)]/30 bg-[var(--surface-container-low)]/60 p-6 shadow-xl shadow-black/20"><div className="flex items-start gap-4"><div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--primary-10)]"><Sparkles className="h-5 w-5 text-[var(--primary-text)]" /></div><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--primary-text)]">Leitura concluída?</p><h2 className="mt-1 text-xl font-bold">Marque esta teoria como vista</h2><p className="mt-2 text-sm leading-6 text-[var(--on-surface-variant)]">Não há editor nesta unidade. Quando estiver pronto, confirme para liberar a próxima lição.</p></div></div><button type="button" onClick={completeNonSqlLesson} disabled={!unlocked || completed} className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[var(--secondary-container)] px-5 py-3 text-sm font-bold text-[var(--on-secondary-container)] transition-[transform,opacity] duration-[160ms] ease-out active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50">{completed ? "Teoria concluída" : "Concluir teoria"}<CheckCircle2 className="h-4 w-4" /></button></section>}
+          {isTheory && <section className="rounded-3xl border border-[var(--primary)]/30 bg-[var(--surface-container-low)]/60 p-6 shadow-xl shadow-black/20"><div className="flex items-start gap-4"><div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--primary-10)]"><Sparkles className="h-5 w-5 text-[var(--primary-text)]" /></div><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--primary-text)]">Leitura concluída?</p><h2 className="mt-1 text-xl font-bold">Marque esta teoria como vista</h2><p className="mt-2 text-sm leading-6 text-[var(--on-surface-variant)]">Não há editor nesta unidade. Quando estiver pronto, confirme para liberar a próxima lição.</p></div></div><button type="button" onClick={completeNonSqlLesson} disabled={!unlocked || completed} className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[var(--secondary-container)] px-5 py-3 text-sm font-bold text-[var(--on-secondary-container)] transition-[transform,opacity] duration-[160ms] ease-out active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50">{completed ? "Teoria concluída" : "Concluir teoria"}<CheckCircle2 className="h-4 w-4" /></button></section>}
 
-            {validation && (
-              <div
-                className={`rounded-2xl border p-4 ${
-                  validation.passed
-                    ? "border-emerald-500/30 bg-emerald-500/10"
-                    : "border-red-500/30 bg-red-500/10"
-                }`}
-                role="status"
-                aria-live="polite"
-              >
-                <div className="flex items-start gap-3">
-                  {validation.passed ? (
-                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" />
-                  ) : (
-                    <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-400" />
-                  )}
-                  <div className="flex-1">
-                    <p className={`font-semibold ${validation.passed ? "text-emerald-400" : "text-red-400"}`}>
-                      {validation.passed ? "Resposta correta!" : "Ops, algo deu errado"}
-                    </p>
-                    <p className="mt-1 text-sm text-[var(--on-surface-variant)]">{validation.message}</p>
-                    {validation.details.length > 0 && (
-                      <ul className="mt-2 list-inside list-disc text-sm text-[var(--on-surface-variant)]">
-                        {validation.details.map((detail, idx) => (
-                          <li key={idx}>{detail}</li>
-                        ))}
-                      </ul>
-                    )}
-                    {validation.passed && (
-                      <p className="mt-2 text-sm font-bold text-emerald-400">+{lesson.xpReward} XP</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {justSolved && next && (
-              <div className="rounded-2xl border border-[var(--primary)]/30 bg-[var(--primary-10)] p-4">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <p className="text-sm font-semibold text-[var(--primary-text)]">
-                    Lição concluída! Pronto para a próxima?
-                  </p>
-                  <button
-                    type="button"
-                    onClick={goToNext}
-                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--secondary-container)] px-4 py-2 text-sm font-bold text-[var(--on-secondary-container)]"
-                  >
-                    Próxima lição
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {result && !result.error && result.columns.length > 0 && (
-              <section className="rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-4">
-                <h3 className="mb-3 text-sm font-semibold text-[var(--on-surface-variant)]">
-                  Resultado ({result.rows.length} {result.rows.length === 1 ? "linha" : "linhas"})
-                </h3>
-                <ResultTable columns={result.columns} rows={result.rows} />
-              </section>
-            )}
-
-            {result?.error && (
-              <section className="rounded-2xl border border-red-500/20 bg-red-500/5 p-4">
-                <h3 className="mb-2 text-sm font-semibold text-red-400">Erro na execução</h3>
-                <pre className="whitespace-pre-wrap rounded-lg bg-[var(--surface-container-lowest)] p-3 font-mono text-xs text-red-300">
-                  {result.error}
-                </pre>
-              </section>
-            )}
+          {/* Saída da execução e estados de conclusão. No editor fica em uma
+              faixa própria com rolagem; nos demais fluxos corre junto do card. */}
+          <div className={isSqlChallenge ? "shrink-0 space-y-3 lg:max-h-[38%] lg:overflow-y-auto lg:overscroll-contain lg:pr-1" : "space-y-4"}>
+            {feedback}
           </div>
-        </div>
-      </main>
+        </section>
+      </div>
     </div>
   );
 }
