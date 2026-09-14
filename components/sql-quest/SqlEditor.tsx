@@ -22,13 +22,14 @@ interface SqlEditorProps {
 
 /**
  * Contrato dimensional único para todos os modos do editor. O layout externo
- * entrega altura via `height` (inclusive "100%"); o piso de 280px garante que
- * nenhum modo desapareça se a cadeia de porcentagens ainda não resolver. A
+ * entrega altura via `height` (inclusive "100%"); o piso de 12rem garante que
+ * nenhum modo desapareça se a cadeia de porcentagens ainda não resolver, sem
+ * forçar o editor a vazar sobre a barra de ações em viewports baixas. A
  * largura é garantida em cada modo pelas classes `w-full min-w-0`, evitando o
  * colapso horizontal dentro de flex/grid.
  */
 function EditorDimensionsStyle(height: string): CSSProperties {
-  return { height, minHeight: "280px" };
+  return { height, minHeight: "12rem" };
 }
 
 function SimpleSqlEditor({
@@ -181,9 +182,10 @@ export default function SqlEditor(props: SqlEditorProps) {
       // sem isso, o <section> interno com height:100% resolve contra um pai de
       // altura auto/0 e o editor fica sem área clicável/digitável. `w-full
       // min-w-0` impede o colapso horizontal dentro de flex/grid, e o piso de
-      // 280px mantém o contrato dimensional dos demais modos.
+      // 12rem mantém o contrato dimensional dos demais modos sem estourar a
+      // altura disponível em telas baixas.
       <div
-        className="relative w-full min-w-0 min-h-[280px] rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] transition-colors focus-within:border-[var(--primary-text)]/60"
+        className="relative w-full min-w-0 min-h-[12rem] rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] transition-colors focus-within:border-[var(--primary-text)]/60"
         style={{ height: resolvedHeight }}
       >
         <MonacoErrorBoundary fallback={<SimpleSqlEditor {...props} />}>

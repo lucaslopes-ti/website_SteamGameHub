@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { CSSProperties, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import DOMPurify from "dompurify";
@@ -167,6 +167,58 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
   const completed = isCompleted(lesson.chapter, lesson.lesson);
   const unlocked = isUnlocked(lesson.chapter, lesson.lesson);
 
+  /**
+   * Altura real do cabeçalho global, medida em runtime. O workspace do desktop
+   * é ancorado logo abaixo dele (`position: fixed`), então usamos o valor px
+   * exato em vez de um `6rem` fixo que quebraria com zoom, fonte ou faixa de
+   * novidades. Mantém um piso seguro para o primeiro render (SSR).
+   */
+  const [headerOffset, setHeaderOffset] = useState(96);
+
+  useEffect(() => {
+    const header = document.querySelector<HTMLElement>('header[role="banner"]');
+    if (!header) return;
+    const update = () =>
+      setHeaderOffset(Math.round(header.getBoundingClientRect().height) || 96);
+    update();
+    let observer: ResizeObserver | undefined;
+    if (typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver(update);
+      observer.observe(header);
+    }
+    window.addEventListener("resize", update);
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
+  /**
+   * Em desktop a lição ocupa exatamente a viewport abaixo do cabeçalho e a
+   * página NÃO rola (o rodapé global fica fora de alcance). Em telas menores o
+   * fluxo volta a ser o normal, com a página rolando verticalmente.
+   */
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+      return;
+    }
+    const query = window.matchMedia("(min-width: 1024px)");
+    const apply = () => {
+      const lock = query.matches;
+      document.documentElement.style.overflow = lock ? "hidden" : "";
+      document.body.style.overflow = lock ? "hidden" : "";
+    };
+    apply();
+    query.addEventListener("change", apply);
+    return () => {
+      query.removeEventListener("change", apply);
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  const rootStyle = { "--lesson-top": `${headerOffset}px` } as CSSProperties;
+
   const startEngine = useCallback(() => {
     setEngineLoading(true);
     setEngineError(null);
@@ -255,6 +307,9 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
     setJustSolved(true);
   };
 
+  /** Há algo a mostrar no console do editor (acerto, erro, resultado ou conclusão). */
+  const hasFeedback = Boolean(validation || result || justSolved);
+
   /** Feedback de execução/conclusão — reaproveitado nos dois formatos de painel. */
   const feedback = (
     <>
@@ -333,7 +388,10 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
   );
 
   return (
-    <div className="flex min-h-screen flex-col bg-[var(--surface)] text-[var(--on-surface)] lg:h-[calc(100dvh-6rem)] lg:min-h-0 lg:overflow-hidden">
+    <div
+      className="flex min-h-screen flex-col bg-[var(--surface)] text-[var(--on-surface)] lg:fixed lg:inset-x-0 lg:bottom-0 lg:top-[var(--lesson-top)] lg:min-h-0 lg:overflow-hidden"
+      style={rootStyle}
+    >
       {/* Contexto compacto do módulo: navegação, título e progresso */}
       <header className="shrink-0 border-b border-[var(--outline-variant)]/25 bg-[var(--surface-container-low)]/55">
         <div className="flex flex-col gap-3 px-4 py-3 sm:px-5 lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:px-6">
@@ -424,6 +482,10 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
         <section
           aria-label="Conteúdo da lição"
           className="min-w-0 space-y-4 border-b border-[var(--outline-variant)]/25 px-4 py-4 sm:px-6 sm:py-5 lg:min-h-0 lg:space-y-5 lg:overflow-y-auto lg:overscroll-contain lg:border-b-0 lg:py-5"
+          style={{
+            backgroundImage:
+              "radial-gradient(130% 90% at 0% 0%, color-mix(in srgb, var(--primary) 16%, transparent), transparent 60%)",
+          }}
         >
           <section className="rounded-2xl border border-[var(--primary)]/25 bg-[var(--primary-10)]/35 p-5 shadow-lg shadow-[var(--primary)]/5">
             <h2 className="mb-2 flex items-center gap-2 text-base font-bold">
@@ -514,6 +576,10 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
               ? "relative flex min-h-0 flex-1 flex-col gap-3 border-t border-[var(--outline-variant)]/25 bg-[var(--surface-container-lowest)]/30 p-3 sm:p-4 lg:gap-4 lg:overflow-hidden lg:border-l lg:border-t-0 lg:p-5"
               : "relative min-h-0 flex-1 space-y-4 border-t border-[var(--outline-variant)]/25 bg-[var(--surface-container-lowest)]/30 p-4 sm:p-5 lg:overflow-y-auto lg:overscroll-contain lg:border-l lg:border-t-0"
           }
+          style={{
+            backgroundImage:
+              "radial-gradient(120% 80% at 100% 100%, color-mix(in srgb, var(--secondary) 12%, transparent), transparent 58%)",
+          }}
         >
           {!unlocked && (
             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-2xl border border-[var(--outline-variant)]/40 bg-[var(--surface)]/90 p-6 text-center backdrop-blur-sm">
@@ -546,8 +612,8 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
           )}
 
           {isSqlChallenge && (
-            <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-[var(--primary)]/30 bg-[var(--surface-container-low)]/60 shadow-xl shadow-black/20">
-              <div className="flex shrink-0 items-center justify-between gap-3 border-b border-[var(--outline-variant)]/25 bg-[var(--surface-container-high)]/40 px-4 py-2.5">
+            <section className="flex min-h-0 flex-1 flex-col rounded-2xl border border-[var(--primary)]/30 bg-[var(--surface-container-low)]/60 shadow-xl shadow-black/20 lg:overflow-hidden">
+              <div className="flex shrink-0 items-center justify-between gap-3 rounded-t-2xl border-b border-[var(--outline-variant)]/25 bg-[var(--surface-container-high)]/40 px-4 py-2.5">
                 <span className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-[var(--on-surface-variant)]">
                   <Database className="h-4 w-4 text-[var(--primary-text)]" />
                   Editor SQL
@@ -595,8 +661,11 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                 </div>
               )}
 
-              {/* O editor preenche todo o espaço vertical disponível no desktop. */}
-              <div className="h-[clamp(20rem,45vh,28rem)] min-h-0 p-3 sm:p-4 lg:h-auto lg:flex-1">
+              {/* O editor preenche todo o espaço vertical disponível no desktop;
+                  a altura fixa fica só no mobile, onde o painel não é limitado
+                  pela viewport. `overflow-hidden` impede que o editor vaze sobre
+                  a barra de ações em telas baixas. */}
+              <div className="h-[clamp(18rem,42vh,26rem)] min-h-0 overflow-hidden p-3 sm:p-4 lg:h-auto lg:flex-1">
                 <SqlEditor
                   value={code}
                   onChange={setCode}
@@ -605,12 +674,22 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                 />
               </div>
 
-              <div className="flex shrink-0 flex-wrap items-center gap-3 border-t border-[var(--outline-variant)]/25 px-4 py-3">
+              {/* Console de resultados: rolagem própria, sem empurrar as ações. */}
+              {hasFeedback && (
+                <div className="shrink-0 space-y-3 overflow-y-auto overscroll-contain border-t border-[var(--outline-variant)]/25 bg-[var(--surface-container-low)]/40 p-3 sm:p-4 lg:max-h-[45%]">
+                  {feedback}
+                </div>
+              )}
+
+              {/* Rodapé do painel: ações sempre visíveis. No desktop o painel tem
+                  altura própria (fica fixo no fim); no mobile a página rola e o
+                  rodapé acompanha a viewport para nunca esconder o Executar. */}
+              <div className="sticky bottom-0 z-20 flex shrink-0 flex-wrap items-center gap-2 rounded-b-2xl border-t border-[var(--outline-variant)]/25 bg-[var(--surface-container-low)]/95 px-3 py-2.5 backdrop-blur-sm sm:gap-3 sm:px-4 sm:py-3">
                 <button
                   type="button"
                   onClick={handleRun}
                   disabled={!unlocked || engineLoading || !!engineError || executing || !code.trim()}
-                  className="inline-flex items-center gap-2 rounded-lg bg-[var(--secondary-container)] px-5 py-2.5 text-sm font-bold text-[var(--on-secondary-container)] shadow-md transition-transform duration-[160ms] ease-out active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[var(--secondary-container)] px-5 py-2.5 text-sm font-bold text-[var(--on-secondary-container)] shadow-md transition-transform duration-[160ms] ease-out active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
                 >
                   {executing ? (
                     <>
@@ -629,13 +708,14 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                   type="button"
                   onClick={handleReset}
                   disabled={executing}
-                  className="inline-flex items-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] px-4 py-2.5 text-sm font-semibold text-[var(--on-surface)] transition-[background-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--surface-container-high)] disabled:opacity-50"
+                  aria-label="Reiniciar código"
+                  className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] px-3 py-2.5 text-sm font-semibold text-[var(--on-surface)] transition-[background-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--surface-container-high)] disabled:opacity-50 sm:px-4"
                 >
                   <RotateCcw className="h-4 w-4" />
-                  Reiniciar
+                  <span className="hidden sm:inline">Reiniciar</span>
                 </button>
 
-                <div className="ml-auto text-xs font-medium text-[var(--on-surface-variant)]">
+                <div className="ml-auto hidden text-xs font-medium text-[var(--on-surface-variant)] sm:block">
                   {lesson.xpReward} XP nesta lição
                 </div>
               </div>
@@ -652,11 +732,9 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
 
           {isTheory && <section className="rounded-3xl border border-[var(--primary)]/30 bg-[var(--surface-container-low)]/60 p-6 shadow-xl shadow-black/20"><div className="flex items-start gap-4"><div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--primary-10)]"><Sparkles className="h-5 w-5 text-[var(--primary-text)]" /></div><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--primary-text)]">Leitura concluída?</p><h2 className="mt-1 text-xl font-bold">Marque esta teoria como vista</h2><p className="mt-2 text-sm leading-6 text-[var(--on-surface-variant)]">Não há editor nesta unidade. Quando estiver pronto, confirme para liberar a próxima lição.</p></div></div><button type="button" onClick={completeNonSqlLesson} disabled={!unlocked || completed} className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[var(--secondary-container)] px-5 py-3 text-sm font-bold text-[var(--on-secondary-container)] transition-[transform,opacity] duration-[160ms] ease-out active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50">{completed ? "Teoria concluída" : "Concluir teoria"}<CheckCircle2 className="h-4 w-4" /></button></section>}
 
-          {/* Saída da execução e estados de conclusão. No editor fica em uma
-              faixa própria com rolagem; nos demais fluxos corre junto do card. */}
-          <div className={isSqlChallenge ? "shrink-0 space-y-3 lg:max-h-[38%] lg:overflow-y-auto lg:overscroll-contain lg:pr-1" : "space-y-4"}>
-            {feedback}
-          </div>
+          {/* Nos desafios de SQL o feedback vive dentro do console do editor;
+              nos demais fluxos (quiz/teoria) corre junto do card. */}
+          {!isSqlChallenge && <div className="space-y-4">{feedback}</div>}
         </section>
       </div>
     </div>

@@ -70,7 +70,7 @@ challenge:
   expectedColumns:
     - COUNT(*)
   expectedRows:
-    - [4]
+    - [5]
   orderSensitive: false
 ---
 
