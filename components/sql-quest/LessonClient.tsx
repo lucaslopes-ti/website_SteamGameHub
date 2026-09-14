@@ -404,6 +404,17 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
               </div>
             )}
 
+            {lesson.setupSql.trim() && (
+              <details className="rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/60 p-4">
+                <summary className="cursor-pointer text-sm font-semibold text-[var(--on-surface)]">
+                  Código de setup
+                </summary>
+                <pre className="mt-3 overflow-x-auto rounded-xl bg-[var(--surface-container-high)] p-4 font-mono text-sm leading-6 text-[var(--on-surface)]">
+                  <code>{lesson.setupSql}</code>
+                </pre>
+              </details>
+            )}
+
             {isSqlChallenge && <section className="rounded-3xl border border-[var(--primary)]/30 bg-[var(--surface-container-low)]/60 shadow-xl shadow-black/20">
               <div className="flex items-center justify-between border-b border-[var(--outline-variant)]/20 px-4 py-3">
                 <span className="flex items-center gap-2 text-sm font-semibold text-[var(--on-surface-variant)]">
