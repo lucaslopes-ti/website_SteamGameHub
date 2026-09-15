@@ -159,12 +159,12 @@ export default function Home() {
 
       <div className="bg-[var(--primary)] text-white py-3 overflow-hidden whitespace-nowrap flex border-y border-[var(--primary-container)]">
         <div className="animate-marquee flex gap-12 font-semibold text-sm">
-          <span>HUB Atualizado: Novos jogos adicionados!</span>
-          <span>HUB Atualizado: Veja as novas estatisticas!</span>
-          <span>HUB Atualizado: Novos materiais de estudo disponiveis!</span>
-          <span>HUB Atualizado: Novos jogos adicionados!</span>
-          <span>HUB Atualizado: Veja as novas estatisticas!</span>
-          <span>HUB Atualizado: Novos materiais de estudo disponiveis!</span>
+          <span>O HUB é aberto a todos os alunos SENAI</span>
+          <span>Publique seu jogo e divulgue seu projeto</span>
+          <span>Sua criação merece ser vista</span>
+          <span>O HUB é aberto a todos os alunos SENAI</span>
+          <span>Publique seu jogo e divulgue seu projeto</span>
+          <span>Sua criação merece ser vista</span>
         </div>
       </div>
 

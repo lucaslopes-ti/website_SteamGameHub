@@ -88,9 +88,9 @@ describe("Hero", () => {
     expect(screen.getByText("Avaliações")).toBeInTheDocument();
   });
 
-  it("renderiza o badge 'Técnico em Programação de Jogos'", () => {
+  it("renderiza o badge 'Aberto a todos os alunos SENAI'", () => {
     render(<Hero />);
-    expect(screen.getByText("Técnico em Programação de Jogos")).toBeInTheDocument();
+    expect(screen.getByText("Aberto a todos os alunos SENAI")).toBeInTheDocument();
   });
 
   it("faz fetch dos jogos ao montar", () => {

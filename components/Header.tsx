@@ -49,11 +49,11 @@ export default function Header() {
   const panelRef = useRef<HTMLDivElement>(null);
 
   const marqueeItems = [
-    { icon: Gamepad2, text: "A vitrine de jogos autorais" },
-    { icon: Sparkles, text: "Novos jogos adicionados" },
-    { icon: Rocket, text: "Acesse e dê sua avaliação" },
-    { icon: Trophy, text: "99% recomendam jogos do hub" },
-    { icon: GraduationCap, text: "Curso Técnico em Programação de Jogos" },
+    { icon: Gamepad2, text: "Aberto a todos os alunos SENAI" },
+    { icon: Sparkles, text: "Publique e divulgue seu jogo" },
+    { icon: Rocket, text: "Mostre seu projeto para o SENAI" },
+    { icon: Trophy, text: "Seu talento merece destaque" },
+    { icon: GraduationCap, text: "Todos os cursos, todos os projetos" },
   ];
 
   const mainItems: { href: string; label: string; icon: IconType }[] = [

@@ -214,7 +214,7 @@ export default function Hero() {
           <div className="lg:col-span-7 space-y-7">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-xs font-mono uppercase tracking-[0.2em] text-senai-orange">
               <Sparkles className="w-3.5 h-3.5" strokeWidth={2.2} />
-              Técnico em Programação de Jogos
+              Aberto a todos os alunos SENAI
             </div>
 
             <div className="space-y-3">
@@ -225,8 +225,8 @@ export default function Hero() {
             </div>
 
             <p className="text-lg md:text-xl text-gray-300 max-w-2xl leading-relaxed">
-              A vitrine oficial dos jogos autorais criados pelos alunos do curso Técnico em Programação de Jogos.
-              Descubra, jogue e avalie experiências interativas feitas por novos talentos.
+              A vitrine oficial dos jogos e projetos criados por alunos do SENAI, de todos os cursos.
+              Descubra, jogue, avalie e publique as suas criações.
             </p>
 
             <div className="flex flex-wrap items-center gap-3 pt-2">
@@ -389,19 +389,19 @@ export default function Hero() {
       <div className="absolute bottom-0 w-full bg-senai-blueDark text-white py-2 overflow-hidden z-30 shadow-lg">
         <div className="flex whitespace-nowrap animate-marquee">
           <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-white font-sans">
-            HUB Atualizado: Novos jogos adicionados
+            Todo aluno SENAI pode publicar seu jogo
           </span>
           <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest opacity-50 font-sans">•</span>
           <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-slate-100 font-sans">
-            Acesse agora e deixe sua avaliação
+            Divulgue seu projeto no HUB
           </span>
           <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest opacity-50 font-sans">•</span>
           <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-white font-sans">
-            HUB Atualizado: Novos jogos adicionados
+            Todo aluno SENAI pode publicar seu jogo
           </span>
           <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest opacity-50 font-sans">•</span>
           <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-slate-100 font-sans">
-            Acesse agora e deixe sua avaliação
+            Divulgue seu projeto no HUB
           </span>
         </div>
       </div>
