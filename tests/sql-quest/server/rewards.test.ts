@@ -7,8 +7,9 @@
  * aprovação idempotente, saldo/estoque insuficientes sem mutação, pedido
  * corrompido falhando fechado, rejeição e fulfillment.
  *
- * NOTA: o fake Firestore não simula retry/concorrência real de transações —
- * os testes validam a lógica, não a serialização concorrente.
+ * NOTA: o fake Firestore serializa transações concorrentes (fila), reproduzindo
+ * o suficiente da atomicidade real para validar o limite global de reservas em
+ * POSTs simultâneos; não simula retry/backoff real.
  *
  * @jest-environment node
  */
@@ -564,6 +565,202 @@ describe("POST /api/sql-quest/rewards/requests", () => {
       })
     );
     expect(other.status).toBe(201);
+  });
+});
+
+describe("estoque global limitado (POST)", () => {
+  it("initialStock 5 aceita no máximo 5 pedidos que consomem estoque entre todos os alunos", async () => {
+    mockGetAuthUser.mockResolvedValue(student);
+    const { store } = seedProgress("u-student", LESSONS_WITH_CHARACTER_PIECE);
+    // 5 pedidos de OUTROS alunos ocupando slots (requested/approved/fulfilled).
+    const statuses = ["requested", "approved", "fulfilled", "requested", "requested"];
+    statuses.forEach((status, i) => {
+      seedRequest(store, `u-other${i}_keychain`, { uid: `u-other${i}`, status });
+    });
+
+    const res = await createRequest(
+      makeJsonRequest("http://localhost/api/sql-quest/rewards/requests", "POST", {
+        itemId: "keychain",
+        requestDetails: "Quero um chaveiro.",
+      })
+    );
+    expect(res.status).toBe(409);
+    expect(store["sql_quest_reward_requests"]["u-student_keychain"]).toBeUndefined();
+
+    // POST NUNCA inicializa/cria docs de estoque.
+    expect(store["sql_quest_reward_stock"]).toBeUndefined();
+    expect(store["sql_quest_reward_inventory"]).toBeUndefined();
+  });
+
+  it("rejected não consome slot: 4 consumindo + 1 rejeitado ainda deixa vaga (5/5)", async () => {
+    mockGetAuthUser.mockResolvedValue(student);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
+    for (let i = 0; i < 4; i++) {
+      seedRequest(store, `u-other${i}_keychain`, { uid: `u-other${i}`, status: "requested" });
+    }
+    seedRequest(store, "u-rejected_keychain", { uid: "u-rejected", status: "rejected" });
+
+    const res = await createRequest(
+      makeJsonRequest("http://localhost/api/sql-quest/rewards/requests", "POST", {
+        itemId: "keychain",
+        requestDetails: "Quero um chaveiro.",
+      })
+    );
+    expect(res.status).toBe(201);
+    expect(store["sql_quest_reward_requests"]["u-student_keychain"].status).toBe(
+      "requested"
+    );
+  });
+
+  it("fulfilled ocupa slot global (initialStock 1)", async () => {
+    mockGetAuthUser.mockResolvedValue(student);
+    const { store } = seedProgress("u-student", LESSONS_WITH_CHARACTER_PIECE);
+    seedRequest(store, "u-other_character-piece", {
+      uid: "u-other",
+      itemId: "character-piece",
+      itemName: "Peça de personagem",
+      costXp: 691,
+      status: "fulfilled",
+    });
+
+    const res = await createRequest(
+      makeJsonRequest("http://localhost/api/sql-quest/rewards/requests", "POST", {
+        itemId: "character-piece",
+        requestDetails: "Quero uma peça do meu personagem.",
+      })
+    );
+    expect(res.status).toBe(409);
+    expect(
+      store["sql_quest_reward_requests"]["u-student_character-piece"]
+    ).toBeUndefined();
+  });
+
+  it("rejeição libera o slot, mas o aluno rejeitado não pode repetir (doc determinístico)", async () => {
+    // Outro aluno ocupa o único slot do character-piece.
+    const { db, store } = createFakeDb();
+    mockDbHolder.db = db;
+    store["sql_quest_progress"] = {
+      "u-student": {
+        uid: "u-student",
+        completedLessonIds: LESSONS_WITH_CHARACTER_PIECE,
+        totalXp: 999999,
+        spentXp: 0,
+        classId: null,
+      },
+      "u-student2": {
+        uid: "u-student2",
+        completedLessonIds: LESSONS_WITH_CHARACTER_PIECE,
+        totalXp: 999999,
+        spentXp: 0,
+        classId: null,
+      },
+    };
+    seedRequest(store, "u-student2_character-piece", {
+      uid: "u-student2",
+      itemId: "character-piece",
+      itemName: "Peça de personagem",
+      costXp: 691,
+      status: "requested",
+    });
+
+    // Com o slot ocupado, o outro aluno não consegue pedir.
+    mockGetAuthUser.mockResolvedValue(student);
+    const blocked = await createRequest(
+      makeJsonRequest("http://localhost/api/sql-quest/rewards/requests", "POST", {
+        itemId: "character-piece",
+        requestDetails: "Quero uma peça do meu personagem.",
+      })
+    );
+    expect(blocked.status).toBe(409);
+
+    // Admin rejeita: o slot é liberado.
+    mockGetAuthUser.mockResolvedValue(admin);
+    const rejected = await decideRequest(
+      makeJsonRequest(
+        "http://localhost/api/sql-quest/rewards/requests/u-student2_character-piece",
+        "PATCH",
+        { action: "reject" }
+      ),
+      { params: { id: "u-student2_character-piece" } }
+    );
+    expect(rejected.status).toBe(200);
+
+    // Outro aluno agora pode ocupar o slot liberado.
+    mockGetAuthUser.mockResolvedValue(student);
+    const freed = await createRequest(
+      makeJsonRequest("http://localhost/api/sql-quest/rewards/requests", "POST", {
+        itemId: "character-piece",
+        requestDetails: "Quero uma peça do meu personagem.",
+      })
+    );
+    expect(freed.status).toBe(201);
+    expect(
+      store["sql_quest_reward_requests"]["u-student_character-piece"].status
+    ).toBe("requested");
+
+    // O aluno rejeitado NÃO pode repetir: o doc determinístico continua lá.
+    mockGetAuthUser.mockResolvedValue(student2);
+    const again = await createRequest(
+      makeJsonRequest("http://localhost/api/sql-quest/rewards/requests", "POST", {
+        itemId: "character-piece",
+        requestDetails: "Quero outra peça do meu personagem.",
+      })
+    );
+    expect(again.status).toBe(409);
+    expect(
+      store["sql_quest_reward_requests"]["u-student2_character-piece"].status
+    ).toBe("rejected");
+  });
+
+  it("POSTs concorrentes respeitam o limite global atomicamente (initialStock 1)", async () => {
+    const { db, store } = createFakeDb();
+    mockDbHolder.db = db;
+    store["sql_quest_progress"] = {
+      "u-student": {
+        uid: "u-student",
+        completedLessonIds: LESSONS_WITH_CHARACTER_PIECE,
+        totalXp: 999999,
+        spentXp: 0,
+        classId: null,
+      },
+      "u-student2": {
+        uid: "u-student2",
+        completedLessonIds: LESSONS_WITH_CHARACTER_PIECE,
+        totalXp: 999999,
+        spentXp: 0,
+        classId: null,
+      },
+    };
+
+    mockGetAuthUser
+      .mockResolvedValueOnce(student)
+      .mockResolvedValueOnce(student2);
+
+    const [first, second] = await Promise.all([
+      createRequest(
+        makeJsonRequest("http://localhost/api/sql-quest/rewards/requests", "POST", {
+          itemId: "character-piece",
+          requestDetails: "Peça do aluno 1.",
+        })
+      ),
+      createRequest(
+        makeJsonRequest("http://localhost/api/sql-quest/rewards/requests", "POST", {
+          itemId: "character-piece",
+          requestDetails: "Peça do aluno 2.",
+        })
+      ),
+    ]);
+
+    const statuses = [first.status, second.status].sort((a, b) => a - b);
+    expect(statuses).toEqual([201, 409]);
+
+    const created = Object.keys(store["sql_quest_reward_requests"] ?? {}).filter(
+      (id) => id.endsWith("_character-piece")
+    );
+    expect(created).toHaveLength(1);
+    // Nenhum doc de estoque/inventário criado pelo POST.
+    expect(store["sql_quest_reward_stock"]).toBeUndefined();
+    expect(store["sql_quest_reward_inventory"]).toBeUndefined();
   });
 });
 

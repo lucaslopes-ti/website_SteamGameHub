@@ -18,7 +18,10 @@
  *   qualquer doc de estoque ausente/corrompido bloqueia a compra — nunca é
  *   restaurado.
  * - Um aluno pode ter no máximo UM pedido por produto (id determinístico
- *   `{uid}_{itemId}` + create atômico).
+ *   `{uid}_{itemId}` + create atômico); isso vale também após rejeição.
+ * - Limite GLOBAL por produto: no máximo `initialStock` pedidos em estados que
+ *   consomem estoque (`requested`/`approved`/`fulfilled`) somando todos os
+ *   alunos; `rejected` libera o slot. Verificado atomicamente (query+create).
  * - O pedido registra o `classId` canônico do progresso no momento da criação:
  *   admin vê/decide todos; instrutor apenas pedidos cujo `classId` pertence a
  *   turma que ele instrui; pedido sem turma é visível/decidível só por admin.
@@ -83,6 +86,22 @@ export const REWARD_PRODUCTS: readonly RewardProduct[] = [
 
 export const REWARD_PRODUCT_BY_ID: ReadonlyMap<string, RewardProduct> = new Map(
   REWARD_PRODUCTS.map((product) => [product.id, product])
+);
+
+/**
+ * Estados de pedido que OCUPAM uma unidade do estoque global do produto.
+ * `rejected` não ocupa (libera o slot); `requested`, `approved` e `fulfilled`
+ * ocupam. O limite global de um produto é seu `initialStock`: no máximo N
+ * pedidos nesses estados somando TODOS os alunos.
+ */
+export const REWARD_CONSUMING_STATUSES: readonly RewardRequestStatus[] = [
+  "requested",
+  "approved",
+  "fulfilled",
+];
+
+const REWARD_CONSUMING_STATUS_SET: ReadonlySet<RewardRequestStatus> = new Set(
+  REWARD_CONSUMING_STATUSES
 );
 
 /** Pedido de recompensa persistido. */
@@ -349,10 +368,17 @@ export class RewardRequestError extends Error {
  *
  * - Valida produto e descrição (3–500 chars).
  * - Exige saldo atual suficiente (derivado das conclusões reais; não desconta
- *   nem reserva).
+ *   nem reserva XP).
  * - Registra o `classId` canônico do progresso no pedido.
  * - Garante no máximo UM pedido por produto via id determinístico
- *   `{uid}_{itemId}` + create atômico (create-only).
+ *   `{uid}_{itemId}` (create-only). Isso vale mesmo para pedido REJEITADO: o
+ *   documento continua existindo, então o aluno não repete o pedido.
+ * - Limite GLOBAL: o produto aceita no máximo `initialStock` pedidos que
+ *   consomem estoque (`requested`/`approved`/`fulfilled`) somando TODOS os
+ *   alunos. `rejected` não conta e libera o slot para outro aluno.
+ * - Tudo é verificado numa ÚNICA transação com query+create, de modo que POSTs
+ *   concorrentes não ultrapassem o limite. O POST NUNCA inicializa/cria docs de
+ *   estoque — apenas lê o catálogo server-side para obter o `initialStock`.
  */
 export async function createRewardRequest(
   db: Firestore,
@@ -370,11 +396,6 @@ export async function createRewardRequest(
     throw new RewardRequestError(details.error, 400);
   }
 
-  const context = await readStudentRewardContext(db, user.uid);
-  if (context.balance.xpBalance < product.costXp) {
-    throw new RewardRequestError("Saldo de XP insuficiente para este pedido.", 409);
-  }
-
   const now = new Date().toISOString();
   const studentName =
     typeof user.name === "string" && user.name.trim() ? user.name.trim() : "Aluno";
@@ -385,7 +406,7 @@ export async function createRewardRequest(
     id: ref.id,
     uid: user.uid,
     studentName,
-    classId: context.classId,
+    classId: null,
     itemId: product.id,
     itemName: product.name,
     costXp: product.costXp,
@@ -402,7 +423,68 @@ export async function createRewardRequest(
   };
 
   try {
-    await ref.create(doc);
+    await db.runTransaction(async (tx) => {
+      const progressRef = db.collection(PROGRESS_COLLECTION).doc(user.uid);
+      const requestsQuery = db
+        .collection(REWARD_REQUESTS_COLLECTION)
+        .where("itemId", "==", product.id);
+
+      // Leituras primeiro (Firestore real exige): progresso + pedidos do produto.
+      const [progressSnap, requestsSnap] = await Promise.all([
+        tx.get(progressRef),
+        tx.get(requestsQuery),
+      ]);
+
+      // Documento determinístico já existe (mesmo rejeitado) → não repete.
+      let consumingCount = 0;
+      for (const existing of requestsSnap.docs) {
+        if (existing.id === ref.id) {
+          throw new RewardRequestError(
+            "Você já fez um pedido deste produto.",
+            409
+          );
+        }
+        const status = existing.data()?.status;
+        if (
+          typeof status === "string" &&
+          REWARD_CONSUMING_STATUS_SET.has(status as RewardRequestStatus)
+        ) {
+          consumingCount += 1;
+        }
+      }
+
+      const progressData = progressSnap.exists ? (progressSnap.data() ?? {}) : {};
+      const earnedXp = computeTotalXp(
+        sanitizeLessonIds(progressData.completedLessonIds)
+      );
+      const balance = computeXpBalance(
+        earnedXp,
+        toNonNegativeNumber(progressData.spentXp)
+      );
+      if (balance < product.costXp) {
+        throw new RewardRequestError(
+          "Saldo de XP insuficiente para este pedido.",
+          409
+        );
+      }
+
+      // Limite global derivado do catálogo (nunca do doc de estoque, que o POST
+      // não inicializa): N pedidos consumindo estoque no máximo.
+      if (consumingCount >= product.initialStock) {
+        throw new RewardRequestError(
+          "Estoque insuficiente para este produto.",
+          409
+        );
+      }
+
+      doc.classId =
+        typeof progressData.classId === "string" && progressData.classId
+          ? progressData.classId
+          : null;
+
+      // create-only atômico dentro da transação.
+      tx.create(ref, doc);
+    });
   } catch (error) {
     if (isAlreadyExistsError(error)) {
       throw new RewardRequestError("Você já fez um pedido deste produto.", 409);
