@@ -23,6 +23,7 @@ import {
 import { SQLLesson, SQLValue } from "@/lib/sql-quest/types";
 import { executeLessonQuery, initEngine } from "@/lib/sql-quest/sql-engine";
 import SqlEditor from "./SqlEditor";
+import ConfettiBurst from "./ConfettiBurst";
 import { useSqlProgress } from "./useSqlProgress";
 
 function ResultTable({ columns, rows }: { columns: string[]; rows: SQLValue[][] }) {
@@ -186,6 +187,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
   } | null>(null);
   const [revealedHints, setRevealedHints] = useState(0);
   const [justSolved, setJustSolved] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
   const [quizAnswers, setQuizAnswers] = useState<Record<number, number>>({});
   const [quizSubmitted, setQuizSubmitted] = useState(false);
 
@@ -211,6 +213,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
     setValidation(null);
     setRevealedHints(0);
     setJustSolved(false);
+    setShowConfetti(false);
     setQuizAnswers({});
     setQuizSubmitted(false);
     startEngine();
@@ -228,6 +231,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
       if (val.passed && !completed) {
         await complete(lesson.chapter, lesson.lesson);
         setJustSolved(true);
+        setShowConfetti(true);
       }
     } catch {
       // Nunca deixa a tela presa caso a execução rejeite inesperadamente.
@@ -278,6 +282,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
     if (isQuiz && !quizPassed) return;
     await complete(lesson.chapter, lesson.lesson);
     setJustSolved(true);
+    setShowConfetti(true);
   };
 
   /** Há algo a mostrar no console do editor (acerto, erro, resultado ou conclusão). */
@@ -366,6 +371,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
       className="flex min-h-screen flex-col bg-[var(--surface)] text-[var(--on-surface)] lg:h-[calc(100dvh-6.125rem)] lg:min-h-0 lg:overflow-hidden"
     >
       <style dangerouslySetInnerHTML={{ __html: SQL_LESSON_SHELL_CSS }} />
+      {showConfetti && <ConfettiBurst />}
       {/* Contexto compacto do módulo: navegação, título e progresso */}
       <header className="shrink-0 border-b border-[var(--outline-variant)]/25 bg-[var(--surface-container-low)]/55">
         <div className="flex flex-col gap-3 px-4 py-3 sm:px-5 lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:px-6">

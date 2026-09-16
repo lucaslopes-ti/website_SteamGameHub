@@ -9,9 +9,15 @@ import {
   useRef,
   useState,
 } from "react";
-// O loader do Monaco é o mesmo usado internamente por @monaco-editor/react
-// (já instalado como dependência transitiva — nenhuma dependência nova).
+// Monaco empacotado localmente (sem CDN): a rede da escola pode bloquear o
+// jsdelivr, o que derrubaria o editor para o fallback. O pacote já vinha como
+// dependência transitiva de @monaco-editor/react.
+import * as monaco from "monaco-editor";
+// O loader do @monaco-editor/react recebe a instância local via config e não
+// baixa nada de CDN.
 import loader from "@monaco-editor/loader";
+
+loader.config({ monaco });
 
 interface SqlEditorProps {
   value: string;
@@ -206,6 +212,16 @@ export default function SqlEditor(props: SqlEditorProps) {
             }}
             onMount={() => {
               mountedRef.current = true;
+              // O Monaco mede a largura dos caracteres antes das webfonts
+              // (DM Mono) terminarem de carregar; quando a fonte troca depois,
+              // o cursor fica deslocado do texto — muito visível com escala
+              // de 125% do Windows. Reme-measure após `document.fonts.ready`
+              // corrige o desalinhamento do cursor.
+              if (typeof document !== "undefined" && document.fonts) {
+                void document.fonts.ready.then(() => {
+                  monaco.editor.remeasureFonts();
+                });
+              }
             }}
             onChange={(value) => props.onChange(value || "")}
           />

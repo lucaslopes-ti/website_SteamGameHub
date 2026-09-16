@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
+    "monaco-editor": "^0.56.0",
     "clsx": "^2.1.1",
     "dompurify": "3.4.8",
     "dotenv": "^17.2.3",
