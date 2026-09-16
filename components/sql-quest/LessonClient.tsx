@@ -277,6 +277,18 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
   const quizPassed = isQuiz && quizComplete && quizQuestions.every((question, index) => quizAnswers[index] === question.answer);
   const theoryHtml = formatTheory(lesson.explanation);
 
+  /**
+   * Anúncio acessível do acerto. Substitui o antigo banner verde: fica invisível
+   * (`sr-only`) e não ocupa espaço visual, mas mantém os leitores de tela
+   * informados — inclusive ao reexecutar uma lição já concluída ou quando não há
+   * próxima lição, casos em que o cartão "Lição concluída" não aparece.
+   */
+  const successAnnouncement = validation?.passed
+    ? `Resposta correta! +${lesson.xpReward} XP.`
+    : isQuiz && quizSubmitted && quizPassed
+    ? `Tudo certo! +${lesson.xpReward} XP conquistados.`
+    : "";
+
   const completeNonSqlLesson = async () => {
     if (!unlocked || completed) return;
     if (isQuiz && !quizPassed) return;
@@ -291,26 +303,20 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
   /** Feedback de execução/conclusão — reaproveitado nos dois formatos de painel. */
   const feedback = (
     <>
-      {validation && (
+      {/* Acerto não recebe banner verde: a confirmação é dada pela região
+          `sr-only` (anúncio acessível), pelo cartão "Lição concluída" abaixo,
+          pelo confete e pelos selos de status. Só a falha mantém o bloco de
+          feedback, com a mensagem e os detalhes. */}
+      {validation && !validation.passed && (
         <div
-          className={`rounded-2xl border p-4 ${
-            validation.passed
-              ? "border-emerald-500/30 bg-emerald-500/10"
-              : "border-red-500/30 bg-red-500/10"
-          }`}
+          className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4"
           role="status"
           aria-live="polite"
         >
           <div className="flex items-start gap-3">
-            {validation.passed ? (
-              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" />
-            ) : (
-              <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-400" />
-            )}
+            <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-400" />
             <div className="flex-1">
-              <p className={`font-semibold ${validation.passed ? "text-emerald-400" : "text-red-400"}`}>
-                {validation.passed ? "Resposta correta!" : "Ops, algo deu errado"}
-              </p>
+              <p className="font-semibold text-red-400">Ops, algo deu errado</p>
               <p className="mt-1 text-sm text-[var(--on-surface-variant)]">{validation.message}</p>
               {validation.details.length > 0 && (
                 <ul className="mt-2 list-inside list-disc text-sm text-[var(--on-surface-variant)]">
@@ -318,9 +324,6 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                     <li key={idx}>{detail}</li>
                   ))}
                 </ul>
-              )}
-              {validation.passed && (
-                <p className="mt-2 text-sm font-bold text-emerald-400">+{lesson.xpReward} XP</p>
               )}
             </div>
           </div>
@@ -372,6 +375,12 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
     >
       <style dangerouslySetInnerHTML={{ __html: SQL_LESSON_SHELL_CSS }} />
       {showConfetti && <ConfettiBurst />}
+      {/* Acerto só para leitores de tela: sem bloco verde e sem ocupar espaço
+          visual. A região vive sempre no DOM (vazia quando não há acerto) para
+          que a mudança de texto seja anunciada de forma confiável. */}
+      <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {successAnnouncement}
+      </p>
       {/* Contexto compacto do módulo: navegação, título e progresso */}
       <header className="shrink-0 border-b border-[var(--outline-variant)]/25 bg-[var(--surface-container-low)]/55">
         <div className="flex flex-col gap-3 px-4 py-3 sm:px-5 lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:px-6">
@@ -706,7 +715,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
             <section className="rounded-3xl border border-[var(--secondary)]/30 bg-[var(--surface-container-low)]/60 p-5 shadow-xl shadow-black/20 sm:p-6" aria-labelledby="quiz-heading">
               <div className="mb-6 flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--secondary)]">Quiz de revisão</p><h2 id="quiz-heading" className="mt-2 text-xl font-bold">Escolha a melhor resposta</h2></div><span className="rounded-full bg-[var(--secondary)]/10 px-3 py-1 text-xs font-bold text-[var(--secondary)]">{Object.keys(quizAnswers).length}/{quizQuestions.length}</span></div>
               <div className="space-y-6">{quizQuestions.map((question, questionIndex) => <fieldset key={`${lesson.id}-question-${questionIndex}`} className="space-y-3"><legend className="text-sm font-semibold leading-6">{questionIndex + 1}. {question.prompt}</legend><div className="grid gap-2">{question.options.map((option, optionIndex) => { const selected = quizAnswers[questionIndex] === optionIndex; const correct = quizSubmitted && optionIndex === question.answer; const wrong = quizSubmitted && selected && !correct; return <label key={`${lesson.id}-question-${questionIndex}-option-${optionIndex}`} className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3 text-sm transition-[border-color,background-color,transform] duration-[160ms] ease-out active:scale-[0.99] ${correct ? "border-emerald-400/50 bg-emerald-500/10" : wrong ? "border-red-400/50 bg-red-500/10" : selected ? "border-[var(--primary)]/60 bg-[var(--primary-10)]" : "border-[var(--outline-variant)]/30 bg-[var(--surface-container-lowest)] [@media(hover:hover)_and_(pointer:fine)]:hover:border-[var(--primary)]/50"}`}><input type="radio" name={`${lesson.id}-question-${questionIndex}`} checked={selected} onChange={() => !quizSubmitted && setQuizAnswers((current) => ({ ...current, [questionIndex]: optionIndex }))} disabled={quizSubmitted} className="mt-0.5 accent-[var(--primary)]" />{option}</label>; })}</div>{quizSubmitted && question.explanation && <p className="text-sm leading-6 text-[var(--on-surface-variant)]">{question.explanation}</p>}</fieldset>)}</div>
-              {!quizSubmitted ? <button type="button" onClick={() => { setQuizSubmitted(true); if (quizPassed) void completeNonSqlLesson(); }} disabled={!quizComplete || !unlocked} className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[var(--secondary-container)] px-5 py-3 text-sm font-bold text-[var(--on-secondary-container)] transition-[transform,opacity] duration-[160ms] ease-out active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50">Verificar respostas</button> : <div className={`mt-7 rounded-2xl border p-4 ${quizPassed ? "border-emerald-400/30 bg-emerald-500/10" : "border-red-400/30 bg-red-500/10"}`} role="status" aria-live="polite"><p className="font-bold">{quizPassed ? "Tudo certo!" : "Quase lá."}</p><p className="mt-1 text-sm text-[var(--on-surface-variant)]">{quizPassed ? `+${lesson.xpReward} XP conquistados.` : "Revise as respostas e tente novamente."}</p>{!quizPassed && <button type="button" onClick={() => setQuizSubmitted(false)} className="mt-3 text-sm font-bold text-[var(--primary-text)]">Tentar novamente</button>}</div>}
+              {!quizSubmitted ? <button type="button" onClick={() => { setQuizSubmitted(true); if (quizPassed) void completeNonSqlLesson(); }} disabled={!quizComplete || !unlocked} className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[var(--secondary-container)] px-5 py-3 text-sm font-bold text-[var(--on-secondary-container)] transition-[transform,opacity] duration-[160ms] ease-out active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50">Verificar respostas</button> : !quizPassed && <div className="mt-7 rounded-2xl border border-red-400/30 bg-red-500/10 p-4" role="status" aria-live="polite"><p className="font-bold">Quase lá.</p><p className="mt-1 text-sm text-[var(--on-surface-variant)]">Revise as respostas e tente novamente.</p><button type="button" onClick={() => setQuizSubmitted(false)} className="mt-3 text-sm font-bold text-[var(--primary-text)]">Tentar novamente</button></div>}
             </section>
           )}
 
