@@ -1,7 +1,7 @@
 /**
  * Recompensas físicas da SQL Quest (camada server).
  *
- * Catálogo FIXO de 3 produtos (preço/estoque são constantes server-side, nunca
+ * Catálogo FIXO de 8 produtos (preço/estoque são constantes server-side, nunca
  * confiados no cliente), pedidos em `sql_quest_reward_requests/{uid}_{itemId}`,
  * estoque compartilhado globalmente em `sql_quest_reward_stock/{itemId}` e uma
  * marca de inventário versionada em `sql_quest_reward_inventory/current`.
@@ -13,10 +13,12 @@
  * - O aluno cria pedido `requested` apenas se tiver saldo atual suficiente;
  *   nada é descontado nem reservado na criação.
  * - Aprovar é idempotente; saldo/estoque insuficientes bloqueiam SEM mutar.
- * - O estoque inicial 5/1/1 é inicializado UMA única vez via marca de
- *   inventário versionada (transação create-only). Após a marca existir,
- *   qualquer doc de estoque ausente/corrompido bloqueia a compra — nunca é
- *   restaurado.
+ * - O estoque inicial 5/1/1/5/5/5/5/5 é inicializado UMA única vez via marca de
+ *   inventário versionada (transação create-only). Novas versões do catálogo
+ *   (v2: +5 chaveiros) inicializam APENAS os estoques dos produtos novos;
+ *   estoques existentes nunca são restaurados. Após a marca existir na versão
+ *   corrente, qualquer doc de estoque ausente/corrompido bloqueia a compra —
+ *   nunca é restaurado.
  * - Um aluno pode ter no máximo UM pedido por produto (id determinístico
  *   `{uid}_{itemId}` + create atômico); isso vale também após rejeição.
  * - Limite GLOBAL por produto: no máximo `initialStock` pedidos em estados que
@@ -45,7 +47,7 @@ import {
 export const REWARD_REQUESTS_COLLECTION = "sql_quest_reward_requests";
 export const REWARD_STOCK_COLLECTION = "sql_quest_reward_stock";
 export const REWARD_INVENTORY_COLLECTION = "sql_quest_reward_inventory";
-export const REWARD_INVENTORY_VERSION = 1;
+export const REWARD_INVENTORY_VERSION = 2;
 export const REWARD_INVENTORY_DOC_ID = "current";
 
 /** Produto físico da loja de recompensas (constante server-side). */
@@ -57,12 +59,47 @@ export interface RewardProduct {
   initialStock: number;
 }
 
-/** Catálogo fixo e versionado no servidor. */
+/** Catálogo fixo e versionado no servidor (v2: +5 chaveiros temáticos). */
 export const REWARD_PRODUCTS: readonly RewardProduct[] = [
   {
     id: "keychain",
     name: "Chaveiro simples",
     description: "Chaveiro personalizado com o logo da SQL Quest.",
+    costXp: 345,
+    initialStock: 5,
+  },
+  {
+    id: "keychain-sql-logo",
+    name: "Chaveiro Logo SQL",
+    description: "Chaveiro em 3D com o logo da SQL Quest em relevo.",
+    costXp: 345,
+    initialStock: 5,
+  },
+  {
+    id: "keychain-database",
+    name: "Chaveiro Banco de Dados",
+    description: "Chaveiro em formato de cilindro de banco de dados.",
+    costXp: 345,
+    initialStock: 5,
+  },
+  {
+    id: "keychain-select",
+    name: "Chaveiro SELECT *",
+    description: "Chaveiro com o clássico comando SELECT * em relevo.",
+    costXp: 345,
+    initialStock: 5,
+  },
+  {
+    id: "keychain-primary-key",
+    name: "Chaveiro Chave Primária",
+    description: "Chaveiro em formato de chave com a inscrição PRIMARY KEY.",
+    costXp: 345,
+    initialStock: 5,
+  },
+  {
+    id: "keychain-join",
+    name: "Chaveiro INNER JOIN",
+    description: "Chaveiro com as tabelas conectadas de um INNER JOIN.",
     costXp: 345,
     initialStock: 5,
   },
@@ -300,12 +337,18 @@ export async function readRewardStock(
 }
 
 /**
- * Inicializa o estoque inicial 5/1/1 UMA única vez, de forma create-only e
- * atômica (transação): cria a marca de inventário versionada e os 3 documentos
- * de estoque apenas se ainda não existirem. Se a marca já existir, não faz
- * nada — docs de estoque removidos/corrompidos NUNCA são restaurados.
+ * Inicializa o estoque inicial UMA única vez por versão do catálogo, de forma
+ * create-only e atômica (transação):
  *
- * Ordem da transação (Firestore real exige): TODAS as leituras (marca + os 3
+ * - Marca ausente: cria a marca versionada e os docs de estoque apenas se
+ *   ainda não existirem. Docs de estoque removidos/corrompidos NUNCA são
+ *   restaurados.
+ * - Marca com versão anterior à atual (ex.: v1 sem os novos produtos): cria
+ *   APENAS os docs de estoque dos produtos que NÃO constam em `itemIds` e
+ *   atualiza a marca para a versão corrente. Estoques já existentes ficam
+ *   intocados.
+ *
+ * Ordem da transação (Firestore real exige): TODAS as leituras (marca + os
  * docs de estoque) acontecem ANTES de qualquer `tx.set`/write.
  */
 export async function ensureRewardInventory(db: Firestore): Promise<void> {
@@ -315,7 +358,15 @@ export async function ensureRewardInventory(db: Firestore): Promise<void> {
 
   await db.runTransaction(async (tx) => {
     const markerSnap = await tx.get(markerRef);
-    if (markerSnap.exists) return;
+    const marker = markerSnap.data() as
+      | { version?: number; itemIds?: string[]; createdAt?: string }
+      | undefined;
+    const knownItemIds = new Set(marker?.itemIds ?? []);
+    const isFreshInstall = !markerSnap.exists;
+    const needsUpgrade =
+      !isFreshInstall &&
+      Number(marker?.version ?? 0) < REWARD_INVENTORY_VERSION;
+    if (!isFreshInstall && !needsUpgrade) return;
 
     // 1) Leituras primeiro: marca + todos os docs de estoque.
     const stockRefs = REWARD_PRODUCTS.map((product) =>
@@ -330,13 +381,17 @@ export async function ensureRewardInventory(db: Firestore): Promise<void> {
       {
         version: REWARD_INVENTORY_VERSION,
         itemIds: REWARD_PRODUCTS.map((product) => product.id),
-        createdAt: now,
+        createdAt: marker?.createdAt ?? now,
+        updatedAt: now,
       },
       { merge: false }
     );
 
     for (let i = 0; i < REWARD_PRODUCTS.length; i++) {
-      if (!stockSnaps[i].exists) {
+      // Produtos já conhecidos pela marca nunca têm o estoque recriado —
+      // docs ausentes/corrompidos permanecem bloqueados (comportamento
+      // documentado). Novos produtos da versão corrente são inicializados.
+      if (!stockSnaps[i].exists && !knownItemIds.has(REWARD_PRODUCTS[i].id)) {
         tx.set(
           stockRefs[i],
           {

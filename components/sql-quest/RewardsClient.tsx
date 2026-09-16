@@ -11,7 +11,6 @@ type RewardsResponse = { earnedXp: number; spentXp: number; xpBalance: number; i
 type RewardRequest = { id: string; itemId?: string; itemName?: string; studentName?: string; costXp?: number; item?: { name?: string; costXp?: number }; requestDetails: string; status: string; createdAt?: string; updatedAt?: string };
 
 const productNotes: Record<string, string> = {
-  "chaveiro simples": "Máximo de 1 por aluno · 5 unidades globais",
   "peça de personagem": "1 unidade global",
   "objeto personalizado até 12 cm": "1 unidade global",
 };
@@ -20,6 +19,7 @@ function getProductNote(item: RewardItem) {
   const name = item.name.toLocaleLowerCase("pt-BR");
   const id = item.id.toLocaleLowerCase();
   if (productNotes[name]) return productNotes[name];
+  if (name.includes("chaveiro") || id.includes("keychain")) return "Máximo de 1 por aluno · 5 unidades globais";
   if ((id.includes("objeto") || id.includes("custom") || id.includes("personal")) && (id.includes("12") || name.includes("12 cm") || name.includes("objeto"))) return "1 unidade global";
   if (name.includes("objeto") && name.includes("12 cm")) return "1 unidade global";
   return undefined;

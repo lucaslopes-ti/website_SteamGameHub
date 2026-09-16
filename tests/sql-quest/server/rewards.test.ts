@@ -193,7 +193,7 @@ function seedMarker(store: ReturnType<typeof createFakeDb>["store"]) {
   };
 }
 
-/** Semeia marca + estoque inicial completo (5/1/1). */
+/** Semeia marca + estoque inicial completo (5/1/1 para os produtos da v1). */
 function seedInventory(store: ReturnType<typeof createFakeDb>["store"]) {
   seedMarker(store);
   store["sql_quest_reward_stock"] = {
@@ -202,6 +202,14 @@ function seedInventory(store: ReturnType<typeof createFakeDb>["store"]) {
     "object-12cm": { itemId: "object-12cm", initialStock: 1, remainingStock: 1, updatedAt: "2026-09-01T00:00:00.000Z" },
   };
 }
+
+const NEW_KEYCHAIN_IDS = [
+  "keychain-sql-logo",
+  "keychain-database",
+  "keychain-select",
+  "keychain-primary-key",
+  "keychain-join",
+];
 
 beforeEach(() => {
   process.env.FIREBASE_SERVICE_ACCOUNT_KEY = "test-key";
@@ -235,7 +243,7 @@ describe("GET /api/sql-quest/rewards", () => {
     expect(body.spentXp).toBe(345);
     expect(body.xpBalance).toBe(xpFor(LESSONS_WITH_CHARACTER_PIECE) - 345);
 
-    expect(body.items).toHaveLength(3);
+    expect(body.items).toHaveLength(8);
     const keychain = body.items.find((i: { id: string }) => i.id === "keychain");
     expect(keychain).toMatchObject({
       id: "keychain",
@@ -251,14 +259,19 @@ describe("GET /api/sql-quest/rewards", () => {
     expect(object).toMatchObject({ costXp: 2072, initialStock: 1, remainingStock: 1 });
   });
 
-  it("inicializa o inventário 5/1/1 uma única vez (create-only)", async () => {
+  it("inicializa o inventário 5/1/1/5/5/5/5/5 uma única vez (create-only)", async () => {
     mockGetAuthUser.mockResolvedValue(student);
     const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
 
     await getRewards(new NextRequest("http://localhost/api/sql-quest/rewards"));
     expect(store["sql_quest_reward_inventory"]["current"]).toMatchObject({
-      version: 1,
-      itemIds: ["keychain", "character-piece", "object-12cm"],
+      version: 2,
+      itemIds: [
+        "keychain",
+        ...NEW_KEYCHAIN_IDS,
+        "character-piece",
+        "object-12cm",
+      ],
     });
     expect(store["sql_quest_reward_stock"]["keychain"]).toMatchObject({
       initialStock: 5,
@@ -272,11 +285,54 @@ describe("GET /api/sql-quest/rewards", () => {
       initialStock: 1,
       remainingStock: 1,
     });
+    for (const id of NEW_KEYCHAIN_IDS) {
+      expect(store["sql_quest_reward_stock"][id]).toMatchObject({
+        initialStock: 5,
+        remainingStock: 5,
+      });
+    }
 
     // Segunda chamada não repõe nada.
     store["sql_quest_reward_stock"]["keychain"].remainingStock = 2;
     await getRewards(new NextRequest("http://localhost/api/sql-quest/rewards"));
     expect(store["sql_quest_reward_stock"]["keychain"].remainingStock).toBe(2);
+  });
+
+  it("migra o inventário v1: inicializa só os novos chaveiros e preserva estoques existentes", async () => {
+    mockGetAuthUser.mockResolvedValue(student);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
+    // Marca v1 (só os 3 produtos antigos) + estoques antigos já parcialmente gastos.
+    seedInventory(store);
+    store["sql_quest_reward_stock"]["keychain"].remainingStock = 2;
+
+    await getRewards(new NextRequest("http://localhost/api/sql-quest/rewards"));
+
+    // Marca sobe para a versão corrente com todos os ids.
+    expect(store["sql_quest_reward_inventory"]["current"]).toMatchObject({
+      version: 2,
+      itemIds: [
+        "keychain",
+        ...NEW_KEYCHAIN_IDS,
+        "character-piece",
+        "object-12cm",
+      ],
+    });
+    // Estoque existente é preservado (nunca restaurado).
+    expect(store["sql_quest_reward_stock"]["keychain"].remainingStock).toBe(2);
+    expect(store["sql_quest_reward_stock"]["character-piece"].remainingStock).toBe(1);
+    expect(store["sql_quest_reward_stock"]["object-12cm"].remainingStock).toBe(1);
+    // Novos produtos entram com o estoque inicial cheio.
+    for (const id of NEW_KEYCHAIN_IDS) {
+      expect(store["sql_quest_reward_stock"][id]).toMatchObject({
+        initialStock: 5,
+        remainingStock: 5,
+      });
+    }
+
+    // Migração é idempotente: nova chamada não repõe nada.
+    store["sql_quest_reward_stock"]["keychain-join"].remainingStock = 0;
+    await getRewards(new NextRequest("http://localhost/api/sql-quest/rewards"));
+    expect(store["sql_quest_reward_stock"]["keychain-join"].remainingStock).toBe(0);
   });
 
   it("inicialização parcial: lê tudo antes de escrever e cria apenas docs ausentes", async () => {
@@ -343,8 +399,17 @@ describe("GET /api/sql-quest/rewards", () => {
     const keychain = body.items.find((i: { id: string }) => i.id === "keychain");
     expect(keychain.remainingStock).toBe(0);
     expect(keychain.initialStock).toBe(5);
-    // Nada foi restaurado.
-    expect(store["sql_quest_reward_stock"]).toBeUndefined();
+    // Docs dos produtos antigos conhecidos pela marca NÃO foram restaurados;
+    // a migração de versão cria apenas os docs dos produtos novos.
+    expect(store["sql_quest_reward_stock"]["keychain"]).toBeUndefined();
+    expect(store["sql_quest_reward_stock"]["character-piece"]).toBeUndefined();
+    expect(store["sql_quest_reward_stock"]["object-12cm"]).toBeUndefined();
+    for (const id of NEW_KEYCHAIN_IDS) {
+      expect(store["sql_quest_reward_stock"][id]).toMatchObject({
+        initialStock: 5,
+        remainingStock: 5,
+      });
+    }
   });
 
   it("reflete o requestStatus do próprio aluno por produto", async () => {
@@ -1005,7 +1070,13 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
     expect(res.status).toBe(409);
 
     expect(store["sql_quest_progress"]["u-student"].spentXp).toBe(0);
-    expect(store["sql_quest_reward_stock"]).toBeUndefined();
+    // Docs antigos ausentes não são restaurados; a migração cria só os novos.
+    expect(store["sql_quest_reward_stock"]["keychain"]).toBeUndefined();
+    expect(store["sql_quest_reward_stock"]["character-piece"]).toBeUndefined();
+    expect(store["sql_quest_reward_stock"]["object-12cm"]).toBeUndefined();
+    for (const id of NEW_KEYCHAIN_IDS) {
+      expect(store["sql_quest_reward_stock"][id]).toBeDefined();
+    }
     expect(store["sql_quest_reward_requests"]["u-student_keychain"].status).toBe("requested");
   });
 
