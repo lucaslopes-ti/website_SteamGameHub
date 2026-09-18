@@ -15,6 +15,8 @@ import type {
   SQLSchemaSnapshot,
   SQLTableSchema,
   SQLColumnSchema,
+  SQLExpectedIndex,
+  SQLIndexSchema,
 } from "@/lib/sql-quest/types";
 
 function makeLesson(challenge: SQLChallenge): SQLLesson {
@@ -420,6 +422,147 @@ describe("validador — modo schema (DDL)", () => {
         { name: "cartoes", columns: [colSchema("codigo", "TEXT")], foreignKeys: [] },
       ]),
     });
+    expect(validateLessonResult(lesson, result).passed).toBe(true);
+  });
+});
+
+describe("validador — modo schema (índices explícitos)", () => {
+  function index(name: string, columns: string[], unique?: boolean): SQLIndexSchema {
+    return { name, columns, unique: unique ?? false };
+  }
+
+  function lessonWithIndexes(indexes: SQLExpectedIndex[]) {
+    return makeLesson({
+      kind: "schema",
+      instruction: "crie o índice",
+      expectedTables: [{ name: "clientes", indexes }],
+    });
+  }
+
+  function resultWithIndexes(indexes: SQLIndexSchema[]) {
+    return makeResult({
+      schema: makeSchema([
+        {
+          name: "clientes",
+          columns: [
+            colSchema("id", "INTEGER", { pk: true }),
+            colSchema("nome", "TEXT"),
+            colSchema("valor", "REAL"),
+          ],
+          foreignKeys: [],
+          indexes,
+        },
+      ]),
+    });
+  }
+
+  it("passa quando nome e colunas conferem (case-insensitive)", () => {
+    const lesson = lessonWithIndexes([
+      { name: "IDX_CLIENTES_NOME", columns: ["NOME"] },
+    ]);
+    const result = resultWithIndexes([index("idx_clientes_nome", ["nome"])]);
+    const validation = validateLessonResult(lesson, result);
+    expect(validation.passed).toBe(true);
+    expect(validation.mode).toBe("schema");
+  });
+
+  it("reprova quando o índice não existe", () => {
+    const lesson = lessonWithIndexes([
+      { name: "idx_clientes_nome", columns: ["nome"] },
+    ]);
+    const result = resultWithIndexes([]);
+    const validation = validateLessonResult(lesson, result);
+    expect(validation.passed).toBe(false);
+    expect(validation.details.join(" ")).toMatch(/índice/);
+  });
+
+  it("reprova quando a ordem das colunas do composto difere", () => {
+    const lesson = lessonWithIndexes([
+      { name: "idx_composto", columns: ["nome", "valor"] },
+    ]);
+    const result = resultWithIndexes([index("idx_composto", ["valor", "nome"])]);
+    expect(validateLessonResult(lesson, result).passed).toBe(false);
+  });
+
+  it("reprova quando a quantidade de colunas difere", () => {
+    const lesson = lessonWithIndexes([
+      { name: "idx_composto", columns: ["nome", "valor"] },
+    ]);
+    const result = resultWithIndexes([index("idx_composto", ["nome"])]);
+    expect(validateLessonResult(lesson, result).passed).toBe(false);
+  });
+
+  it("reprova quando unique esperado é true e o real é false", () => {
+    const lesson = lessonWithIndexes([
+      { name: "uq_nome", columns: ["nome"], unique: true },
+    ]);
+    const result = resultWithIndexes([index("uq_nome", ["nome"], false)]);
+    const validation = validateLessonResult(lesson, result);
+    expect(validation.passed).toBe(false);
+    expect(validation.details.join(" ")).toMatch(/UNIQUE/);
+  });
+
+  it("reprova quando unique esperado é false e o real é true", () => {
+    const lesson = lessonWithIndexes([
+      { name: "idx_nome", columns: ["nome"], unique: false },
+    ]);
+    const result = resultWithIndexes([index("idx_nome", ["nome"], true)]);
+    const validation = validateLessonResult(lesson, result);
+    expect(validation.passed).toBe(false);
+    expect(validation.details.join(" ")).toMatch(/UNIQUE/);
+  });
+
+  it("ignora unicidade quando unique não é informado", () => {
+    const lesson = lessonWithIndexes([{ name: "idx_nome", columns: ["nome"] }]);
+    const result = resultWithIndexes([index("idx_nome", ["nome"], true)]);
+    expect(validateLessonResult(lesson, result).passed).toBe(true);
+  });
+
+  it("permite índices extras não declarados", () => {
+    const lesson = lessonWithIndexes([
+      { name: "idx_nome", columns: ["nome"] },
+    ]);
+    const result = resultWithIndexes([
+      index("idx_nome", ["nome"]),
+      index("idx_extra", ["valor"]),
+    ]);
+    expect(validateLessonResult(lesson, result).passed).toBe(true);
+  });
+
+  it("reprova quando apenas um dos índices declarados existe", () => {
+    const lesson = lessonWithIndexes([
+      { name: "idx_nome", columns: ["nome"] },
+      { name: "idx_valor", columns: ["valor"] },
+    ]);
+    const result = resultWithIndexes([index("idx_nome", ["nome"])]);
+    expect(validateLessonResult(lesson, result).passed).toBe(false);
+  });
+
+  it("não considera índices automáticos de UNIQUE como explícitos", () => {
+    const lesson = lessonWithIndexes([
+      { name: "sqlite_autoindex_clientes_1", columns: ["nome"] },
+    ]);
+    // A coluna é UNIQUE, mas não há índice explícito capturado.
+    const actual: SQLTableSchema = {
+      name: "clientes",
+      columns: [
+        colSchema("id", "INTEGER", { pk: true }),
+        colSchema("nome", "TEXT", { unique: true }),
+      ],
+      foreignKeys: [],
+      indexes: [],
+    };
+    const result = makeResult({ schema: makeSchema([actual]) });
+    expect(validateLessonResult(lesson, result).passed).toBe(false);
+  });
+
+  it("não reprova schema sem indexes declarados", () => {
+    const lesson = makeLesson({
+      kind: "schema",
+      instruction: "crie a tabela",
+      expectedTables: [{ name: "clientes", columns: [{ name: "id" }] }],
+    });
+    const result = resultWithIndexes([index("idx_qualquer", ["nome"])]);
     expect(validateLessonResult(lesson, result).passed).toBe(true);
   });
 });

@@ -21,6 +21,7 @@ import type {
   SQLTableSchema,
   SQLExpectedTable,
   SQLExpectedColumn,
+  SQLExpectedIndex,
   SQLColumnSchema,
   SQLForeignKeySchema,
 } from "./types";
@@ -268,6 +269,42 @@ function fkMatches(
   });
 }
 
+/**
+ * Confere um índice explícito esperado contra os índices capturados da tabela.
+ *
+ * Exige mesmo nome (case-insensitive), mesma sequência e quantidade de colunas
+ * e, quando `unique` é informado, a mesma unicidade. Índices extras não
+ * reprovam. Devolve `null` quando confere ou a mensagem do problema.
+ */
+function checkExpectedIndex(
+  actualTable: SQLTableSchema,
+  expected: SQLExpectedIndex
+): string | null {
+  const actualIndex = (actualTable.indexes ?? []).find(
+    (idx) => idx.name.toLowerCase() === expected.name.toLowerCase()
+  );
+  if (!actualIndex) {
+    return `A tabela "${actualTable.name}" não possui o índice "${expected.name}".`;
+  }
+
+  const expectedColumns = normalizeColumnsForFkMatch(expected.columns);
+  const actualColumns = normalizeColumnsForFkMatch(actualIndex.columns);
+  if (
+    expectedColumns.length !== actualColumns.length ||
+    !expectedColumns.every((c, i) => actualColumns[i] === c)
+  ) {
+    return `O índice "${actualIndex.name}" da tabela "${actualTable.name}" não confere: esperado (${expected.columns.join(", ")}), recebido (${actualIndex.columns.join(", ")}).`;
+  }
+
+  if (expected.unique !== undefined && actualIndex.unique !== expected.unique) {
+    return `O índice "${actualIndex.name}" da tabela "${actualTable.name}" deveria ${
+      expected.unique ? "ser UNIQUE" : "NÃO ser UNIQUE"
+    }.`;
+  }
+
+  return null;
+}
+
 function validateExpectedTable(
   actualTable: SQLTableSchema | null,
   expectedTable: SQLExpectedTable
@@ -308,6 +345,11 @@ function validateExpectedTable(
         `A tabela "${expectedTable.name}" deveria ter uma FOREIGN KEY de "${expectedFk.columns.join(", ")}" referenciando ${refs}.`
       );
     }
+  }
+
+  for (const expectedIndex of expectedTable.indexes ?? []) {
+    const indexProblem = checkExpectedIndex(actualTable, expectedIndex);
+    if (indexProblem) problems.push(indexProblem);
   }
 
   return problems;

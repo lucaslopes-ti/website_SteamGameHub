@@ -21,14 +21,30 @@ chapters:
     slug: filtros
     title: "Filtros, operadores e curingas"
     description: "Deixe as consultas do Senai Pay mais precisas: crie colunas calculadas com aliases e funções, filtre com BETWEEN, DISTINCT, AND, OR e IN, e busque padrões de texto com LIKE e os curingas % e _."
+  - number: 6
+    slug: ordenacao
+    title: "Ordenação e limites de resultados"
+    description: "Nem toda consulta precisa devolver tudo. Neste capítulo você aprende a limitar o número de registros com LIMIT, classificar os resultados com ORDER BY em ordem crescente ou decrescente e combinar as duas cláusulas nas práticas do Senai Pay."
   - number: 7
     slug: agregacao
     title: "Funções de agregação"
     description: "Dados crus são ótimos, mas relatórios precisam de resumos. Neste capítulo você aprende a calcular totais, médias, mínimos e máximos com COUNT, SUM, MAX, MIN, AVG, GROUP BY, HAVING e ROUND para responder às perguntas do time de negócios do Senai Pay."
+  - number: 8
+    slug: subqueries
+    title: "Subqueries"
+    description: "Algumas perguntas exigem mais de uma consulta. Aprenda a aninhar consultas com subqueries, usando IN e = para filtrar com dados de outra tabela e até para calcular valores sem consultar nenhuma tabela."
+  - number: 9
+    slug: normalizacao
+    title: "Normalização e modelagem de dados"
+    description: "Um bom banco evita dados duplicados e inconsistentes. Neste capítulo você modela relacionamentos 1:1, 1:N e N:N com chaves estrangeiras, entende a normalização e aplica as formas normais 1NF, 2NF, 3NF e BCNF às tabelas do Senai Pay."
   - number: 10
     slug: joins
     title: "Juntando tabelas com JOIN"
     description: "Os dados do Senai Pay estão espalhados em várias tabelas. Aprenda a combiná-los com INNER JOIN, LEFT JOIN, RIGHT JOIN e FULL JOIN para montar relatórios completos sobre usuários, países e transações."
+  - number: 11
+    slug: performance
+    title: "Performance e índices"
+    description: "Consultas rápidas fazem diferença em escala. Aprenda a criar índices com CREATE INDEX, entender quando eles aceleram (e quando pesam), usar índices de múltiplas colunas e saber quando desnormalizar em nome da velocidade."
 ---
 
 # Capítulos da SQL Quest

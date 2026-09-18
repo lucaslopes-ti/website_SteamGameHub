@@ -281,6 +281,171 @@ describe("motor sql.js — desafios data (INSERT/UPDATE/DELETE)", () => {
   });
 });
 
+describe("motor sql.js — snapshot de índices explícitos", () => {
+  it("registra índice explícito e mantém a detecção de UNIQUE automática", async () => {
+    const lesson = makeLesson(
+      {
+        kind: "schema",
+        instruction: "crie o índice",
+        expectedTables: [
+          {
+            name: "clientes",
+            indexes: [
+              { name: "idx_clientes_nome", columns: ["nome"], unique: false },
+            ],
+          },
+        ],
+      },
+      ""
+    );
+    const { result, validation } = await executeLessonQueryWithSqlJs(
+      SQL,
+      lesson,
+      "CREATE TABLE clientes (id INTEGER PRIMARY KEY, nome TEXT UNIQUE, cidade TEXT);" +
+        "CREATE INDEX idx_clientes_nome ON clientes(nome);"
+    );
+
+    expect(result.success).toBe(true);
+    const table = result.schema!.tables[0];
+    expect(table.indexes).toEqual([
+      { name: "idx_clientes_nome", columns: ["nome"], unique: false },
+    ]);
+    // A detecção automática de UNIQUE (origin 'u') continua funcionando.
+    const nome = table.columns.find((c) => c.name === "nome");
+    expect(nome?.unique).toBe(true);
+    expect(validation.passed).toBe(true);
+    expect(validation.mode).toBe("schema");
+  });
+
+  it("preserva a ordem (seqno) das colunas de um índice composto", async () => {
+    const setup =
+      "CREATE TABLE t (a INTEGER, b INTEGER, c INTEGER);" +
+      "CREATE INDEX idx_b_a ON t(b, a);";
+
+    const ordered = makeLesson(
+      {
+        kind: "schema",
+        instruction: "crie o índice",
+        expectedTables: [
+          {
+            name: "t",
+            indexes: [{ name: "idx_b_a", columns: ["b", "a"] }],
+          },
+        ],
+      },
+      ""
+    );
+    const { result, validation } = await executeLessonQueryWithSqlJs(
+      SQL,
+      ordered,
+      setup
+    );
+    expect(result.success).toBe(true);
+    expect(result.schema!.tables[0].indexes).toEqual([
+      { name: "idx_b_a", columns: ["b", "a"], unique: false },
+    ]);
+    expect(validation.passed).toBe(true);
+
+    const reversed = makeLesson(
+      {
+        kind: "schema",
+        instruction: "crie o índice",
+        expectedTables: [
+          {
+            name: "t",
+            indexes: [{ name: "idx_b_a", columns: ["a", "b"] }],
+          },
+        ],
+      },
+      ""
+    );
+    const wrong = await executeLessonQueryWithSqlJs(SQL, reversed, setup);
+    expect(wrong.validation.passed).toBe(false);
+  });
+
+  it("registra índice UNIQUE explícito com unique=true", async () => {
+    const lesson = makeLesson(
+      {
+        kind: "schema",
+        instruction: "crie o índice único",
+        expectedTables: [
+          {
+            name: "t",
+            indexes: [
+              { name: "uq_composto", columns: ["a", "b"], unique: true },
+            ],
+          },
+        ],
+      },
+      ""
+    );
+    const { result, validation } = await executeLessonQueryWithSqlJs(
+      SQL,
+      lesson,
+      "CREATE TABLE t (a INTEGER, b INTEGER);" +
+        "CREATE UNIQUE INDEX uq_composto ON t(a, b);"
+    );
+    expect(result.success).toBe(true);
+    expect(result.schema!.tables[0].indexes).toEqual([
+      { name: "uq_composto", columns: ["a", "b"], unique: true },
+    ]);
+    expect(validation.passed).toBe(true);
+  });
+
+  it("ignora índices parciais", async () => {
+    const { result } = await executeLessonQueryWithSqlJs(
+      SQL,
+      makeLesson(
+        {
+          kind: "schema",
+          instruction: "crie a tabela",
+          expectedTables: [{ name: "t" }],
+        },
+        ""
+      ),
+      "CREATE TABLE t (a INTEGER, b INTEGER);" +
+        "CREATE INDEX idx_parcial ON t(a) WHERE a > 0;"
+    );
+    expect(result.success).toBe(true);
+    expect(result.schema!.tables[0].indexes).toEqual([]);
+  });
+
+  it("descarta índices com expressão (termo não-coluna)", async () => {
+    const { result } = await executeLessonQueryWithSqlJs(
+      SQL,
+      makeLesson(
+        {
+          kind: "schema",
+          instruction: "crie a tabela",
+          expectedTables: [{ name: "t" }],
+        },
+        ""
+      ),
+      "CREATE TABLE t (a INTEGER, b TEXT);" +
+        "CREATE INDEX idx_expr ON t(lower(b));"
+    );
+    expect(result.success).toBe(true);
+    expect(result.schema!.tables[0].indexes).toEqual([]);
+  });
+
+  it("tabela sem índice explícito tem indexes vazio", async () => {
+    const { result } = await executeLessonQueryWithSqlJs(
+      SQL,
+      makeLesson(
+        {
+          kind: "schema",
+          instruction: "crie a tabela",
+          expectedTables: [{ name: "t" }],
+        },
+        ""
+      ),
+      "CREATE TABLE t (a INTEGER, b TEXT UNIQUE);"
+    );
+    expect(result.success).toBe(true);
+    expect(result.schema!.tables[0].indexes).toEqual([]);
+  });
+});
+
 describe("motor sql.js — regressão dos modos existentes", () => {
   it("modo exact continua funcionando", async () => {
     const lesson = makeLesson(

@@ -145,6 +145,16 @@ function asChallenge(v: unknown): SQLContentChallenge | undefined {
                     : undefined,
                 }))
               : [],
+            indexes: Array.isArray(t.indexes)
+              ? t.indexes.filter(isRecord).map((idx) => ({
+                  name: typeof idx.name === "string" ? idx.name : "",
+                  columns: Array.isArray(idx.columns)
+                    ? idx.columns.filter((x): x is string => typeof x === "string")
+                    : [],
+                  unique:
+                    typeof idx.unique === "boolean" ? idx.unique : undefined,
+                }))
+              : [],
             forbidColumns: Array.isArray(t.forbidColumns)
               ? t.forbidColumns.filter((x): x is string => typeof x === "string")
               : [],

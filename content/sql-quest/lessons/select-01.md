@@ -15,6 +15,9 @@ hints:
 references:
   - label: "SQLite — SELECT"
     url: "https://www.sqlite.org/lang_select.html"
+images:
+  - alt: "Logos de bancos de dados SQL, como SQLite, PostgreSQL e MySQL"
+    src: "sql_logos.png"
 setupSql: |
   CREATE TABLE users (
     id INTEGER,

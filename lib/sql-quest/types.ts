@@ -33,6 +33,22 @@ export interface SQLTableSchema {
   name: string;
   columns: SQLColumnSchema[];
   foreignKeys: SQLForeignKeySchema[];
+  /**
+   * Índices EXPLÍCITOS (criados via `CREATE INDEX`) da tabela. Restrições
+   * UNIQUE automáticas (origin 'u') e PRIMARY KEY não entram aqui — elas
+   * continuam refletidas em `SQLColumnSchema.unique`. Ausente em schemas
+   * iniciais/estáticos que não vêm do snapshot.
+   */
+  indexes?: SQLIndexSchema[];
+}
+
+/** Índice explícito capturado do snapshot do banco. */
+export interface SQLIndexSchema {
+  name: string;
+  /** Colunas do índice, NA ORDEM (sequência) declarada. */
+  columns: string[];
+  /** true quando o índice foi criado como UNIQUE. */
+  unique: boolean;
 }
 
 /** Chave estrangeira (pode ser composta). */
@@ -114,6 +130,16 @@ export interface SQLExpectedForeignKey {
   referencedColumns?: string[];
 }
 
+/** Expectativa opcional sobre um índice explícito de uma tabela. */
+export interface SQLExpectedIndex {
+  /** Nome do índice, comparado sem diferenciar maiúsculas/minúsculas. */
+  name: string;
+  /** Colunas que compõem o índice, NA ORDEM (sequência) declarada. */
+  columns: string[];
+  /** Quando informado, exige que a unicidade do índice confira. */
+  unique?: boolean;
+}
+
 /** Expectativa opcional sobre uma tabela em desafios de schema. */
 export interface SQLExpectedTable {
   name: string;
@@ -121,6 +147,8 @@ export interface SQLExpectedTable {
   columns?: SQLExpectedColumn[];
   /** Chaves estrangeiras que DEVEM existir. */
   foreignKeys?: SQLExpectedForeignKey[];
+  /** Índices explícitos que DEVEM existir (extras são permitidos). */
+  indexes?: SQLExpectedIndex[];
   /** Colunas que NÃO podem existir (ex.: após um RENAME COLUMN). */
   forbidColumns?: string[];
 }

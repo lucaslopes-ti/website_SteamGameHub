@@ -27,6 +27,7 @@ import type {
   SQLTableSchema,
   SQLColumnSchema,
   SQLForeignKeySchema,
+  SQLIndexSchema,
   SQLTableState,
 } from "./types";
 import { validateLessonResult } from "./validator";
@@ -108,6 +109,64 @@ function execRowObjects(
   });
 }
 
+/**
+ * Captura os índices EXPLÍCITOS (criados via `CREATE INDEX`) de uma tabela.
+ *
+ * - apenas `origin === 'c'` (restrições UNIQUE/PRIMARY KEY automáticas ficam
+ *   de fora — a detecção de UNIQUE automática é feita em separado);
+ * - índices parciais (`partial === 1`) são ignorados;
+ * - o nome do índice e as colunas precisam ser identificadores seguros e
+ *   colunas REAIS da tabela;
+ * - um índice com qualquer termo que não seja coluna real (ex.: expressão) é
+ *   descartado por inteiro;
+ * - a ordem das colunas é preservada por `seqno`.
+ */
+function buildExplicitIndexes(
+  db: SqlJsDatabase,
+  quotedTable: string,
+  tableColumns: SQLColumnSchema[]
+): SQLIndexSchema[] {
+  const columnNames = new Set(tableColumns.map((c) => c.name.toLowerCase()));
+  const indexes: SQLIndexSchema[] = [];
+
+  const indexRows = execRowObjects(
+    db,
+    `PRAGMA main.index_list(${quotedTable});`
+  );
+
+  for (const row of indexRows) {
+    if (row.origin !== "c") continue;
+    if (Number(row.partial ?? 0) === 1) continue;
+    const indexName = String(row.name);
+    if (!IDENTIFIER_RE.test(indexName)) continue;
+
+    const termRows = execRowObjects(
+      db,
+      `PRAGMA main.index_info("${indexName}");`
+    ).sort((a, b) => Number(a.seqno ?? 0) - Number(b.seqno ?? 0));
+
+    const columns: string[] = [];
+    let hasNonColumnTerm = termRows.length === 0;
+    for (const term of termRows) {
+      const termName = term.name === null ? "" : String(term.name);
+      if (termName === "" || !columnNames.has(termName.toLowerCase())) {
+        hasNonColumnTerm = true;
+        break;
+      }
+      columns.push(termName);
+    }
+    if (hasNonColumnTerm) continue;
+
+    indexes.push({
+      name: indexName,
+      columns,
+      unique: Number(row.unique ?? 0) === 1,
+    });
+  }
+
+  return indexes;
+}
+
 /** Monta o snapshot do schema (tabelas/colunas/restrições) após a execução. */
 function buildSchemaSnapshot(db: SqlJsDatabase): SQLSchemaSnapshot {
   const tables: SQLTableSchema[] = [];
@@ -122,7 +181,7 @@ function buildSchemaSnapshot(db: SqlJsDatabase): SQLSchemaSnapshot {
     const quoted = `"${tableName}"`;
 
     // Colunas via PRAGMA table_info.
-    const columnRows = execRowObjects(db, `PRAGMA table_info(${quoted});`);
+    const columnRows = execRowObjects(db, `PRAGMA main.table_info(${quoted});`);
     const columns: SQLColumnSchema[] = columnRows.map((row) => {
       const pkValue = Number(row.pk ?? 0) > 0;
       return {
@@ -139,7 +198,7 @@ function buildSchemaSnapshot(db: SqlJsDatabase): SQLSchemaSnapshot {
     // Índices únicos automáticos (origin = 'u') para detectar UNIQUE.
     const uniqueIndexNames = execRowObjects(
       db,
-      `PRAGMA index_list(${quoted});`
+      `PRAGMA main.index_list(${quoted});`
     )
       .filter((row) => Number(row.unique ?? 0) === 1 && row.origin === "u")
       .map((row) => String(row.name));
@@ -148,7 +207,7 @@ function buildSchemaSnapshot(db: SqlJsDatabase): SQLSchemaSnapshot {
       if (!IDENTIFIER_RE.test(indexName)) continue;
       const indexColumns = execRowObjects(
         db,
-        `PRAGMA index_info("${indexName}");`
+        `PRAGMA main.index_info("${indexName}");`
       )
         .map((row) => String(row.name))
         .filter((name) => name !== "undefined" && name.length > 0);
@@ -158,7 +217,7 @@ function buildSchemaSnapshot(db: SqlJsDatabase): SQLSchemaSnapshot {
     }
 
     // Chaves estrangeiras via PRAGMA foreign_key_list (agrupadas por id).
-    const fkRows = execRowObjects(db, `PRAGMA foreign_key_list(${quoted});`);
+    const fkRows = execRowObjects(db, `PRAGMA main.foreign_key_list(${quoted});`);
     const groups = new Map<string, Array<Record<string, RawSqlCell>>>();
     for (const row of fkRows) {
       const id = String(row.id);
@@ -193,7 +252,12 @@ function buildSchemaSnapshot(db: SqlJsDatabase): SQLSchemaSnapshot {
       }
     }
 
-    tables.push({ name: tableName, columns, foreignKeys });
+    tables.push({
+      name: tableName,
+      columns,
+      foreignKeys,
+      indexes: buildExplicitIndexes(db, quoted, columns),
+    });
   }
 
   return { tables };

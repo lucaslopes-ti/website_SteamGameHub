@@ -12,6 +12,7 @@ import {
   loadContentDirectory,
   loadLessonFile,
   loadChapterFile,
+  parseLesson,
 } from "@/lib/sql-quest/content/loader";
 import { buildContentBundle } from "@/lib/sql-quest/content/build";
 
@@ -89,6 +90,83 @@ describe("loadLessonFile / loadChapterFile", () => {
     const chapters = loadChapterFile(path.join(FIXTURES, "valid", "chapters.md"));
     expect(chapters.map((c) => c.number)).toEqual([1, 2, 3]);
     expect(chapters[0].slug).toBe("select");
+  });
+});
+
+describe("parseLesson — índices explícitos em schema", () => {
+  function parseSchemaLesson(indexes: unknown) {
+    return parseLesson(
+      {
+        id: "indices-01",
+        title: "Índices",
+        summary: "Crie índices.",
+        chapter: 2,
+        chapterSlug: "tabelas",
+        lesson: 3,
+        difficulty: "intermediario",
+        xp: 60,
+        setupSql: "CREATE TABLE clientes (id INTEGER PRIMARY KEY);",
+        challenge: {
+          kind: "schema",
+          instruction: "Crie os índices.",
+          expectedTables: [
+            {
+              name: "clientes",
+              columns: [{ name: "id", type: "INTEGER", primaryKey: true }],
+              indexes,
+            },
+          ],
+        },
+      },
+      "## Contexto\n\nTexto.",
+      "indices-01.md"
+    );
+  }
+
+  it("preserva name, ordem das colunas e unique (incluindo false)", () => {
+    const lesson = parseSchemaLesson([
+      { name: "idx_composto", columns: ["cliente_id", "valor"], unique: false },
+      { name: "uq_nome", columns: ["nome"], unique: true },
+      { name: "idx_sem_unique", columns: ["id"] },
+    ]);
+    if (lesson.challenge?.kind !== "schema") {
+      throw new Error("esperado desafio schema");
+    }
+    const indexes = lesson.challenge.expectedTables[0].indexes ?? [];
+    expect(indexes).toHaveLength(3);
+
+    expect(indexes[0]).toEqual({
+      name: "idx_composto",
+      columns: ["cliente_id", "valor"],
+      unique: false,
+    });
+    expect("unique" in indexes[0]).toBe(true);
+    expect(indexes[0].unique).toBe(false);
+
+    expect(indexes[1]).toEqual({
+      name: "uq_nome",
+      columns: ["nome"],
+      unique: true,
+    });
+
+    expect(indexes[2].name).toBe("idx_sem_unique");
+    expect(indexes[2].columns).toEqual(["id"]);
+    expect(indexes[2].unique).toBeUndefined();
+  });
+
+  it("normaliza indexes malformados para estruturas vazias", () => {
+    const lesson = parseSchemaLesson([
+      { name: "idx_ok", columns: ["id", 42, "nome"] },
+    ]);
+    if (lesson.challenge?.kind !== "schema") {
+      throw new Error("esperado desafio schema");
+    }
+    const indexes = lesson.challenge.expectedTables[0].indexes ?? [];
+    expect(indexes[0]).toEqual({
+      name: "idx_ok",
+      columns: ["id", "nome"],
+      unique: undefined,
+    });
   });
 });
 

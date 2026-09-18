@@ -35,6 +35,16 @@ export interface SQLContentExpectedForeignKey {
   referencedColumns?: string[];
 }
 
+/** Índice explícito esperado em desafios de schema. */
+export interface SQLContentExpectedIndex {
+  /** Nome do índice, comparado sem diferenciar maiúsculas/minúsculas. */
+  name: string;
+  /** Colunas que compõem o índice, NA ORDEM (sequência) declarada. */
+  columns: string[];
+  /** Quando informado, exige que a unicidade do índice confira. */
+  unique?: boolean;
+}
+
 /** Tabela esperada em desafios de schema. */
 export interface SQLContentExpectedTable {
   name: string;
@@ -42,6 +52,8 @@ export interface SQLContentExpectedTable {
   columns?: SQLContentExpectedColumn[];
   /** Chaves estrangeiras que DEVEM existir. */
   foreignKeys?: SQLContentExpectedForeignKey[];
+  /** Índices explícitos que DEVEM existir (extras são permitidos). */
+  indexes?: SQLContentExpectedIndex[];
   /** Colunas que NÃO podem existir (ex.: após um RENAME COLUMN). */
   forbidColumns?: string[];
 }

@@ -8,7 +8,7 @@ lesson: 1
 difficulty: intermediario
 xp: 41
 prerequisites:
-  - crud-13
+  - normalizacao-11
 hints:
   - "Use INNER JOIN entre users e countries, nessa ordem."
   - "A condição de junção é countries.country_code = users.country_code."

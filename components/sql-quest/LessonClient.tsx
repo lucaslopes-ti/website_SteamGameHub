@@ -96,6 +96,52 @@ function HintCard({ hint, index }: { hint: string; index: number }) {
 }
 
 /**
+ * Resolve o `src` de uma imagem da lição para o caminho público servido pelo
+ * app. O conteúdo guarda apenas o nome do arquivo (ex.: "sql_logos.png"),
+ * relativo ao diretório local de imagens; em runtime elas são expostas em
+ * `/uploads/images/`. Caminhos já absolutos (URLs ou iniciados por "/") são
+ * preservados como estão.
+ */
+function resolveLessonImageSrc(src: string): string {
+  const trimmed = src.trim();
+  if (
+    trimmed.length === 0 ||
+    trimmed.startsWith("/") ||
+    /^[a-z][a-z0-9+.-]*:/i.test(trimmed)
+  ) {
+    return trimmed;
+  }
+  return `/uploads/images/${trimmed.replace(/^\.\//, "")}`;
+}
+
+/**
+ * Galeria de imagens da lição, integrada ao painel de conteúdo. Renderização
+ * genérica: qualquer lição que traga `images` no conteúdo ganha as figuras
+ * automaticamente, sem depender de um id/lição específica.
+ */
+function LessonImages({ images }: { images: SQLLesson["images"] }) {
+  if (images.length === 0) return null;
+  return (
+    <div className="space-y-4">
+      {images.map((image, index) => (
+        <figure
+          key={`${image.src}-${index}`}
+          className="overflow-hidden rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-3 shadow-lg shadow-black/10"
+        >
+          <img
+            src={resolveLessonImageSrc(image.src)}
+            alt={image.alt}
+            loading="lazy"
+            decoding="async"
+            className="h-auto w-full rounded-xl object-cover"
+          />
+        </figure>
+      ))}
+    </div>
+  );
+}
+
+/**
  * Scaffold NEUTRO de partida para o editor: um comentário SQL com a instrução,
  * sem revelar a solução. Nunca usa `exampleSql` (que costuma satisfazer o
  * desafio). A solução continua disponível apenas como última dica progressiva
@@ -357,7 +403,11 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
         </section>
       )}
 
-      {result?.error && (
+      {/* Erro de execução: quando existe validação, o bloco de feedback já
+          traz a mensagem e o detalhe técnico (modo "error") — repetir aqui
+          duplicaria o mesmo texto. Este bloco cobre apenas o caso residual de
+          falha inesperada, em que não há validação. */}
+      {result?.error && !validation && (
         <section className="rounded-2xl border border-red-500/20 bg-red-500/5 p-4">
           <h3 className="mb-2 text-sm font-semibold text-red-400">Erro na execução</h3>
           <pre className="whitespace-pre-wrap rounded-lg bg-[var(--surface-container-lowest)] p-3 font-mono text-xs text-red-300">
@@ -484,18 +534,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
             <p className="text-sm leading-6 text-[var(--on-surface-variant)]">{instruction}</p>
           </section>
 
-          {lesson.id === "select-01" && (
-            <figure className="overflow-hidden rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-3 shadow-lg shadow-black/10">
-              <img
-                src="/uploads/images/sql_logos.png"
-                alt="Logotipos relacionados à linguagem SQL e bancos de dados"
-                className="h-auto w-full rounded-xl object-cover"
-              />
-              <figcaption className="px-1 pt-3 text-center text-xs leading-5 text-[var(--on-surface-variant)]">
-                SQL conecta dados, consultas e decisões em um único idioma.
-              </figcaption>
-            </figure>
-          )}
+          <LessonImages images={lesson.images} />
 
           <section className="rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-5">
             <h2 className="mb-3 flex items-center gap-2 text-base font-bold">
@@ -651,10 +690,10 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
               )}
 
               {/* O editor preenche todo o espaço vertical disponível no desktop;
-                  a altura fixa fica só no mobile, onde o painel não é limitado
-                  pela viewport. `overflow-hidden` impede que o editor vaze sobre
-                  a barra de ações em telas baixas. */}
-              <div className="h-[clamp(18rem,42vh,26rem)] min-h-0 overflow-hidden p-3 sm:p-4 lg:h-auto lg:flex-1">
+                  no mobile mantém altura fixa com piso estável (16rem) para
+                  seguir visível e editável mesmo depois de um feedback. O
+                  `overflow-hidden` impede que ele vaze sobre a barra de ações. */}
+              <div className="h-[clamp(16rem,40vh,24rem)] min-h-0 overflow-hidden p-3 sm:p-4 lg:h-auto lg:flex-1">
                 <SqlEditor
                   value={code}
                   onChange={setCode}
@@ -663,9 +702,18 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                 />
               </div>
 
-              {/* Console de resultados: rolagem própria, sem empurrar as ações. */}
+              {/* Console de resultados: altura limitada com rolagem interna em
+                  qualquer tela. No mobile o teto em `vh` evita que um erro
+                  grande cresça sem fim e empurre/oculte o editor; no desktop o
+                  teto em `%` mantém a barra de ações sempre acessível. A região
+                  rola pelo teclado (`tabIndex`) e é anunciada por leitores. */}
               {hasFeedback && (
-                <div className="shrink-0 space-y-3 overflow-y-auto overscroll-contain border-t border-[var(--outline-variant)]/25 bg-[var(--surface-container-low)]/40 p-3 sm:p-4 lg:max-h-[45%]">
+                <div
+                  role="region"
+                  aria-label="Console de resultados"
+                  tabIndex={0}
+                  className="max-h-[38vh] shrink-0 space-y-3 overflow-y-auto overscroll-contain border-t border-[var(--outline-variant)]/25 bg-[var(--surface-container-low)]/40 p-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--primary-text)]/50 sm:max-h-[42vh] sm:p-4 lg:max-h-[45%]"
+                >
                   {feedback}
                 </div>
               )}

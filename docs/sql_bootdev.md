@@ -1027,7 +1027,6 @@ True
 
 False
 
-
 Question 2
 Not answered
 Within backend systems, SQL queries are typically ____
@@ -3009,3 +3008,2215 @@ Lesson 13: Query Practice - Country Codes
 Assignment: return the distinct country codes present in the users table.
 SELECT DISTINCT country_code FROM users;
 DISTINCT removes duplicate values from the result.
+
+
+CHAPTER 6 - LESSON 1
+
+LIMIT
+Sometimes we don't want to retrieve every record from a table. For example, it's common for a production database table to have millions of rows, and SELECTing all of them might crash your system! The LIMIT keyword has entered the chat.
+
+LIMIT can be used at the end of a SELECT statement to set a cap on the number of records returned.
+
+SELECT
+  *
+FROM
+  products
+WHERE
+  product_name LIKE '%berry%'
+LIMIT
+  50;
+
+The query above retrieves all the records from the products table where the name contains the word berry. If we ran this query on the Amazon database, it would almost certainly return a lot of records.
+
+The LIMIT clause only allows the database to return up to 50 records matching the query. This means that if there aren't that many records matching the query, LIMIT will not have an effect.
+
+Assignment
+A lot of our users have been using CashPal to pay other users for lunch. Let's take a look at a sample of that data.
+
+Write a query that returns all rows and fields from the transactions table, with the following conditions:
+
+Any record where the note field has the word lunch in it.
+The query should return at most 5 records.
+
+
+LESSON 2
+
+Limit Quiz
+SELECT
+  *
+FROM
+  products
+WHERE
+  product_name LIKE '%berry%'
+LIMIT
+  5;
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the Undercaffeinated and Overfed, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+
+
+1
+
+2
+
+Question 1
+Not answered
+'LIMIT 5' will always return exactly 5 records
+
+1
+
+True
+
+2
+
+False
+
+Why might you use a LIMIT clause?
+
+1
+
+To get as much data as possible
+
+2
+
+To avoid selecting a huge amount of data and causing strain on the system
+
+3
+
+I wouldn't. System performance is an OPS person's problem
+
+4
+
+Because I'm a 'machine learning engineer' and don't care about efficiency
+
+LESSON 3
+
+ORDER BY
+SQL also offers us the ability to sort the results of a query using ORDER BY. By default, the ORDER BY keyword sorts records by the given field in ascending order, or ASC for short. However, ORDER BY does support descending order as well with the keyword DESC.
+
+Examples
+This query returns the name, price, and quantity fields from the products table sorted by price in ascending order:
+
+SELECT
+  name,
+  price,
+  quantity
+FROM
+  products
+ORDER BY
+  price;
+
+This query returns the name, price, and quantity of the products ordered by quantity in descending order:
+
+SELECT
+  name,
+  price,
+  quantity
+FROM
+  products
+ORDER BY
+  quantity DESC;
+
+Assignment
+Write a query that lists all the records in the transactions table where:
+
+amount is BETWEEN 10 and 80 dollars.
+The results are sorted by amount in descending order.
+Tip
+
+
+LESSON 4
+
+ORDER BY Quiz
+Example 1
+name	age
+Preston	30
+Lane	27
+Rory	22
+Ashley	20
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the Bane of End-Users, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+
+
+1
+
+2
+
+Question 1
+Not answered
+Example 1 is sorted by age in ____ order
+
+1
+
+DESC
+
+2
+
+ASC
+
+
+Which query would potentially return the data in example 1?
+
+1
+
+SELECT * FROM people ORDER BY age;
+
+2
+
+SELECT * FROM people ORDER BY age DESC;
+
+3
+
+SELECT * FROM people ORDER BY age ASC;
+
+4
+
+SELECT * FROM people ORDER BY DESC age;
+
+LESSON 5
+
+Boot.dev
+Dashboard
+Courses
+Training
+Billing
+Leaderboard
+Community
+Shop
+
+gem bag
+
+New NotificationsToggle notifications99
+Disciple
+
+Level 44
+
+user avatarprofile role frame
+
+sharpshooter armor
+sharpshooter
+5
+
+streak embers
+
+daily streak
+Explain difficulty
+xp potions
+
+chest!Quest available
+
+CH6: Structuring
+
+L5: ORDER BY and LIMIT
+Back
+Next
+
+ORDER BY and LIMIT
+When using both ORDER BY and LIMIT, the ORDER BY clause must come first.
+
+Assignment
+An HR employee got into the Git repository where we store all the queries, and tried to update a query on their own.
+
+Fix the bug in the SQL query.
+
+
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the King of the Keyboard, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+002_main.sql
+001_up.sql
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+SELECT
+  *
+FROM
+  transactions
+WHERE
+  amount BETWEEN 10 AND 80
+LIMIT
+  4
+ORDER BY
+  amount DESC;
+
+
+Submit
+
+Run
+
+Solution
+
+
+
+LESSON 6
+
+Query Practice – Security Breach
+Bad news! CashPal suffered its first security breach: one of the interns leaked a sensitive file that contained some user passwords. Even worse, the user table has passwords stored in plain text. Luckily, we know which passwords were leaked so we can warn these specific users before we move to a modern password storage system.
+
+Assignment
+Write a query on the users table that:
+
+Returns the name and username for every user with a password equal to backendDev, welovebootdev, or SQLrocks.
+Orders the records so that the names are in alphabetical order (A-Z).
+
+
+CHAPTER 8 - LESSON 1
+
+Subqueries
+Sometimes a single query is not enough to retrieve the specific records we need.
+
+It is possible to run a query on the result set of another query – a query within a query! This is called "query-ception"... erm... I mean a "subquery."
+
+Subqueries can be very useful in a number of situations when trying to retrieve specific data that wouldn't be accessible by simply querying a single table.
+
+Querying Multiple Tables
+Here is an example of a subquery:
+
+SELECT
+  id,
+  song_name,
+  artist_id
+FROM
+  songs
+WHERE
+  artist_id IN (
+    SELECT
+      id
+    FROM
+      artists
+    WHERE
+      artist_name LIKE 'Rick%'
+  );
+
+In this hypothetical database, the query above selects all of the ids, song_names, and artist_ids from the songs table that are written by artists whose name starts with Rick. Notice that the subquery allows us to use information from a different table – in this case the artists table.
+
+Subquery Syntax
+The only syntax unique to a subquery is the parentheses surrounding the nested query. The IN operator could be different; for example, we could use the = operator if we expect a single value to be returned.
+
+Assignment
+One of CashPal's customer service representatives needs us to pull all the transactions for a specific user. Trouble is, they only know the user's name, not their id.
+
+Use a subquery to return all transaction details for the user with the name David.
+
+LESSON 2
+
+Subqueries
+Sometimes a single query is not enough to retrieve the specific records we need.
+
+It is possible to run a query on the result set of another query – a query within a query! This is called "query-ception"... erm... I mean a "subquery."
+
+Subqueries can be very useful in a number of situations when trying to retrieve specific data that wouldn't be accessible by simply querying a single table.
+
+Querying Multiple Tables
+Here is an example of a subquery:
+
+SELECT
+  id,
+  song_name,
+  artist_id
+FROM
+  songs
+WHERE
+  artist_id IN (
+    SELECT
+      id
+    FROM
+      artists
+    WHERE
+      artist_name LIKE 'Rick%'
+  );
+
+In this hypothetical database, the query above selects all of the ids, song_names, and artist_ids from the songs table that are written by artists whose name starts with Rick. Notice that the subquery allows us to use information from a different table – in this case the artists table.
+
+Subquery Syntax
+The only syntax unique to a subquery is the parentheses surrounding the nested query. The IN operator could be different; for example, we could use the = operator if we expect a single value to be returned.
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the Incredibly Fluffy, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+
+
+1
+
+2
+
+Question 1
+Not answered
+A subquery...
+
+1
+
+... is a technique for speeding up your database
+
+2
+
+... creates a temporary table
+
+3
+
+... allows you to query the result set of a nested query
+
+The example will return ____ row(s)
+
+1
+
+zero
+
+2
+
+potentially many
+
+3
+
+one
+
+4
+
+no more than one
+
+LESSON 3
+
+Query Practice – Invoice Subquery
+Certain customers have been using their personal CashPal accounts for business expenses. CashPal is trying to contact these customers so they can upsell business accounts.
+
+Assignment
+Using the transactions and users tables, write an SQL statement with a subquery that retrieves full user records for every user who:
+
+Matches the sender_id in a transaction with "invoice" or "tax" mentioned anywhere in the transaction note.
+And is not an admin.
+
+
+LESSON 4
+
+No Tables
+When working on a back-end application, this doesn't come up often, but it's important to remember that SQL is a full programming language. We usually use it to interact with data stored in tables, but it's quite flexible and powerful.
+
+For example, you can SELECT information that's simply calculated, with no tables necessary.
+
+SELECT
+  5 + 10 AS sum;
+
+-- 15
+
+Assignment
+Finance has found that people who have lived longer than 40 years need to start thinking about retirement. Write a query that returns all columns for all users who are more than 40 years old.
+
+Unfortunately, this table awkwardly stores age in days in the age_in_days field! Use a subquery to convert 40 years → days and filter on that. Assume every year has 365 days.
+
+LESSON 5
+
+Quiz
+SELECT
+  5 + 10 AS sum;
+
+-- 15
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the Coffee Connoisseur, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+SQL can only operate on data stored in tables
+
+1
+
+True
+
+2
+
+False
+
+CHAPER 9 - LESSON 1
+
+Boot.dev
+Dashboard
+Courses
+Training
+Billing
+Leaderboard
+Community
+Shop
+
+gem bag
+
+New NotificationsToggle notifications99
+Disciple
+
+Level 44
+
+user avatarprofile role frame
+
+sharpshooter armor
+sharpshooter
+5
+
+streak embers
+
+daily streak
+Explain difficulty
+xp potions
+
+chest!Quest available
+
+CH9: Normalization
+
+L1: Table Relationships
+Back
+Next
+
+Table Relationships
+Relational databases are powerful because of the relationships between the tables. These relationships help us to keep our databases clean and efficient. A relationship between tables assumes that one of these tables has a foreign key that references the primary key of another table.
+
+Click to hide video
+
+Types of Relationships
+There are 3 primary types of relationships in a relational database:
+
+One-to-one
+One-to-many
+Many-to-many
+relationships
+
+One-to-One
+A one-to-one relationship most often manifests as a field or set of fields on a row in a table. For example, a user will have exactly one password.
+
+Settings fields might be another example of a one-to-one relationship. A user will have exactly one email_preference and exactly one birthday.
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the Gormless Glutton, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+
+
+1
+
+2
+
+Question 1
+Not answered
+Which is an example of a one-to-one relationship?
+
+1
+
+A user's transactions
+
+2
+
+A university's professors
+
+3
+
+A transaction's 'note'
+
+4
+
+A father's children
+
+LESSON 2
+
+Boot.dev
+Dashboard
+Courses
+Training
+Billing
+Leaderboard
+Community
+Shop
+
+gem bag
+
+New NotificationsToggle notifications99
+Disciple
+
+Level 44
+
+user avatarprofile role frame
+
+sharpshooter armor
+sharpshooter
+5
+
+streak embers
+
+daily streak
+Explain difficulty
+xp potions
+
+chest!Quest available
+
+CH9: Normalization
+
+L2: One to Many
+Back
+Next
+
+One to Many
+When talking about the relationships between tables, a one-to-many relationship is probably the most commonly used relationship.
+
+A one-to-many relationship occurs when a single record in one table is related to potentially many records in another table.
+
+The one → many relation only goes one way; a record in the second table cannot be related to multiple records in the first table!
+
+Examples
+Assignment
+It's important that we track which devices our users are using to log into CashPal for security purposes. A user can log in from potentially many devices (e.g., a phone, a tablet, and a laptop), but each specific device is owned by a single user.
+
+Let's create a one-to-many relationship between users and their devices.
+
+Create a new table called devices with 4 fields:
+id: an integer primary key
+mac_address: TEXT
+type: TEXT
+user_id: an integer foreign key to the id field of the users table
+
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the Primeval 10x Developer, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+001_main.sql
+002_test.sql
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  age INTEGER NOT NULL,
+  country_code TEXT NOT NULL,
+  username TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL,
+  is_admin BOOLEAN
+);
+
+
+Submit
+
+Run
+
+Solution
+
+
+LESSON 3
+
+Boot.dev
+Dashboard
+Courses
+Training
+Billing
+Leaderboard
+Community
+Shop
+
+gem bag
+
+New NotificationsToggle notifications99
+Disciple
+
+Level 44
+
+user avatarprofile role frame
+
+sharpshooter armor
+sharpshooter
+5
+
+streak embers
+
+daily streak
+Explain difficulty
+xp potions
+
+chest!Quest available
+
+CH9: Normalization
+
+L3: Many to Many
+Back
+Next
+
+Many to Many
+A many-to-many relationship occurs when multiple records in one table can be related to multiple records in another table.
+
+Examples
+A products table and a suppliers table – Products may have 0 to many suppliers, and suppliers can supply 0 to many products.
+A classes table and a students table – Students can take potentially many classes and classes can have many students enrolled.
+Joining Table
+Unique Constraint Across Two Fields
+When enforcing specific schema constraints, we may need to enforce the UNIQUE constraint across two different fields.
+
+CREATE TABLE product_suppliers (
+  product_id INTEGER,
+  supplier_id INTEGER,
+  UNIQUE (product_id, supplier_id),
+  FOREIGN KEY (product_id) REFERENCES products (id),
+  FOREIGN KEY (supplier_id) REFERENCES suppliers (id)
+);
+
+This lets multiple rows share the same product_id or supplier_id, but it prevents any two rows from having both the same product_id and supplier_id.
+
+Assignment
+Let's rethink our user ↔ country relationship. Originally, each user had a single country_code field, but many users have dual citizenship!
+
+If we just gave the countries table a user_id (a one-to-many relationship), we would have duplicate country records. If two users are associated with the United States, we'd create two "United States" countries records.
+
+It is better if each country only has a single record. That way, when a country changes its metadata, we only have to update one record. Because a user can have many countries, and a country can have many users, this is a many-to-many relationship.
+
+Use a joining table to link users and countries.
+
+Remove the country_code field from the users table.
+Create a new table called countries. It should have 3 fields:
+id: an integer primary key
+country_code: TEXT
+name: TEXT
+Create a new table called users_countries. It should have two fields:
+country_id
+user_id
+Add a "unique together" constraint on those ID fields.
+Add foreign keys for those ID fields so that each one references its respective ID in the users or countries table.
+
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the Undercaffeinated and Overfed, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+001_main.sql
+002_test.sql
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  age INTEGER NOT NULL,
+  country_code TEXT NOT NULL,
+  username TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL,
+  is_admin BOOLEAN
+);
+
+
+Submit
+
+Run
+
+Solution
+
+
+LESSON 4
+
+Boot.dev
+Dashboard
+Courses
+Training
+Billing
+Leaderboard
+Community
+Shop
+
+gem bag
+
+New NotificationsToggle notifications99
+Disciple
+
+Level 44
+
+user avatarprofile role frame
+
+sharpshooter armor
+sharpshooter
+5
+
+streak embers
+
+daily streak
+Explain difficulty
+xp potions
+
+chest!Quest available
+
+CH9: Normalization
+
+L4: Database Normalization
+Back
+Next
+
+Database Normalization
+Database normalization is a method for structuring your database schema in a way that helps:
+
+Improve data integrity
+Reduce data redundancy
+Click to hide video
+
+What Is Data Integrity?
+"Data integrity" refers to the accuracy and consistency of data. For example, if a user's age is stored in a database, rather than their birthday, that data becomes incorrect automatically with the passage of time.
+
+It would be better to store a birthday and calculate the age as needed.
+
+A birthday is raw data - it never changes. An age is precomputed data - it becomes stale over time.
+
+What Is Data Redundancy?
+"Data redundancy" occurs when the same piece of data is stored in multiple places. For example: saving the same file multiple times to different hard drives.
+
+Data redundancy can be problematic, especially when data in one place is changed such that the data is no longer consistent across all copies of that data.
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the King of the Keyboard, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+
+
+1
+
+2
+
+Question 1
+Not answered
+To improve data integrity, data should generally be stored in a ____ form
+
+1
+
+Raw
+
+2
+
+Precomputed
+
+
+
+Boot.dev
+Dashboard
+Courses
+Training
+Billing
+Leaderboard
+Community
+Shop
+
+gem bag
+
+New NotificationsToggle notifications99
+Disciple
+
+Level 44
+
+user avatarprofile role frame
+
+sharpshooter armor
+sharpshooter
+5
+
+streak embers
+
+daily streak
+Explain difficulty
+xp potions
+
+chest!Quest available
+
+CH9: Normalization
+
+L4: Database Normalization
+Back
+Next
+
+Database Normalization
+Database normalization is a method for structuring your database schema in a way that helps:
+
+Improve data integrity
+Reduce data redundancy
+Click to hide video
+
+What Is Data Integrity?
+"Data integrity" refers to the accuracy and consistency of data. For example, if a user's age is stored in a database, rather than their birthday, that data becomes incorrect automatically with the passage of time.
+
+It would be better to store a birthday and calculate the age as needed.
+
+A birthday is raw data - it never changes. An age is precomputed data - it becomes stale over time.
+
+What Is Data Redundancy?
+"Data redundancy" occurs when the same piece of data is stored in multiple places. For example: saving the same file multiple times to different hard drives.
+
+Data redundancy can be problematic, especially when data in one place is changed such that the data is no longer consistent across all copies of that data.
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the King of the Keyboard, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+
+
+1
+
+2
+
+Question 2
+Not answered
+Pick the best example of data redundancy
+
+1
+
+Two tables both contain fields that store a boolean value
+
+2
+
+Each table has an id field as its primary key
+
+3
+
+A user's address is stored in two different tables
+
+4
+
+A country table and a users table each contain a field called name
+
+
+LESSON 5
+
+Boot.dev
+Dashboard
+Courses
+Training
+Billing
+Leaderboard
+Community
+Shop
+
+gem bag
+
+New NotificationsToggle notifications99
+Disciple
+
+Level 44
+
+user avatarprofile role frame
+
+sharpshooter armor
+sharpshooter
+5
+
+streak embers
+
+daily streak
+Explain difficulty
+xp potions
+
+chest!Quest available
+
+CH9: Normalization
+
+L5: Normal Forms
+Back
+Next
+
+Normal Forms
+The creator of "database normalization," Edgar F. Codd described different "normal forms" a database can adhere to. We'll talk about the most common ones.
+
+First normal form (1NF)
+Second normal form (2NF)
+Third normal form (3NF)
+Boyce-Codd normal form (BCNF)
+normal forms
+
+In short, first normal form is the least normalized form, and Boyce-Codd is the most normalized form we'll cover here.
+
+The more normalized a database, the better its data integrity, and the less duplicate data you'll have.
+
+“Primary Key” in Normal Forms
+In the context of database normalization, we're going to use the term "primary key" slightly differently. When we're talking about SQLite, a "primary key" is a single column that uniquely identifies a row.
+
+When we're talking more generally about data normalization, the term "primary key" means the collection of columns that uniquely identify a row. That can be a single column, but it can actually be any number of columns that form a composite key. A primary key is the minimum number of columns needed to uniquely identify a row in a table.
+
+If you think back to the many-to-many joining table product_suppliers, that table's "primary key" was actually a combination of the two IDs, product_id and supplier_id:
+
+CREATE TABLE product_suppliers (product_id INTEGER, supplier_id INTEGER, UNIQUE (product_id, supplier_id));
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the Hump Day Holdout, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+
+
+1
+
+2
+
+3
+
+Question 1
+Not answered
+Which form has the most duplicate data?
+
+1
+
+BCNF
+
+2
+
+3NF
+
+3
+
+2NF
+
+4
+
+1NF
+
+
+
+Question 2
+Not answered
+Which form encourages the most accurate and up-to-date information?
+
+1
+
+BCNF
+
+2
+
+3NF
+
+3
+
+2NF
+
+4
+
+1NF
+
+
+In the context of normalization, a primary key is made up of ____ table columns
+
+1
+
+1-many
+
+2
+
+1-2
+
+3
+
+1
+
+4
+
+0-1
+
+LESSON 6
+
+Boot.dev
+Dashboard
+Courses
+Training
+Billing
+Leaderboard
+Community
+Shop
+
+gem bag
+
+New NotificationsToggle notifications99
+Disciple
+
+Level 44
+
+user avatarprofile role frame
+
+sharpshooter armor
+sharpshooter
+5
+
+streak embers
+
+daily streak
+Explain difficulty
+xp potions
+
+chest!Quest available
+
+CH9: Normalization
+
+L6: First Normal Form (1NF)
+Back
+Next
+
+First Normal Form (1NF)
+To be compliant with first normal form (1NF for short), a database table simply needs to follow two rules:
+
+It must have a unique primary key.
+A cell can't have a nested table as its value (depending on the database system you're using, this may not even be possible).
+Example of Not 1NF
+name	age	email
+Lane	27	lane@example.com
+Lane	27	lane@example.com
+Allan	27	allan@example.com
+This table does not adhere to 1NF. It has two identical rows, so there isn't a unique primary key for each row.
+
+Example of 1NF
+The simplest way (but not the only way) to get into first normal form is to add a unique id column.
+
+id	name	age	email
+1	Lane	27	lane@example.com
+2	Lane	27	lane@example.com
+3	Allan	27	allan@example.com
+It's worth noting that if you create a "primary key" by ensuring that two columns are always "unique together," that works too.
+
+Almost Always Adhere to 1NF
+First normal form is simply a good idea.
+
+I've never built a database schema where each table isn't at least in first normal form.
+
+Assignment
+We hired an intern at CashPal and her first task was to design a new "companies" table. This table will store our business clients' data. Unfortunately, the intern has committed the unforgivable sin – there's no primary key on the table! We could have entire duplicate rows!
+
+Add an id field as the first column. It should be an integer and have the PRIMARY KEY constraint. When you're done, the companies table will be in first normal form.
+
+
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the Bear with a Back-End, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+001_main.sql
+002_test.sql
+
+1
+2
+CREATE TABLE companies (name TEXT NOT NULL, num_employees INTEGER NOT NULL);
+
+
+Submit
+
+Run
+
+Solution
+
+
+LESSON 7
+
+Boot.dev
+Dashboard
+Courses
+Training
+Billing
+Leaderboard
+Community
+Shop
+
+gem bag
+
+New NotificationsToggle notifications99
+Disciple
+
+Level 44
+
+user avatarprofile role frame
+
+sharpshooter armor
+sharpshooter
+5
+
+streak embers
+
+daily streak
+Explain difficulty
+xp potions
+
+chest!Quest available
+
+CH9: Normalization
+
+L7: Second Normal Form (2NF)
+Back
+Next
+
+Second Normal Form (2NF)
+A table in second normal form (2NF) follows all the rules of first normal form, and one additional rule that applies only to composite primary keys:
+
+All columns that are not part of the primary key are dependent on the entire primary key, and not just one of the columns in the primary key.
+Example of 1NF but Not 2NF
+In this table, the primary key is a combination of first_name + last_name.
+
+first_name	last_name	first_initial
+Lane	Wagner	l
+Lane	Small	l
+Allan	Wagner	a
+This table does not adhere to 2NF. The first_initial column is entirely dependent on the first_name column, rendering it redundant.
+
+Example of 2NF
+One way to convert the table above to 2NF is to add a new table that maps a first_name directly to its first_initial. This removes any duplicates!
+
+first_name	last_name
+Lane	Wagner
+Lane	Small
+Allan	Wagner
+first_name	first_initial
+Lane	l
+Allan	a
+2NF Is Usually a Good Idea
+You should probably default to keeping your tables in second normal form. That said, there are good reasons to deviate from it, particularly for performance reasons. The reason being that when you have to query a second table to get additional data, it can take a bit longer.
+
+My rule of thumb is: optimize for data integrity and data de-duplication first. If you have speed issues, de-normalize accordingly.
+
+Assignment
+Another developer on our team has created a joining table for the companies ↔ users many-to-many relationship. Unfortunately, they did it a bit... weird. They included meta-information about companies on the joining table!
+
+A good joining table simply has the IDs of the entities in the relationship. It manages the relationship and nothing else. Any information about the entities themselves belongs in their respective tables.
+
+Move the column that's out of place to its proper table. Be sure to add it as the last column in that table.
+
+
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the Gormless Glutton, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+001_main.sql
+002_test.sql
+
+1
+2
+3
+4
+5
+6
+CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL, age INTEGER NOT NULL);
+
+CREATE TABLE companies (id INTEGER PRIMARY KEY, name TEXT NOT NULL, num_employees INTEGER NOT NULL);
+
+CREATE TABLE users_companies (user_id INTEGER, company_id INTEGER, revenue REAL, UNIQUE (user_id, company_id));
+
+
+Submit
+
+Run
+
+Solution
+
+
+LESSON 8
+
+Boot.dev
+Dashboard
+Courses
+Training
+Billing
+Leaderboard
+Community
+Shop
+
+gem bag
+
+New NotificationsToggle notifications99
+Disciple
+
+Level 44
+
+user avatarprofile role frame
+
+sharpshooter armor
+sharpshooter
+5
+
+streak embers
+
+daily streak
+Explain difficulty
+xp potions
+
+chest!Quest available
+
+CH9: Normalization
+
+L8: Third Normal Form (3NF)
+Back
+Next
+
+Third Normal Form (3NF)
+A table in third normal form (3NF) follows all the rules of second normal form, and one additional rule:
+
+All columns that aren't part of the primary key are dependent solely on the primary key.
+Notice that this is only slightly different from second normal form. In second normal form we can't have a column completely dependent on only part of the primary key, and in third normal form we can't have a column that is entirely dependent on anything that isn't the primary key.
+
+Example of 2NF but Not 3NF
+In this table, the primary key is simply the id column.
+
+id	name	first_initial	email
+1	Lane	l	lane.works@example.com
+2	Breanna	b	breanna@example.com
+3	Lane	l	lane.right@example.com
+This table is in second normal form because first_initial is not dependent on a part of the primary key. However, because it is dependent on the name column, it doesn't adhere to third normal form.
+
+Example of 3NF
+The way to convert the table above to 3NF is to add a new table that maps a name directly to its first_initial. Notice how similar this solution is to 2NF.
+
+id	name	email
+1	Lane	lane.works@example.com
+2	Breanna	breanna@example.com
+3	Lane	lane.right@example.com
+name	first_initial
+Lane	l
+Breanna	b
+3NF Is Usually a Good Idea
+The same exact rule of thumb applies to the second and third normal forms.
+
+Optimize for data integrity and data de-duplication first by adhering to 3NF. If you have speed issues, de-normalize accordingly.
+
+Assignment
+This rollout of business accounts is really causing some headaches for our development team. The companies table has been a disaster. Our database architect pointed out that the idea behind the size field is redundant.
+
+If a company has more than 100 employees, we consider it "large," otherwise it's "small." That's something we can calculate from the num_employees field, rather than storing it separately.
+
+Remove the size column from the companies table by modifying the CREATE TABLE statement.
+Change the SELECT statement to calculate a size field in the result set that works the same way. Return the other fields as normal.
+Tip
+
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the Gormless Glutton, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+CREATE TABLE companies (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  num_employees INTEGER NOT NULL,
+  size TEXT
+);
+
+-- Don't touch between these comments --
+INSERT INTO
+  companies (name, num_employees)
+VALUES
+  ('Pfizer', 10000);
+
+INSERT INTO
+  companies (name, num_employees)
+VALUES
+  ('WorldBanc', 80);
+
+INSERT INTO
+  companies (name, num_employees)
+VALUES
+  ('Fantasy Quest', 30);
+
+INSERT INTO
+  companies (name, num_employees)
+VALUES
+  ('Walmart', 1000);
+
+-- Don't touch between these comments --
+SELECT
+  *
+FROM
+  companies;
+
+
+Submit
+
+Run
+
+Solution
+
+
+LESSON 9
+
+Boot.dev
+Dashboard
+Courses
+Training
+Billing
+Leaderboard
+Community
+Shop
+
+gem bag
+
+New NotificationsToggle notifications99
+Disciple
+
+Level 44
+
+user avatarprofile role frame
+
+sharpshooter armor
+sharpshooter
+5
+
+streak embers
+
+daily streak
+Explain difficulty
+xp potions
+
+chest!Quest available
+
+CH9: Normalization
+
+L9: Boyce-Codd Normal Form (BCNF)
+Back
+Next
+
+Boyce-Codd Normal Form (BCNF)
+A table in Boyce-Codd normal form (created by Raymond Boyce and Edgar Codd) follows all the rules of third normal form, plus one additional rule:
+
+A column that's part of a primary key can not be entirely dependent on a column that's not part of that primary key.
+This only comes into play when there are multiple possible primary key combinations that overlap. Another name for this is "overlapping candidate keys."
+
+Only in rare cases does a table in third normal form not meet the requirements of Boyce-Codd normal form!
+
+Example of 3NF but Not Boyce-Codd
+release_year	release_date	sales	name
+2001	2001-01-02	100	Kiss me tender
+2001	2001-01-02	200	Bloody Mary
+2002	2002-04-14	100	I wanna be them
+2002	2002-04-14	200	He got me
+The interesting thing here is that there are three possible primary keys:
+
+release_year + sales
+release_date + sales
+name
+This means that by definition, this table is in the second and third normal forms because those forms only restrict how dependent a column that is not part of a primary key can be.
+
+However, this table is not in Boyce-Codd's normal form because release_year is entirely dependent on release_date.
+
+Example of BCNF
+The easiest way to fix the table in our example is to remove the duplicate data from release_date. Let's make that column release_month_and_day.
+
+release_year	release_month_and_day	sales	name
+2001	01-02	100	Kiss me tender
+2001	02-04	200	Bloody Mary
+2002	04-14	100	I wanna be them
+2002	06-24	200	He got me
+BCNF Is Usually a Good Idea
+The same exact rule of thumb applies to the second, third, and Boyce-Codd normal forms. That said, it's unlikely you'll see BCNF-specific issues in practice.
+
+Optimize for data integrity and data de-duplication first by adhering to Boyce-Codd normal form. If you have speed issues, de-normalize accordingly.
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the Fearless Friday Deployer, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+When can a table be in 3NF but not BCNF?
+
+1
+
+When Raymond F Boyce and Edgar F Codd decree it so from on-high
+
+2
+
+It has multiple possible primary keys
+
+3
+
+It has multiple possible primary key combinations, and one of the columns in a possible primary key is dependent on a column outside of that primary key
+
+4
+
+It has a primary key that depends on another column that's not a primary key
+
+
+LESSON 10
+
+Boot.dev
+Dashboard
+Courses
+Training
+Billing
+Leaderboard
+Community
+Shop
+
+gem bag
+
+New NotificationsToggle notifications99
+Disciple
+
+Level 44
+
+user avatarprofile role frame
+
+sharpshooter armor
+sharpshooter
+5
+
+streak embers
+
+daily streak
+Explain difficulty
+xp potions
+
+chest!Quest available
+
+CH9: Normalization
+
+L10: Normalization Review
+Back
+Next
+
+Normalization Review
+In my opinion, the exact definitions of 1st, 2nd, 3rd and Boyce-Codd normal forms simply are not all that important in your work as a back-end developer.
+
+However, what is important is to understand the basic principles of data integrity and data redundancy that the normal forms teach us. Let's go over some rules of thumb that you should commit to memory – they'll serve you well when you design databases and even just in coding interviews.
+
+Rules of Thumb for Database Design
+Every table should always have a unique identifier (primary key)
+90% of the time, that unique identifier will be a single column named id
+Avoid duplicate data
+Avoid storing data that is completely dependent on other data. Instead, compute it on the fly when you need it.
+Keep your schema as simple as you can. Optimize for a normalized database first. Only denormalize for speed's sake when you start to run into performance problems.
+We'll talk more about speed optimization in a later chapter.
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the Magnificent, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+
+
+1
+
+2
+
+3
+
+Question 1
+Not answered
+Which should you optimize for first?
+
+1
+
+Speed
+
+2
+
+Reducing duplicate data
+
+
+When you don't need a composite key, what should the name of your primary key's column be?
+
+1
+
+skeleton_key
+
+2
+
+key
+
+3
+
+identifier
+
+4
+
+id
+
+
+Which is more important for your career in back-end development?
+
+1
+
+Memorizing the exact definitions of 1NF, 2NF, 3NF and BCNF
+
+2
+
+Internalizing simple rules-of-thumb regarding database normalization
+
+LESSON 11
+
+Query Practice – Users & Banks
+Someone added new columns to CashPal's users table that include information on the user's banking institution. Unfortunately, the developer that made these changes had assumed that a user could have only a single banking institution.
+
+We know that a user can be a member of multiple banks, and that each bank may service a great number of CashPal users. You've been tasked with cleaning up the users table and creating any additional tables to properly support a many-to-many relationship between banks and users.
+
+Assignment
+Given what you've learned about normalization and many-to-many relationships, do the following:
+
+Create a new table called banks that contains any bank-related columns that were incorrectly added to the users table and were prefixed with bank_. Be sure to omit the bank_ prefix when creating the table; we won't need it anymore. (Don't worry about altering the users table right now.)
+Create a joining table named users_banks with user_id and bank_id columns. Add any constraints such that there is never a duplicate row with the same user_id and bank_id combination.
+Add foreign keys so user_id references users(id) and bank_id references banks(id).
+
+
+CHAPTER 11 - LESSON 1
+
+Boot.dev
+Dashboard
+Courses
+Training
+Billing
+Leaderboard
+Community
+Shop
+
+gem bag
+
+New NotificationsToggle notifications99
+Disciple
+
+Level 44
+
+user avatarprofile role frame
+
+sharpshooter armor
+sharpshooter
+5
+
+streak embers
+
+daily streak
+Explain difficulty
+xp potions
+
+chest!Quest available
+
+CH11: Performance
+
+L1: SQL Indexes
+Back
+Next
+
+SQL Indexes
+An index is an in-memory structure that ensures that queries we run on a database are performant, that is to say, they run quickly.
+
+Most database indexes are just binary trees or B-trees! The binary tree can be stored in RAM as well as on disk, and it makes it easy to look up the location of an entire row.
+
+PRIMARY KEY columns are indexed by default, ensuring you can look up a row by its id very quickly. However, if you have other columns that you want to be able to do quick lookups on, you'll need to index them.
+
+CREATE INDEX
+CREATE INDEX index_name ON table_name (column_name);
+
+It's fairly common to name an index after the column it's created on with a suffix of _idx.
+
+Assignment
+As it turns out, the front-end frequently finds itself in a state where it knows a user's email but not their id. Let's add an index on the email field called email_idx.
+
+
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the Bear with a Back-End, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+002_main.sql
+001_up.sql
+003_test.sql
+
+1
+
+
+Submit
+
+Run
+
+Solution
+
+
+
+LESSON 2
+
+Boot.dev
+Dashboard
+Courses
+Training
+Billing
+Leaderboard
+Community
+Shop
+
+gem bag
+
+New NotificationsToggle notifications99
+Disciple
+
+Level 44
+
+user avatarprofile role frame
+
+sharpshooter armor
+sharpshooter
+5
+
+streak embers
+
+daily streak
+Explain difficulty
+xp potions
+
+chest!Quest available
+
+CH11: Performance
+
+L2: Index Review
+Back
+Next
+
+Index Review
+As we discussed, an index is a data structure that can perform quick lookups.
+
+By indexing a column, we create a new in-memory structure, usually a B-tree, where the values in the indexed column are sorted into the tree to keep lookups fast. In terms of Big-O complexity, a B-tree index ensures that lookups are O(log(n)).
+
+Shouldn't We Index Everything?
+While indexes make specific kinds of lookups much faster, they also add performance overhead – they can slow down a database in other ways.
+
+Think about it: if you index every column, you could have hundreds of B-trees in memory! That needlessly bloats the memory usage of your database. It also means that each time you insert a record, that record needs to be added to many trees, slowing down your insert speed.
+
+The rule of thumb is simple:
+
+Add indexes to columns you know you'll be doing frequent lookups on. Leave everything else un-indexed. You can always add another index later.
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the Lover of Salmon, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+
+
+1
+
+2
+
+3
+
+Question 1
+Not answered
+A b-tree index makes lookups...
+
+1
+
+O(n^2)
+
+2
+
+O(n*log(n))
+
+3
+
+O(n)
+
+4
+
+O(log(n))
+
+
+
+LESSON 3
+
+Boot.dev
+Dashboard
+Courses
+Training
+Billing
+Leaderboard
+Community
+Shop
+
+gem bag
+
+New NotificationsToggle notifications99
+Disciple
+
+Level 44
+
+user avatarprofile role frame
+
+sharpshooter armor
+sharpshooter
+5
+
+streak embers
+
+daily streak
+Explain difficulty
+xp potions
+
+chest!Quest available
+
+CH11: Performance
+
+L3: Multi-Column Indexes
+Back
+Next
+
+Multi-Column Indexes
+Multi-column indexes are useful for the exact reason you might think – they speed up lookups that depend on multiple columns.
+
+CREATE INDEX
+CREATE INDEX first_name_last_name_age_idx ON users (first_name, last_name, age);
+
+A multi-column index is sorted by the first column first, the second column next, and so forth. A lookup on only the first column in a multi-column index gets almost all of the performance improvements that it would get from its own single-column index. However, lookups on only the second or third column will have very degraded performance.
+
+Rule of Thumb
+Unless you have specific reasons to do something special, only add multi-column indexes if you're doing frequent lookups on a specific combination of columns.
+
+Assignment
+We frequently need to look up all the transactions between two specific users. There's a page on the website that allows a user to find all the payments they've made to a friend by that friend's name.
+
+Add an index on the user_id and recipient_id columns called user_id_recipient_id_idx to speed up our app!
+
+Make sure the user_id is the first column in the index, so we can also use this index to help our queries that only care about user_id.
+
+
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the Efficient Bubble Sorter, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+002_main.sql
+001_up.sql
+003_test.sql
+
+1
+
+
+Submit
+
+Run
+
+Solution
+
+
+
+
+LESSON 4
+
+Boot.dev
+Dashboard
+Courses
+Training
+Billing
+Leaderboard
+Community
+Shop
+
+gem bag
+
+New NotificationsToggle notifications99
+Disciple
+
+Level 44
+
+user avatarprofile role frame
+
+sharpshooter armor
+sharpshooter
+5
+
+streak embers
+
+daily streak
+Explain difficulty
+xp potions
+
+chest!Quest available
+
+CH11: Performance
+
+L4: Denormalizing for Speed
+Back
+Next
+
+Denormalizing for Speed
+We left you with a cliffhanger in the "normalization" chapter. As it turns out, data integrity and deduplication come at a cost, and that cost is usually speed.
+
+Joining tables together, using subqueries, performing aggregations, and running post-hoc calculations take time. At very large scales these advanced techniques can actually become a huge performance toll on an application – sometimes grinding the database server to a halt.
+
+Storing duplicate information can drastically speed up an application that needs to look it up in different ways. For example, if you store a user's country information right on their user record, no expensive join is required to load their profile page!
+
+That said, denormalize at your own risk! Denormalizing a database incurs a large risk of inaccurate and buggy data.
+
+In my opinion, it should be used as a kind of "last resort" in the name of speed.
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the Bane of End-Users, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+
+
+1
+
+2
+
+3
+
+Question 1
+Not answered
+Denormalizing a database can be used to ____
+
+1
+
+Speed up the queries
+
+2
+
+Reduce duplicate data
+
+
+It's smart to start with a ____ database and ____ it as needed for speed.
+
+1
+
+Normalized, Denormalize
+
+2
+
+Denormalized, Normalize
+
+
+A ____ database is easier to keep bug-free
+
+1
+
+Normalized
+
+2
+
+It's the same
+
+3
+
+Denormalized
+
+LESSON 5
+
+Boot.dev
+Dashboard
+Courses
+Training
+Billing
+Leaderboard
+Community
+Shop
+
+gem bag
+
+New NotificationsToggle notifications99
+Disciple
+
+Level 44
+
+user avatarprofile role frame
+
+sharpshooter armor
+sharpshooter
+5
+
+streak embers
+
+daily streak
+Explain difficulty
+xp potions
+
+chest!Quest available
+
+CH11: Performance
+
+L5: SQL Injection
+Back
+Next
+
+SQL Injection
+SQL is a very common way hackers attempt to cause damage or breach a database. One of my favorite XKCD comics of all time demonstrates the problem:
+
+bobby tables
+
+The joke here is that if someone was using this query:
+
+INSERT INTO
+  students (name)
+VALUES
+  (?);
+
+And the "name" of a student was Robert'); DROP TABLE students;-- then the resulting SQL query would look like this:
+
+INSERT INTO
+  students (name)
+VALUES
+  ('Robert');
+
+DROP TABLE students;
+
+--');
+
+As you can see, this is actually two queries! The first one inserts "Robert" into the database, and the second one deletes the students table!
+
+Protecting Against SQL Injection
+You need to be aware of SQL injection attacks, but to be honest, the solution these days is simply to use a modern SQL library that sanitizes inputs. We don't often need to sanitize inputs by hand at the application level anymore.
+
+For example, the Go standard library's SQL package automatically protects against SQL injection attacks if you use it properly.
+
+In short, don't interpolate user input into raw query strings yourself – make sure your database library has a way to sanitize inputs, and pass user-provided values into that.
+
+
+
+
+
+Boots
+Spellbook
+Lessons
+Boots
+Need help? I, Boots the King of the Keyboard, can assist... for a price.
+
+Ask Boots a question...
+
+
+
+
+
+1
+
+2
+
+Question 1
+Not answered
+SQL injection is best avoided by using a modern SQL package that handles the sanitization of user-provided values
+
+1
+
+True
+
+2
+
+False

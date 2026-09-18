@@ -1,0 +1,168 @@
+---
+id: subqueries-01
+title: "Subqueries: consultas dentro de consultas"
+summary: "Use uma subquery para buscar as transações de um usuário a partir do nome dele."
+chapter: 8
+chapterSlug: subqueries
+lesson: 1
+difficulty: intermediario
+xp: 41
+prerequisites:
+  - ordenacao-06
+hints:
+  - "A consulta externa busca em transactions; a interna busca em users."
+  - "Use WHERE user_id = (SELECT id FROM users WHERE name = 'David')."
+  - "SELECT * FROM transactions WHERE user_id = (SELECT id FROM users WHERE name = 'David');"
+references:
+  - label: "SQLite — SELECT"
+    url: "https://www.sqlite.org/lang_select.html"
+setupSql: |
+  CREATE TABLE users (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    age INTEGER NOT NULL,
+    country_code TEXT NOT NULL,
+    username TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    is_admin BOOLEAN
+  );
+
+  INSERT INTO users (id, name, age, country_code, username, password, is_admin) VALUES
+    (1, 'David', 34, 'US', 'DavidDev', 'insertPractice', false),
+    (2, 'Samantha', 29, 'BR', 'Sammy93', 'addingRecords!', false),
+    (3, 'John', 39, 'CA', 'Jjdev21', 'sqlMaster2024', false),
+    (4, 'Ram', 42, 'IN', 'Ram11c', 'queryNinja', false),
+    (5, 'Hunter', 30, 'US', 'Hdev92', 'backendDev', false),
+    (6, 'Allan', 27, 'US', 'Alires', 'welovebootdev', true),
+    (7, 'Al', 44, 'JP', 'quickCoder', 'SQLrocks', false),
+    (8, 'Tiffany', 28, 'US', 'TiffT', 'tiffanyPass', true),
+    (9, 'Marta', 36, 'ES', 'MartaDBA', 'spainPass', true),
+    (10, 'Yuki', 58, 'JP', 'YukiSensei', 'retireSoon', false);
+
+  CREATE TABLE transactions (
+    id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    sender_id INTEGER,
+    recipient_id INTEGER,
+    note TEXT,
+    amount INTEGER NOT NULL,
+    was_successful BOOLEAN NOT NULL
+  );
+
+  INSERT INTO transactions (id, user_id, sender_id, recipient_id, note, amount, was_successful) VALUES
+    (1, 1, 1, 2, 'Lunch with client', 25, true),
+    (2, 1, 1, 3, 'Coffee', 5, true),
+    (3, 2, 2, 1, 'Lunch', 30, true),
+    (4, 2, NULL, 4, 'invoice #1042', 15, true),
+    (5, 3, 3, 5, 'Lunch', 10, true),
+    (6, 3, 3, 6, 'tax payment', 40, true),
+    (7, 4, 4, 1, 'Lunch', 22, true),
+    (8, 5, 5, 2, 'Lunch', 18, true),
+    (9, 6, 6, 3, 'Rent', 12, true),
+    (10, 6, 6, 4, 'Lunch', 27, false),
+    (11, 8, 8, 5, 'invoice #2210', 55, true),
+    (12, 9, 9, 1, 'tax refund', 33, true),
+    (13, 10, 10, 2, 'Lunch', 8, true),
+    (14, 4, 4, 6, 'invoice #3099', 70, true);
+tables:
+  - name: users
+    columns:
+      - name: id
+        type: INTEGER
+        primaryKey: true
+      - name: name
+        type: TEXT
+        notNull: true
+      - name: age
+        type: INTEGER
+        notNull: true
+      - name: country_code
+        type: TEXT
+        notNull: true
+      - name: username
+        type: TEXT
+        unique: true
+        notNull: true
+      - name: password
+        type: TEXT
+        notNull: true
+      - name: is_admin
+        type: BOOLEAN
+  - name: transactions
+    columns:
+      - name: id
+        type: INTEGER
+        primaryKey: true
+      - name: user_id
+        type: INTEGER
+        notNull: true
+      - name: sender_id
+        type: INTEGER
+      - name: recipient_id
+        type: INTEGER
+      - name: note
+        type: TEXT
+      - name: amount
+        type: INTEGER
+        notNull: true
+      - name: was_successful
+        type: BOOLEAN
+        notNull: true
+challenge:
+  kind: exact
+  instruction: "Usando uma subquery, retorne todas as colunas da tabela `transactions` pertencentes ao usuário chamado `David`."
+  expectedColumns:
+    - id
+    - user_id
+    - sender_id
+    - recipient_id
+    - note
+    - amount
+    - was_successful
+  expectedRows:
+    - [1, 1, 1, 2, "Lunch with client", 25, 1]
+    - [2, 1, 1, 3, "Coffee", 5, 1]
+  orderSensitive: false
+---
+
+## Contexto
+
+Às vezes, uma única consulta não basta para encontrar os registros de que
+precisamos. É possível rodar uma consulta **sobre o resultado de outra
+consulta** — uma consulta dentro de outra consulta. Isso é chamado de
+**subquery**.
+
+```sql
+SELECT
+  id,
+  song_name,
+  artist_id
+FROM
+  songs
+WHERE
+  artist_id IN (
+    SELECT
+      id
+    FROM
+      artists
+    WHERE
+      artist_name LIKE 'Rick%'
+  );
+```
+
+Essa consulta seleciona as músicas de artistas cujo nome começa com "Rick".
+A subquery (`SELECT id FROM artists ...`) fornece os `id`s usados pela consulta
+externa. Repare que ela permite usar dados de **outra tabela**.
+
+A única sintaxe especial de uma subquery são os **parênteses** ao redor da
+consulta aninhada. O operador pode variar: usamos `IN` quando esperamos vários
+valores e `=` quando esperamos um único valor.
+
+## Sua vez
+
+Um dos representantes de atendimento do Senai Pay precisa puxar todas as
+transações de um usuário específico. O problema é que ele só sabe o **nome** do
+usuário (`David`), não o `id`.
+
+Use uma subquery para retornar **todas as colunas** da tabela `transactions`
+pertencentes ao usuário chamado `David`.

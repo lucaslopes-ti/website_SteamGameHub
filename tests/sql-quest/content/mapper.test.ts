@@ -146,6 +146,57 @@ describe("mapContentLesson", () => {
     });
   });
 
+  it("preserva índices explícitos no desafio schema", () => {
+    const lesson = mapContentLesson(
+      makeContentLesson({
+        challenge: {
+          kind: "schema",
+          instruction: "Crie os índices.",
+          expectedTables: [
+            {
+              name: "transferencias",
+              columns: [{ name: "cliente_id", type: "INTEGER" }],
+              indexes: [
+                {
+                  name: "idx_transferencias_cliente",
+                  columns: ["cliente_id"],
+                  unique: false,
+                },
+                {
+                  name: "uq_cliente_valor",
+                  columns: ["cliente_id", "valor"],
+                  unique: true,
+                },
+              ],
+            },
+          ],
+        },
+      })
+    );
+    expect(lesson.challenge).toEqual({
+      kind: "schema",
+      instruction: "Crie os índices.",
+      expectedTables: [
+        {
+          name: "transferencias",
+          columns: [{ name: "cliente_id", type: "INTEGER" }],
+          indexes: [
+            {
+              name: "idx_transferencias_cliente",
+              columns: ["cliente_id"],
+              unique: false,
+            },
+            {
+              name: "uq_cliente_valor",
+              columns: ["cliente_id", "valor"],
+              unique: true,
+            },
+          ],
+        },
+      ],
+    });
+  });
+
   it("preserva desafios data (estado final de tabelas)", () => {
     const lesson = mapContentLesson(
       makeContentLesson({

@@ -574,6 +574,32 @@ function validateExpectedTable(
       err(`${field}.forbidColumns deve ser uma lista de strings.`);
     }
   }
+  if (value.indexes !== undefined) {
+    if (!Array.isArray(value.indexes)) {
+      err(`${field}.indexes deve ser uma lista.`, `${field}.indexes`);
+    } else {
+      value.indexes.forEach((idx, index) => {
+        const inf = `${field}.indexes[${index}]`;
+        if (!isRecord(idx)) {
+          err(`${inf} deve ser um objeto { name, columns, unique? }.`, inf);
+          return;
+        }
+        if (!isNonEmptyString(idx.name)) {
+          err(`${inf}.name ausente ou vazio.`, inf);
+        }
+        if (
+          !Array.isArray(idx.columns) ||
+          idx.columns.length === 0 ||
+          !idx.columns.every(isNonEmptyString)
+        ) {
+          err(`${inf}.columns deve ser uma lista não vazia de strings.`, inf);
+        }
+        if (idx.unique !== undefined && typeof idx.unique !== "boolean") {
+          err(`${inf}.unique deve ser booleano.`, inf);
+        }
+      });
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------

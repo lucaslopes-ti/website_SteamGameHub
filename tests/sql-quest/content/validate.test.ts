@@ -196,6 +196,111 @@ describe("validateLessonDocument — quiz, theory e imagens", () => {
   });
 });
 
+function schemaLessonWithIndexes(indexes: unknown) {
+  return {
+    id: "indices-01",
+    title: "Indices",
+    summary: "Crie indices no NexoPay.",
+    chapter: 2,
+    chapterSlug: "tabelas",
+    lesson: 3,
+    difficulty: "intermediario",
+    xp: 60,
+    prerequisites: [],
+    hints: [],
+    references: [],
+    setupSql: "CREATE TABLE clientes (id INTEGER PRIMARY KEY);",
+    challenge: {
+      kind: "schema",
+      instruction: "Crie o indice solicitado.",
+      expectedTables: [
+        {
+          name: "clientes",
+          columns: [{ name: "id", type: "INTEGER", primaryKey: true }],
+          indexes,
+        },
+      ],
+    },
+  };
+}
+
+describe("validateLessonDocument — indices explicitos em schema", () => {
+  it("aceita indexes com name, columns (na ordem) e unique booleano", () => {
+    const issues = validateLessonDocument(
+      schemaLessonWithIndexes([
+        { name: "idx_clientes_id", columns: ["id"], unique: false },
+        {
+          name: "idx_composto",
+          columns: ["cliente_id", "valor"],
+          unique: true,
+        },
+      ]),
+      "## Contexto\n\nTexto.",
+      "indices-01.md"
+    );
+    expect(issues).toEqual([]);
+  });
+
+  it("aceita indexes sem unique (unicidade nao conferida)", () => {
+    const issues = validateLessonDocument(
+      schemaLessonWithIndexes([{ name: "idx_clientes_id", columns: ["id"] }]),
+      "## Contexto\n\nTexto.",
+      "indices-01.md"
+    );
+    expect(issues).toEqual([]);
+  });
+
+  it("rejeita indexes que nao e uma lista", () => {
+    const issues = validateLessonDocument(
+      schemaLessonWithIndexes("idx_clientes_id"),
+      "## Contexto\n\nTexto.",
+      "indices-01.md"
+    );
+    expect(
+      issues.some((i) => i.field === "challenge.expectedTables[0].indexes")
+    ).toBe(true);
+  });
+
+  it("rejeita index sem name", () => {
+    const issues = validateLessonDocument(
+      schemaLessonWithIndexes([{ name: "", columns: ["id"] }]),
+      "## Contexto\n\nTexto.",
+      "indices-01.md"
+    );
+    expect(
+      issues.some((i) =>
+        i.field?.startsWith("challenge.expectedTables[0].indexes")
+      )
+    ).toBe(true);
+  });
+
+  it("rejeita index com columns vazio", () => {
+    const issues = validateLessonDocument(
+      schemaLessonWithIndexes([{ name: "idx", columns: [] }]),
+      "## Contexto\n\nTexto.",
+      "indices-01.md"
+    );
+    expect(
+      issues.some((i) =>
+        i.field?.startsWith("challenge.expectedTables[0].indexes")
+      )
+    ).toBe(true);
+  });
+
+  it("rejeita index com unique nao booleano", () => {
+    const issues = validateLessonDocument(
+      schemaLessonWithIndexes([
+        { name: "idx", columns: ["id"], unique: "sim" },
+      ]),
+      "## Contexto\n\nTexto.",
+      "indices-01.md"
+    );
+    expect(issues.some((i) => i.message.includes("unique deve ser booleano"))).toBe(
+      true
+    );
+  });
+});
+
 describe("validateChapterDocument", () => {
   it("aceita chapters.md válido", () => {
     const raw = fs.readFileSync(path.join(FIXTURES, "valid", "chapters.md"), "utf8");

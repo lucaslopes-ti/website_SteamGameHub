@@ -227,12 +227,30 @@ challenge:
         - columns: [cliente_id]
           table: clientes
           referencedColumns: [id]
+      indexes:
+        - name: idx_transferencias_cliente
+          columns: [cliente_id]
+          unique: false
+        - name: uq_transferencias_cliente_valor
+          columns: [cliente_id, valor]
+          unique: true
       forbidColumns:
         - valor_antigo
 ```
 
 - `columns`: colunas que DEVEM existir (as demais presentes não reprovam).
 - `foreignKeys`: FKs que DEVEM existir (`columns`, `table`, `referencedColumns?`).
+- `indexes`: índices **explícitos** que DEVEM existir. Cada item é
+  `{ name, columns, unique? }`:
+  - `name`: nome do índice, comparado **sem diferenciar maiúsculas/minúsculas**;
+  - `columns`: colunas do índice, **na ordem** (sequência) declarada; a
+    quantidade e a sequência precisam conferir;
+  - `unique`: quando informado, exige que a unicidade do índice confira
+    (restrições `UNIQUE` automáticas de coluna **não** contam como índice
+    explícito).
+  - Apenas índices criados via `CREATE INDEX` são considerados. Os extras são
+    permitidos (não reprovam por existirem a mais). Índices com expressão
+    (não-coluna) e índices parciais são ignorados pelo snapshot.
 - `forbidColumns`: colunas que NÃO podem existir (ex.: após `RENAME COLUMN`).
 
 #### `kind: quiz` — perguntas de múltipla escolha (sem execução de SQL)
@@ -345,7 +363,10 @@ seção 3, padrão do `id`, `xp >= 1`, `difficulty` válida, estrutura de
 Específico por natureza:
 
 - **exact/schema**: `setupSql` obrigatório; estrutura de `expectedColumns`/
-  `expectedRows`/`expectedTables` conforme 3.4.
+  `expectedRows`/`expectedTables` conforme 3.4. Em `schema`, cada tabela pode
+  declarar `indexes` (`{ name, columns, unique? }`) — validados por nome
+  (case-insensitive), tabela, sequência/quantidade de colunas e unicidade
+  quando informada; índices extras são permitidos.
 - **quiz**: `questions` não vazia; cada pergunta com `prompt`, `options` (≥ 2),
   `answer` inteiro **dentro do intervalo** de `options`, `explanation` opcional.
 - **theory** (sem `challenge`): `setupSql` opcional; corpo é a narrativa.
