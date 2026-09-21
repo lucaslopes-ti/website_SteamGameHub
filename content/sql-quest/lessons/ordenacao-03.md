@@ -10,9 +10,10 @@ xp: 35
 prerequisites:
   - ordenacao-02
 hints:
-  - "Use a cláusula WHERE com BETWEEN para limitar o valor: amount BETWEEN 10 AND 80."
-  - "Adicione ORDER BY amount DESC no final para ordenar do maior para o menor."
-  - "SELECT * FROM transactions WHERE amount BETWEEN 10 AND 80 ORDER BY amount DESC;"
+  - "A missão é listar as transações com valor entre 10 e 80, da maior para a menor."
+  - "Use um operador de faixa no filtro, incluindo os extremos."
+  - "Ordene pela coluna de valor em ordem decrescente; a ordenação vem depois do filtro."
+  - "Selecione todas as colunas da tabela `transactions`."
 references:
   - label: "SQLite — SELECT"
     url: "https://www.sqlite.org/lang_select.html"

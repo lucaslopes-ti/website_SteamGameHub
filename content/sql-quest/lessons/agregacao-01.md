@@ -10,9 +10,10 @@ xp: 35
 prerequisites:
   - crud-13
 hints:
-  - "Use a função agregada COUNT com o coringa *."
-  - "Filtre com WHERE user_id = 6 AND was_successful = true."
-  - "SELECT COUNT(*) FROM transactions WHERE user_id = 6 AND was_successful = true;"
+  - "A missão é contar quantas transações pertencem ao `user_id` 6 e foram bem-sucedidas."
+  - "Use a função de contagem com o coringa e acrescente um filtro."
+  - "O filtro combina duas condições com E: o usuário é 6 e a transação foi bem-sucedida."
+  - "O resultado é um único número."
 references:
   - label: "SQLite — Aggregate Functions"
     url: "https://www.sqlite.org/lang_aggfunc.html"
@@ -109,6 +110,13 @@ precisa saber o número de transações bem-sucedidas de um usuário.
 
 ## Sua vez
 
-Retorne o número de transações em que o `user_id` é `6` e `was_successful` é
-`true`. Lembre-se de usar o coringa `*` com `COUNT` a menos que as instruções
-peçam especificamente outra coisa.
+A missão é medir quantas transações bem-sucedidas o usuário 6 fez.
+
+Sua consulta deve:
+
+- usar a função de contagem sobre a tabela `transactions`;
+- contar com o coringa, e não uma coluna específica;
+- filtrar pelo `user_id` 6 e por transações bem-sucedidas;
+- devolver um único número.
+
+As duas condições do filtro precisam valer ao mesmo tempo.

@@ -10,9 +10,10 @@ xp: 34
 prerequisites:
   - normalizacao-06
 hints:
-  - "A informação revenue descreve a empresa, não a ligação entre usuário e empresa."
-  - "Adicione a coluna à empresa: ALTER TABLE companies ADD COLUMN revenue REAL;"
-  - "Remova da junção: ALTER TABLE users_companies DROP COLUMN revenue;"
+  - "A missão é mover a coluna `revenue` da tabela de junção para a tabela da empresa."
+  - "Pergunte-se a que entidade o dado pertence: à ligação entre usuário e empresa ou à própria empresa?"
+  - "Adicione a coluna `revenue` (REAL) à tabela `companies`."
+  - "Remova `revenue` da tabela `users_companies`."
 references:
   - label: "SQLite — ALTER TABLE"
     url: "https://www.sqlite.org/lang_altertable.html"
@@ -127,4 +128,11 @@ Mova a coluna que está fora de lugar para a tabela correta. Adicione-a como a
 
 ## Sua vez
 
-Faça a alteração descrita no desafio.
+A missão é corrigir um dado que está no lugar errado.
+
+Sua tarefa:
+
+1. adicionar `revenue` (REAL) como a última coluna de `companies`;
+2. remover `revenue` da tabela de junção `users_companies`.
+
+Pense em qual entidade o faturamento descreve: a empresa ou a ligação entre usuário e empresa?

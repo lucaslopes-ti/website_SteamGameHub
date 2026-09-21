@@ -10,9 +10,10 @@ xp: 41
 prerequisites:
   - joins-08
 hints:
-  - "Junte users com countries e com transactions."
-  - "Filtre apenas transações bem-sucedidas (was_successful = true)."
-  - "Filtre o usuário com id 6 e agrupe por users.id."
+  - "A missão é montar o perfil do usuário de id 6 combinando três tabelas."
+  - "Junte `users` com `countries` para obter o nome do país e com `transactions` para calcular o saldo."
+  - "Some apenas as transações bem-sucedidas e use o apelido `balance` para a soma; o nome do país recebe o apelido `country_name`."
+  - "Filtre o usuário de id 6 e agrupe pelo id do usuário para ter uma única linha."
 references:
   - label: "SQLite — JOIN"
     url: "https://www.sqlite.org/lang_select.html"

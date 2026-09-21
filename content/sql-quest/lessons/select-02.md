@@ -10,8 +10,10 @@ xp: 28
 prerequisites:
   - select-01
 hints:
-  - "Troque o * pelo nome da coluna que você quer."
-  - "SELECT age FROM users;"
+  - "A missão é devolver somente a idade de cada usuário, nada além disso."
+  - "Troque o coringa `*` pelo nome da coluna que você quer ver. Com uma coluna só, aparece um único nome entre o comando de leitura e a tabela."
+  - "A coluna se chama `age` e a tabela continua sendo `users`."
+  - "O número de linhas não muda: continua havendo uma linha por usuário, mas com uma só coluna."
 references:
   - label: "SQLite — SELECT"
     url: "https://www.sqlite.org/lang_select.html"
@@ -80,4 +82,12 @@ SELECT name FROM users;
 
 ## Sua vez
 
-Atualize a consulta para selecionar apenas a coluna `age` da tabela `users`.
+A missão é deixar a consulta mais enxuta e trazer apenas uma informação.
+
+Sua consulta deve:
+
+- consultar a tabela `users`;
+- devolver apenas a coluna `age`;
+- devolver todas as linhas, sem filtros.
+
+Observe que o total de linhas permanece o mesmo: um usuário por linha, porém com uma coluna só.

@@ -10,9 +10,10 @@ xp: 34
 prerequisites:
   - tabelas-08
 hints:
-  - "Cada coluna deve ter um tipo que faça sentido com o nome dela."
-  - "image_url e description são TEXT; is_sponsored é BOOLEAN."
-  - "CREATE TABLE posts(id INTEGER, image_url TEXT, description TEXT, author_id INTEGER, is_sponsored BOOLEAN);"
+  - "A missão é criar a tabela `posts` escolhendo você mesmo os tipos de dado de cada coluna."
+  - "Pense no conteúdo de cada coluna: descrições e URLs guardam texto; identificadores e contagens guardam números; sinalizações guardam sim ou não."
+  - "As colunas são `id`, `image_url`, `description`, `author_id` e `is_sponsored`, nessa ordem."
+  - "Uma coluna que referencia outra tabela costuma ter o mesmo tipo da chave referenciada; identificadores usam INTEGER."
 references:
   - label: "SQLite — CREATE TABLE"
     url: "https://www.sqlite.org/lang_createtable.html"

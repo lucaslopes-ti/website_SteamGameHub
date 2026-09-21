@@ -10,9 +10,10 @@ xp: 28
 prerequisites:
   - crud-06
 hints:
-  - "Quando o dono RECEBE dinheiro, sender_id identifica quem enviou e recipient_id é NULL."
-  - "Filtre com WHERE sender_id IS NOT NULL."
-  - "SELECT * FROM transactions WHERE sender_id IS NOT NULL;"
+  - "A missão é listar as transações em que o dono da conta está RECEBENDO dinheiro."
+  - "Quem recebe não tem remetente: nessas transações, a coluna de quem envia fica sem valor (NULL)."
+  - "Filtre pela coluna `sender_id` usando o teste que verifica se o valor NÃO é nulo."
+  - "Selecione todas as colunas da tabela `transactions`."
 references:
   - label: "SQLite — NULL"
     url: "https://www.sqlite.org/lang_expr.html"
@@ -103,5 +104,12 @@ identifica o dono, apenas o usuário do outro lado precisa de outro ID:
 
 ## Sua vez
 
-Da tabela `transactions`, selecione todas as colunas das transações em que o
-dono está **recebendo** dinheiro.
+A missão é encontrar as transações em que o dono da conta aparece como quem RECEBE o dinheiro.
+
+Sua consulta deve:
+
+- consultar a tabela `transactions`;
+- devolver todas as colunas;
+- manter apenas as linhas em que a coluna `sender_id` não é nula.
+
+Lembre-se: um valor nulo não é zero nem texto vazio; teste-o com o operador específico para nulos.

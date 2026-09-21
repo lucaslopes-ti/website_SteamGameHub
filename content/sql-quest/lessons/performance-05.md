@@ -10,9 +10,10 @@ xp: 28
 prerequisites:
   - performance-04
 hints:
-  - "Nunca monte a query concatenando a entrada do usuário na string."
-  - "Passe os valores como parâmetros para a biblioteca de banco."
-  - "Bibliotecas modernas sanitizam a entrada automaticamente quando usadas corretamente."
+  - "Antes de responder, releia o contexto sobre o caminho que a entrada do usuário percorre até chegar ao banco."
+  - "No exemplo com apóstrofo e traço duplo, identifique o que o banco passa a executar por causa da entrada."
+  - "Ao avaliar a afirmação sobre bibliotecas modernas, pergunte-se em que circunstâncias ela valeria e em quais não."
+  - "Confira depois com as explicações."
 references:
   - label: "OWASP — SQL Injection"
     url: "https://owasp.org/www-community/attacks/SQL_Injection"
@@ -93,4 +94,9 @@ passe os valores fornecidos pelo usuário para ela.
 
 ## Sua vez
 
-Responda às perguntas do desafio.
+Responda às perguntas sobre SQL injection e sobre como evitá-la.
+
+- Pense no que acontece quando a entrada do usuário vira parte do comando SQL.
+- Considere como as bibliotecas modernas tratam valores passados como parâmetros.
+
+Depois de enviar, leia as explicações para revisar.

@@ -10,9 +10,10 @@ xp: 34
 prerequisites:
   - restricoes-04
 hints:
-  - "id INTEGER PRIMARY KEY"
-  - "memo, amount e balance são NOT NULL"
-  - "CREATE TABLE transactions(id INTEGER PRIMARY KEY, sender_id INTEGER, recipient_id INTEGER, memo TEXT NOT NULL, amount REAL NOT NULL, balance REAL NOT NULL);"
+  - "A missão é criar a tabela `transactions` com os campos e as restrições pedidos."
+  - "Comece pela definição da chave primária e siga listando as colunas com seus tipos."
+  - "Três colunas não podem ser nulas: a mensagem (`memo`), o valor (`amount`) e o saldo (`balance`). Já `sender_id` e `recipient_id` podem ficar sem valor."
+  - "Separe as colunas por vírgula e encerre a instrução ao fechar os parênteses."
 references:
   - label: "SQLite — CREATE TABLE"
     url: "https://www.sqlite.org/lang_createtable.html"

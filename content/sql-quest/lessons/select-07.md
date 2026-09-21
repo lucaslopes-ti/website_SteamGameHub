@@ -10,9 +10,10 @@ xp: 34
 prerequisites:
   - select-06
 hints:
-  - "Crie a tabela users com as colunas id, name e age."
-  - "O segundo INSERT deve usar o valor 1 (inteiro) na coluna name."
-  - "Termine com um SELECT * FROM users;"
+  - "A missão tem três etapas na mesma consulta: criar a tabela, inserir duas linhas e, por fim, ler tudo."
+  - "Ao criar a tabela, cada coluna recebe um nome e um tipo: `id` é inteiro, `name` é texto e `age` é inteiro."
+  - "No segundo registro, coloque de propósito o valor inteiro `1` na coluna `name`; a ideia é testar a tipagem flexível do SQLite."
+  - "Separe as três instruções com ponto e vírgula e termine lendo todos os registros da tabela."
 references:
   - label: "SQLite — Datatypes"
     url: "https://www.sqlite.org/datatype3.html"
@@ -64,6 +65,13 @@ Na prática, manter os tipos consistentes evita bugs silenciosos.
 
 ## Sua vez
 
-Crie a tabela `users` com as colunas `id` (INTEGER), `name` (TEXT) e `age`
-(INTEGER). Insira dois registros — o segundo deve ter o valor inteiro `1` na
-coluna `name` — e finalize com um `SELECT * FROM users;`.
+A missão é criar uma tabela, inserir dois registros e ler o resultado para observar a tipagem flexível do SQLite.
+
+Faça, nesta ordem:
+
+1. crie a tabela `users` com `id` (INTEGER), `name` (TEXT) e `age` (INTEGER);
+2. insira um registro com `name` igual a `Ana Souza`;
+3. insira outro registro com o número inteiro `1` na coluna `name`;
+4. finalize lendo todos os registros da tabela.
+
+O objetivo é notar que o SQLite aceita guardar um inteiro onde o tipo declarado era TEXT.

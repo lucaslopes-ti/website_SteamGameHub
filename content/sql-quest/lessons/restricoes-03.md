@@ -10,9 +10,10 @@ xp: 34
 prerequisites:
   - restricoes-02
 hints:
-  - "O segundo INSERT usa o id 1, que já existe."
-  - "Incremente o id em 1 para cada inserção sucessiva."
-  - "Depois dos INSERTs, selecione todos os registros com SELECT * FROM users;"
+  - "A missão é corrigir o segundo registro que já vem pronto no editor e, depois, listar a tabela."
+  - "O erro é de chave primária: o segundo registro tenta reutilizar um identificador que já existe."
+  - "Dê ao segundo registro um `id` diferente e ainda não usado; incrementar em 1 é a boa prática."
+  - "Depois de corrigir, leia todos os usuários da tabela para conferir o resultado."
 references:
   - label: "SQLite — PRIMARY KEY"
     url: "https://www.sqlite.org/lang_createtable.html"
@@ -109,6 +110,12 @@ VALUES (1, 'Jerry', 25, 'US', 'jerrysmith', 'mypasswordis1234', true);
 
 ## Sua vez
 
-Corrija o bug nos dados inseridos. Ao trabalhar com IDs inteiros, a boa prática
-é incrementar o `id` em 1 a cada inserção sucessiva. Depois de corrigir,
-selecione todos os registros da tabela `users`.
+O editor já traz dois registros prontos, mas o segundo tem um problema.
+
+Sua tarefa:
+
+1. identifique por que o segundo registro viola a chave primária;
+2. ajuste o `id` dele para um valor novo, seguindo a boa prática de incrementar de 1 em 1;
+3. ao final, selecione todos os registros da tabela `users`.
+
+Não mude os demais dados: só o identificador do segundo registro precisa de correção.

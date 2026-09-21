@@ -10,8 +10,10 @@ xp: 28
 prerequisites:
   - filtros-06
 hints:
-  - "Use WHERE country_code IN ('US', 'CA', 'MX')."
-  - "SELECT name, age, country_code FROM users WHERE country_code IN ('US', 'CA', 'MX');"
+  - "A missão é listar nome, idade e país dos usuários que moram em um dos três países pedidos."
+  - "Como o país pode assumir vários valores válidos, use o operador que testa se o valor pertence a uma lista."
+  - "A lista de códigos é `US`, `CA` e `MX`."
+  - "As colunas saem na ordem `name`, `age` e `country_code`."
 references:
   - label: "SQLite — Expressions"
     url: "https://www.sqlite.org/lang_expr.html"
@@ -117,9 +119,12 @@ uma tabela fica, mais difícil é analisá-la sem consultas adequadas.
 
 ## Sua vez
 
-Queremos saber quais dos nossos usuários são dos Estados Unidos, do Canadá ou
-do México.
+A missão é encontrar os usuários dos Estados Unidos, do Canadá ou do México.
 
-Escreva uma instrução `SELECT` que retorne os campos `name`, `age` e
-`country_code` de todos os usuários da tabela `users` com `country_code` igual
-a `US`, `CA` ou `MX`.
+Sua consulta deve:
+
+- consultar a tabela `users`;
+- devolver as colunas `name`, `age` e `country_code`, nessa ordem;
+- manter apenas as linhas cujo `country_code` está na lista `US`, `CA`, `MX`.
+
+Prefira o operador de lista em vez de encadear vários OU.

@@ -10,8 +10,10 @@ xp: 28
 prerequisites:
   - filtros-02
 hints:
-  - "Use a cláusula WHERE com BETWEEN."
-  - "SELECT name, age FROM users WHERE age BETWEEN 18 AND 30;"
+  - "A missão é listar nome e idade dos usuários com idade dentro de uma faixa."
+  - "Use apenas as duas colunas pedidas e uma condição que testa se a idade está entre dois valores, incluindo os extremos."
+  - "A faixa vai de 18 a 30 anos, inclusive nos limites."
+  - "A ordem das colunas é `name` e depois `age`."
 references:
   - label: "SQLite — Expressions"
     url: "https://www.sqlite.org/lang_expr.html"
@@ -116,7 +118,12 @@ quanto precisarmos.
 
 ## Sua vez
 
-Precisamos ver quantos jovens adultos estão usando o Senai Pay!
+A missão é encontrar os jovens adultos atendidos pelo Senai Pay.
 
-Consulte a tabela `users` e retorne os campos `name` e `age` de todos os
-usuários com idade ENTRE 18 e 30 anos.
+Sua consulta deve:
+
+- consultar a tabela `users`;
+- devolver as colunas `name` e `age`, nessa ordem;
+- manter apenas os usuários com idade entre 18 e 30 anos, incluindo 18 e 30.
+
+Pense em qual operador testa uma faixa de valores sem precisar escrever várias comparações.

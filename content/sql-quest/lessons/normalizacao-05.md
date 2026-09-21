@@ -10,8 +10,10 @@ xp: 28
 prerequisites:
   - normalizacao-04
 hints:
-  - "A 1NF é a forma menos normalizada; a BCNF é a mais normalizada deste curso."
-  - "Na normalização, a chave primária pode ser formada por várias colunas (chave composta)."
+  - "Organize mentalmente as formas normais em ordem de rigor e use essa escala para comparar as perguntas."
+  - "Releia no contexto como o material define chave primária no contexto da normalização."
+  - "Use a escala de normalização para raciocinar sobre o que aumenta e o que diminui conforme o rigor cresce."
+  - "Confira nas explicações depois de responder."
 references:
   - label: "SQLite — CREATE TABLE"
     url: "https://www.sqlite.org/lang_createtable.html"
@@ -93,4 +95,9 @@ CREATE TABLE product_suppliers (
 
 ## Sua vez
 
-Responda às perguntas do desafio.
+Responda às perguntas sobre as formas normais.
+
+- Coloque as formas em ordem de normalização para comparar duplicação e integridade.
+- Releia o que significa 'chave primária' no contexto da normalização.
+
+Depois de enviar, leia as explicações para conferir.

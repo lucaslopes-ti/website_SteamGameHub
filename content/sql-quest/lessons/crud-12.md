@@ -10,9 +10,9 @@ xp: 34
 prerequisites:
   - crud-11
 hints:
-  - "Use COUNT(*) com uma cláusula WHERE."
-  - "Filtre por country_code = 'US'."
-  - "SELECT COUNT(*) FROM users WHERE country_code = 'US';"
+  - "A missão é contar apenas os usuários cujo país é `US`."
+  - "Combine a função de contagem com uma condição de filtro e use o coringa dentro da contagem."
+  - "A condição compara a coluna `country_code` com o texto `US`."
 references:
   - label: "SQLite — Aggregates"
     url: "https://www.sqlite.org/lang_aggfunc.html"
@@ -82,9 +82,12 @@ número de usuários localizados nos EUA parece pequeno.
 
 ## Sua vez
 
-Escreva uma consulta SQL que retorne a contagem de **todos** os registros da
-tabela `users` cujo `country_code` seja igual a `'US'`.
+A missão é contar quantos usuários do Senai Pay estão nos Estados Unidos.
 
-Lembre-se: queremos saber o número total de registros, então podemos usar o
-coringa (`*`) em `COUNT(*)`. Embora você normalmente pudesse usar a coluna `id`,
-ou seja, `COUNT(id)`, nesta tarefa use o coringa.
+Sua consulta deve:
+
+- usar a função de contagem sobre a tabela `users`;
+- contar somente as linhas em que `country_code` é igual a `US`;
+- devolver um único número.
+
+Lembre-se de usar o coringa na contagem, não uma coluna específica.

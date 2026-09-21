@@ -10,10 +10,10 @@ xp: 41
 prerequisites:
   - agregacao-06
 hints:
-  - "Filtre as linhas com WHERE antes de agrupar: was_successful = true, note LIKE '%lunch%' e sender_id IS NOT NULL."
-  - "Agrupe por sender_id e use HAVING SUM(amount) > 20."
-  - "Ordene com ORDER BY balance ASC."
-  - "SELECT sender_id, SUM(amount) AS balance FROM transactions WHERE was_successful = true AND note LIKE '%lunch%' AND sender_id IS NOT NULL GROUP BY sender_id HAVING SUM(amount) > 20 ORDER BY balance ASC;"
+  - "A missão tem várias partes: filtrar linhas, agrupar por remetente e filtrar o grupo pela soma."
+  - "Separe os filtros por tipo: condições sobre linhas cruas vão no filtro de linhas; condições sobre o total agregado vão no filtro de grupos."
+  - "Antes de agrupar: transações bem-sucedidas, cujo texto contém lunch e com remetente não nulo."
+  - "Depois de agrupar: mostre `sender_id` e a soma como `balance`, mantenha só os grupos com soma maior que 20 e ordene a soma de forma crescente."
 references:
   - label: "SQLite — SELECT"
     url: "https://www.sqlite.org/lang_select.html"

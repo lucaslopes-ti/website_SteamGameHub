@@ -10,8 +10,9 @@ xp: 28
 prerequisites:
   - normalizacao-08
 hints:
-  - "A BCNF adiciona uma regra sobre colunas que fazem parte da chave primária."
-  - "O caso só aparece quando há múltiplas chaves candidatas que se sobrepõem."
+  - "Releia no contexto a regra extra que a BCNF impõe em relação à 3NF."
+  - "Releia também o que são chaves candidatas e o que significa dizer que elas se sobrepõem."
+  - "Na pergunta sobre frequência, pense em como a teoria costuma descrever a ocorrência prática desse caso."
 references:
   - label: "SQLite — CREATE TABLE"
     url: "https://www.sqlite.org/lang_createtable.html"
@@ -100,4 +101,9 @@ desnormalize conforme a necessidade.
 
 ## Sua vez
 
-Responda às perguntas do desafio.
+Responda às perguntas sobre a forma normal de Boyce-Codd.
+
+- Compare a BCNF com a 3NF para identificar a regra extra.
+- Releia o que são chaves candidatas e o que significa elas se sobreporem.
+
+Depois de enviar, leia as explicações para conferir.

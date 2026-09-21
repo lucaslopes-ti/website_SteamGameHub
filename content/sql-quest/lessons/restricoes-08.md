@@ -9,7 +9,10 @@ difficulty: iniciante
 xp: 28
 prerequisites:
   - restricoes-07
-hints: []
+hints:
+  - "Releia no contexto o que cada restrição permite e impede, com atenção às restrições que parecem se sobrepor."
+  - "Para cada descrição, pergunte-se qual restrição se encaixa exatamente, sem confundir as parecidas."
+  - "Leia as explicações após responder para conferir a associação."
 references:
   - label: "SQLite — CREATE TABLE"
     url: "https://www.sqlite.org/lang_createtable.html"
@@ -98,4 +101,14 @@ CREATE TABLE users (
 
 ## Sua vez
 
-Responda às perguntas do desafio.
+Responda às perguntas associando cada situação à restrição correta.
+
+Pense na função de cada uma:
+
+- identificar cada linha de forma única e sem nulo;
+- obrigar que a coluna sempre tenha um valor;
+- impedir valores repetidos;
+- exigir que o valor exista em outra tabela;
+- preencher um valor automaticamente.
+
+Depois de enviar, leia as explicações para conferir.

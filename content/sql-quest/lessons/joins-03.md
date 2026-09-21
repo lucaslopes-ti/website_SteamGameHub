@@ -10,9 +10,10 @@ xp: 41
 prerequisites:
   - joins-02
 hints:
-  - "Use LEFT JOIN entre users e transactions."
-  - "Agrupe por users.id e some os valores com SUM."
-  - "Não use apelidos de tabela nesta consulta."
+  - "A missão é juntar usuários e transações, agregando por usuário."
+  - "Use uma junção que mantenha todos os usuários, mesmo os que não têm transações."
+  - "Agrupe pelo id do usuário e produza duas agregações: soma dos valores e contagem de transações, com os apelidos pedidos."
+  - "Ordene pela soma em ordem decrescente. O enunciado pede para não usar apelidos de tabela."
 references:
   - label: "SQLite — JOIN"
     url: "https://www.sqlite.org/lang_select.html"

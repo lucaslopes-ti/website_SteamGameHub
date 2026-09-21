@@ -9,9 +9,10 @@ difficulty: iniciante
 xp: 34
 prerequisites: []
 hints:
-  - "Use o comando SELECT seguido do coringa *."
-  - "A tabela se chama users."
-  - "SELECT * FROM users;"
+  - "A missão é ler TODAS as colunas e TODOS os registros da tabela `users` do Senai Pay."
+  - "Para ler dados use o comando `SELECT`. Para pedir todas as colunas de uma vez, use o coringa `*` no lugar da lista de colunas."
+  - "Monte na ordem: primeiro o comando `SELECT`, depois o que você quer ver (o coringa) e por último a palavra `FROM` com o nome da tabela."
+  - "Não use filtro, ordenação nem limite: o resultado deve ter uma linha para cada usuário cadastrado e todas as cinco colunas."
 references:
   - label: "SQLite — SELECT"
     url: "https://www.sqlite.org/lang_select.html"
@@ -82,5 +83,12 @@ populado — seu trabalho é apenas consultá-lo.
 
 ## Sua vez
 
-Escreva uma consulta que traga todas as colunas e todos os registros da tabela
-`users`.
+A missão é ler o cadastro completo dos usuários do Senai Pay.
+
+Sua consulta deve:
+
+- consultar a tabela `users`;
+- devolver todas as colunas, na ordem em que foram criadas (`id`, `name`, `age`, `balance`, `is_admin`);
+- devolver todas as linhas, sem filtros, sem ordenação e sem limite.
+
+Ao ler o resultado, repare que cada linha representa um usuário e cada coluna, um atributo dele.

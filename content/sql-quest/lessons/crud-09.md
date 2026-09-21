@@ -9,7 +9,10 @@ difficulty: iniciante
 xp: 21
 prerequisites:
   - crud-08
-hints: []
+hints:
+  - "Releia no contexto os dois temas das perguntas: proteção de dados contra perdas e as formas de excluir um registro."
+  - "Ao comparar as opções, elimine as que não se sustentam no cenário de produção descrito."
+  - "Para o termo em inglês, pergunte-se o que muda no banco nesse tipo de exclusão e o que continua armazenado."
 references:
   - label: "SQLite — DELETE"
     url: "https://www.sqlite.org/lang_delete.html"
@@ -70,4 +73,9 @@ aplicações que só querem se proteger contra erros de desenvolvimento.
 
 ## Sua vez
 
-Responda às perguntas do desafio.
+Responda às perguntas sobre backups e sobre as formas de excluir dados com segurança.
+
+- Considere a importância de conseguir recuperar informações após um erro.
+- Considere a diferença entre remover a linha fisicamente e apenas sinalizá-la como excluída.
+
+Depois de enviar, leia as explicações para comparar.

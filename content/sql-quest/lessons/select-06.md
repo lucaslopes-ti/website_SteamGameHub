@@ -9,7 +9,10 @@ difficulty: iniciante
 xp: 28
 prerequisites:
   - select-05
-hints: []
+hints:
+  - "Antes de responder, releia o contexto que contrasta bancos relacionais e não relacionais."
+  - "Ao comparar as opções, pergunte-se se a afirmação vale para todas as tecnologias de uma família ou apenas para algumas."
+  - "Confira nas explicações qual critério foi usado para chegar à conclusão."
 references:
   - label: "SQLite — Lang"
     url: "https://www.sqlite.org/lang.html"
@@ -56,4 +59,9 @@ ElasticSearch.
 
 ## Sua vez
 
-Responda às perguntas do desafio.
+Responda às perguntas comparando as duas famílias de bancos.
+
+- Pense em quantas linguagens de consulta diferentes cada família costuma usar.
+- Pense no quanto os bancos de uma mesma família se parecem entre si.
+
+Depois de enviar, leia as explicações para revisar seu raciocínio.

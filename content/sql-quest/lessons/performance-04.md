@@ -10,9 +10,9 @@ xp: 28
 prerequisites:
   - performance-03
 hints:
-  - "Juntar tabelas, usar subqueries e agregar custam tempo."
-  - "Guardar dados duplicados pode evitar JOINs caros."
-  - "Desnormalize só como último recurso, em nome da velocidade."
+  - "Releia no contexto a definição de desnormalização e o motivo pelo qual ela é considerada uma decisão de risco."
+  - "Ao avaliar as opções, separe o efeito buscado dos efeitos colaterais de manter cópias de um mesmo dado."
+  - "Na pergunta sobre a ordem, pergunte-se em que momento do projeto cada abordagem faz mais sentido."
 references:
   - label: "SQLite — CREATE TABLE"
     url: "https://www.sqlite.org/lang_createtable.html"
@@ -70,4 +70,9 @@ usado como uma espécie de **último recurso** em nome da velocidade.
 
 ## Sua vez
 
-Responda às perguntas do desafio.
+Responda às perguntas sobre desnormalização por velocidade.
+
+- Pense no que se ganha e no que se perde ao duplicar dados.
+- Considere quando (e se) vale a pena abrir mão da normalização.
+
+Depois de enviar, leia as explicações para conferir.

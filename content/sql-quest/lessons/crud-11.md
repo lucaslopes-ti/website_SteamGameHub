@@ -9,7 +9,10 @@ difficulty: iniciante
 xp: 21
 prerequisites:
   - crud-10
-hints: []
+hints:
+  - "Releia no contexto o que um ORM automatiza e o que ele abstrai do banco."
+  - "Para cada opção, verifique se ela descreve uma vantagem real ou apenas uma expectativa, comparando com o que o contexto afirma."
+  - "Na pergunta sobre adoção de ORM, pense no que pode fazer essa escolha variar de um projeto para outro."
 references:
   - label: "SQLite — Lang"
     url: "https://www.sqlite.org/lang.html"
@@ -110,4 +113,9 @@ decisão do time.
 
 ## Sua vez
 
-Responda às perguntas do desafio.
+Responda às perguntas sobre mapeamento objeto-relacional (ORMs).
+
+- Pense no que o ORM faz por você e no que você deixa de controlar.
+- Considere o equilíbrio entre produtividade e controle sobre o banco.
+
+Depois de enviar, leia as explicações para revisar.

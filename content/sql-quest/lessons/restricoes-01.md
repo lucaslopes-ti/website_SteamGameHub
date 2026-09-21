@@ -10,8 +10,10 @@ xp: 28
 prerequisites:
   - tabelas-10
 hints:
-  - "Use o coringa * para selecionar todos os campos."
-  - "SELECT * FROM transactions;"
+  - "A missão é ler todos os campos e todos os registros da tabela `transactions`."
+  - "Use o comando de leitura e o coringa que representa todas as colunas."
+  - "A tabela se chama `transactions`; não há filtro, ordenação nem limite."
+  - "Esta tabela foi criada sem restrições, então observe se algumas colunas aparecem sem valor (NULL)."
 references:
   - label: "SQLite — NULL"
     url: "https://www.sqlite.org/lang_expr.html"
@@ -91,5 +93,12 @@ serem criados.
 
 ## Sua vez
 
-Escreva uma consulta que selecione todos os campos de todos os registros da
-tabela `transactions`. Use o coringa `*` para selecionar todos os campos.
+A missão é ler a tabela `transactions` inteira, sem filtrar nada.
+
+Sua consulta deve:
+
+- consultar a tabela `transactions`;
+- devolver todas as colunas;
+- devolver todas as linhas, sem filtros nem limite.
+
+Como a tabela foi criada sem restrições, observe se alguma coluna aparece sem valor (NULL).

@@ -10,8 +10,10 @@ xp: 28
 prerequisites:
   - filtros-08
 hints:
-  - "Combine LIKE 'Bo___' para nomes que começam com Bo e têm exatamente 5 caracteres."
-  - "SELECT * FROM users WHERE name LIKE 'Bo___';"
+  - "A missão é listar todos os campos dos usuários cujo nome começa com Bo e tem exatamente 5 caracteres."
+  - "Use o operador de padrão de texto; aqui você precisa de um curinga que representa UM caractere, não qualquer quantidade."
+  - "O prefixo é `Bo` e faltam três caracteres exatos: use um curinga por caractere restante."
+  - "Selecione todas as colunas da tabela `users`."
 references:
   - label: "SQLite — Expressions"
     url: "https://www.sqlite.org/lang_expr.html"
@@ -111,6 +113,12 @@ A consulta acima corresponde a produtos como:
 
 ## Sua vez
 
-O RH conseguiu refinar ainda mais a consulta! Eles querem um relatório de todos
-os dados da tabela `users` para usuários cujos nomes começam com Bo e têm
-exatamente 5 caracteres.
+A missão é refinar a busca do RH com um critério de tamanho.
+
+Sua consulta deve:
+
+- consultar a tabela `users`;
+- devolver todos os campos;
+- trazer apenas nomes que começam com `Bo` e têm exatamente 5 caracteres.
+
+Conte os caracteres: o prefixo já ocupa dois, então faltam três posições exatas.

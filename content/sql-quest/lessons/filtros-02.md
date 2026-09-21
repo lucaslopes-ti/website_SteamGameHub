@@ -10,9 +10,10 @@ xp: 28
 prerequisites:
   - filtros-01
 hints:
-  - "Use IIF(was_successful, 'No action required', 'Perform an audit') AS audit."
-  - "Selecione todas as colunas com * e adicione a coluna calculada no final."
-  - "SELECT *, IIF(was_successful, 'No action required', 'Perform an audit') AS audit FROM transactions;"
+  - "A missão é devolver todas as transações e classificar cada uma com uma coluna extra de auditoria."
+  - "Use uma expressão condicional que devolve um texto quando a transação foi bem-sucedida e outro quando não foi."
+  - "A coluna calculada entra no final do resultado e recebe o apelido `audit`."
+  - "Selecione todas as colunas existentes e acrescente a expressão; a ordem final é as colunas originais e, por último, `audit`."
 references:
   - label: "SQLite — Core Functions"
     url: "https://www.sqlite.org/lang_corefunc.html"

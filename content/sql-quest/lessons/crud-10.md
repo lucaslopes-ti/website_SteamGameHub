@@ -10,9 +10,10 @@ xp: 34
 prerequisites:
   - crud-09
 hints:
-  - "Use UPDATE users SET is_admin = true seguido de WHERE."
-  - "Filtre pelo nome: WHERE name = 'Lane'."
-  - "UPDATE users SET is_admin = true WHERE name = 'Lane';"
+  - "A missão é tornar o usuário Lane um administrador."
+  - "Use o comando de atualização, indique qual coluna muda e para qual valor, e restrinja a linha com uma condição."
+  - "A coluna é `is_admin` e o novo valor é verdadeiro; identifique o Lane pelo nome."
+  - "Sem a condição, todos os usuários seriam promovidos a administrador."
 references:
   - label: "SQLite — UPDATE"
     url: "https://www.sqlite.org/lang_update.html"
@@ -96,8 +97,12 @@ WHERE
 
 ## Sua vez
 
-Precisamos atualizar o registro do Lane na tabela `users`. Ele fundou o Senai
-Pay, mas nem é reconhecido como administrador!
+A missão é conceder privilégios de administrador ao Lane.
 
-Atualize o registro do Lane na tabela `users` para que o campo `is_admin` seja
-definido como `true`!
+Sua instrução deve:
+
+- atuar sobre a tabela `users`;
+- alterar a coluna `is_admin` para verdadeiro;
+- atingir apenas a linha do usuário Lane.
+
+Atenção à condição: sem ela, a atualização vale para todos os registros.

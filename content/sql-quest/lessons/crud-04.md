@@ -9,7 +9,10 @@ difficulty: iniciante
 xp: 21
 prerequisites:
   - crud-03
-hints: []
+hints:
+  - "Releia o contexto que contrasta SQL escrito à mão com SQL gerado por código dentro de um sistema."
+  - "Para cada afirmação, pergunte-se em que cenário ela seria verdadeira e em que cenário falharia; só então escolha."
+  - "Ao analisar a interpolação de strings, identifique quem controla o que entra na instrução e quais consequências isso pode ter."
 references:
   - label: "SQLite — Lang"
     url: "https://www.sqlite.org/lang.html"
@@ -68,4 +71,9 @@ Falaremos mais sobre isso depois!
 
 ## Sua vez
 
-Responda às perguntas do desafio.
+Responda às perguntas sobre como sistemas reais geram SQL e sobre os riscos de montar consultas com texto do usuário.
+
+- Pense na diferença entre escrever SQL manualmente e gerar a consulta por código.
+- Pense no que pode acontecer quando a entrada do usuário é colada dentro do comando.
+
+Depois de enviar, leia as explicações para revisar.

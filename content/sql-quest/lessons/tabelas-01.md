@@ -10,8 +10,10 @@ xp: 34
 prerequisites:
   - select-07
 hints:
-  - "Cada campo é seguido do seu tipo de dado."
-  - "CREATE TABLE people(id INTEGER, tag TEXT, name TEXT, age INTEGER, balance REAL, is_admin BOOLEAN);"
+  - "A missão é criar a tabela `people` do zero, com seis colunas."
+  - "Comece com as palavras-chave de criação da tabela e o nome dela; depois abra parênteses e liste cada coluna."
+  - "Cada coluna é descrita pelo nome seguido do tipo de dado. A ordem pedida é `id`, `tag`, `name`, `age`, `balance` e `is_admin`."
+  - "Tipos: `id` e `age` são INTEGER; `tag` e `name` são TEXT; `balance` é REAL; `is_admin` é BOOLEAN. Feche os parênteses e encerre a instrução."
 references:
   - label: "SQLite — CREATE TABLE"
     url: "https://www.sqlite.org/lang_createtable.html"

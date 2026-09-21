@@ -9,7 +9,10 @@ difficulty: iniciante
 xp: 28
 prerequisites:
   - tabelas-03
-hints: []
+hints:
+  - "Releia no contexto o que torna uma migração segura e o que a torna perigosa."
+  - "Para cada afirmação, pergunte-se se ela leva em conta as consequências de uma migração malfeita sobre quem depende do schema."
+  - "Depois de marcar, use a explicação para conferir seu critério."
 references:
   - label: "SQLite — ALTER TABLE"
     url: "https://www.sqlite.org/lang_altertable.html"
@@ -61,4 +64,10 @@ em execução dependa dele.
 
 ## Sua vez
 
-Responda às perguntas do desafio.
+Leia cada afirmação sobre migrações e decida se ela é verdadeira ou falsa.
+
+- Considere a reversibilidade: dá para desfazer a mudança com segurança?
+- Considere as dependências: outros sistemas ou trechos de código usam o schema atual.
+- Uma migração mal feita pode ser difícil de corrigir em produção.
+
+Ao enviar, leia a explicação para revisar seu raciocínio.

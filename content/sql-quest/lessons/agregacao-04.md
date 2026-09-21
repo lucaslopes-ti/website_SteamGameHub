@@ -10,9 +10,10 @@ xp: 35
 prerequisites:
   - agregacao-03
 hints:
-  - "Use a função agregada MIN sobre a coluna age."
-  - "Filtre com WHERE country_code = 'US'."
-  - "SELECT MIN(age) AS age FROM users WHERE country_code = 'US';"
+  - "A missão é encontrar a menor idade entre os usuários dos Estados Unidos."
+  - "Use a função agregada que devolve o valor mínimo sobre a coluna de idade."
+  - "O filtro compara `country_code` com o código dos Estados Unidos, que é `US`."
+  - "Dê à coluna do resultado o apelido `age`."
 references:
   - label: "SQLite — Aggregate Functions"
     url: "https://www.sqlite.org/lang_aggfunc.html"
@@ -82,6 +83,13 @@ Unidos.
 
 ## Sua vez
 
-Use uma agregação `MIN` para descobrir apenas a idade do usuário mais jovem do
-Senai Pay nos Estados Unidos (o `country_code` dos Estados Unidos é `US`). Dê o
-apelido (alias) `age` à coluna retornada.
+A missão é descobrir a idade do usuário mais jovem do Senai Pay nos Estados Unidos.
+
+Sua consulta deve:
+
+- usar a função que devolve o menor valor;
+- aplicar essa função sobre a coluna `age`;
+- filtrar usuários cujo `country_code` é `US`;
+- renomear a coluna resultante para `age`.
+
+O resultado é um único valor.

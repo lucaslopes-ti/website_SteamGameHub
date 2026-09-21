@@ -10,9 +10,10 @@ xp: 28
 prerequisites:
   - subqueries-05
 hints:
-  - "Um relacionamento 1:1 guarda um único valor por linha (ex.: a anotação de uma transação)."
-  - "Um relacionamento 1:N aparece quando uma linha de A se liga a várias linhas de B."
-  - "Um relacionamento N:N precisa de uma tabela de junção com as duas chaves estrangeiras."
+  - "Releia as definições dos três tipos de relacionamento no contexto."
+  - "Para classificar cada exemplo, conte quantos itens do outro lado podem estar ligados a um único item e vice-versa."
+  - "Na pergunta sobre N:N, pense em como o banco relaciona vários registros de um lado com vários do outro lado."
+  - "Depois de responder, use as explicações para conferir a classificação."
 references:
   - label: "SQLite — Foreign Keys"
     url: "https://www.sqlite.org/foreignkeys.html"

@@ -10,9 +10,9 @@ xp: 28
 prerequisites:
   - ordenacao-03
 hints:
-  - "Selecione apenas as colunas name e age."
-  - "Use ORDER BY age DESC para colocar as maiores idades primeiro."
-  - "SELECT name, age FROM users ORDER BY age DESC;"
+  - "A missão é listar nome e idade dos usuários, do mais velho para o mais novo."
+  - "Selecione apenas as colunas `name` e `age`."
+  - "Use a cláusula de ordenação sobre a coluna de idade, em ordem decrescente."
 references:
   - label: "SQLite — SELECT"
     url: "https://www.sqlite.org/lang_select.html"

@@ -10,10 +10,10 @@ xp: 41
 prerequisites:
   - subqueries-03
 hints:
-  - "A coluna age_in_days guarda a idade em dias."
-  - "Converta 40 anos em dias multiplicando por 365."
-  - "Use a subquery (SELECT 40 * 365) na condição de filtro."
-  - "SELECT * FROM users WHERE age_in_days > (SELECT 40 * 365);"
+  - "A missão é listar os usuários com mais de 40 anos, sabendo que a idade está guardada em dias."
+  - "Você precisa comparar a coluna de dias com um valor calculado; calcule 40 vezes 365 dentro de uma subquery."
+  - "A subquery não precisa de tabela: ela só faz a multiplicação."
+  - "A condição da consulta externa compara a coluna de idade em dias com o resultado da subquery, usando maior que."
 references:
   - label: "SQLite — Expressions"
     url: "https://www.sqlite.org/lang_expr.html"
@@ -83,7 +83,12 @@ armazenada em **dias**, não em anos.
 
 ## Sua vez
 
-Escreva uma consulta que retorne **todas as colunas** da tabela `users` para os
-usuários com **mais de 40 anos**. Como a idade está em dias, use uma subquery
-para converter 40 anos em dias (assuma que cada ano tem 365 dias) e use esse
-valor no filtro.
+A missão é encontrar os usuários com mais de 40 anos, mas a idade está armazenada em dias.
+
+Sua consulta deve:
+
+- ler todas as colunas da tabela `users`;
+- usar uma subquery para converter 40 anos em dias, considerando 365 dias por ano;
+- filtrar quem tem a idade em dias maior que esse valor.
+
+A subquery serve para deixar o cálculo explícito dentro da própria consulta.

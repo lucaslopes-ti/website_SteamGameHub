@@ -10,9 +10,10 @@ xp: 34
 prerequisites:
   - crud-12
 hints:
-  - "Use UPDATE users SET country_code = 'US' seguido de WHERE."
-  - "Filtre apenas os registros com country_code = 'USA'."
-  - "UPDATE users SET country_code = 'US' WHERE country_code = 'USA';"
+  - "A missão é padronizar o código de país, trocando `USA` por `US` apenas em quem ainda usa o valor antigo."
+  - "Use o comando de atualização informando a coluna `country_code`, o novo valor e uma condição."
+  - "A condição deve selecionar apenas quem tem `country_code` igual a `USA`; assim, registros que já estão com `US` não são tocados."
+  - "Confira depois quantos registros foram afetados: só os que tinham o valor antigo."
 references:
   - label: "SQLite — UPDATE"
     url: "https://www.sqlite.org/lang_update.html"
@@ -77,6 +78,12 @@ incorretamente com um valor de `country_code` igual a `'USA'` em vez de `'US'`.
 
 ## Sua vez
 
-Escreva uma instrução SQL para atualizar o valor de `country_code` de `'USA'`
-para `'US'` em todos os registros de usuário aplicáveis. Garanta que **apenas**
-os registros inicialmente marcados com `'USA'` sejam alterados!
+A missão é corrigir dados inconsistentes e deixar só o código de país válido.
+
+Sua instrução deve:
+
+- atuar sobre a tabela `users`;
+- alterar `country_code` de `USA` para `US`;
+- atingir apenas os registros que ainda têm `USA`.
+
+O filtro é o que garante que nenhuma linha já correta seja alterada.

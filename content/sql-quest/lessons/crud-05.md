@@ -10,8 +10,9 @@ xp: 28
 prerequisites:
   - crud-04
 hints:
-  - "Use a função agregada COUNT com o coringa *."
-  - "SELECT COUNT(*) FROM users;"
+  - "A missão é contar quantas linhas existem na tabela `users`."
+  - "Use a função de contagem; com o coringa dentro dela, cada linha é contada."
+  - "Não há filtro: o resultado é um único número com o total de usuários."
 references:
   - label: "SQLite — Aggregates"
     url: "https://www.sqlite.org/lang_aggfunc.html"
@@ -98,6 +99,12 @@ porque contas de usuário podem ser excluídas!
 
 ## Sua vez
 
-Use uma instrução `COUNT(*)` para recuperar o número de registros na tabela
-`users`. Neste curso, use `*` com `COUNT` a menos que as instruções peçam
-especificamente para contar uma coluna em particular.
+A missão é descobrir quantos usuários existem no Senai Pay.
+
+Sua consulta deve:
+
+- usar a função de contagem da tabela `users`;
+- contar todas as linhas, sem filtro;
+- devolver um único valor numérico.
+
+Lembre-se: nesta tarefa a contagem usa o coringa, não uma coluna específica.

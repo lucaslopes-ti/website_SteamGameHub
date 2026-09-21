@@ -10,8 +10,10 @@ xp: 28
 prerequisites:
   - filtros-03
 hints:
-  - "Use a palavra-chave DISTINCT logo após SELECT."
-  - "SELECT DISTINCT country_code FROM users;"
+  - "A missão é descobrir quais países aparecem na base, sem repetir o mesmo país."
+  - "Existe uma palavra-chave que remove linhas duplicadas do resultado; ela vai logo depois do comando de leitura."
+  - "Selecione apenas a coluna `country_code` da tabela `users`."
+  - "O resultado deve ter um país por linha, sem repetições."
 references:
   - label: "SQLite — SELECT"
     url: "https://www.sqlite.org/lang_select.html"
@@ -104,8 +106,12 @@ Isso retorna apenas uma linha para cada valor único de `previous_company`.
 
 ## Sua vez
 
-Os executivos do Senai Pay querem saber em quais países temos clientes.
-Armazenamos o dado `country_code` como uma coluna na tabela `users`.
+A missão é responder em quais países o Senai Pay tem clientes.
 
-Execute uma consulta `DISTINCT` para obter todos os `country_code` únicos da
-tabela `users`.
+Sua consulta deve:
+
+- consultar apenas a coluna `country_code` da tabela `users`;
+- remover os países repetidos do resultado;
+- devolver cada país uma única vez.
+
+Sem remover as duplicatas, o mesmo país apareceria várias vezes, uma por usuário.

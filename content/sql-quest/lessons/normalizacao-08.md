@@ -10,9 +10,10 @@ xp: 41
 prerequisites:
   - normalizacao-07
 hints:
-  - "Primeiro remova a coluna: ALTER TABLE companies DROP COLUMN size;"
-  - "Calcule o valor com CASE WHEN num_employees > 100 THEN 'large' ELSE 'small' END."
-  - "Dê o apelido (alias) size à expressão calculada."
+  - "A missão tem dois passos: remover uma coluna armazenada e calcular esse valor na consulta."
+  - "Primeiro remova a coluna `size` da tabela `companies` com uma instrução de alteração."
+  - "Na consulta, devolva `id`, `name` e `num_employees` e crie uma coluna calculada com uma expressão condicional."
+  - "A regra: `large` quando `num_employees` for maior que 100; caso contrário, `small`. Dê o apelido `size` à coluna calculada."
 references:
   - label: "SQLite — SELECT"
     url: "https://www.sqlite.org/lang_select.html"
@@ -99,6 +100,12 @@ hora em que precisamos.
 
 ## Sua vez
 
-Remova a coluna `size` armazenada e escreva uma consulta que retorne `id`,
-`name` e `num_employees` e calcule uma coluna `size`, valendo `'large'` quando
-`num_employees` for maior que 100 e `'small'` caso contrário.
+A missão é parar de armazenar um valor que pode ser derivado e calculá-lo na hora.
+
+Faça, nesta ordem:
+
+1. remova a coluna armazenada `size` da tabela `companies`;
+2. escreva uma consulta que devolva `id`, `name` e `num_employees`;
+3. acrescente uma coluna `size` calculada: `large` quando `num_employees` for maior que 100 e `small` caso contrário.
+
+O valor calculado substitui o dado que era guardado.

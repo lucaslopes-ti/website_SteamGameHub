@@ -10,8 +10,10 @@ xp: 34
 prerequisites:
   - tabelas-04
 hints:
-  - "Use ALTER TABLE transactions ADD COLUMN ..."
-  - "Adicione was_successful BOOLEAN e transaction_type TEXT."
+  - "A missão é completar a migração para frente, adicionando duas colunas à tabela `transactions`."
+  - "Para adicionar coluna, use a instrução de alteração de tabela seguida da palavra que indica adição e da definição da nova coluna."
+  - "A ordem importa: primeiro `was_successful` (BOOLEAN), depois `transaction_type` (TEXT)."
+  - "Use uma instrução por coluna e mantenha nomes e tipos exatamente como pedidos."
 references:
   - label: "SQLite — ALTER TABLE"
     url: "https://www.sqlite.org/lang_altertable.html"

@@ -9,7 +9,10 @@ difficulty: intermediario
 xp: 28
 prerequisites:
   - joins-06
-hints: []
+hints:
+  - "Compare as linhas das tabelas de entrada com as linhas do resultado: quais aparecem, quais desaparecem e quais aparecem sem par."
+  - "Pergunte-se: há linhas sem correspondência no resultado? Se houver, de qual tabela elas vêm? Se não houver, o que isso indica?"
+  - "Só depois dessa checagem, identifique qual das opções descreve esse comportamento."
 references:
   - label: "SQLite — JOIN"
     url: "https://www.sqlite.org/lang_select.html"
@@ -73,5 +76,10 @@ FROM users ________ transactions ON users.id = transactions.user_id;
 
 ## Sua vez
 
-Dadas as tabelas e a consulta, responda qual tipo de JOIN produziria o
-resultado mostrado.
+Compare as tabelas de entrada com o resultado mostrado e decida qual junção o produz.
+
+- Verifique se alguma linha ficou sem correspondência.
+- Observe de qual lado estão as linhas sem par: isso indica o tipo de junção externa.
+- Se não houver linhas órfãs, é a junção que mantém apenas os pares.
+
+Ao enviar, leia a explicação para conferir.

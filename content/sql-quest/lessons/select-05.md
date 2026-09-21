@@ -10,8 +10,10 @@ xp: 28
 prerequisites:
   - select-04
 hints:
-  - "Selecione as colunas id, name e is_admin."
-  - "SELECT id, name, is_admin FROM users;"
+  - "A missão é inspecionar três colunas específicas para ver como o SQLite mostra valores booleanos."
+  - "Escolha as colunas pelo nome, separadas por vírgula, em vez de usar o coringa `*`."
+  - "As colunas são `id`, `name` e `is_admin`, nessa ordem, todas da tabela `users`."
+  - "Ao ler o resultado, observe a coluna `is_admin`: o SQLite guarda verdadeiro e falso como `1` e `0`."
 references:
   - label: "SQLite — Datatypes"
     url: "https://www.sqlite.org/datatype3.html"
@@ -89,5 +91,12 @@ administrador ou não. Vamos ver como esse campo aparece no resultado.
 
 ## Sua vez
 
-Escreva uma consulta que selecione as colunas `id`, `name` e `is_admin` da
-tabela `users`.
+A missão é observar como o SQLite representa um valor booleano.
+
+Sua consulta deve:
+
+- consultar a tabela `users`;
+- devolver as colunas `id`, `name` e `is_admin`, nessa ordem;
+- trazer todas as linhas.
+
+No resultado, compare a coluna `is_admin` com o que você esperaria: `1` significa verdadeiro e `0`, falso.

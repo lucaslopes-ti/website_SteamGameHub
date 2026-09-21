@@ -10,8 +10,10 @@ xp: 28
 prerequisites:
   - filtros-07
 hints:
-  - "Use LIKE 'Bo%' para nomes que começam com Bo."
-  - "SELECT * FROM users WHERE name LIKE 'Bo%';"
+  - "A missão é listar todos os campos dos usuários cujo nome começa com Bo."
+  - "Use um operador de comparação de padrão de texto, não a igualdade exata."
+  - "O padrão é o prefixo `Bo` seguido do curinga que representa qualquer continuação; sem o curinga, só casaria exatamente 'Bo'."
+  - "Selecione todas as colunas da tabela `users`."
 references:
   - label: "SQLite — Expressions"
     url: "https://www.sqlite.org/lang_expr.html"
@@ -129,9 +131,12 @@ WHERE
 
 ## Sua vez
 
-O time de RH está lidando com um chamado de um dos nossos usuários, mas está
-com dificuldade para encontrar o registro dele no banco. Eles têm quase certeza
-de que o nome do usuário começa com Bo.
+A missão é ajudar o RH a localizar um usuário que, provavelmente, tem o nome começando por Bo.
 
-Escreva uma consulta que retorne todos os campos dos registros da tabela
-`users` em que o nome do usuário começa com Bo.
+Sua consulta deve:
+
+- consultar a tabela `users`;
+- devolver todos os campos;
+- trazer apenas as linhas cujo `name` começa com `Bo`.
+
+Como o sobrenome pode variar, compare o texto por padrão em vez de igualdade exata.

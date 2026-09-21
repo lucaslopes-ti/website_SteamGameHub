@@ -10,9 +10,10 @@ xp: 34
 prerequisites:
   - crud-02
 hints:
-  - "Omita a coluna id no INSERT para o banco gerar o próximo valor."
-  - "No SQLite, INTEGER PRIMARY KEY auto-incrementa quando o id é omitido."
-  - "INSERT INTO users (name, age, country_code, username, password, is_admin) VALUES ('Lance', 20, 'US', 'LanChr', 'lancePass', false);"
+  - "A missão é inserir dois usuários sem informar o `id`, deixando o banco gerar o próximo valor."
+  - "Para isso, basta não citar a coluna `id` na lista de colunas do comando de inserção."
+  - "No SQLite, uma chave primária inteira se numera sozinha quando o valor é omitido."
+  - "Informe todas as demais colunas, na mesma ordem, para cada um dos dois registros."
 references:
   - label: "SQLite — Autoincrement"
     url: "https://www.sqlite.org/autoinc.html"

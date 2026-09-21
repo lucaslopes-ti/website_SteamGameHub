@@ -10,9 +10,10 @@ xp: 41
 prerequisites:
   - ordenacao-05
 hints:
-  - "Selecione apenas name e username."
-  - "Use WHERE password IN ('backendDev', 'welovebootdev', 'SQLrocks')."
-  - "SELECT name, username FROM users WHERE password IN ('backendDev', 'welovebootdev', 'SQLrocks') ORDER BY name;"
+  - "A missão é listar nome e usuário dos donos de senhas que vazaram naquela lista específica."
+  - "Como as senhas podem ser uma entre várias, use o operador que testa pertencimento a uma lista em vez de vários OU."
+  - "Selecione apenas `name` e `username`."
+  - "Ordene pelo nome em ordem alfabética crescente."
 references:
   - label: "SQLite — SELECT"
     url: "https://www.sqlite.org/lang_select.html"

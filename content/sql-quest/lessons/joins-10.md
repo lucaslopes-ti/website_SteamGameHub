@@ -10,9 +10,10 @@ xp: 41
 prerequisites:
   - joins-09
 hints:
-  - "Junte users com support_tickets usando INNER JOIN."
-  - "Exclua tickets com issue_type 'Account Access' usando WHERE."
-  - "Agrupe por usuário e filtre com HAVING COUNT > 1."
+  - "A missão é contar tickets de suporte por usuário, ignorando um tipo específico."
+  - "Junte `users` com `support_tickets` usando a junção interna."
+  - "Antes de agrupar, exclua os tickets cujo tipo é `Account Access`."
+  - "Agrupe por usuário, conte os tickets com o apelido `support_ticket_count` e mantenha só quem tem mais de 1; ordene da maior contagem para a menor."
 references:
   - label: "SQLite — JOIN"
     url: "https://www.sqlite.org/lang_select.html"

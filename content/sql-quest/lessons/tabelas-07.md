@@ -9,7 +9,10 @@ difficulty: iniciante
 xp: 28
 prerequisites:
   - tabelas-06
-hints: []
+hints:
+  - "Antes de responder, releia o contexto sobre migrações e sobre a relação entre o banco e o código da aplicação."
+  - "Para a primeira pergunta, pense nas consequências de uma mudança de banco que não pode ser desfeita."
+  - "Para a segunda, pense no que acontece com o código da aplicação quando a estrutura do banco muda."
 references:
   - label: "SQLite — ALTER TABLE"
     url: "https://www.sqlite.org/lang_altertable.html"
@@ -86,4 +89,9 @@ schema na ordem certa.
 
 ## Sua vez
 
-Responda às perguntas do desafio.
+Responda às perguntas sobre migrações lembrando de dois pontos:
+
+- uma migração altera o schema que o restante do sistema usa;
+- mudanças de banco e de código costumam precisar caminhar juntas.
+
+Depois de enviar, leia as explicações para comparar com seu raciocínio.

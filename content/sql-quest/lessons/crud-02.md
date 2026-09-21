@@ -10,9 +10,10 @@ xp: 34
 prerequisites:
   - crud-01
 hints:
-  - "Use INSERT INTO users (colunas) VALUES (valores)."
-  - "O primeiro registro é David; o segundo é Samantha."
-  - "INSERT INTO users (id, name, age, country_code, username, password, is_admin) VALUES (1, 'David', 34, 'US', 'DavidDev', 'insertPractice', false);"
+  - "A missão é inserir dois usuários completos na tabela `users`, respeitando a ordem das colunas."
+  - "Use o comando de inserção, informe entre parênteses a lista de colunas e depois a palavra que introduz os valores."
+  - "Cada linha de valores segue a mesma ordem das colunas informadas: texto entre aspas; números e booleanos sem aspas."
+  - "São duas linhas de dados. Como você informa todos os campos, os registros recebem `id` 1 e `id` 2."
 references:
   - label: "SQLite — INSERT"
     url: "https://www.sqlite.org/lang_insert.html"

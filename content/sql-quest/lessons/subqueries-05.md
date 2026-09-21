@@ -10,9 +10,9 @@ xp: 28
 prerequisites:
   - subqueries-04
 hints:
-  - "Você não precisa de FROM nesta consulta."
-  - "Multiplique 40 por 365."
-  - "SELECT 40 * 365 AS cutoff_days;"
+  - "A missão é fazer um cálculo simples sem consultar nenhuma tabela."
+  - "Quando não há tabela envolvida, a cláusula que normalmente indica a origem dos dados pode ser omitida."
+  - "Multiplique 40 por 365 e dê à coluna o apelido `cutoff_days`."
 references:
   - label: "SQLite — SELECT"
     url: "https://www.sqlite.org/lang_select.html"
@@ -75,6 +75,12 @@ uma tabela com uma coluna (`sum`) e uma linha (`15`).
 
 ## Sua vez
 
-Escreva uma consulta, **sem consultar nenhuma tabela**, que retorne 40 anos
-convertidos em dias (considere cada ano com 365 dias). A coluna do resultado
-deve se chamar `cutoff_days`.
+A missão é calcular quantos dias há em 40 anos, sem tocar em nenhuma tabela.
+
+Sua consulta deve:
+
+- multiplicar 40 por 365;
+- devolver uma única coluna chamada `cutoff_days`;
+- não consultar nenhuma tabela.
+
+Pense em como uma consulta sem origem de dados funciona: ela apenas calcula uma expressão.

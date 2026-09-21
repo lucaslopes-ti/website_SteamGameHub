@@ -10,9 +10,10 @@ xp: 41
 prerequisites:
   - joins-01
 hints:
-  - "Use users.name, users.age e countries.name AS country_name."
-  - "Ordene por country_name em ordem crescente."
-  - "SELECT users.name, users.age, countries.name AS country_name FROM users INNER JOIN countries ON countries.country_code = users.country_code ORDER BY country_name ASC;"
+  - "A missão é ajustar a consulta para escolher colunas específicas e ordenar pelo nome do país."
+  - "Como as duas tabelas têm uma coluna `name`, qualifique os nomes com a tabela de origem para não haver ambiguidade."
+  - "Renomeie o nome do país para `country_name` com um apelido."
+  - "Selecione `users.name`, `users.age` e o nome do país; ordene pelo apelido do país em ordem crescente."
 references:
   - label: "SQLite — JOIN"
     url: "https://www.sqlite.org/lang_select.html"

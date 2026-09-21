@@ -10,9 +10,10 @@ xp: 35
 prerequisites:
   - filtros-11
 hints:
-  - "Adicione a cláusula LIMIT no final da consulta."
-  - "Filtre as transações cujo note contém 'lunch': WHERE note LIKE '%lunch%'."
-  - "SELECT * FROM transactions WHERE note LIKE '%lunch%' LIMIT 5;"
+  - "A missão é listar as transações cuja anotação contém a palavra lunch, no máximo 5 linhas."
+  - "Use um operador de padrão para encontrar a palavra em qualquer posição da anotação: pode haver texto antes e depois."
+  - "Selecione todas as colunas da tabela `transactions`."
+  - "A cláusula que limita a quantidade de linhas vem por último, depois do filtro."
 references:
   - label: "SQLite — SELECT"
     url: "https://www.sqlite.org/lang_select.html"

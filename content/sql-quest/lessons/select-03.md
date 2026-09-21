@@ -10,8 +10,10 @@ xp: 28
 prerequisites:
   - select-02
 hints:
-  - "Liste as colunas separadas por vírgula, na ordem pedida."
-  - "SELECT age, name, balance FROM users;"
+  - "A missão é devolver três colunas específicas, na ordem exata pedida no enunciado."
+  - "Liste os nomes das colunas separados por vírgula. A vírgula separa colunas dentro da mesma linha, não linhas diferentes."
+  - "As colunas são `age`, `name` e `balance`; a tabela é `users`."
+  - "Confira a ordem antes de rodar: `age` primeiro, depois `name` e por fim `balance`. A comparação do resultado leva a ordem em conta."
 references:
   - label: "SQLite — SELECT"
     url: "https://www.sqlite.org/lang_select.html"
@@ -76,5 +78,12 @@ SELECT vida, dano, defesa FROM monstros;
 
 ## Sua vez
 
-Atualize a consulta para selecionar as colunas `age`, `name` e `balance` da
-tabela `users`, nessa ordem.
+A missão é escolher mais de uma coluna da tabela `users`, na ordem correta.
+
+Sua consulta deve:
+
+- consultar a tabela `users`;
+- devolver as colunas `age`, `name` e `balance`, exatamente nessa ordem;
+- devolver todas as linhas, sem filtros.
+
+A ordem das colunas faz parte do resultado esperado, então não a inverta.

@@ -10,8 +10,10 @@ xp: 28
 prerequisites:
   - filtros-04
 hints:
-  - "Combine country_code = 'CA' com age < 18 usando AND."
-  - "SELECT * FROM users WHERE country_code = 'CA' AND age < 18;"
+  - "A missão é listar todos os campos dos usuários canadenses menores de idade."
+  - "Duas condições precisam valer ao mesmo tempo; combine-as com o operador lógico apropriado."
+  - "As condições são: país igual a `CA` e idade menor que 18."
+  - "Selecione todas as colunas da tabela `users`."
 references:
   - label: "SQLite — Expressions"
     url: "https://www.sqlite.org/lang_expr.html"
@@ -118,9 +120,12 @@ reconhecem `==` como sintaxe válida.
 
 ## Sua vez
 
-As restrições legais no Canadá mudaram! A forma como precisamos lidar com as
-transações de menores de idade canadenses no Senai Pay está mais regulamentada.
-Precisamos encontrar todos esses usuários para ver quantos essa mudança afeta!
+A missão é encontrar os usuários canadenses menores de 18 anos.
 
-Escreva uma consulta que recupere todas as colunas dos usuários da tabela
-`users` que são do Canadá (CA) e têm menos de 18 anos.
+Sua consulta deve:
+
+- consultar a tabela `users`;
+- devolver todas as colunas;
+- manter apenas as linhas em que `country_code` é `CA` e a idade é menor que 18.
+
+As duas condições precisam ser verdadeiras na mesma linha, então use o operador lógico que exige ambas.

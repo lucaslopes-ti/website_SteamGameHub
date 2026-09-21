@@ -10,9 +10,10 @@ xp: 41
 prerequisites:
   - joins-10
 hints:
-  - "Use a sintaxe CREATE INDEX nome_do_indice ON tabela (coluna)."
-  - "O índice deve se chamar email_idx e ser criado sobre a coluna email."
-  - "CREATE INDEX email_idx ON users (email);"
+  - "A missão é criar um índice não único na coluna de e-mail da tabela `users`."
+  - "Use a instrução de criação de índice, com um nome para ele e, entre parênteses, a coluna indexada."
+  - "O índice deve se chamar `email_idx` e cobrir a coluna `email` da tabela `users`."
+  - "Não use a palavra que tornaria o índice único: aqui ele é comum."
 references:
   - label: "SQLite — CREATE INDEX"
     url: "https://www.sqlite.org/lang_createindex.html"
@@ -101,5 +102,12 @@ conhece o **e-mail** de um usuário, mas não o seu `id`. Vamos adicionar um
 
 ## Sua vez
 
-Crie um índice **não único** chamado `email_idx` na coluna `email` da tabela
-`users`.
+A missão é acelerar as buscas por e-mail no Senai Pay criando um índice.
+
+Sua instrução deve:
+
+- criar um índice chamado `email_idx`;
+- indexar a coluna `email` da tabela `users`;
+- ser um índice não único.
+
+Pense no índice como um atalho de busca: ele não altera os dados, só a forma de encontrá-los.

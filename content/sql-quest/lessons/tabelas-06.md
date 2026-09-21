@@ -10,8 +10,10 @@ xp: 34
 prerequisites:
   - tabelas-05
 hints:
-  - "Use ALTER TABLE transactions DROP COLUMN ..."
-  - "Remova was_successful e transaction_type."
+  - "A missão é reverter a migração anterior, removendo duas colunas da tabela `transactions`."
+  - "Para remover coluna, use a instrução de alteração de tabela seguida da palavra que indica remoção e do nome da coluna."
+  - "Remova primeiro `was_successful` e depois `transaction_type`, na ordem do enunciado."
+  - "Ao final, a tabela deve voltar a ter apenas as colunas do estado original."
 references:
   - label: "SQLite — ALTER TABLE"
     url: "https://www.sqlite.org/lang_altertable.html"

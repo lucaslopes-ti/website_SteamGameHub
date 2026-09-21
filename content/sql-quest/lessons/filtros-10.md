@@ -9,7 +9,10 @@ difficulty: intermediario
 xp: 28
 prerequisites:
   - filtros-09
-hints: []
+hints:
+  - "Reveja no contexto o significado de cada curinga: quantos caracteres cada um representa e o que eles permitem no início ou no fim do padrão."
+  - "Escreva mentalmente quais cadeias de texto cada padrão aceita e teste cada opção contra esse conjunto."
+  - "Confira depois de responder com a contagem de caracteres da explicação."
 references:
   - label: "SQLite — Expressions"
     url: "https://www.sqlite.org/lang_expr.html"
@@ -63,4 +66,9 @@ WHERE
 
 ## Sua vez
 
-Responda às perguntas do desafio.
+Responda às perguntas sobre os curingas de padrão de texto.
+
+- Relembre: o sublinhado casa um caractere e a porcentagem casa qualquer quantidade.
+- Conte com cuidado os caracteres exigidos por cada padrão e o que ele aceita no início ou no fim.
+
+Depois de enviar, leia as explicações para conferir seu raciocínio.

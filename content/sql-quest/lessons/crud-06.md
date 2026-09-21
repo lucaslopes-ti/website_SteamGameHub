@@ -10,9 +10,9 @@ xp: 28
 prerequisites:
   - crud-05
 hints:
-  - "Adicione a cláusula WHERE ao final do SELECT."
-  - "Filtre por is_admin = true (ou is_admin = 1)."
-  - "SELECT username FROM users WHERE is_admin = true;"
+  - "A missão é listar apenas o `username` dos usuários que são administradores."
+  - "Escolha só a coluna pedida e acrescente uma condição para restringir as linhas."
+  - "A coluna que indica administrador é `is_admin`; verdadeiro pode ser escrito como `true` ou `1`."
 references:
   - label: "SQLite — WHERE"
     url: "https://www.sqlite.org/lang_expr.html"
@@ -110,6 +110,12 @@ que o campo `power_level` seja maior ou igual a 9000.
 
 ## Sua vez
 
-Precisamos saber o `username` de todos os usuários da tabela `users` que têm
-privilégios de administrador! Recupere-os. Consulte o código de setup para ver
-quais campos existem.
+A missão é encontrar os administradores do Senai Pay e ver apenas o nome de usuário deles.
+
+Sua consulta deve:
+
+- consultar a tabela `users`;
+- devolver somente a coluna `username`;
+- trazer apenas as linhas em que `is_admin` é verdadeiro.
+
+Consulte o código de setup se precisar conferir os nomes das colunas.

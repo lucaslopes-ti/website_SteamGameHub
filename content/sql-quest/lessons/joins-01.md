@@ -10,9 +10,10 @@ xp: 41
 prerequisites:
   - normalizacao-11
 hints:
-  - "Use INNER JOIN entre users e countries, nessa ordem."
-  - "A condição de junção é countries.country_code = users.country_code."
-  - "SELECT * FROM users INNER JOIN countries ON countries.country_code = users.country_code;"
+  - "A missão é juntar as tabelas `users` e `countries` e devolver todas as colunas das duas."
+  - "Use a junção interna e informe a condição que liga as duas tabelas."
+  - "A ligação é pelo campo de código do país, que existe nas duas tabelas."
+  - "A ordem das tabelas na junção é `users` primeiro e `countries` depois, como pedido."
 references:
   - label: "SQLite — JOIN"
     url: "https://www.sqlite.org/lang_select.html"
@@ -163,5 +164,13 @@ Vamos começar escrevendo um JOIN simples entre as tabelas `users` e
 
 ## Sua vez
 
-Escreva um `INNER JOIN` entre `users` e `countries`, nessa ordem. Retorne todos
-os campos das duas tabelas. A junção deve ser feita pelo campo `country_code`.
+A missão é combinar usuários e países para ver cada usuário com os dados do seu país.
+
+Sua consulta deve:
+
+- juntar a tabela `users` com a tabela `countries`, nessa ordem;
+- usar uma junção interna;
+- ligar as tabelas pelo código do país, presente nas duas;
+- devolver todas as colunas das duas tabelas.
+
+Pense em qual coluna é a ponte entre as tabelas antes de escrever a condição de junção.

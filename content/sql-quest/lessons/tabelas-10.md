@@ -10,9 +10,10 @@ xp: 34
 prerequisites:
   - tabelas-09
 hints:
-  - "Renomeie a coluna: ALTER TABLE posts RENAME COLUMN author_id TO poster_id;"
-  - "Adicione: ALTER TABLE posts ADD COLUMN is_edited BOOLEAN;"
-  - "Remova: ALTER TABLE posts DROP COLUMN is_sponsored;"
+  - "A missão é escrever uma migração para frente com três mudanças na tabela `posts`."
+  - "São três instruções de alteração de tabela, uma por passo, na ordem do enunciado."
+  - "Passo 1: renomear a coluna `author_id` para `poster_id`. Passo 2: adicionar `is_edited` como BOOLEAN. Passo 3: remover `is_sponsored`."
+  - "Antes de rodar, confira o estado final esperado: deve existir `poster_id` e `is_edited`, e não deve mais existir `is_sponsored`."
 references:
   - label: "SQLite — ALTER TABLE"
     url: "https://www.sqlite.org/lang_altertable.html"

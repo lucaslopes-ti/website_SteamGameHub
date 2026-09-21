@@ -10,9 +10,10 @@ xp: 34
 prerequisites:
   - normalizacao-05
 hints:
-  - "No SQLite não dá para adicionar PRIMARY KEY com ALTER TABLE."
-  - "Remova a tabela atual: DROP TABLE companies;"
-  - "Recrie com id INTEGER PRIMARY KEY como primeira coluna."
+  - "A missão é reconstruir a tabela `companies` para que ela tenha uma chave primária."
+  - "No SQLite não dá para transformar uma coluna existente em chave primária; é preciso recriar a tabela."
+  - "Remova a tabela atual e crie-a de novo, com `id` INTEGER PRIMARY KEY como primeira coluna."
+  - "Mantenha `name` e `num_employees` como NOT NULL, com os mesmos tipos."
 references:
   - label: "SQLite — CREATE TABLE"
     url: "https://www.sqlite.org/lang_createtable.html"
@@ -91,4 +92,12 @@ Adicione um campo `id` como primeira coluna, do tipo inteiro e com a restrição
 
 ## Sua vez
 
-Coloque `companies` na 1NF conforme o desafio.
+A missão é colocar a tabela `companies` na primeira forma normal, garantindo uma chave primária.
+
+Seus passos:
+
+1. remova a tabela atual;
+2. recrie `companies` com `id` INTEGER PRIMARY KEY como primeira coluna;
+3. mantenha `name` TEXT NOT NULL e `num_employees` INTEGER NOT NULL.
+
+Lembre-se de que essa é uma tabela nova: os dados antigos não são preservados.

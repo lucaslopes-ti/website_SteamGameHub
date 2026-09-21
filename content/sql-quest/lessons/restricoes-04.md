@@ -10,9 +10,10 @@ xp: 34
 prerequisites:
   - restricoes-03
 hints:
-  - "O código 'IND' não existe na tabela countries."
-  - "Use 'IN', que é o código cadastrado."
-  - "Depois dos INSERTs, selecione todos os registros com SELECT * FROM users;"
+  - "A missão é corrigir o segundo registro para não violar a chave estrangeira e, depois, listar a tabela."
+  - "A coluna de país do usuário só aceita um código que já exista na tabela de países."
+  - "O código usado no segundo registro não está cadastrado; troque por um código válido da tabela `countries`."
+  - "Depois de corrigir, leia todos os usuários da tabela para conferir."
 references:
   - label: "SQLite — FOREIGN KEY"
     url: "https://www.sqlite.org/foreignkeys.html"
@@ -124,5 +125,12 @@ não existe na tabela `countries` — o código cadastrado é `'IN'`.
 
 ## Sua vez
 
-Corrija o INSERT do Amit para que nenhuma constraint de chave estrangeira seja
-violada. Depois, selecione todos os registros da tabela `users`.
+O editor traz dois registros, e o segundo aponta para um país que não existe.
+
+Sua tarefa:
+
+1. descubra qual código de país é inválido;
+2. troque-o por um código que esteja cadastrado na tabela `countries`;
+3. ao final, selecione todos os registros da tabela `users`.
+
+Mantenha todo o resto do registro como está; só o código de país precisa mudar.

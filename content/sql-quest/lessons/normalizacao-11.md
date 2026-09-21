@@ -10,9 +10,10 @@ xp: 41
 prerequisites:
   - normalizacao-10
 hints:
-  - "Crie banks sem o prefixo bank_: name, agency e account."
-  - "Na junção users_banks, use UNIQUE (user_id, bank_id) para não repetir o par."
-  - "Adicione FOREIGN KEY (user_id) REFERENCES users(id) e FOREIGN KEY (bank_id) REFERENCES banks(id)."
+  - "A missão é separar os dados bancários em uma tabela própria e criar a ligação muitos-para-muitos."
+  - "Em `banks`, use nomes sem o prefixo `bank_`: `name`, `agency` e `account`, além de `id` como chave primária."
+  - "Na tabela de junção `users_banks`, a unicidade deve ser sobre o par `user_id` e `bank_id`."
+  - "Adicione duas chaves estrangeiras: `user_id` referencia `users(id)` e `bank_id` referencia `banks(id)`."
 references:
   - label: "SQLite — Foreign Keys"
     url: "https://www.sqlite.org/foreignkeys.html"

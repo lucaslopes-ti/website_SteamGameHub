@@ -10,9 +10,10 @@ xp: 34
 prerequisites:
   - normalizacao-01
 hints:
-  - "id INTEGER PRIMARY KEY"
-  - "mac_address e type são colunas TEXT."
-  - "user_id INTEGER REFERENCES users(id) cria a chave estrangeira."
+  - "A missão é criar a tabela `devices` com quatro colunas."
+  - "A primeira coluna identifica cada dispositivo: é um inteiro que também é a chave primária."
+  - "`mac_address` e `type` guardam texto."
+  - "A coluna `user_id` guarda um inteiro que referencia a chave primária da tabela `users`; é a chave estrangeira."
 references:
   - label: "SQLite — Foreign Keys"
     url: "https://www.sqlite.org/foreignkeys.html"

@@ -10,8 +10,10 @@ xp: 34
 prerequisites:
   - tabelas-01
 hints:
-  - "Use CREATE TABLE seguido do nome da tabela."
-  - "CREATE TABLE transactions(id INTEGER, recipient_id INTEGER, sender_id INTEGER, note TEXT, amount REAL);"
+  - "A missão é criar a tabela `transactions` com cinco colunas."
+  - "Use as palavras-chave de criação de tabela, o nome da tabela e a lista de colunas entre parênteses."
+  - "A ordem pedida é: `id`, `recipient_id`, `sender_id`, `note` e `amount`."
+  - "Tipos: os três primeiros são INTEGER, `note` é TEXT e `amount` é REAL. Encerre a instrução ao fechar os parênteses."
 references:
   - label: "SQLite — CREATE TABLE"
     url: "https://www.sqlite.org/lang_createtable.html"

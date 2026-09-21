@@ -10,9 +10,10 @@ xp: 41
 prerequisites:
   - agregacao-08
 hints:
-  - "Selecione country_code e ROUND(AVG(age)) com o apelido (alias) average_age."
-  - "Agrupe por country_code com GROUP BY."
-  - "SELECT country_code, ROUND(AVG(age)) AS average_age FROM users GROUP BY country_code;"
+  - "A missão é devolver o país e a idade média de cada país, com a média arredondada."
+  - "Selecione o `country_code` e a média de idade envolvida na função de arredondamento, com o apelido `average_age`."
+  - "Como há uma linha por país, agrupe pelo `country_code`."
+  - "A ordem das colunas é `country_code` e depois `average_age`."
 references:
   - label: "SQLite — Aggregate Functions"
     url: "https://www.sqlite.org/lang_aggfunc.html"
@@ -84,7 +85,13 @@ arredondamento com `ROUND`, apelidos com `AS` e agrupamento com `GROUP BY`.
 
 ## Sua vez
 
-Escreva uma instrução SQL que retorne duas colunas: o `country_code` e a idade
-média dos usuários daquele `country_code`. O time de marketing pediu que a
-média seja arredondada para o número inteiro mais próximo e que a coluna com a
-idade média seja renomeada para `average_age`.
+A missão é entregar ao marketing a idade média dos usuários por país.
+
+Sua consulta deve:
+
+- devolver duas colunas: `country_code` e a média de idade;
+- arredondar a média para o inteiro mais próximo;
+- renomear a coluna da média para `average_age`;
+- ter uma linha por país, agrupando pelo código do país.
+
+A ordem das colunas no resultado é a do enunciado.

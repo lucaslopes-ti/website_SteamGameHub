@@ -10,9 +10,10 @@ xp: 28
 prerequisites:
   - ordenacao-01
 hints:
-  - "Use WHERE user_id = 6."
-  - "Adicione LIMIT 3 ao final para definir o teto de registros."
-  - "SELECT * FROM transactions WHERE user_id = 6 LIMIT 3;"
+  - "A missão é listar as transações do usuário de `user_id` 6, com um teto de 3 linhas."
+  - "O filtro identifica as linhas do usuário; a cláusula de limite define o teto."
+  - "Use o coringa para trazer todas as colunas."
+  - "Lembre-se de que o limite é um teto, não uma garantia: se o usuário tiver menos linhas que o teto, vêm menos."
 references:
   - label: "SQLite — SELECT"
     url: "https://www.sqlite.org/lang_select.html"

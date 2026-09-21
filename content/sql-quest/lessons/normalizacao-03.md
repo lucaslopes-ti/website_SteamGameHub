@@ -10,9 +10,10 @@ xp: 41
 prerequisites:
   - normalizacao-02
 hints:
-  - "Remova a coluna: ALTER TABLE users DROP COLUMN country_code;"
-  - "CREATE TABLE countries (id INTEGER PRIMARY KEY, country_code TEXT, name TEXT);"
-  - "Na junção, some UNIQUE (country_id, user_id) e as duas FOREIGN KEY."
+  - "A missão tem três partes: remover uma coluna antiga, criar a tabela de países e criar a tabela de junção."
+  - "Primeiro remova `country_code` de `users` com uma instrução de alteração de tabela."
+  - "A tabela `countries` tem `id` como chave primária, além de `country_code` e `name`, ambos de texto."
+  - "Na tabela `users_countries`, use uma restrição de unicidade sobre o par de colunas e duas chaves estrangeiras, uma para cada entidade."
 references:
   - label: "SQLite — Foreign Keys"
     url: "https://www.sqlite.org/foreignkeys.html"

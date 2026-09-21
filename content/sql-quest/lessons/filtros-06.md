@@ -10,9 +10,10 @@ xp: 28
 prerequisites:
   - filtros-05
 hints:
-  - "Agrupe as condições de país com parênteses antes do AND."
-  - "Use COUNT(*) com o alias junior_count."
-  - "SELECT COUNT(*) AS junior_count FROM users WHERE (country_code = 'US' OR country_code = 'CA') AND age < 18;"
+  - "A missão é contar usuários que moram nos Estados Unidos OU no Canadá E têm menos de 18 anos."
+  - "As condições de país formam um grupo que precisa ser avaliado junto antes de combinar com a idade; use parênteses para isso."
+  - "Use a função de contagem com o coringa e dê à coluna resultante o apelido `junior_count`."
+  - "Sem os parênteses a lógica muda por causa da precedência entre E e OU; confira esse detalhe antes de rodar."
 references:
   - label: "SQLite — Expressions"
     url: "https://www.sqlite.org/lang_expr.html"

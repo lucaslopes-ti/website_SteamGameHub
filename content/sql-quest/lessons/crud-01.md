@@ -10,9 +10,10 @@ xp: 28
 prerequisites:
   - restricoes-08
 hints:
-  - "READ (ler) é o mesmo que recuperar dados."
-  - "Use SELECT * para ler todos os campos de todos os registros."
-  - "SELECT * FROM crud;"
+  - "A missão é descobrir qual comando do CRUD serve para LER dados e usá-lo na tabela `crud`."
+  - "READ é a operação de recuperar dados. No SQL, é o comando que usamos desde o começo do curso."
+  - "Você precisa de todos os campos e todas as linhas: use o coringa para as colunas."
+  - "A tabela se chama `crud` e não há filtro algum."
 references:
   - label: "SQLite — SELECT"
     url: "https://www.sqlite.org/lang_select.html"
@@ -63,5 +64,12 @@ correspondente a uma operação.
 
 ## Sua vez
 
-Determine qual comando SQL pode ser usado para uma operação **READ** e use-o
-para ler todos os campos de todos os registros da tabela `crud`!
+A missão é identificar o comando do CRUD que corresponde a READ e usá-lo para listar a tabela `crud`.
+
+Sua consulta deve:
+
+- usar o comando de leitura de dados;
+- consultar a tabela `crud`;
+- devolver todos os campos e todas as linhas.
+
+Cada coluna da tabela guarda o nome de um comando; use-a como pista se ficar em dúvida.

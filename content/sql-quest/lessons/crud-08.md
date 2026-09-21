@@ -10,9 +10,9 @@ xp: 34
 prerequisites:
   - crud-07
 hints:
-  - "Use DELETE FROM users seguido de WHERE."
-  - "Filtre pelo nome da usuária: WHERE name = 'Samantha'."
-  - "DELETE FROM users WHERE name = 'Samantha';"
+  - "A missão é remover da tabela `users` o registro da usuária Samantha."
+  - "Use o comando de exclusão seguido da condição que identifica a linha; sem condição, todas as linhas seriam removidas."
+  - "Identifique a usuária pelo nome, com o operador de igualdade e o texto entre aspas."
 references:
   - label: "SQLite — DELETE"
     url: "https://www.sqlite.org/lang_delete.html"
@@ -89,8 +89,12 @@ Esta instrução DELETE remove todos os registros da tabela `employees` que têm
 
 ## Sua vez
 
-Samantha, uma das usuárias do Senai Pay, optou por excluir a conta dela e parar
-de usar o aplicativo... o que nos deixa tristes. De qualquer forma, precisamos
-remover o registro dela do banco de dados!
+A missão é excluir a conta da Samantha do banco do Senai Pay.
 
-Exclua o registro da Samantha da tabela `users`.
+Sua instrução deve:
+
+- atuar sobre a tabela `users`;
+- remover apenas a linha da usuária Samantha;
+- identificar a linha pelo nome exato.
+
+Cuidado: uma exclusão sem condição apagaria todos os usuários.

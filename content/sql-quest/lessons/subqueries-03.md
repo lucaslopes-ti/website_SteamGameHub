@@ -10,10 +10,10 @@ xp: 41
 prerequisites:
   - subqueries-02
 hints:
-  - "A subquery busca sender_id em transactions onde note LIKE '%invoice%' OR note LIKE '%tax%'."
-  - "A consulta externa busca em users com id IN (...)."
-  - "Combine com AND is_admin = false para excluir administradores."
-  - "SELECT * FROM users WHERE id IN (SELECT sender_id FROM transactions WHERE note LIKE '%invoice%' OR note LIKE '%tax%') AND is_admin = false;"
+  - "A missão é listar todos os dados dos usuários que enviaram transações de cobrança ou imposto e não são administradores."
+  - "A subquery busca na tabela de transações os remetentes cujo texto contém invoice OU tax; use o curinga para 'contém'."
+  - "Na consulta externa, o `id` do usuário precisa pertencer a essa lista; combine com uma segunda condição que exige `is_admin` falso."
+  - "Não se esqueça do parêntese que agrupa a lógica do 'ou' dentro da subquery."
 references:
   - label: "SQLite — SELECT"
     url: "https://www.sqlite.org/lang_select.html"

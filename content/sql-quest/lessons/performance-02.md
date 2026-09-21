@@ -10,9 +10,9 @@ xp: 28
 prerequisites:
   - performance-01
 hints:
-  - "Uma B-tree mantém os valores ordenados, então cada passo descarta boa parte da busca."
-  - "Índices aceleram leituras, mas pesam em memória e em INSERT/UPDATE."
-  - "Indexe as colunas usadas com frequência em buscas; deixe o resto sem índice."
+  - "Releia no contexto a explicação sobre a estrutura de um índice e sobre o custo de mantê-lo."
+  - "Ao avaliar quais colunas já estão indexadas, pense em quais tipos de restrição o banco cria por padrão."
+  - "Na pergunta sobre a regra prática, reflita sobre o equilíbrio entre ganho nas buscas e custo nas alterações."
 references:
   - label: "SQLite — Query Optimizer Overview"
     url: "https://www.sqlite.org/optoverview.html"
@@ -80,4 +80,9 @@ A regra prática é simples:
 
 ## Sua vez
 
-Responda às perguntas do desafio.
+Responda às perguntas sobre como os índices funcionam e quando valem a pena.
+
+- Pense no ganho de velocidade nas leituras e no custo nas escritas.
+- Considere que colunas de chave primária já vêm indexadas.
+
+Depois de enviar, leia as explicações para revisar.

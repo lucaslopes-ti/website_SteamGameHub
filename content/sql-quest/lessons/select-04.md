@@ -9,7 +9,10 @@ difficulty: iniciante
 xp: 28
 prerequisites:
   - select-03
-hints: []
+hints:
+  - "Releia a cena e separe dois aspectos: o volume de dados e o nível de automação que o dia a dia exige."
+  - "Para cada opção, pergunte-se em que cenário ela seria a escolha natural e em qual ela atrapalharia o trabalho."
+  - "Depois de responder, use a explicação para conferir o critério que diferencia as opções."
 references:
   - label: "SQLite — Lang"
     url: "https://www.sqlite.org/lang.html"
@@ -48,4 +51,10 @@ de programação como Python, TypeScript e Go.
 
 ## Sua vez
 
-Responda às perguntas do desafio.
+Leia cada situação e escolha a opção que combina melhor com o contexto descrito.
+
+- Considere quantos dados serão guardados e quantas pessoas vão consultá-los.
+- Pense no grau de automação e de escala que a tarefa exige.
+- Não há resposta única para todos os casos: o contexto é que decide.
+
+Depois de enviar, leia as explicações para comparar seu raciocínio com o esperado.

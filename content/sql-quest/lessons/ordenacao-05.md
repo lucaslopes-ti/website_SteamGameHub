@@ -10,9 +10,10 @@ xp: 41
 prerequisites:
   - ordenacao-04
 hints:
-  - "No SQL, o ORDER BY deve vir antes do LIMIT."
-  - "Filtre com amount BETWEEN 10 AND 80 e ordene com ORDER BY amount DESC."
-  - "SELECT * FROM transactions WHERE amount BETWEEN 10 AND 80 ORDER BY amount DESC LIMIT 4;"
+  - "A missão é corrigir a consulta que já vem mostrada no contexto: as cláusulas estão na ordem errada."
+  - "Pense na sequência em que o banco executa as etapas: primeiro filtra, depois ordena e só então limita."
+  - "O filtro é a faixa de valores entre 10 e 80; a ordenação é pelo valor, do maior para o menor; o limite é 4."
+  - "Reorganize as cláusulas sem mudar o significado e selecione todas as colunas da tabela `transactions`."
 references:
   - label: "SQLite — SELECT"
     url: "https://www.sqlite.org/lang_select.html"
@@ -103,6 +104,13 @@ que faz sentido limitar quantas linhas retornar.
 
 ## Sua vez
 
-Corrija a consulta acima para retornar **todas as colunas** da tabela
-`transactions` em que `amount` está **ENTRE 10 e 80**, ordenadas por `amount`
-em ordem **decrescente**, com `LIMIT` de **4** registros.
+A missão é consertar a consulta do RH, que não executa por causa da ordem das cláusulas.
+
+Sua consulta final deve:
+
+- selecionar todas as colunas da tabela `transactions`;
+- filtrar os valores entre 10 e 80, incluindo os extremos;
+- ordenar pelo valor em ordem decrescente;
+- limitar o resultado aos 4 maiores valores.
+
+Dica: em SQL, quem define o conjunto de linhas vem antes de quem ordena, e a ordenação vem antes de quem limita.

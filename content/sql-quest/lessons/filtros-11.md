@@ -10,9 +10,10 @@ xp: 41
 prerequisites:
   - filtros-10
 hints:
-  - "Use IIF com a condição age > 55 OR country_code = 'CA'."
-  - "Selecione todas as colunas com * e adicione discount_percent no final."
-  - "SELECT *, IIF(age > 55 OR country_code = 'CA', 10, 0) AS discount_percent FROM users;"
+  - "A missão é listar todos os usuários e criar uma coluna calculada com o percentual de desconto."
+  - "Use uma expressão condicional que devolve 10 quando a condição de desconto vale e 0 quando não vale."
+  - "A condição tem duas partes alternativas: idade acima de 55 anos OU país igual a `CA`; una com o operador lógico adequado."
+  - "A nova coluna entra no final, com o apelido `discount_percent`, e o valor é inteiro."
 references:
   - label: "SQLite — Core Functions"
     url: "https://www.sqlite.org/lang_corefunc.html"

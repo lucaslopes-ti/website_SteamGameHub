@@ -10,9 +10,10 @@ xp: 41
 prerequisites:
   - ordenacao-06
 hints:
-  - "A consulta externa busca em transactions; a interna busca em users."
-  - "Use WHERE user_id = (SELECT id FROM users WHERE name = 'David')."
-  - "SELECT * FROM transactions WHERE user_id = (SELECT id FROM users WHERE name = 'David');"
+  - "A missão é listar todas as colunas das transações do usuário chamado David, mas a tabela de transações não guarda nomes."
+  - "Resolva em duas etapas: primeiro descubra o `id` do David na tabela `users`; depois use esse valor para filtrar as transações."
+  - "A consulta interna (subquery) fica dentro da condição da consulta externa e devolve o id procurado."
+  - "A consulta externa lê todas as colunas de `transactions` e compara `user_id` com o resultado da subquery."
 references:
   - label: "SQLite — SELECT"
     url: "https://www.sqlite.org/lang_select.html"
@@ -160,9 +161,12 @@ valores e `=` quando esperamos um único valor.
 
 ## Sua vez
 
-Um dos representantes de atendimento do Senai Pay precisa puxar todas as
-transações de um usuário específico. O problema é que ele só sabe o **nome** do
-usuário (`David`), não o `id`.
+A missão é puxar as transações de um usuário do qual só se conhece o nome.
 
-Use uma subquery para retornar **todas as colunas** da tabela `transactions`
-pertencentes ao usuário chamado `David`.
+Sua consulta deve:
+
+- ler todas as colunas da tabela `transactions`;
+- usar uma subquery que descobre o `id` do David na tabela `users`;
+- filtrar as transações cujo `user_id` é igual a esse id.
+
+Pense na ordem de execução: a consulta de dentro resolve primeiro o id; a de fora usa esse valor.

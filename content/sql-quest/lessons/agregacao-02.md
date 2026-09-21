@@ -10,9 +10,10 @@ xp: 35
 prerequisites:
   - agregacao-01
 hints:
-  - "Use a função agregada SUM sobre a coluna amount."
-  - "Filtre com WHERE user_id = 9 AND was_successful = true."
-  - "SELECT SUM(amount) FROM transactions WHERE user_id = 9 AND was_successful = true;"
+  - "A missão é somar o valor de todas as transações bem-sucedidas do Bob."
+  - "Use a função de soma sobre a coluna `amount`."
+  - "O filtro combina duas condições com E: usuário é 9 e transação bem-sucedida."
+  - "O resultado é um único valor."
 references:
   - label: "SQLite — Aggregate Functions"
     url: "https://www.sqlite.org/lang_aggfunc.html"
@@ -101,6 +102,13 @@ saldo corrente em cada registro individual de transação.
 
 ## Sua vez
 
-Escreva uma consulta que retorne a agregação `SUM` dos valores (`amount`) de
-todas as transações bem-sucedidas do Bob (`user_id` é `9`). Consulte o SQL de
-setup para ver os detalhes da tabela.
+A missão é descobrir quanto o Bob movimentou em transações bem-sucedidas.
+
+Sua consulta deve:
+
+- usar a função de soma sobre a coluna `amount`;
+- considerar apenas a tabela `transactions`;
+- filtrar pelo `user_id` 9 e por transações bem-sucedidas;
+- devolver um único valor.
+
+Somar valores de linhas filtradas é diferente de filtrar depois de somar: o filtro vem antes.

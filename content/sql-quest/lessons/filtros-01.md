@@ -10,9 +10,10 @@ xp: 28
 prerequisites:
   - crud-13
 hints:
-  - "Use AS para renomear o campo note para birthday_message."
-  - "Filtre com WHERE sender_id = 10."
-  - "SELECT amount, note AS birthday_message FROM transactions WHERE sender_id = 10;"
+  - "A missão é devolver o valor e a anotação das transações enviadas pela avó, com a anotação renomeada."
+  - "Selecione as duas colunas pedidas e use o recurso de apelido para dar outro nome apenas à coluna da anotação."
+  - "A condição identifica as transações pelo `sender_id` igual a 10, que é a avó."
+  - "A ordem no resultado é `amount` primeiro e a anotação renomeada depois."
 references:
   - label: "SQLite — SELECT"
     url: "https://www.sqlite.org/lang_select.html"
@@ -97,9 +98,13 @@ colunas `id` e `name` em vez de `employee_id` e `employee_name`.
 
 ## Sua vez
 
-Um usuário pediu para encontrarmos todas as transações na conta dele vindas da
-avó. Achamos divertido renomear o campo `note` para `birthday_message`, porque
-notamos que todas as transações da avó são mensagens de aniversário.
+A missão é montar um recorte das transações vindas da avó, com um nome mais amigável para a mensagem.
 
-Retorne os campos `amount` e `note` da tabela `transactions` onde `sender_id` é
-10 (a avó). O campo `note` deve ser renomeado para `birthday_message`.
+Sua consulta deve:
+
+- consultar a tabela `transactions`;
+- devolver as colunas `amount` e `note`;
+- renomear `note` para `birthday_message`;
+- trazer apenas as transações em que `sender_id` é 10.
+
+O apelido não muda o dado: ele só muda o nome da coluna no resultado.

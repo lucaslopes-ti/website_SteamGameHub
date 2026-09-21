@@ -10,8 +10,9 @@ xp: 28
 prerequisites:
   - normalizacao-09
 hints:
-  - "Normalize primeiro; desnormalize apenas por desempenho."
-  - "Na dúvida, nomeie a chave primária de id."
+  - "Releia no contexto a orientação sobre a ordem de prioridades ao estruturar um banco."
+  - "Ao avaliar o nome da chave, pense em qual convenção é mais comum e mais simples em bancos."
+  - "Na pergunta sobre desnormalização, reflita sobre o momento adequado para tomar essa decisão."
 references:
   - label: "SQLite — CREATE TABLE"
     url: "https://www.sqlite.org/lang_createtable.html"
@@ -72,4 +73,9 @@ memorizar — elas ajudam a projetar bancos e também em entrevistas de emprego.
 
 ## Sua vez
 
-Responda às perguntas do desafio.
+Responda às perguntas sobre regras práticas de normalização.
+
+- Priorize integridade e ausência de duplicação antes de buscar velocidade.
+- Prefira convenções simples e amplamente usadas ao nomear chaves.
+
+Depois de enviar, leia as explicações para revisar.

@@ -10,9 +10,10 @@ xp: 35
 prerequisites:
   - agregacao-02
 hints:
-  - "Use a função agregada MAX sobre a coluna age."
-  - "Filtre com WHERE is_admin = true."
-  - "SELECT MAX(age) AS age FROM users WHERE is_admin = true;"
+  - "A missão é encontrar a maior idade entre os usuários que são administradores."
+  - "Use a função agregada que devolve o valor máximo sobre a coluna de idade."
+  - "O filtro mantém apenas quem tem `is_admin` verdadeiro."
+  - "Dê à coluna do resultado o apelido `age`, conforme pedido."
 references:
   - label: "SQLite — Aggregate Functions"
     url: "https://www.sqlite.org/lang_aggfunc.html"
@@ -84,6 +85,13 @@ administrador.
 
 ## Sua vez
 
-Use uma agregação `MAX` para retornar a idade do usuário mais velho do Senai
-Pay que também é administrador (`is_admin` é `true`). Dê o apelido (alias)
-`age` à coluna retornada.
+A missão é descobrir a idade do administrador mais velho do Senai Pay.
+
+Sua consulta deve:
+
+- usar a função que devolve o maior valor;
+- aplicar essa função sobre a coluna `age`;
+- filtrar apenas usuários com `is_admin` verdadeiro;
+- renomear a coluna resultante para `age`.
+
+O resultado é um único valor.

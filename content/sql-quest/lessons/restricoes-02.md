@@ -10,9 +10,10 @@ xp: 34
 prerequisites:
   - restricoes-01
 hints:
-  - "id INTEGER PRIMARY KEY"
-  - "username TEXT UNIQUE NOT NULL"
-  - "name, age, country_code e password são NOT NULL"
+  - "A missão é criar a tabela `users` com regras de integridade em cada coluna."
+  - "Cada coluna é descrita por nome, tipo e, quando houver, a restrição que ela deve cumprir."
+  - "Resumo das regras: `id` é chave primária; `name`, `age`, `country_code` e `password` não podem ser nulos; `username` é único e também não pode ser nulo; `is_admin` é booleano e pode ficar sem valor."
+  - "Escreva as restrições logo após o tipo de cada coluna e separe as colunas por vírgula."
 references:
   - label: "SQLite — CREATE TABLE"
     url: "https://www.sqlite.org/lang_createtable.html"

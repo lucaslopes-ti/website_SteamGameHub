@@ -10,9 +10,10 @@ xp: 34
 prerequisites:
   - agregacao-07
 hints:
-  - "Envolva a agregação AVG(age) com a função ROUND."
-  - "Dê o apelido (alias) round_age à coluna retornada."
-  - "SELECT ROUND(AVG(age)) AS round_age FROM users;"
+  - "A missão é arredondar a média de idade e renomear a coluna resultante."
+  - "A consulta que já vem pronta calcula a média, mas devolve um número decimal; envolva esse cálculo na função de arredondamento."
+  - "Dê à coluna final o apelido `round_age`."
+  - "Não mude a tabela nem a agregação interna: só acrescente o arredondamento e o apelido."
 references:
   - label: "SQLite — Core Functions"
     url: "https://www.sqlite.org/lang_corefunc.html"
@@ -103,5 +104,12 @@ O time de produto quer a idade média dos usuários como um número inteiro.
 
 ## Sua vez
 
-Corrija a consulta para que ela retorne a média como um número inteiro
-(arredondado). Renomeie a coluna resultante para `round_age`.
+O editor já traz uma consulta que calcula a média de idade, mas o resultado sai com casas decimais.
+
+Sua tarefa:
+
+1. envolver o cálculo da média na função de arredondamento, para virar um inteiro;
+2. renomear a coluna resultante para `round_age`;
+3. manter a mesma tabela e a mesma agregação por dentro.
+
+O objetivo é só ajustar a apresentação do número, não o cálculo.

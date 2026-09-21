@@ -10,9 +10,10 @@ xp: 34
 prerequisites:
   - agregacao-05
 hints:
-  - "Use a função agregada AVG sobre a coluna age."
-  - "Filtre com WHERE country_code = 'US'."
-  - "SELECT AVG(age) FROM users WHERE country_code = 'US';"
+  - "A missão é devolver a idade média dos usuários dos Estados Unidos."
+  - "Use a função agregada de média sobre a coluna de idade."
+  - "O filtro restringe ao `country_code` `US`."
+  - "O resultado é um único valor; o apelido não é obrigatório aqui."
 references:
   - label: "SQLite — Aggregate Functions"
     url: "https://www.sqlite.org/lang_aggfunc.html"
@@ -85,5 +86,13 @@ idade média dos usuários nos Estados Unidos.
 
 ## Sua vez
 
-Retorne um único valor representando a idade média de todos os usuários cujo
-`country_code` é `US`.
+A missão é calcular a idade média dos usuários americanos.
+
+Sua consulta deve:
+
+- usar a função de média sobre a coluna `age`;
+- considerar apenas a tabela `users`;
+- filtrar usuários com `country_code` igual a `US`;
+- devolver um único valor.
+
+A média pode vir com casas decimais; nesta lição não é preciso arredondar.

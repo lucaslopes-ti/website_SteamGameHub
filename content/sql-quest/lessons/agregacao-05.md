@@ -10,9 +10,10 @@ xp: 35
 prerequisites:
   - agregacao-04
 hints:
-  - "Use SUM(amount) com o apelido (alias) balance."
-  - "Agrupe por user_id com GROUP BY."
-  - "SELECT user_id, SUM(amount) AS balance FROM transactions WHERE was_successful = true GROUP BY user_id;"
+  - "A missão é somar o saldo por usuário, considerando apenas transações bem-sucedidas."
+  - "Use a função de soma sobre `amount` e dê à coluna o apelido `balance`."
+  - "Como o resultado tem uma linha por usuário, inclua o `user_id` e agrupe por ele."
+  - "Filtre antes de agrupar para considerar apenas transações bem-sucedidas."
 references:
   - label: "SQLite — SELECT"
     url: "https://www.sqlite.org/lang_select.html"
@@ -133,6 +134,13 @@ consulta!
 
 ## Sua vez
 
-Use a agregação `SUM` com a cláusula `GROUP BY`. A linha de cada usuário deve
-conter o `user_id` e o saldo dele — uma soma com apelido (alias) `balance` dos
-valores das transações bem-sucedidas.
+A missão é montar o saldo de cada usuário no Senai Pay.
+
+Sua consulta deve:
+
+- devolver o `user_id` e a soma dos valores como `balance`;
+- considerar apenas transações bem-sucedidas;
+- ter uma linha por usuário, agrupando pelo identificador;
+- somar a coluna `amount`.
+
+Filtrar antes de agrupar evita somar transações que não valem.

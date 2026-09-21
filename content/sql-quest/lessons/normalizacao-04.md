@@ -10,8 +10,9 @@ xp: 28
 prerequisites:
   - normalizacao-03
 hints:
-  - "Dados brutos não mudam; dados pré-calculados ficam desatualizados."
-  - "Redundância é guardar a mesma informação em mais de um lugar."
+  - "Releia no contexto o que mantém os dados confiáveis ao longo do tempo e o que caracteriza redundância."
+  - "Ao avaliar os exemplos, pergunte-se o que cada abordagem preserva e o que ela deixa vulnerável ao passar do tempo."
+  - "Na pergunta sobre o objetivo da normalização, relacione a prática com os problemas que ela evita."
 references:
   - label: "SQLite — CREATE TABLE"
     url: "https://www.sqlite.org/lang_createtable.html"
@@ -79,4 +80,9 @@ os outros não: a mesma informação passa a ficar inconsistente entre as cópia
 
 ## Sua vez
 
-Responda às perguntas do desafio.
+Responda às perguntas sobre integridade e redundância de dados.
+
+- Reflita sobre quais dados são brutos e quais são derivados (e, por isso, podem envelhecer).
+- Procure exemplos em que o mesmo dado é guardado em mais de um lugar.
+
+Depois de enviar, leia as explicações para revisar.

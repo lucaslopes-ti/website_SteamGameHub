@@ -10,9 +10,10 @@ xp: 41
 prerequisites:
   - subqueries-01
 hints:
-  - "A subquery deve retornar os ids dos administradores: SELECT id FROM users WHERE is_admin = true."
-  - "Use user_id IN (...) na consulta externa."
-  - "SELECT * FROM transactions WHERE user_id IN (SELECT id FROM users WHERE is_admin = true);"
+  - "A missão é listar as transações cujo dono é administrador."
+  - "Primeiro, uma subquery deve devolver a lista de ids de todos os administradores."
+  - "Na consulta externa, use o operador que testa se o valor pertence a essa lista (o mesmo usado com listas de valores)."
+  - "A consulta externa lê todas as colunas de `transactions` e filtra `user_id` contra a subquery."
 references:
   - label: "SQLite — SELECT"
     url: "https://www.sqlite.org/lang_select.html"
@@ -158,6 +159,12 @@ administradores da plataforma.
 
 ## Sua vez
 
-Retorne **todas as colunas** da tabela `transactions` cujo `user_id` pertence a
-um administrador (`is_admin` verdadeiro). Use uma subquery com `IN` para obter
-a lista de administradores a partir da tabela `users`.
+A missão é buscar as transações feitas por administradores do Senai Pay.
+
+Sua consulta deve:
+
+- ler todas as colunas da tabela `transactions`;
+- usar uma subquery com o operador de lista para obter os ids dos administradores;
+- filtrar as transações cujo `user_id` pertence a essa lista.
+
+A subquery responde a pergunta 'quem é administrador?'; a consulta externa usa a resposta para filtrar.

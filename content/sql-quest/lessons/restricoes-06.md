@@ -9,7 +9,10 @@ difficulty: iniciante
 xp: 28
 prerequisites:
   - restricoes-05
-hints: []
+hints:
+  - "Leia o diagrama com calma e conte as linhas da tabela de junção que apontam para cada aluno e para cada curso."
+  - "Para saber quantos cursos um aluno tem, procure na junção as linhas que citam o id desse aluno; para contar alunos de um curso, faça o caminho inverso."
+  - "Depois de responder, use as explicações para conferir as contagens."
 references:
   - label: "SQLite — Foreign Keys"
     url: "https://www.sqlite.org/foreignkeys.html"
@@ -101,4 +104,9 @@ descobrir todos os alunos matriculados no curso verificando a coluna
 
 ## Sua vez
 
-Responda às perguntas do desafio.
+Analise as tabelas apresentadas e responda às perguntas sobre matrículas e cursos.
+
+- A tabela de junção liga alunos a cursos; cada linha é uma matrícula.
+- Para contar, siga as referências de id entre as tabelas com atenção.
+
+Use as explicações após responder para conferir suas contagens.

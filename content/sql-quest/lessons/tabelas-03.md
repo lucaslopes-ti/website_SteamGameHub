@@ -10,9 +10,10 @@ xp: 34
 prerequisites:
   - tabelas-02
 hints:
-  - "Renomeie a tabela: ALTER TABLE people RENAME TO users;"
-  - "Renomeie a coluna: ALTER TABLE users RENAME COLUMN tag TO username;"
-  - "Adicione a coluna: ALTER TABLE users ADD COLUMN password TEXT;"
+  - "A missão tem três ajustes de estrutura na tabela `people`, feitos em sequência."
+  - "O primeiro renomeia a própria tabela; os dois seguintes alteram colunas, um renomeando e outro adicionando."
+  - "Passo 1: renomear a tabela `people` para `users`. Passo 2: renomear a coluna `tag` para `username`. Passo 3: adicionar a coluna `password` do tipo TEXT."
+  - "Use uma instrução de alteração por passo, na ordem pedida, e confira os nomes finais antes de rodar."
 references:
   - label: "SQLite — ALTER TABLE"
     url: "https://www.sqlite.org/lang_altertable.html"

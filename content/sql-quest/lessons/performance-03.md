@@ -10,9 +10,10 @@ xp: 41
 prerequisites:
   - performance-02
 hints:
-  - "Use CREATE INDEX nome ON transactions (coluna1, coluna2)."
-  - "A ordem importa: user_id deve ser a primeira coluna do índice."
-  - "CREATE INDEX user_id_recipient_id_idx ON transactions (user_id, recipient_id);"
+  - "A missão é criar um índice não único com duas colunas, na ordem pedida."
+  - "Use a instrução de criação de índice, com nome, tabela e a lista de colunas entre parênteses."
+  - "O nome é `user_id_recipient_id_idx` e as colunas são `user_id` e depois `recipient_id`."
+  - "A ordem das colunas dentro do índice importa e é conferida."
 references:
   - label: "SQLite — Query Planning"
     url: "https://www.sqlite.org/queryplanner.html"
@@ -106,5 +107,13 @@ para que também possamos usá-lo em consultas que só se importam com `user_id`
 
 ## Sua vez
 
-Crie um índice **não único** chamado `user_id_recipient_id_idx` nas colunas
-`user_id` e `recipient_id` da tabela `transactions`, nessa ordem.
+A missão é otimizar consultas que filtram transações por usuário e destinatário ao mesmo tempo.
+
+Sua instrução deve:
+
+- criar um índice chamado `user_id_recipient_id_idx`;
+- indexar a tabela `transactions`;
+- incluir as colunas `user_id` e `recipient_id`, nessa ordem;
+- ser um índice não único.
+
+Em um índice composto, a ordem das colunas define como ele é usado nas buscas.
