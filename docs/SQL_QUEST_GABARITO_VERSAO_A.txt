@@ -1,0 +1,1766 @@
+==============================================================================
+SQL QUEST — GABARITO INTERNO
+==============================================================================
+Documento interno de referência para correção e revisão das lições da SQL Quest.
+Fonte: content/sql-quest/lessons/*.md, na ordem de capítulo/lição.
+Uso interno: NÃO publicar e NÃO distribuir para alunos.
+Total: 95 lições · 11 capítulos.
+
+Convenções:
+- natureza: tipo do desafio no front matter (exact, data, schema, quiz, theory).
+- quiz: a alternativa correta é indicada por letra (A = primeira opção).
+- exact/data/schema: o critério canônico transcreve o bloco `challenge` do front matter.
+- theory: unidade narrativa, sem resposta executável.
+- SQL de referência: exibido apenas quando uma dica do front matter traz uma solução SQL completa (pode existir mais de uma solução aceita).
+==============================================================================
+
+------------------------------------------------------------------------------
+Capítulo 1 — Lição 1
+id: select-01
+título: Sua primeira consulta: SELECT *
+natureza: exact
+critério canônico (exact):
+  instrução: Escreva uma consulta que traga todas as colunas e todos os registros da tabela `users` do Senai Pay.
+  colunas esperadas (ordem exata): id, name, age, balance, is_admin
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [1, "Ana Souza", 28, 450, 1]
+    - [2, "Bruno Lima", 27, 200, 1]
+    - [3, "Carla Mendes", 33, 496.24, 0]
+
+------------------------------------------------------------------------------
+Capítulo 1 — Lição 2
+id: select-02
+título: Selecionando uma única coluna
+natureza: exact
+critério canônico (exact):
+  instrução: Atualize a consulta para selecionar apenas a coluna `age` da tabela `users`.
+  colunas esperadas (ordem exata): age
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [28]
+    - [27]
+    - [33]
+
+------------------------------------------------------------------------------
+Capítulo 1 — Lição 3
+id: select-03
+título: Selecionando várias colunas
+natureza: exact
+critério canônico (exact):
+  instrução: Selecione as colunas `age`, `name` e `balance` da tabela `users`, nessa ordem.
+  colunas esperadas (ordem exata): age, name, balance
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [28, "Ana Souza", 450]
+    - [27, "Bruno Lima", 200]
+    - [33, "Carla Mendes", 496.24]
+
+------------------------------------------------------------------------------
+Capítulo 1 — Lição 4
+id: select-04
+título: O que é SQL?
+natureza: quiz
+critério canônico (quiz):
+  instrução: Responda às perguntas abaixo.
+  Pergunta 1: Qual você usaria para controlar seus impostos e orçamento pessoal?
+    A) Um ábaco
+    B) Uma planilha (Excel ou Google Sheets)
+    C) Um banco SQL altamente escalável
+    Correta: B) Uma planilha (Excel ou Google Sheets)
+    Explicação: Planilhas são ótimas para manipulação manual simples de dados.
+  Pergunta 2: Qual você usaria para armazenar os registros de alunos de uma escola online?
+    A) Dedos das mãos e dos pés
+    B) Uma planilha
+    C) Uma máquina de Turing com quilômetros de fita
+    D) Um banco de dados SQL
+    Correta: D) Um banco de dados SQL
+    Explicação: Bancos SQL são projetados para dados escaláveis e automatizados.
+
+------------------------------------------------------------------------------
+Capítulo 1 — Lição 5
+id: select-05
+título: Quais bancos usam SQL?
+natureza: exact
+critério canônico (exact):
+  instrução: Selecione todas as colunas `id`, `name` e `is_admin` da tabela `users` para ver como o SQLite representa valores booleanos.
+  colunas esperadas (ordem exata): id, name, is_admin
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [1, "Ana Souza", 1]
+    - [2, "Bruno Lima", 1]
+    - [3, "Carla Mendes", 0]
+
+------------------------------------------------------------------------------
+Capítulo 1 — Lição 6
+id: select-06
+título: SQL vs. NoSQL
+natureza: quiz
+critério canônico (quiz):
+  instrução: Responda às perguntas abaixo.
+  Pergunta 1: Cada banco NoSQL tende a usar ____ linguagem(ns) de consulta.
+    A) a mesma
+    B) diferentes
+    Correta: B) diferentes
+    Explicação: Cada sistema NoSQL costuma ter sua própria forma de escrever e executar consultas.
+  Pergunta 2: Bancos compatíveis com ____ tendem a ser mais parecidos em funcionalidade do que bancos ____.
+    A) SQL, NoSQL
+    B) NoSQL, SQL
+    Correta: A) SQL, NoSQL
+    Explicação: Bancos relacionais são bastante parecidos entre si; bancos NoSQL tendem a ser únicos e voltados a propósitos específicos.
+
+------------------------------------------------------------------------------
+Capítulo 1 — Lição 7
+id: select-07
+título: Tipagem flexível do SQLite
+natureza: schema
+critério canônico (schema):
+  instrução: Crie a tabela `users` com as colunas `id` (INTEGER), `name` (TEXT) e `age` (INTEGER). Depois insira dois registros: o primeiro com name 'Ana Souza' e o segundo com o valor inteiro 1 na coluna name. Finalize com um SELECT * FROM users.
+  tabelas esperadas:
+    - tabela: users
+      colunas exigidas:
+        - id: INTEGER
+        - name: TEXT
+        - age: INTEGER
+      colunas proibidas: (nenhuma)
+      chaves estrangeiras exigidas:
+        (nenhuma)
+      índices exigidos:
+        (nenhum)
+
+------------------------------------------------------------------------------
+Capítulo 2 — Lição 1
+id: tabelas-01
+título: Criando uma tabela
+natureza: schema
+critério canônico (schema):
+  instrução: Crie a tabela `people` com os seguintes campos: id (INTEGER), tag (TEXT), name (TEXT), age (INTEGER), balance (REAL) e is_admin (BOOLEAN).
+  tabelas esperadas:
+    - tabela: people
+      colunas exigidas:
+        - id: INTEGER
+        - tag: TEXT
+        - name: TEXT
+        - age: INTEGER
+        - balance: REAL
+        - is_admin: BOOLEAN
+      colunas proibidas: (nenhuma)
+      chaves estrangeiras exigidas:
+        (nenhuma)
+      índices exigidos:
+        (nenhum)
+
+------------------------------------------------------------------------------
+Capítulo 2 — Lição 2
+id: tabelas-02
+título: Prática: criando a tabela de transações
+natureza: schema
+critério canônico (schema):
+  instrução: Crie a tabela `transactions` com os campos: id (INTEGER), recipient_id (INTEGER), sender_id (INTEGER), note (TEXT) e amount (REAL).
+  tabelas esperadas:
+    - tabela: transactions
+      colunas exigidas:
+        - id: INTEGER
+        - recipient_id: INTEGER
+        - sender_id: INTEGER
+        - note: TEXT
+        - amount: REAL
+      colunas proibidas: (nenhuma)
+      chaves estrangeiras exigidas:
+        (nenhuma)
+      índices exigidos:
+        (nenhum)
+
+------------------------------------------------------------------------------
+Capítulo 2 — Lição 3
+id: tabelas-03
+título: Alterando tabelas com ALTER TABLE
+natureza: schema
+critério canônico (schema):
+  instrução: Altere a tabela `people` com ALTER TABLE: (1) renomeie a tabela para `users`; (2) renomeie a coluna `tag` para `username`; (3) adicione a coluna `password` do tipo TEXT.
+  tabelas esperadas:
+    - tabela: users
+      colunas exigidas:
+        - id: INTEGER
+        - username: TEXT
+        - name: TEXT
+        - age: INTEGER
+        - balance: REAL
+        - is_admin: BOOLEAN
+        - password: TEXT
+      colunas proibidas: tag
+      chaves estrangeiras exigidas:
+        (nenhuma)
+      índices exigidos:
+        (nenhum)
+
+------------------------------------------------------------------------------
+Capítulo 2 — Lição 4
+id: tabelas-04
+título: Introdução a migrações
+natureza: quiz
+critério canônico (quiz):
+  instrução: Responda às perguntas abaixo.
+  Pergunta 1: Qual das afirmações sobre migrações é FALSA?
+    A) Você pode ser descuidado ao escrever migrações — uma migração ruim é fácil de corrigir
+    B) Migrações bem escritas são reversíveis
+    C) Migrações são mudanças incrementais feitas no banco de dados
+    D) Uma boa migração considera os sistemas que dependem do schema existente
+    Correta: A) Você pode ser descuidado ao escrever migrações — uma migração ruim é fácil de corrigir
+    Explicação: Migrações ruins são perigosas: podem quebrar sistemas que dependem do schema antigo e são difíceis de reverter.
+
+------------------------------------------------------------------------------
+Capítulo 2 — Lição 5
+id: tabelas-05
+título: Migração para frente (up)
+natureza: schema
+critério canônico (schema):
+  instrução: Complete a migração up: adicione a coluna `was_successful` (BOOLEAN) e depois a coluna `transaction_type` (TEXT) à tabela `transactions`, nessa ordem.
+  tabelas esperadas:
+    - tabela: transactions
+      colunas exigidas:
+        - id: INTEGER
+        - recipient_id: INTEGER
+        - sender_id: INTEGER
+        - note: TEXT
+        - amount: REAL
+        - was_successful: BOOLEAN
+        - transaction_type: TEXT
+      colunas proibidas: (nenhuma)
+      chaves estrangeiras exigidas:
+        (nenhuma)
+      índices exigidos:
+        (nenhum)
+
+------------------------------------------------------------------------------
+Capítulo 2 — Lição 6
+id: tabelas-06
+título: Migração para trás (down)
+natureza: schema
+critério canônico (schema):
+  instrução: Complete a migração down: remova a coluna `was_successful` e depois a coluna `transaction_type` da tabela `transactions`, revertendo o schema ao estado original.
+  tabelas esperadas:
+    - tabela: transactions
+      colunas exigidas:
+        - id: INTEGER
+        - recipient_id: INTEGER
+        - sender_id: INTEGER
+        - note: TEXT
+        - amount: REAL
+      colunas proibidas: was_successful, transaction_type
+      chaves estrangeiras exigidas:
+        (nenhuma)
+      índices exigidos:
+        (nenhum)
+
+------------------------------------------------------------------------------
+Capítulo 2 — Lição 7
+id: tabelas-07
+título: Revisão de migrações
+natureza: quiz
+critério canônico (quiz):
+  instrução: Responda às perguntas abaixo.
+  Pergunta 1: Por que migrações 'boas' são escritas de forma reversível?
+    A) Elas não são
+    B) Para que, se algo der errado, as mudanças possam ser revertidas
+    C) Porque você deve sempre reverter as mudanças antes de aplicar novas
+    Correta: B) Para que, se algo der errado, as mudanças possam ser revertidas
+    Explicação: Migrações reversíveis permitem desfazer mudanças com segurança quando algo quebra.
+  Pergunta 2: Migrações de banco costumam estar acopladas a atualizações de código da aplicação?
+    A) Sim
+    B) Não
+    Correta: A) Sim
+    Explicação: Sim: se o schema muda, o código que usa o schema antigo pode quebrar. Por isso as mudanças costumam andar juntas.
+
+------------------------------------------------------------------------------
+Capítulo 2 — Lição 8
+id: tabelas-08
+título: Tipos de dados do SQLite
+natureza: theory
+critério canônico (theory):
+  instrução: unidade de teoria (apenas narrativa)
+  Não há resposta executável (unidade de teoria).
+
+------------------------------------------------------------------------------
+Capítulo 2 — Lição 9
+id: tabelas-09
+título: Prática: tabela de posts
+natureza: schema
+critério canônico (schema):
+  instrução: Crie a tabela `posts` com as colunas: id, image_url, description, author_id e is_sponsored. Use tipos de dados que façam sentido para cada coluna.
+  tabelas esperadas:
+    - tabela: posts
+      colunas exigidas:
+        - id: INTEGER
+        - image_url: TEXT
+        - description: TEXT
+        - author_id: INTEGER
+        - is_sponsored: BOOLEAN
+      colunas proibidas: (nenhuma)
+      chaves estrangeiras exigidas:
+        (nenhuma)
+      índices exigidos:
+        (nenhum)
+
+------------------------------------------------------------------------------
+Capítulo 2 — Lição 10
+id: tabelas-10
+título: Prática: migração da tabela de posts
+natureza: schema
+critério canônico (schema):
+  instrução: Escreva uma migração up para a tabela `posts`: (1) renomeie `author_id` para `poster_id`; (2) adicione a coluna `is_edited` (BOOLEAN); (3) remova a coluna `is_sponsored`.
+  tabelas esperadas:
+    - tabela: posts
+      colunas exigidas:
+        - id: INTEGER
+        - image_url: TEXT
+        - description: TEXT
+        - poster_id: INTEGER
+        - is_edited: BOOLEAN
+      colunas proibidas: author_id, is_sponsored
+      chaves estrangeiras exigidas:
+        (nenhuma)
+      índices exigidos:
+        (nenhum)
+
+------------------------------------------------------------------------------
+Capítulo 3 — Lição 1
+id: restricoes-01
+título: Valores NULL
+natureza: exact
+critério canônico (exact):
+  instrução: Escreva uma consulta que selecione todos os campos de todos os registros da tabela `transactions`.
+  colunas esperadas (ordem exata): id, recipient_id, sender_id, note, amount, was_successful, transaction_type
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [1, 2, 1, "Almoço no restaurante", 25.5, NULL, NULL]
+    - [2, 3, 1, "Café da manhã", 8.9, NULL, NULL]
+    - [3, 1, 2, "Ingresso do cinema", 45, NULL, NULL]
+
+------------------------------------------------------------------------------
+Capítulo 3 — Lição 2
+id: restricoes-02
+título: Constraints: regras para os dados
+natureza: schema
+critério canônico (schema):
+  instrução: Crie a tabela `users` com os campos e constraints: id (INTEGER, PRIMARY KEY), name (TEXT, NOT NULL), age (INTEGER, NOT NULL), country_code (TEXT, NOT NULL), username (TEXT, UNIQUE, NOT NULL), password (TEXT, NOT NULL) e is_admin (BOOLEAN).
+  tabelas esperadas:
+    - tabela: users
+      colunas exigidas:
+        - id: INTEGER, PRIMARY KEY
+        - name: TEXT, NOT NULL
+        - age: INTEGER, NOT NULL
+        - country_code: TEXT, NOT NULL
+        - username: TEXT, NOT NULL, UNIQUE
+        - password: TEXT, NOT NULL
+        - is_admin: BOOLEAN
+      colunas proibidas: (nenhuma)
+      chaves estrangeiras exigidas:
+        (nenhuma)
+      índices exigidos:
+        (nenhum)
+
+------------------------------------------------------------------------------
+Capítulo 3 — Lição 3
+id: restricoes-03
+título: Chaves primárias (PRIMARY KEY)
+natureza: exact
+critério canônico (exact):
+  instrução: Corrija o segundo INSERT: ele usa o id 1, que já existe. Use id 2 e depois selecione todos os registros da tabela `users`.
+  colunas esperadas (ordem exata): id, name, age, country_code, username, password, is_admin
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [1, "Rudolf", 33, "DE", "rudolf1234", "thisisnotsecure", 0]
+    - [2, "Jerry", 25, "US", "jerrysmith", "mypasswordis1234", 1]
+
+------------------------------------------------------------------------------
+Capítulo 3 — Lição 4
+id: restricoes-04
+título: Chaves estrangeiras (FOREIGN KEY)
+natureza: exact
+critério canônico (exact):
+  instrução: Corrija o segundo INSERT: o código 'IND' não existe na tabela `countries`. Use o código correto e depois selecione todos os registros da tabela `users`.
+  colunas esperadas (ordem exata): id, name, country_code
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [1, "Jerry", "US"]
+    - [2, "Amit", "IN"]
+
+------------------------------------------------------------------------------
+Capítulo 3 — Lição 5
+id: restricoes-05
+título: Schema: projetando a tabela de transações
+natureza: schema
+critério canônico (schema):
+  instrução: Crie a tabela `transactions` com os campos e constraints: id (INTEGER, PRIMARY KEY), sender_id (INTEGER), recipient_id (INTEGER), memo (TEXT, NOT NULL), amount (REAL, NOT NULL) e balance (REAL, NOT NULL).
+  tabelas esperadas:
+    - tabela: transactions
+      colunas exigidas:
+        - id: INTEGER, PRIMARY KEY
+        - sender_id: INTEGER
+        - recipient_id: INTEGER
+        - memo: TEXT, NOT NULL
+        - amount: REAL, NOT NULL
+        - balance: REAL, NOT NULL
+      colunas proibidas: (nenhuma)
+      chaves estrangeiras exigidas:
+        (nenhuma)
+      índices exigidos:
+        (nenhum)
+
+------------------------------------------------------------------------------
+Capítulo 3 — Lição 6
+id: restricoes-06
+título: Bancos de dados relacionais
+natureza: quiz
+critério canônico (quiz):
+  instrução: Considere o banco abaixo e responda às perguntas.
+  Pergunta 1: Quantos cursos Ana está matriculada?
+    A) 5
+    B) 4
+    C) 2
+    D) 1
+    Correta: C) 2
+    Explicação: Ana (id 2) aparece em 2 registros da tabela StudentCourses: os cursos 2 e 3.
+  Pergunta 2: Quantos alunos estão no curso Banco de Dados?
+    A) 5
+    B) 4
+    C) 3
+    D) 1
+    Correta: C) 3
+    Explicação: O curso Banco de Dados (id 3) tem 3 alunos: os ids 1, 2 e 3 na tabela StudentCourses.
+
+------------------------------------------------------------------------------
+Capítulo 3 — Lição 7
+id: restricoes-07
+título: Bancos relacionais vs. não relacionais
+natureza: theory
+critério canônico (theory):
+  instrução: unidade de teoria (apenas narrativa)
+  Não há resposta executável (unidade de teoria).
+
+------------------------------------------------------------------------------
+Capítulo 3 — Lição 8
+id: restricoes-08
+título: Revisão de constraints
+natureza: quiz
+critério canônico (quiz):
+  instrução: Responda às perguntas abaixo.
+  Pergunta 1: Qual constraint identifica cada linha de forma única e não aceita NULL?
+    A) PRIMARY KEY
+    B) NOT NULL
+    C) DEFAULT
+    D) UNIQUE
+    Correta: A) PRIMARY KEY
+    Explicação: A PRIMARY KEY identifica cada linha de forma única; não aceita duplicatas nem NULL.
+  Pergunta 2: Qual constraint garante que uma coluna sempre tenha um valor em todo INSERT?
+    A) NOT NULL
+    B) UNIQUE
+    C) DEFAULT
+    D) FOREIGN KEY
+    Correta: A) NOT NULL
+    Explicação: NOT NULL impede que a coluna receba valores NULL.
+  Pergunta 3: Qual constraint impede que duas linhas tenham o mesmo valor em uma coluna?
+    A) PRIMARY KEY
+    B) NOT NULL
+    C) UNIQUE
+    D) DEFAULT
+    Correta: C) UNIQUE
+    Explicação: UNIQUE garante que não existam valores duplicados na coluna.
+  Pergunta 4: Qual constraint exige que o valor da coluna exista em outra tabela?
+    A) PRIMARY KEY
+    B) FOREIGN KEY
+    C) UNIQUE
+    D) NOT NULL
+    Correta: B) FOREIGN KEY
+    Explicação: FOREIGN KEY referencia uma PRIMARY KEY (ou coluna UNIQUE) de outra tabela.
+  Pergunta 5: Qual constraint usa um valor automático quando nenhum é fornecido no INSERT?
+    A) DEFAULT
+    B) NOT NULL
+    C) UNIQUE
+    D) FOREIGN KEY
+    Correta: A) DEFAULT
+    Explicação: DEFAULT define um valor usado automaticamente quando o campo é omitido.
+
+------------------------------------------------------------------------------
+Capítulo 4 — Lição 1
+id: crud-01
+título: CRUD: as quatro operações básicas
+natureza: exact
+critério canônico (exact):
+  instrução: Determine qual comando SQL é usado para uma operação READ e use-o para ler todos os campos de todos os registros da tabela `crud`.
+  colunas esperadas (ordem exata): c, r, u, d
+  ordem das linhas: não importa
+  linhas esperadas:
+    - ["CREATE = CREATE", "READ = SELECT", "UPDATE = UPDATE", "DELETE = DELETE"]
+
+------------------------------------------------------------------------------
+Capítulo 4 — Lição 2
+id: crud-02
+título: A instrução INSERT
+natureza: data
+critério canônico (data):
+  instrução: Insira os dois registros abaixo na tabela `users`, usando a estrutura do CREATE TABLE como referência: (1) David, 34, US, DavidDev, insertPractice, não admin; (2) Samantha, 29, BR, Sammy93, addingRecords!, não admin.
+  tabelas de estado esperadas:
+    - tabela: users
+      colunas esperadas (ordem exata): id, name, age, country_code, username, password, is_admin
+      ordem das linhas: não importa
+      estado final esperado:
+        - [1, "David", 34, "US", "DavidDev", "insertPractice", 0]
+        - [2, "Samantha", 29, "BR", "Sammy93", "addingRecords!", 0]
+
+------------------------------------------------------------------------------
+Capítulo 4 — Lição 3
+id: crud-03
+título: Auto incremento de IDs
+natureza: data
+critério canônico (data):
+  instrução: Adicione mais dois registros à tabela `users` SEM informar o id, deixando o banco incrementar automaticamente: (1) Lance, 20, US, LanChr, lancePass, não admin; (2) Tiffany, 28, US, Tifferoon, autoincrement, admin.
+  tabelas de estado esperadas:
+    - tabela: users
+      colunas esperadas (ordem exata): id, name, age, country_code, username, password, is_admin
+      ordem das linhas: não importa
+      estado final esperado:
+        - [1, "David", 34, "US", "DavidDev", "insertPractice", 0]
+        - [2, "Samantha", 29, "BR", "Sammy93", "addingRecords!", 0]
+        - [3, "Lance", 20, "US", "LanChr", "lancePass", 0]
+        - [4, "Tiffany", 28, "US", "Tifferoon", "autoincrement", 1]
+
+------------------------------------------------------------------------------
+Capítulo 4 — Lição 4
+id: crud-04
+título: Inserção manual e injeção de SQL
+natureza: quiz
+critério canônico (quiz):
+  instrução: Responda às perguntas abaixo.
+  Pergunta 1: Toda vez que alguém cria uma conta no Senai Pay, um desenvolvedor precisa adicioná-la manualmente no banco escrevendo uma consulta SQL à mão.
+    A) Verdadeiro
+    B) Falso
+    Correta: B) Falso
+    Explicação: Sistemas reais geram as consultas SQL por código, não à mão, para cada novo usuário.
+  Pergunta 2: Em sistemas backend, consultas SQL normalmente são ____
+    A) Escritas à mão
+    B) Geradas por código
+    Correta: B) Geradas por código
+    Explicação: Um servidor backend usa uma linguagem de programação para montar e executar as consultas dinamicamente.
+  Pergunta 3: Por que interpolar strings diretamente em uma consulta SQL é perigoso?
+    A) Pode permitir injeção de SQL (SQL injection)
+    B) Deixa a consulta mais lenta
+    C) Não é perigoso
+    D) Gera sempre um erro de sintaxe
+    Correta: A) Pode permitir injeção de SQL (SQL injection)
+    Explicação: Interpolar entrada do usuário sem cuidado permite que um atacante injete comandos SQL maliciosos.
+
+------------------------------------------------------------------------------
+Capítulo 4 — Lição 5
+id: crud-05
+título: Contando registros com COUNT
+natureza: exact
+critério canônico (exact):
+  instrução: Use COUNT(*) para recuperar o número de registros na tabela `users`.
+  colunas esperadas (ordem exata): COUNT(*)
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [12]
+
+------------------------------------------------------------------------------
+Capítulo 4 — Lição 6
+id: crud-06
+título: Filtrando com WHERE
+natureza: exact
+critério canônico (exact):
+  instrução: Escreva uma consulta que retorne o `username` de todos os usuários da tabela `users` que têm privilégios de administrador.
+  colunas esperadas (ordem exata): username
+  ordem das linhas: não importa
+  linhas esperadas:
+    - ["Alires"]
+    - ["Tifferoon"]
+    - ["MartaDBA"]
+    - ["NoahRoot"]
+
+------------------------------------------------------------------------------
+Capítulo 4 — Lição 7
+id: crud-07
+título: Encontrando valores NULL
+natureza: exact
+critério canônico (exact):
+  instrução: Da tabela `transactions`, selecione todas as colunas das transações em que o dono está RECEBENDO dinheiro (ou seja, sender_id não é NULL).
+  colunas esperadas (ordem exata): id, user_id, recipient_id, sender_id, note, amount
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [1, 1, NULL, 4, "Recebi um pagamento", 50]
+    - [3, 3, NULL, 1, "Recebi outro pagamento", 12.75]
+
+------------------------------------------------------------------------------
+Capítulo 4 — Lição 8
+id: crud-08
+título: Excluindo registros com DELETE
+natureza: data
+critério canônico (data):
+  instrução: Samantha, uma das usuárias do Senai Pay, optou por excluir a conta dela. Remova o registro dela da tabela `users`.
+  tabelas de estado esperadas:
+    - tabela: users
+      colunas esperadas (ordem exata): id, name, age, country_code, username, password, is_admin
+      ordem das linhas: não importa
+      estado final esperado:
+        - [1, "David", 34, "US", "DavidDev", "insertPractice", 0]
+        - [3, "John", 39, "CA", "Jjdev21", "sqlMaster2024", 0]
+
+------------------------------------------------------------------------------
+Capítulo 4 — Lição 9
+id: crud-09
+título: O perigo de excluir dados
+natureza: quiz
+critério canônico (quiz):
+  instrução: Responda às perguntas abaixo.
+  Pergunta 1: Você ____ deve ter backups automatizados de um banco de dados de produção.
+    A) Às vezes
+    B) Nunca
+    C) Quase nunca
+    D) Quase sempre
+    Correta: D) Quase sempre
+    Explicação: Backups automatizados são essenciais para proteger dados valiosos contra erros de desenvolvimento.
+  Pergunta 2: Um soft delete é quando você ____
+    A) Marca uma linha como excluída em vez de remover os dados de verdade
+    B) Exclui alguns dados, mas eles não são removidos do banco por 30 dias
+    C) Exclui dados pedindo gentilmente ao banco, geralmente com um 'por favor'
+    D) Exclui dados de um snapshot
+    Correta: A) Marca uma linha como excluída em vez de remover os dados de verdade
+    Explicação: No soft delete, marcamos a linha (ex.: com uma data em deleted_at) e ignoramos linhas marcadas nas consultas.
+
+------------------------------------------------------------------------------
+Capítulo 4 — Lição 10
+id: crud-10
+título: Atualizando registros com UPDATE
+natureza: data
+critério canônico (data):
+  instrução: Atualize o registro do Lane na tabela `users` para que o campo `is_admin` seja definido como true.
+  tabelas de estado esperadas:
+    - tabela: users
+      colunas esperadas (ordem exata): id, name, age, country_code, username, password, is_admin
+      ordem das linhas: não importa
+      estado final esperado:
+        - [1, "David", 34, "US", "DavidDev", "insertPractice", 0]
+        - [2, "Lane", 27, "US", "wagslane", "update_me", 1]
+        - [3, "Tiffany", 28, "US", "Tifferoon", "autoincrement", 1]
+
+------------------------------------------------------------------------------
+Capítulo 4 — Lição 11
+id: crud-11
+título: Mapeamento objeto-relacional (ORMs)
+natureza: quiz
+critério canônico (quiz):
+  instrução: Responda às perguntas abaixo.
+  Pergunta 1: Ao usar um ORM, você ____
+    A) Escreve muito SQL cru
+    B) Chama métodos e funções disponibilizados pela API do ORM
+    Correta: B) Chama métodos e funções disponibilizados pela API do ORM
+    Explicação: Um ORM expõe métodos na linguagem de programação que geram o SQL por baixo dos panos.
+  Pergunta 2: Uma vantagem de um ORM é que ele...
+    A) Deixa seu código menos verboso
+    B) É mais fácil de depurar em baixo nível
+    C) Dá mais controle sobre o banco
+    D) Garante consultas mais rápidas
+    Correta: A) Deixa seu código menos verboso
+    Explicação: ORMs reduzem código repetitivo, mas limitam o controle e podem ser mais difíceis de depurar.
+  Pergunta 3: Você deve usar um ORM?
+    A) Depende do projeto/time
+    B) Sempre
+    C) Quase nunca
+    D) Quase sempre
+    Correta: A) Depende do projeto/time
+    Explicação: Um ORM normalmente troca controle por simplicidade; a decisão é do time.
+
+------------------------------------------------------------------------------
+Capítulo 4 — Lição 12
+id: crud-12
+título: Prática: contagem condicional
+natureza: exact
+critério canônico (exact):
+  instrução: Escreva uma consulta SQL que retorne a contagem de todos os registros da tabela `users` cujo `country_code` seja igual a 'US'.
+  colunas esperadas (ordem exata): COUNT(*)
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [5]
+
+------------------------------------------------------------------------------
+Capítulo 4 — Lição 13
+id: crud-13
+título: Prática: atualização condicional
+natureza: data
+critério canônico (data):
+  instrução: Escreva uma instrução SQL para atualizar o valor de `country_code` de 'USA' para 'US' em todos os registros aplicáveis. Garanta que apenas os registros marcados com 'USA' sejam alterados.
+  tabelas de estado esperadas:
+    - tabela: users
+      colunas esperadas (ordem exata): id, name, age, country_code, username, password, is_admin
+      ordem das linhas: não importa
+      estado final esperado:
+        - [1, "David", 34, "US", "DavidDev", "insertPractice", 0]
+        - [2, "Samantha", 29, "BR", "Sammy93", "addingRecords!", 0]
+        - [3, "Hunter", 30, "US", "Hdev92", "backendDev", 0]
+        - [4, "Aiko", 31, "JP", "AikoOps", "sakuraCloud7", 0]
+
+------------------------------------------------------------------------------
+Capítulo 5 — Lição 1
+id: filtros-01
+título: Apelidando colunas com AS
+natureza: exact
+critério canônico (exact):
+  instrução: Retorne os campos `amount` e `note` da tabela `transactions` onde `sender_id` é 10 (a avó). O campo `note` deve ser renomeado para `birthday_message`.
+  colunas esperadas (ordem exata): amount, birthday_message
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [100, "Feliz aniversário!"]
+    - [75, "Feliz aniversário, neta!"]
+    - [50, "Feliz aniversário!"]
+
+------------------------------------------------------------------------------
+Capítulo 5 — Lição 2
+id: filtros-02
+título: Funções SQL e colunas calculadas
+natureza: exact
+critério canônico (exact):
+  instrução: Retorne todos os dados da tabela `transactions` e adicione uma coluna extra no final com o alias `audit`. Se `was_successful` for true, o campo deve dizer 'No action required'; se for false, 'Perform an audit'.
+  colunas esperadas (ordem exata): id, recipient_id, sender_id, note, amount, was_successful, transaction_type, audit
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [1, 2, 1, "Almoço no restaurante", 25.5, 1, "purchase", "No action required"]
+    - [2, 1, 10, "Feliz aniversário!", 100, 1, "gift", "No action required"]
+    - [3, 1, 5, "Transferência para investimento", 200, 0, "purchase", "Perform an audit"]
+    - [4, 3, 1, "Café da manhã", 8.9, 1, "purchase", "No action required"]
+    - [5, 1, 8, "Reembolso de compra", 45, 0, "refund", "Perform an audit"]
+    - [6, 2, 1, "Ingresso do cinema", 32.5, 1, "purchase", "No action required"]
+
+------------------------------------------------------------------------------
+Capítulo 5 — Lição 3
+id: filtros-03
+título: Filtrando entre valores com BETWEEN
+natureza: exact
+critério canônico (exact):
+  instrução: Consulte a tabela `users` e retorne os campos `name` e `age` de todos os usuários com idade ENTRE 18 e 30 anos (inclusive).
+  colunas esperadas (ordem exata): name, age
+  ordem das linhas: não importa
+  linhas esperadas:
+    - ["Samantha", 29]
+    - ["Hunter", 30]
+    - ["Allan", 27]
+    - ["Lance", 20]
+    - ["Tiffany", 28]
+    - ["Mia", 18]
+
+------------------------------------------------------------------------------
+Capítulo 5 — Lição 4
+id: filtros-04
+título: Removendo duplicatas com DISTINCT
+natureza: exact
+critério canônico (exact):
+  instrução: Execute uma consulta DISTINCT para obter todos os `country_code` únicos da tabela `users`.
+  colunas esperadas (ordem exata): country_code
+  ordem das linhas: não importa
+  linhas esperadas:
+    - ["US"]
+    - ["BR"]
+    - ["CA"]
+    - ["IN"]
+    - ["JP"]
+    - ["ES"]
+    - ["GH"]
+    - ["AU"]
+
+------------------------------------------------------------------------------
+Capítulo 5 — Lição 5
+id: filtros-05
+título: Combinando condições com AND
+natureza: exact
+critério canônico (exact):
+  instrução: Escreva uma consulta que retorne todas as colunas dos usuários da tabela `users` que são do Canadá (CA) e têm menos de 18 anos.
+  colunas esperadas (ordem exata): id, name, age, country_code, username, password, is_admin
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [4, "Emma", 16, "CA", "EmmaDev", "mapleSQL", 0]
+    - [6, "Mia", 17, "CA", "MiaDev", "firstAdult", 0]
+
+------------------------------------------------------------------------------
+Capítulo 5 — Lição 6
+id: filtros-06
+título: Combinando condições com OR
+natureza: exact
+critério canônico (exact):
+  instrução: Escreva uma consulta que retorne a contagem de todos os usuários (com o alias `junior_count`) que são dos Estados Unidos ou do Canadá E têm menos de 18 anos.
+  colunas esperadas (ordem exata): junior_count
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [3]
+
+------------------------------------------------------------------------------
+Capítulo 5 — Lição 7
+id: filtros-07
+título: Filtrando por uma lista de valores com IN
+natureza: exact
+critério canônico (exact):
+  instrução: Escreva uma instrução SELECT que retorne os campos `name`, `age` e `country_code` de todos os usuários da tabela `users` com `country_code` igual a US, CA ou MX.
+  colunas esperadas (ordem exata): name, age, country_code
+  ordem das linhas: não importa
+  linhas esperadas:
+    - ["David", 34, "US"]
+    - ["John", 39, "CA"]
+    - ["Hunter", 30, "US"]
+    - ["Allan", 27, "US"]
+    - ["Isabella", 22, "MX"]
+    - ["Emma", 16, "CA"]
+    - ["Sofia", 15, "MX"]
+
+------------------------------------------------------------------------------
+Capítulo 5 — Lição 8
+id: filtros-08
+título: Buscando padrões de texto com LIKE
+natureza: exact
+critério canônico (exact):
+  instrução: Escreva uma consulta que retorne todos os campos dos registros da tabela `users` em que o nome do usuário começa com Bo.
+  colunas esperadas (ordem exata): id, name, age, country_code, username, password, is_admin
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [2, "Bonnie", 33, "CA", "BonnieSQL", "bonniePass", 0]
+    - [3, "Bodhi", 26, "US", "BodhiApp", "zenQuery", 0]
+    - [5, "Bo", 40, "US", "BoCoder", "boPass", 0]
+
+------------------------------------------------------------------------------
+Capítulo 5 — Lição 9
+id: filtros-09
+título: O curinga de caractere único (_)
+natureza: exact
+critério canônico (exact):
+  instrução: Escreva uma consulta que retorne todos os dados da tabela `users` para usuários cujos nomes começam com Bo e têm exatamente 5 caracteres.
+  colunas esperadas (ordem exata): id, name, age, country_code, username, password, is_admin
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [3, "Bodhi", 26, "US", "BodhiApp", "zenQuery", 0]
+    - [5, "Bobby", 29, "CA", "BobbySQL", "bobbyPass", 0]
+
+------------------------------------------------------------------------------
+Capítulo 5 — Lição 10
+id: filtros-10
+título: Quiz: curingas % e _
+natureza: quiz
+critério canônico (quiz):
+  instrução: Responda às perguntas abaixo.
+  Pergunta 1: Qual das opções descreve os valores que correspondem ao exemplo 1 (`name LIKE 'or_%'`)?
+    A) Valores que começam com 'or' e têm exatamente 3 caracteres.
+    B) Valores que começam com 'or' e têm pelo menos 3 caracteres.
+    C) Valores que terminam com 'or' e têm pelo menos 3 caracteres.
+    D) Valores que terminam com 'or' e têm exatamente 3 caracteres.
+    Correta: B) Valores que começam com 'or' e têm pelo menos 3 caracteres.
+    Explicação: O padrão 'or_%' exige 'or' seguido de pelo menos um caractere (_) e depois qualquer quantidade (%). Ou seja, os valores começam com 'or' e têm no mínimo 3 caracteres.
+  Pergunta 2: Qual das opções NÃO corresponderia ao exemplo 2 (`name LIKE '__ing'`)?
+    A) thing
+    B) sling
+    C) singing
+    D) bling
+    Correta: C) singing
+    Explicação: '__ing' corresponde a palavras com exatamente 5 caracteres que terminam em 'ing'. 'singing' tem 7 caracteres e não corresponde ao padrão.
+
+------------------------------------------------------------------------------
+Capítulo 5 — Lição 11
+id: filtros-11
+título: Prática: programa de descontos
+natureza: exact
+critério canônico (exact):
+  instrução: Escreva uma consulta que retorne todos os usuários da tabela `users`, incluindo todas as colunas, mais uma coluna adicional chamada `discount_percent`. O valor deve ser 10 ou 0 (inteiro), dependendo de o usuário atender a alguma condição de desconto: ter mais de 55 anos ou ser do Canadá (country_code 'CA').
+  colunas esperadas (ordem exata): id, name, age, country_code, username, password, is_admin, discount_percent
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [1, "David", 34, "US", "DavidDev", "insertPractice", 0, 0]
+    - [2, "Samantha", 29, "BR", "Sammy93", "addingRecords!", 0, 0]
+    - [3, "John", 39, "CA", "Jjdev21", "sqlMaster2024", 0, 10]
+    - [4, "Emma", 16, "CA", "EmmaDev", "mapleSQL", 0, 10]
+    - [5, "Yuki", 58, "JP", "YukiSensei", "retireSoon", 0, 10]
+    - [6, "Liam", 17, "US", "LiamCoder", "usMinorPass", 0, 0]
+    - [7, "Sofia", 15, "MX", "SofiaMX", "mexicoPass", 0, 0]
+    - [8, "Benjamin", 33, "CA", "BenjaSQL", "canadaPass", 0, 10]
+    - [9, "Miriam", 70, "BR", "MiriamDBA", "seniorPass", 0, 10]
+    - [10, "Hunter", 30, "US", "Hdev92", "backendDev", 0, 0]
+
+------------------------------------------------------------------------------
+Capítulo 6 — Lição 1
+id: ordenacao-01
+título: Limitando resultados com LIMIT
+natureza: exact
+critério canônico (exact):
+  instrução: Escreva uma consulta que retorne todos os campos da tabela `transactions` em que a coluna `note` contém a palavra `lunch`. A consulta deve retornar no máximo 5 registros.
+  colunas esperadas (ordem exata): id, user_id, sender_id, recipient_id, note, amount, was_successful
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [1, 1, 1, 2, "Lunch with client", 25, 1]
+    - [3, 2, 2, 1, "Lunch", 30, 1]
+    - [4, 2, NULL, 4, "Lunch", 15, 1]
+    - [5, 3, 3, 5, "Lunch", 10, 1]
+    - [7, 4, 4, 1, "Lunch", 22, 1]
+
+------------------------------------------------------------------------------
+Capítulo 6 — Lição 2
+id: ordenacao-02
+título: Prática: LIMIT é um teto, não uma garantia
+natureza: exact
+critério canônico (exact):
+  instrução: Retorne todos os campos da tabela `transactions` para o usuário com `user_id` igual a 6, com um teto de 3 registros.
+  colunas esperadas (ordem exata): id, user_id, sender_id, recipient_id, note, amount, was_successful
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [9, 6, 6, 3, "Rent", 12, 1]
+    - [10, 6, 6, 4, "Lunch", 27, 0]
+
+------------------------------------------------------------------------------
+Capítulo 6 — Lição 3
+id: ordenacao-03
+título: Ordenando resultados com ORDER BY
+natureza: exact
+critério canônico (exact):
+  instrução: Retorne todas as colunas da tabela `transactions` cujo `amount` está ENTRE 10 e 80 (inclusive), ordenadas por `amount` em ordem decrescente.
+  colunas esperadas (ordem exata): id, user_id, sender_id, recipient_id, note, amount, was_successful
+  ordem das linhas: importa
+  linhas esperadas:
+    - [6, 3, 3, 6, "Groceries", 40, 1]
+    - [3, 2, 2, 1, "Lunch", 30, 1]
+    - [10, 6, 6, 4, "Lunch", 27, 0]
+    - [1, 1, 1, 2, "Lunch with client", 25, 1]
+    - [7, 4, 4, 1, "Lunch", 22, 1]
+    - [8, 5, 5, 2, "Lunch", 18, 1]
+    - [4, 2, NULL, 4, "Lunch", 15, 1]
+    - [9, 6, 6, 3, "Rent", 12, 1]
+    - [5, 3, 3, 5, "Lunch", 10, 1]
+
+------------------------------------------------------------------------------
+Capítulo 6 — Lição 4
+id: ordenacao-04
+título: Prática: do mais velho ao mais novo
+natureza: exact
+critério canônico (exact):
+  instrução: Retorne os campos `name` e `age` de todos os usuários da tabela `users`, ordenados da maior idade para a menor idade.
+  colunas esperadas (ordem exata): name, age
+  ordem das linhas: importa
+  linhas esperadas:
+    - ["Yuki", 58]
+    - ["Al", 44]
+    - ["Ram", 42]
+    - ["John", 39]
+    - ["Marta", 36]
+    - ["David", 34]
+    - ["Hunter", 30]
+    - ["Samantha", 29]
+    - ["Tiffany", 28]
+    - ["Allan", 27]
+
+------------------------------------------------------------------------------
+Capítulo 6 — Lição 5
+id: ordenacao-05
+título: Prática: corrigindo ORDER BY com LIMIT
+natureza: exact
+critério canônico (exact):
+  instrução: Corrija a consulta quebrada e retorne todas as colunas da tabela `transactions` cujo `amount` está ENTRE 10 e 80, ordenadas por `amount` em ordem decrescente e limitadas aos 4 maiores valores.
+  colunas esperadas (ordem exata): id, user_id, sender_id, recipient_id, note, amount, was_successful
+  ordem das linhas: importa
+  linhas esperadas:
+    - [6, 3, 3, 6, "Groceries", 40, 1]
+    - [3, 2, 2, 1, "Lunch", 30, 1]
+    - [10, 6, 6, 4, "Lunch", 27, 0]
+    - [1, 1, 1, 2, "Lunch with client", 25, 1]
+
+------------------------------------------------------------------------------
+Capítulo 6 — Lição 6
+id: ordenacao-06
+título: Prática: vazamento de senhas
+natureza: exact
+critério canônico (exact):
+  instrução: Retorne `name` e `username` de todos os usuários cujo `password` é igual a `backendDev`, `welovebootdev` ou `SQLrocks`, ordenados por `name` em ordem alfabética (A-Z).
+  colunas esperadas (ordem exata): name, username
+  ordem das linhas: importa
+  linhas esperadas:
+    - ["Al", "quickCoder"]
+    - ["Allan", "Alires"]
+    - ["Hunter", "Hdev92"]
+
+------------------------------------------------------------------------------
+Capítulo 7 — Lição 1
+id: agregacao-01
+título: O que são agregações? Contando com COUNT
+natureza: exact
+critério canônico (exact):
+  instrução: Retorne o número de transações em que o user_id é 6 e was_successful é true.
+  colunas esperadas (ordem exata): COUNT(*)
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [2]
+
+------------------------------------------------------------------------------
+Capítulo 7 — Lição 2
+id: agregacao-02
+título: Somando valores com SUM
+natureza: exact
+critério canônico (exact):
+  instrução: Escreva uma consulta que retorne a soma (SUM) dos valores (amount) de todas as transações bem-sucedidas do Bob (user_id = 9).
+  colunas esperadas (ordem exata): SUM(amount)
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [350]
+
+------------------------------------------------------------------------------
+Capítulo 7 — Lição 3
+id: agregacao-03
+título: Maior valor com MAX
+natureza: exact
+critério canônico (exact):
+  instrução: Use uma agregação MAX para retornar a idade do usuário mais velho do Senai Pay que também é administrador. Dê o apelido (alias) de age à coluna retornada.
+  colunas esperadas (ordem exata): age
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [41]
+
+------------------------------------------------------------------------------
+Capítulo 7 — Lição 4
+id: agregacao-04
+título: Menor valor com MIN
+natureza: exact
+critério canônico (exact):
+  instrução: Use uma agregação MIN para descobrir apenas a idade do usuário mais jovem do Senai Pay nos Estados Unidos (country_code = 'US'). Dê o apelido (alias) de age à coluna retornada.
+  colunas esperadas (ordem exata): age
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [27]
+
+------------------------------------------------------------------------------
+Capítulo 7 — Lição 5
+id: agregacao-05
+título: Agrupando dados com GROUP BY
+natureza: exact
+critério canônico (exact):
+  instrução: Use a agregação SUM com a cláusula GROUP BY. A linha de cada usuário deve conter o user_id e o saldo dele — uma soma com apelido (alias) balance dos valores das transações bem-sucedidas.
+  colunas esperadas (ordem exata): user_id, balance
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [1, 30]
+    - [2, 45]
+    - [3, 50]
+    - [4, 40]
+    - [5, 12]
+    - [6, 27]
+    - [7, 8]
+    - [8, 20]
+    - [9, 350]
+    - [10, 5]
+
+------------------------------------------------------------------------------
+Capítulo 7 — Lição 6
+id: agregacao-06
+título: Calculando médias com AVG
+natureza: exact
+critério canônico (exact):
+  instrução: Retorne um único valor representando a idade média de todos os usuários cujo country_code é 'US'.
+  colunas esperadas (ordem exata): AVG(age)
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [29.75]
+
+------------------------------------------------------------------------------
+Capítulo 7 — Lição 7
+id: agregacao-07
+título: Filtrando grupos com HAVING
+natureza: exact
+critério canônico (exact):
+  instrução: Escreva uma consulta na tabela transactions que retorne o total gasto por cada usuário em almoços (lunch) quando esse saldo for maior que 20. Retorne sender_id e balance (a soma de amount), sem linhas com sender_id nulo, apenas transações bem-sucedidas cuja note contenha 'lunch', agrupando por sender_id e ordenando pelo balance em ordem crescente.
+  colunas esperadas (ordem exata): sender_id, balance
+  ordem das linhas: importa
+  linhas esperadas:
+    - [1, 25]
+    - [6, 27]
+    - [2, 30]
+    - [4, 40]
+    - [9, 350]
+
+------------------------------------------------------------------------------
+Capítulo 7 — Lição 8
+id: agregacao-08
+título: Arredondando com ROUND
+natureza: exact
+critério canônico (exact):
+  instrução: Corrija a consulta para que ela retorne a média como um número inteiro (arredondado). Renomeie a coluna resultante para round_age.
+  colunas esperadas (ordem exata): round_age
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [35]
+
+------------------------------------------------------------------------------
+Capítulo 7 — Lição 9
+id: agregacao-09
+título: Prática: média de idades por país
+natureza: exact
+critério canônico (exact):
+  instrução: Escreva uma instrução SQL que retorne duas colunas: o country_code e a idade média dos usuários daquele country_code. Arredonde a média para o número inteiro mais próximo e renomeie a coluna da idade média para average_age.
+  colunas esperadas (ordem exata): country_code, average_age
+  ordem das linhas: não importa
+  linhas esperadas:
+    - ["US", 30]
+    - ["BR", 29]
+    - ["CA", 39]
+    - ["IN", 42]
+    - ["JP", 39]
+    - ["ES", 36]
+    - ["AU", 41]
+
+------------------------------------------------------------------------------
+Capítulo 8 — Lição 1
+id: subqueries-01
+título: Subqueries: consultas dentro de consultas
+natureza: exact
+critério canônico (exact):
+  instrução: Usando uma subquery, retorne todas as colunas da tabela `transactions` pertencentes ao usuário chamado `David`.
+  colunas esperadas (ordem exata): id, user_id, sender_id, recipient_id, note, amount, was_successful
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [1, 1, 1, 2, "Lunch with client", 25, 1]
+    - [2, 1, 1, 3, "Coffee", 5, 1]
+
+------------------------------------------------------------------------------
+Capítulo 8 — Lição 2
+id: subqueries-02
+título: Prática: transações de administradores
+natureza: exact
+critério canônico (exact):
+  instrução: Retorne todas as colunas da tabela `transactions` cujo `user_id` pertence a um administrador (`is_admin` verdadeiro), usando uma subquery com IN.
+  colunas esperadas (ordem exata): id, user_id, sender_id, recipient_id, note, amount, was_successful
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [9, 6, 6, 3, "Rent", 12, 1]
+    - [10, 6, 6, 4, "Lunch", 27, 0]
+    - [11, 8, 8, 5, "invoice #2210", 55, 1]
+    - [12, 9, 9, 1, "tax refund", 33, 1]
+
+------------------------------------------------------------------------------
+Capítulo 8 — Lição 3
+id: subqueries-03
+título: Prática: subquery de faturas
+natureza: exact
+critério canônico (exact):
+  instrução: Usando as tabelas `transactions` e `users`, escreva uma instrução SQL com subquery que retorne todos os campos do usuário para cada usuário que: tenha o `id` igual a algum `sender_id` de uma transação cujo `note` contenha 'invoice' ou 'tax'; e não seja administrador (`is_admin` falso).
+  colunas esperadas (ordem exata): id, name, age, country_code, username, password, is_admin
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [3, "John", 39, "CA", "Jjdev21", "sqlMaster2024", 0]
+    - [4, "Ram", 42, "IN", "Ram11c", "queryNinja", 0]
+
+------------------------------------------------------------------------------
+Capítulo 8 — Lição 4
+id: subqueries-04
+título: Prática: convertendo anos em dias com subquery
+natureza: exact
+critério canônico (exact):
+  instrução: Retorne todas as colunas da tabela `users` para os usuários com mais de 40 anos, sabendo que `age_in_days` guarda a idade em dias. Use uma subquery para converter 40 anos em dias (considere cada ano com 365 dias) e filtre por esse valor.
+  colunas esperadas (ordem exata): id, name, age_in_days
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [4, "Ram", 15330]
+    - [7, "Al", 16060]
+    - [10, "Yuki", 21170]
+
+------------------------------------------------------------------------------
+Capítulo 8 — Lição 5
+id: subqueries-05
+título: Prática: cálculos sem tabelas
+natureza: exact
+critério canônico (exact):
+  instrução: Sem consultar nenhuma tabela, escreva uma consulta que retorne 40 anos convertidos em dias (considere cada ano com 365 dias). A coluna do resultado deve se chamar `cutoff_days`.
+  colunas esperadas (ordem exata): cutoff_days
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [14600]
+
+------------------------------------------------------------------------------
+Capítulo 9 — Lição 1
+id: normalizacao-01
+título: Relacionamentos entre tabelas
+natureza: quiz
+critério canônico (quiz):
+  instrução: Responda às perguntas abaixo sobre relacionamentos entre tabelas.
+  Pergunta 1: Qual é um exemplo de relacionamento um-para-um (1:1) no Senai Pay?
+    A) As transações de um usuário
+    B) Os professores de uma universidade
+    C) A anotação (note) de uma transação
+    D) Os filhos de um pai
+    Correta: C) A anotação (note) de uma transação
+    Explicação: Cada transação tem no máximo uma anotação, então há exatamente um valor ligado a cada transação.
+  Pergunta 2: Qual é um exemplo de relacionamento um-para-muitos (1:N)?
+    A) Um usuário e sua senha
+    B) Um usuário e seus dispositivos de acesso
+    C) Uma transação e sua anotação
+    D) Um país e seu código de duas letras
+    Correta: B) Um usuário e seus dispositivos de acesso
+    Explicação: Um usuário pode acessar de vários dispositivos, mas cada dispositivo pertence a um único usuário.
+  Pergunta 3: Em um relacionamento muitos-para-muitos (N:N), como representamos a ligação no banco?
+    A) Adicionando country_code à tabela users
+    B) Adicionando user_id à tabela countries
+    C) Criando uma tabela de junção com as chaves das duas entidades
+    D) Guardando uma lista de identificadores em uma única coluna TEXT
+    Correta: C) Criando uma tabela de junção com as chaves das duas entidades
+    Explicação: A tabela de junção guarda pares de chaves estrangeiras, permitindo que ambos os lados tenham vários registros relacionados.
+  Pergunta 4: O que uma tabela precisa ter para se relacionar com outra?
+    A) Uma chave estrangeira que referencia a chave primária da outra tabela
+    B) O mesmo número de colunas da outra tabela
+    C) Exatamente o mesmo nome da outra tabela
+    D) Um índice de texto em todas as colunas
+    Correta: A) Uma chave estrangeira que referencia a chave primária da outra tabela
+    Explicação: O relacionamento é criado por uma chave estrangeira que aponta para a chave primária (ou coluna única) da outra tabela.
+
+------------------------------------------------------------------------------
+Capítulo 9 — Lição 2
+id: normalizacao-02
+título: Um para muitos: dispositivos
+natureza: schema
+critério canônico (schema):
+  instrução: Crie a tabela `devices` com os campos: id (INTEGER, PRIMARY KEY), mac_address (TEXT), type (TEXT) e user_id (INTEGER) como chave estrangeira para `users(id)`.
+  tabelas esperadas:
+    - tabela: devices
+      colunas exigidas:
+        - id: INTEGER, PRIMARY KEY
+        - mac_address: TEXT
+        - type: TEXT
+        - user_id: INTEGER
+      colunas proibidas: (nenhuma)
+      chaves estrangeiras exigidas:
+        - (user_id) -> users(id)
+      índices exigidos:
+        (nenhum)
+
+------------------------------------------------------------------------------
+Capítulo 9 — Lição 3
+id: normalizacao-03
+título: Muitos para muitos: países
+natureza: schema
+critério canônico (schema):
+  instrução: Faça a ligação muitos-para-muitos entre usuários e países: remova `country_code` de `users`; crie a tabela `countries` (id PRIMARY KEY, country_code TEXT, name TEXT); e crie `users_countries` com `country_id` e `user_id`, uma restrição única sobre os dois juntos e chaves estrangeiras para `countries(id)` e `users(id)`.
+  tabelas esperadas:
+    - tabela: users
+      colunas exigidas:
+        - id: INTEGER, PRIMARY KEY
+      colunas proibidas: country_code
+      chaves estrangeiras exigidas:
+        (nenhuma)
+      índices exigidos:
+        (nenhum)
+    - tabela: countries
+      colunas exigidas:
+        - id: INTEGER, PRIMARY KEY
+        - country_code: TEXT
+        - name: TEXT
+      colunas proibidas: (nenhuma)
+      chaves estrangeiras exigidas:
+        (nenhuma)
+      índices exigidos:
+        (nenhum)
+    - tabela: users_countries
+      colunas exigidas:
+        - country_id: INTEGER
+        - user_id: INTEGER
+      colunas proibidas: (nenhuma)
+      chaves estrangeiras exigidas:
+        - (country_id) -> countries(id)
+        - (user_id) -> users(id)
+      índices exigidos:
+        (nenhum)
+
+------------------------------------------------------------------------------
+Capítulo 9 — Lição 4
+id: normalizacao-04
+título: Normalização de banco de dados
+natureza: quiz
+critério canônico (quiz):
+  instrução: Responda às perguntas abaixo sobre integridade e redundância.
+  Pergunta 1: Para melhorar a integridade dos dados, os dados devem, em geral, ser armazenados de qual forma?
+    A) Bruta (raw)
+    B) Pré-calculada (precomputed)
+    Correta: A) Bruta (raw)
+    Explicação: Dados brutos nunca mudam. Um dado derivado, como a idade, fica desatualizado com o tempo.
+  Pergunta 2: Qual é o melhor exemplo de redundância de dados?
+    A) Duas tabelas que têm um campo booleano
+    B) Cada tabela ter um campo id como chave primária
+    C) O endereço de um usuário estar armazenado em duas tabelas diferentes
+    D) Uma tabela countries e uma tabela users terem, cada uma, um campo name
+    Correta: C) O endereço de um usuário estar armazenado em duas tabelas diferentes
+    Explicação: Redundância é a mesma informação guardada em vários lugares — como o mesmo endereço em duas tabelas.
+  Pergunta 3: Por que armazenar a idade em vez da data de nascimento prejudica a integridade?
+    A) Porque ocupa mais espaço em disco
+    B) Porque a idade fica desatualizada com o passar do tempo
+    C) Porque o tipo INTEGER é mais lento
+    D) Porque impede a criação de índices
+    Correta: B) Porque a idade fica desatualizada com o passar do tempo
+    Explicação: A idade é um dado pré-calculado: cada aniversário a torna incorreta. A data de nascimento é bruta e nunca muda.
+  Pergunta 4: Qual é o objetivo da normalização?
+    A) Aumentar a redundância para acelerar consultas
+    B) Melhorar a integridade dos dados e reduzir a redundância
+    C) Garantir que toda tabela tenha uma chave estrangeira
+    D) Eliminar a necessidade de chaves primárias
+    Correta: B) Melhorar a integridade dos dados e reduzir a redundância
+    Explicação: Normalizar é estruturar o schema para melhorar a integridade e reduzir a duplicação.
+
+------------------------------------------------------------------------------
+Capítulo 9 — Lição 5
+id: normalizacao-05
+título: Formas normais
+natureza: quiz
+critério canônico (quiz):
+  instrução: Responda às perguntas abaixo sobre as formas normais.
+  Pergunta 1: Qual forma normal tem mais dados duplicados?
+    A) BCNF
+    B) 3NF
+    C) 2NF
+    D) 1NF
+    Correta: D) 1NF
+    Explicação: A 1NF é a menos normalizada, então é a que ainda admite mais duplicação.
+  Pergunta 2: Qual forma normal incentiva mais informação exata e atualizada?
+    A) BCNF
+    B) 3NF
+    C) 2NF
+    D) 1NF
+    Correta: A) BCNF
+    Explicação: A BCNF é a mais normalizada das formas cobertas: mais integridade e menos duplicação.
+  Pergunta 3: No contexto da normalização, a chave primária é formada por quantas colunas?
+    A) 1 a muitas colunas
+    B) Sempre 1 e 2 colunas
+    C) A menor combinação de colunas que identifica cada linha
+    D) 0 a 1 coluna
+    Correta: C) A menor combinação de colunas que identifica cada linha
+    Explicação: Na normalização, 'chave primária' é o conjunto mínimo de colunas que identifica uma linha — pode ser uma só ou uma chave composta.
+  Pergunta 4: Quanto mais normalizado é um banco de dados...
+    A) maior a integridade e menor a duplicação de dados
+    B) maior a duplicação de dados
+    C) menor a integridade dos dados
+    D) mais chaves primárias únicas ele precisa ter
+    Correta: A) maior a integridade e menor a duplicação de dados
+    Explicação: Quanto mais normalizado, melhor a integridade dos dados e menos dados duplicados.
+
+------------------------------------------------------------------------------
+Capítulo 9 — Lição 6
+id: normalizacao-06
+título: Primeira forma normal (1NF)
+natureza: schema
+critério canônico (schema):
+  instrução: Coloque a tabela `companies` na primeira forma normal: recrie-a com um campo `id` INTEGER PRIMARY KEY como primeira coluna, mantendo `name` (TEXT NOT NULL) e `num_employees` (INTEGER NOT NULL).
+  tabelas esperadas:
+    - tabela: companies
+      colunas exigidas:
+        - id: INTEGER, PRIMARY KEY
+        - name: TEXT, NOT NULL
+        - num_employees: INTEGER, NOT NULL
+      colunas proibidas: (nenhuma)
+      chaves estrangeiras exigidas:
+        (nenhuma)
+      índices exigidos:
+        (nenhum)
+
+------------------------------------------------------------------------------
+Capítulo 9 — Lição 7
+id: normalizacao-07
+título: Segunda forma normal (2NF)
+natureza: schema
+critério canônico (schema):
+  instrução: Mova a coluna que está fora de lugar para a tabela correta: adicione `revenue` como a última coluna de `companies` e remova `revenue` da tabela de junção `users_companies`.
+  tabelas esperadas:
+    - tabela: companies
+      colunas exigidas:
+        - id: INTEGER, PRIMARY KEY
+        - name: TEXT, NOT NULL
+        - num_employees: INTEGER, NOT NULL
+        - revenue: REAL
+      colunas proibidas: (nenhuma)
+      chaves estrangeiras exigidas:
+        (nenhuma)
+      índices exigidos:
+        (nenhum)
+    - tabela: users_companies
+      colunas exigidas:
+        - user_id: INTEGER
+        - company_id: INTEGER
+      colunas proibidas: revenue
+      chaves estrangeiras exigidas:
+        (nenhuma)
+      índices exigidos:
+        (nenhum)
+
+------------------------------------------------------------------------------
+Capítulo 9 — Lição 8
+id: normalizacao-08
+título: Terceira forma normal (3NF)
+natureza: exact
+critério canônico (exact):
+  instrução: Remova a coluna armazenada `size` (ALTER TABLE companies DROP COLUMN size) e escreva uma consulta que retorne `id`, `name` e `num_employees` e calcule uma coluna `size`: 'large' quando `num_employees` for maior que 100, senão 'small'.
+  colunas esperadas (ordem exata): id, name, num_employees, size
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [1, "Pfizer", 10000, "large"]
+    - [2, "WorldBanc", 80, "small"]
+    - [3, "Fantasy Quest", 30, "small"]
+    - [4, "Walmart", 1000, "large"]
+
+------------------------------------------------------------------------------
+Capítulo 9 — Lição 9
+id: normalizacao-09
+título: Forma normal de Boyce-Codd (BCNF)
+natureza: quiz
+critério canônico (quiz):
+  instrução: Responda às perguntas abaixo sobre a BCNF.
+  Pergunta 1: Quando uma tabela pode estar na 3NF, mas não na BCNF?
+    A) Quando Boyce e Codd decretam que sim
+    B) Quando ela tem múltiplas chaves primárias possíveis
+    C) Quando tem múltiplas chaves candidatas sobrepostas e uma coluna de uma chave depende de uma coluna fora dela
+    D) Quando a chave primária depende de uma coluna que não é chave
+    Correta: C) Quando tem múltiplas chaves candidatas sobrepostas e uma coluna de uma chave depende de uma coluna fora dela
+    Explicação: A BCNF restringe como colunas que fazem parte da chave primária podem depender de colunas que não fazem parte dela.
+  Pergunta 2: O que significa 'chaves candidatas sobrepostas'?
+    A) Várias combinações de colunas que poderiam ser a chave primária e que compartilham colunas
+    B) Duas tabelas diferentes com o mesmo nome
+    C) Uma chave primária com dois tipos de dados diferentes
+    D) Chaves estrangeiras que apontam para a mesma tabela
+    Correta: A) Várias combinações de colunas que poderiam ser a chave primária e que compartilham colunas
+    Explicação: Chaves candidatas são combinações que identificam uma linha; 'sobrepostas' quer dizer que elas compartilham colunas.
+  Pergunta 3: Com que frequência uma tabela na 3NF deixa de atender à BCNF?
+    A) Sempre
+    B) Na maioria dos casos
+    C) Apenas em casos raros
+    D) Nunca
+    Correta: C) Apenas em casos raros
+    Explicação: É raro encontrar problemas específicos de BCNF na prática.
+
+------------------------------------------------------------------------------
+Capítulo 9 — Lição 10
+id: normalizacao-10
+título: Revisão de normalização
+natureza: quiz
+critério canônico (quiz):
+  instrução: Responda às perguntas abaixo sobre as regras práticas de normalização.
+  Pergunta 1: O que você deve otimizar primeiro em um banco de dados?
+    A) Velocidade
+    B) Reduzir dados duplicados
+    Correta: B) Reduzir dados duplicados
+    Explicação: Otimize primeiro a integridade e a desduplicação; a velocidade vem depois, se necessário.
+  Pergunta 2: Quando não é preciso uma chave composta, qual deve ser o nome da coluna da chave primária?
+    A) skeleton_key
+    B) key
+    C) identifier
+    D) id
+    Correta: D) id
+    Explicação: Na grande maioria dos casos, a chave primária é uma única coluna chamada id.
+  Pergunta 3: O que é mais importante para a sua carreira em desenvolvimento back-end?
+    A) Memorizar as definições exatas de 1NF, 2NF, 3NF e BCNF
+    B) Internalizar regras práticas simples sobre normalização de banco de dados
+    Correta: B) Internalizar regras práticas simples sobre normalização de banco de dados
+    Explicação: As definições exatas importam menos do que os princípios de integridade e desduplicação que elas ensinam.
+  Pergunta 4: Quando vale a pena desnormalizar o banco?
+    A) Sempre, logo no início do projeto
+    B) Nunca, em nenhuma hipótese
+    C) Quando começarem a aparecer problemas de desempenho
+    D) Quando a tabela não tiver chave primária
+    Correta: C) Quando começarem a aparecer problemas de desempenho
+    Explicação: Desnormalize apenas de forma pontual, quando a performance se tornar um problema real.
+
+------------------------------------------------------------------------------
+Capítulo 9 — Lição 11
+id: normalizacao-11
+título: Prática: usuários e bancos
+natureza: schema
+critério canônico (schema):
+  instrução: Crie a tabela `banks` com as colunas de banco que estavam em `users`, sem o prefixo bank_ (`name`, `agency`, `account`) e `id` INTEGER PRIMARY KEY. Crie também `users_banks` com `user_id` e `bank_id`, uma restrição de unicidade sobre os dois juntos e chaves estrangeiras para `users(id)` e `banks(id)`.
+  tabelas esperadas:
+    - tabela: banks
+      colunas exigidas:
+        - id: INTEGER, PRIMARY KEY
+        - name: TEXT
+        - agency: TEXT
+        - account: TEXT
+      colunas proibidas: (nenhuma)
+      chaves estrangeiras exigidas:
+        (nenhuma)
+      índices exigidos:
+        (nenhum)
+    - tabela: users_banks
+      colunas exigidas:
+        - user_id: INTEGER
+        - bank_id: INTEGER
+      colunas proibidas: (nenhuma)
+      chaves estrangeiras exigidas:
+        - (user_id) -> users(id)
+        - (bank_id) -> banks(id)
+      índices exigidos:
+        (nenhum)
+
+------------------------------------------------------------------------------
+Capítulo 10 — Lição 1
+id: joins-01
+título: Introdução aos JOINs
+natureza: exact
+critério canônico (exact):
+  instrução: Escreva um INNER JOIN entre `users` e `countries` (nessa ordem), retornando todos os campos das duas tabelas. A junção deve ser feita pelo campo `country_code`.
+  colunas esperadas (ordem exata): id, name, age, country_code, username, password, is_admin, id, country_code, name
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [1, "David", 34, "US", "DavidDev", "insertPractice", 0, 1, "US", "United States"]
+    - [2, "Samantha", 29, "BR", "Sammy93", "addingRecords!", 0, 5, "BR", "Brazil"]
+    - [3, "John", 39, "CA", "Jjdev21", "sqlMaster2024", 0, 2, "CA", "Canada"]
+    - [4, "Ram", 42, "IN", "Ram11c", "queryNinja", 0, 3, "IN", "India"]
+    - [5, "Hunter", 30, "US", "Hdev92", "backendDev", 0, 1, "US", "United States"]
+    - [6, "Allan", 27, "US", "Alires", "adminPass1", 1, 1, "US", "United States"]
+    - [7, "Al", 39, "JP", "quickCoder", "snake_case", 0, 4, "JP", "Japan"]
+
+------------------------------------------------------------------------------
+Capítulo 10 — Lição 2
+id: joins-02
+título: Namespacing em tabelas
+natureza: exact
+critério canônico (exact):
+  instrução: Ajuste a consulta para: (1) retornar os campos `name` e `age` da tabela `users`; (2) retornar o campo `name` da tabela `countries` renomeado para `country_name`; (3) ordenar por `country_name` em ordem crescente.
+  colunas esperadas (ordem exata): name, age, country_name
+  ordem das linhas: importa
+  linhas esperadas:
+    - ["Samantha", 29, "Brazil"]
+    - ["John", 39, "Canada"]
+    - ["Ram", 42, "India"]
+    - ["Al", 39, "Japan"]
+    - ["David", 34, "United States"]
+    - ["Hunter", 30, "United States"]
+    - ["Allan", 27, "United States"]
+
+------------------------------------------------------------------------------
+Capítulo 10 — Lição 3
+id: joins-03
+título: LEFT JOIN
+natureza: exact
+critério canônico (exact):
+  instrução: Junte as tabelas `users` e `transactions` com LEFT JOIN em `users.id = transactions.user_id`. Retorne o nome do usuário (como `name`), a soma dos valores das transações (como `transaction_sum`) e a contagem de transações (como `transaction_count`). Agrupe por `users.id` e ordene pela soma em ordem decrescente. Usuários sem transações também devem aparecer. Não use apelidos de tabela.
+  colunas esperadas (ordem exata): name, transaction_sum, transaction_count
+  ordem das linhas: importa
+  linhas esperadas:
+    - ["David", 266.71, 2]
+    - ["John", 9.56, 1]
+    - ["Samantha", NULL, 0]
+    - ["Ram", NULL, 0]
+    - ["Hunter", NULL, 0]
+    - ["Allan", NULL, 0]
+    - ["Al", NULL, 0]
+
+------------------------------------------------------------------------------
+Capítulo 10 — Lição 4
+id: joins-04
+título: RIGHT JOIN
+natureza: theory
+critério canônico (theory):
+  instrução: unidade de teoria (apenas narrativa)
+  Não há resposta executável (unidade de teoria).
+
+------------------------------------------------------------------------------
+Capítulo 10 — Lição 5
+id: joins-05
+título: FULL JOIN
+natureza: theory
+critério canônico (theory):
+  instrução: unidade de teoria (apenas narrativa)
+  Não há resposta executável (unidade de teoria).
+
+------------------------------------------------------------------------------
+Capítulo 10 — Lição 6
+id: joins-06
+título: Quiz de JOINs (1)
+natureza: quiz
+critério canônico (quiz):
+  instrução: Dadas as tabelas e o resultado abaixo, responda qual tipo de JOIN produziria esse resultado.
+  Pergunta 1: Qual tipo de JOIN produz o resultado mostrado?
+    A) LEFT JOIN
+    B) INNER JOIN
+    C) FULL JOIN
+    Correta: B) INNER JOIN
+    Explicação: O resultado contém apenas usuários com transações correspondentes (David e John) e apenas transações com usuários existentes — é um INNER JOIN.
+
+------------------------------------------------------------------------------
+Capítulo 10 — Lição 7
+id: joins-07
+título: Quiz de JOINs (2)
+natureza: quiz
+critério canônico (quiz):
+  instrução: Dadas as tabelas e o resultado abaixo, responda qual tipo de JOIN produziria esse resultado.
+  Pergunta 1: Qual tipo de JOIN produz o resultado mostrado?
+    A) LEFT JOIN
+    B) INNER JOIN
+    C) FULL JOIN
+    Correta: A) LEFT JOIN
+    Explicação: Todos os usuários aparecem (mesmo sem transações), mas a transação do usuário 10 não aparece — é um LEFT JOIN.
+
+------------------------------------------------------------------------------
+Capítulo 10 — Lição 8
+id: joins-08
+título: Quiz de JOINs (3)
+natureza: quiz
+critério canônico (quiz):
+  instrução: Dadas as tabelas e o resultado abaixo, responda qual tipo de JOIN produziria esse resultado.
+  Pergunta 1: Qual tipo de JOIN produz o resultado mostrado?
+    A) RIGHT JOIN
+    B) INNER JOIN
+    C) FULL JOIN
+    Correta: A) RIGHT JOIN
+    Explicação: Todas as transações aparecem (inclusive a do usuário 10, sem usuário correspondente), mas usuários sem transações não aparecem — é um RIGHT JOIN.
+
+------------------------------------------------------------------------------
+Capítulo 10 — Lição 9
+id: joins-09
+título: Prática: página de perfil
+natureza: exact
+critério canônico (exact):
+  instrução: Escreva uma consulta que retorne, para o usuário de id 6: o id, o nome, a idade, o username, o nome do país (renomeado para `country_name`) e a soma dos valores de todas as transações bem-sucedidas (renomeada para `balance`).
+  colunas esperadas (ordem exata): id, name, age, username, country_name, balance
+  ordem das linhas: não importa
+  linhas esperadas:
+    - [6, "Allan", 27, "Alires", "United States", 133.71]
+
+------------------------------------------------------------------------------
+Capítulo 10 — Lição 10
+id: joins-10
+título: Prática: tickets de suporte
+natureza: exact
+critério canônico (exact):
+  instrução: Escreva uma consulta com INNER JOIN que retorne: o nome do usuário, o username e a contagem de tickets de suporte (renomeada para `support_ticket_count`). Exclua tickets com issue_type 'Account Access'. Retorne apenas usuários com mais de 1 ticket que não seja 'Account Access'. Ordene do usuário com mais tickets para o com menos.
+  colunas esperadas (ordem exata): name, username, support_ticket_count
+  ordem das linhas: importa
+  linhas esperadas:
+    - ["Hunter", "Hdev92", 4]
+    - ["John", "Jjdev21", 3]
+    - ["David", "DavidDev", 2]
+
+------------------------------------------------------------------------------
+Capítulo 11 — Lição 1
+id: performance-01
+título: Índices: acelerando buscas
+natureza: schema
+critério canônico (schema):
+  instrução: Crie um índice não único chamado `email_idx` na coluna `email` da tabela `users`.
+  tabelas esperadas:
+    - tabela: users
+      colunas exigidas:
+        (nenhuma)
+      colunas proibidas: (nenhuma)
+      chaves estrangeiras exigidas:
+        (nenhuma)
+      índices exigidos:
+        - email_idx (email) — não único
+
+------------------------------------------------------------------------------
+Capítulo 11 — Lição 2
+id: performance-02
+título: Como os índices funcionam
+natureza: quiz
+critério canônico (quiz):
+  instrução: Responda às perguntas abaixo sobre índices e desempenho.
+  Pergunta 1: Um índice B-tree faz com que as buscas sejam...
+    A) O(n^2)
+    B) O(n*log(n))
+    C) O(n)
+    D) O(log(n))
+    Correta: D) O(log(n))
+    Explicação: A B-tree mantém os valores ordenados e divide a busca a cada nível, resultando em complexidade O(log(n)).
+  Pergunta 2: Por que não devemos indexar todas as colunas de uma tabela?
+    A) Porque o SQLite só permite um índice por tabela
+    B) Porque cada índice ocupa memória e deixa INSERT/UPDATE mais lentos
+    C) Porque índices impedem o uso de JOINs
+    D) Porque índices só funcionam em chaves estrangeiras
+    Correta: B) Porque cada índice ocupa memória e deixa INSERT/UPDATE mais lentos
+    Explicação: Vários índices incham o uso de memória e obrigam cada escrita a atualizar várias árvores.
+  Pergunta 3: Quais colunas já vêm indexadas automaticamente?
+    A) Apenas colunas do tipo TEXT
+    B) As colunas que aceitam valores NULL
+    C) As colunas PRIMARY KEY
+    D) Nenhuma coluna
+    Correta: C) As colunas PRIMARY KEY
+    Explicação: As colunas PRIMARY KEY são indexadas por padrão, o que torna a busca por id muito rápida.
+  Pergunta 4: Qual é a regra prática sobre índices?
+    A) Indexar todas as colunas para garantir velocidade
+    B) Indexar as colunas usadas com frequência em buscas e deixar o resto sem índice
+    C) Nunca criar índices em produção
+    D) Criar índices apenas em colunas booleanas
+    Correta: B) Indexar as colunas usadas com frequência em buscas e deixar o resto sem índice
+    Explicação: Adicione índices às colunas em que você fará buscas frequentes; você sempre pode adicionar outro depois.
+
+------------------------------------------------------------------------------
+Capítulo 11 — Lição 3
+id: performance-03
+título: Índices compostos
+natureza: schema
+critério canônico (schema):
+  instrução: Crie um índice não único chamado `user_id_recipient_id_idx` nas colunas `user_id` e `recipient_id` da tabela `transactions`, nessa ordem.
+  tabelas esperadas:
+    - tabela: transactions
+      colunas exigidas:
+        (nenhuma)
+      colunas proibidas: (nenhuma)
+      chaves estrangeiras exigidas:
+        (nenhuma)
+      índices exigidos:
+        - user_id_recipient_id_idx (user_id, recipient_id) — não único
+
+------------------------------------------------------------------------------
+Capítulo 11 — Lição 4
+id: performance-04
+título: Desnormalização por velocidade
+natureza: quiz
+critério canônico (quiz):
+  instrução: Responda às perguntas abaixo sobre desnormalização.
+  Pergunta 1: A desnormalização pode ser usada para ____
+    A) Reduzir dados duplicados
+    B) Acelerar as consultas
+    Correta: B) Acelerar as consultas
+    Explicação: Guardar dados duplicados evita operações custosas, como JOINs, e por isso pode acelerar as consultas.
+  Pergunta 2: É inteligente começar com um banco ____ e ____ conforme a necessidade por velocidade.
+    A) Normalizado, desnormalizar
+    B) Desnormalizado, normalizar
+    Correta: A) Normalizado, desnormalizar
+    Explicação: Comece normalizado para garantir integridade; desnormalize pontualmente se surgirem problemas de desempenho.
+  Pergunta 3: Qual banco é mais fácil de manter livre de bugs?
+    A) Normalizado
+    B) É indiferente
+    C) Desnormalizado
+    Correta: A) Normalizado
+    Explicação: Com dados sem duplicação, há menos chance de cópias ficarem inconsistentes entre si.
+  Pergunta 4: Qual é o principal risco ao desnormalizar um banco?
+    A) Passar a exigir mais JOINs
+    B) Dados imprecisos e inconsistentes
+    C) Impedir o uso de chaves primárias
+    D) Perder a capacidade de criar índices
+    Correta: B) Dados imprecisos e inconsistentes
+    Explicação: Dados duplicados podem divergir; por isso desnormalizar é arriscado e deve ser o último recurso.
+
+------------------------------------------------------------------------------
+Capítulo 11 — Lição 5
+id: performance-05
+título: SQL injection
+natureza: quiz
+critério canônico (quiz):
+  instrução: Responda às perguntas abaixo sobre SQL injection.
+  Pergunta 1: SQL injection é melhor evitado usando uma biblioteca moderna de SQL que cuida da sanitização dos valores fornecidos pelo usuário.
+    A) Verdadeiro
+    B) Falso
+    Correta: A) Verdadeiro
+    Explicação: Bibliotecas modernas sanitizam entradas automaticamente; não precisamos mais higienizar tudo na mão.
+  Pergunta 2: O que o exemplo `Robert'); DROP TABLE students;--` demonstra?
+    A) Que o SQLite apaga tabelas automaticamente
+    B) Que inserir entrada do usuário direto na query permite executar comandos extras
+    C) Que chaves primárias evitam ataques
+    D) Que nomes com apóstrofo são inválidos em SQL
+    Correta: B) Que inserir entrada do usuário direto na query permite executar comandos extras
+    Explicação: Sem sanitização, a entrada fecha a query original e injeta uma segunda instrução que apaga a tabela.
+  Pergunta 3: Qual é a prática recomendada ao usar entrada do usuário em consultas?
+    A) Concatenar os valores diretamente na string SQL
+    B) Remover manualmente todos os apóstrofos
+    C) Passar os valores como parâmetros para a biblioteca de banco
+    D) Guardar a query em uma coluna TEXT
+    Correta: C) Passar os valores como parâmetros para a biblioteca de banco
+    Explicação: Passe valores como parâmetros: a biblioteca trata a entrada como dado, e não como parte do comando SQL.
+  Pergunta 4: No ataque de exemplo, para que serve o `--` no final da entrada?
+    A) Comentar o restante da query, ignorando o que vem depois
+    B) Encerrar a conexão com o banco
+    C) Criar um índice temporário
+    D) Indicar que a string é um parâmetro
+    Correta: A) Comentar o restante da query, ignorando o que vem depois
+    Explicação: Em SQL, `--` inicia um comentário e descarta o resto da instrução original.
