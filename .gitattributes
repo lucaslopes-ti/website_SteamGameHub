@@ -5,6 +5,7 @@
 *.7z binary
 *.app binary
 *.dmg binary
+*.pdf binary
 
 # Arquivos de dados JSON podem ser text
 *.json text
