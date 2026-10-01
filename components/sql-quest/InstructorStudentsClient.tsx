@@ -307,7 +307,7 @@ function StudentsPanel() {
               Alunos e progresso
             </h1>
             <p className="mt-3 max-w-2xl leading-7 text-[var(--on-surface-variant)]">
-              Todos os alunos com progresso em SQL Quest, com XP, nível, lições
+              Todos os alunos com progresso em SENAI Quest, com XP, nível, lições
               concluídas e o último login na plataforma.
             </p>
           </div>
@@ -447,7 +447,7 @@ function StudentsPanel() {
               <Users className="mx-auto h-9 w-9 text-[var(--outline)]" />
               <h2 className="mt-4 font-bold">Ainda não há alunos</h2>
               <p className="mt-2 text-sm text-[var(--on-surface-variant)]">
-                Quando os alunos concluírem lições do SQL Quest, eles aparecerão
+                Quando os alunos concluírem lições do SENAI Quest, eles aparecerão
                 aqui.
               </p>
             </div>
@@ -471,7 +471,7 @@ function StudentsPanel() {
               <div className="mt-5 hidden overflow-hidden rounded-3xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-lowest)] sm:block">
                 <table className="w-full border-collapse text-left text-sm">
                   <caption className="sr-only">
-                    Alunos com progresso em SQL Quest. A coluna “Último login”
+                    Alunos com progresso em SENAI Quest. A coluna “Último login”
                     mostra o último login na plataforma, não a última visita.
                   </caption>
                   <thead>

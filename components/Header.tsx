@@ -60,7 +60,7 @@ export default function Header() {
     { href: "/games", label: t("header.games"), icon: Gamepad2 },
     { href: "/materiais", label: "Materiais", icon: BookOpen },
     { href: "/simulado-saep", label: "Simulado SAEP", icon: Trophy },
-    { href: "/sql-quest", label: "SQL SenaiUdi", icon: Database },
+    { href: "/sql-quest", label: "SENAI Quest", icon: Database },
   ];
 
   const isActive = useCallback(

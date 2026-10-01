@@ -45,6 +45,14 @@ chapters:
     slug: performance
     title: "Performance e índices"
     description: "Consultas rápidas fazem diferença em escala. Aprenda a criar índices com CREATE INDEX, entender quando eles aceleram (e quando pesam), usar índices de múltiplas colunas e saber quando desnormalizar em nome da velocidade."
+  - number: 12
+    slug: redes
+    title: "Fundamentos de redes"
+    description: "Como as redes funcionam: o que é uma rede, quem é cliente e quem é servidor, redes ponto a ponto, os meios físicos (par trançado, fibra e Wi-Fi), topologias físicas e lógicas e os tipos de rede por escopo — LAN, WAN, SOHO, intranet e extranet."
+  - number: 13
+    slug: cabeamento
+    title: "Infraestrutura e cabeamento estruturado"
+    description: "A viagem do sinal: dispositivos de interconexão, cabeamento estruturado, par trançado e suas categorias, conectores e pinagem T568, fibra óptica, redes sem fio, normas TIA/EIA e os seis subsistemas que levam o sinal da operadora até a tomada do usuário."
 ---
 
 # Capítulos da SQL Quest

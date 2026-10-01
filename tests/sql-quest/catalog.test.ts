@@ -26,15 +26,15 @@ import {
 
 describe("catálogo — capítulos", () => {
   it("define exatamente os capítulos esperados", () => {
-    expect(totalChapters).toBe(11);
-    expect(getChapterCount()).toBe(11);
+    expect(totalChapters).toBe(13);
+    expect(getChapterCount()).toBe(13);
   });
 
   it("está ordenado por número e tem metadados completos", () => {
     // A trilha preserva os números históricos dos capítulos; com a expansão,
-    // a sequência atual vai de 1 a 11 sem lacunas.
+    // a sequência atual vai de 1 a 13 sem lacunas (11 SQL + 12-13 redes).
     expect(chapters.map((c) => c.number)).toEqual([
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
     ]);
     expect(chapters.map((c) => c.slug)).toEqual([
       "select",
@@ -48,6 +48,8 @@ describe("catálogo — capítulos", () => {
       "normalizacao",
       "joins",
       "performance",
+      "redes",
+      "cabeamento",
     ]);
     for (const chapter of chapters) {
       expect(chapter.slug).toBeTruthy();
@@ -69,8 +71,8 @@ describe("catálogo — capítulos", () => {
 });
 
 describe("catálogo — lições", () => {
-  it("tem 95 lições (7+10+8+13+11+6+9+5+11+10+5)", () => {
-    expect(totalLessons).toBe(95);
+  it("tem 110 lições (7+10+8+13+11+6+9+5+11+10+5+6+9)", () => {
+    expect(totalLessons).toBe(110);
     expect(getLessonCount()).toBe(totalLessons);
     expect(getLessonsPerChapter()).toEqual({
       1: 7,
@@ -84,6 +86,8 @@ describe("catálogo — lições", () => {
       9: 11,
       10: 10,
       11: 5,
+      12: 6,
+      13: 9,
     });
   });
 
@@ -243,7 +247,9 @@ describe("catálogo — navegação", () => {
     expect(getNextLesson(8, 5)?.id).toBe("normalizacao-01");
     expect(getNextLesson(9, 11)?.id).toBe("joins-01");
     expect(getNextLesson(10, 10)?.id).toBe("performance-01");
-    expect(getNextLesson(11, 5)).toBeNull();
+    expect(getNextLesson(11, 5)?.id).toBe("redes-01");
+    expect(getNextLesson(12, 6)?.id).toBe("cabeamento-01");
+    expect(getNextLesson(13, 9)).toBeNull();
   });
 
   it("getPreviousLesson atravessa a fronteira entre capítulos", () => {
@@ -256,6 +262,8 @@ describe("catálogo — navegação", () => {
     expect(getPreviousLesson(9, 1)?.id).toBe("subqueries-05");
     expect(getPreviousLesson(10, 1)?.id).toBe("normalizacao-11");
     expect(getPreviousLesson(11, 1)?.id).toBe("joins-10");
+    expect(getPreviousLesson(12, 1)?.id).toBe("performance-05");
+    expect(getPreviousLesson(13, 1)?.id).toBe("redes-06");
   });
 
   it("devolve null para posições inexistentes", () => {

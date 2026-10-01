@@ -440,7 +440,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                 href="/sql-quest"
                 className="shrink-0 transition-colors [@media(hover:hover)_and_(pointer:fine)]:hover:text-[var(--primary-text)]"
               >
-                SQL SenaiUdi
+                SENAI Quest
               </Link>
               <ChevronRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-[var(--outline)]" />
               <Link
