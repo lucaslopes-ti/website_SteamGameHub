@@ -58,8 +58,8 @@ export default function SqlQuestGuard({
           </div>
           <h1 className="font-display text-2xl font-bold">Acesso restrito</h1>
           <p className="mt-2 text-sm text-[var(--on-surface-variant)]">
-            Entre com sua conta do SENAI para acessar as missões do SQL
-            SenaiUdi. Seu progresso é salvo automaticamente na sua conta.
+            Entre com sua conta do SENAI para acessar as missões do
+            SENAI Quest. Seu progresso é salvo automaticamente na sua conta.
           </p>
           <div className="mt-6 flex flex-col gap-3">
             <Link
