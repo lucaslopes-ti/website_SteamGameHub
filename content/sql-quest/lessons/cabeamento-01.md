@@ -15,6 +15,9 @@ hints:
 references:
   - label: "Cisco — Networking Basics"
     url: "https://www.netacad.com/courses/networking-basics"
+images:
+  - alt: "Principais dispositivos intermediários de rede: switch, roteador, ponto de acesso sem fio (AP) e modem/ONT"
+    src: "redes_dispositivos.jpg"
 challenge:
   kind: quiz
   instruction: "Responda às perguntas abaixo sobre dispositivos de interconexão."

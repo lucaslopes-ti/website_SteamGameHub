@@ -15,6 +15,9 @@ hints:
 references:
   - label: "Cisco — Networking Basics"
     url: "https://www.netacad.com/courses/networking-basics"
+images:
+  - alt: "Diagramas das principais topologias de rede: estrela, barramento, anel e malha"
+    src: "redes_topologias.jpg"
 challenge:
   kind: quiz
   instruction: "Responda às perguntas abaixo sobre diagramas e topologias."

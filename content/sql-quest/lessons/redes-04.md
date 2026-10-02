@@ -15,6 +15,9 @@ hints:
 references:
   - label: "Cisco — Networking Basics"
     url: "https://www.netacad.com/courses/networking-basics"
+images:
+  - alt: "Comparação dos principais meios físicos de transmissão: cabo de cobre par trançado, fibra óptica e ondas de rádio Wi-Fi"
+    src: "redes_meios_transmissao.jpg"
 challenge:
   kind: quiz
   instruction: "Responda às perguntas abaixo sobre os meios de rede."

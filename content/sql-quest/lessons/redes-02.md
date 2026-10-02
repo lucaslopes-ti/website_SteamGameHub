@@ -15,6 +15,9 @@ hints:
 references:
   - label: "Cisco — Networking Basics"
     url: "https://www.netacad.com/courses/networking-basics"
+images:
+  - alt: "Diagrama do modelo cliente-servidor e fluxo de comunicação através da infraestrutura de rede"
+    src: "redes_cliente_servidor.jpg"
 challenge:
   kind: quiz
   instruction: "Responda às perguntas abaixo sobre hosts e papéis na rede."

@@ -15,6 +15,9 @@ hints:
 references:
   - label: "Cisco — Networking Basics"
     url: "https://www.netacad.com/courses/networking-basics"
+images:
+  - alt: "Escopos geográficos de redes: rede local residencial/SOHO (LAN) conectando-se à Internet global (WAN)"
+    src: "redes_escopos_lan_wan.jpg"
 challenge:
   kind: quiz
   instruction: "Responda às perguntas abaixo sobre tipos e tamanhos de rede."

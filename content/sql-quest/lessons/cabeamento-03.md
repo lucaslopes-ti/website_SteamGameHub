@@ -15,6 +15,9 @@ hints:
 references:
   - label: "Cisco — Networking Basics"
     url: "https://www.netacad.com/courses/networking-basics"
+images:
+  - alt: "Estrutura interna do cabo de par trançado destacando os 4 pares coloridos, separador interno e blindagem UTP vs STP"
+    src: "cabeamento_par_trancado.jpg"
 challenge:
   kind: quiz
   instruction: "Responda às perguntas abaixo sobre o par trançado."

@@ -15,6 +15,9 @@ hints:
 references:
   - label: "Cisco — Networking Basics"
     url: "https://www.netacad.com/courses/networking-basics"
+images:
+  - alt: "Padrões de pinagem do conector RJ45 (8P8C): sequência de cores das normas T568A e T568B"
+    src: "cabeamento_pinagem_t568.jpg"
 challenge:
   kind: quiz
   instruction: "Responda às perguntas abaixo sobre conectores e pinagem."

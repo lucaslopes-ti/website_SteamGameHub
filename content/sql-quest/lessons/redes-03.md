@@ -15,6 +15,9 @@ hints:
 references:
   - label: "Cisco — Networking Basics"
     url: "https://www.netacad.com/courses/networking-basics"
+images:
+  - alt: "Comparativo entre rede centralizada cliente-servidor e arquitetura descentralizada ponto a ponto (P2P)"
+    src: "redes_p2p_vs_servidor.jpg"
 challenge:
   kind: quiz
   instruction: "Responda às perguntas abaixo sobre redes ponto a ponto."

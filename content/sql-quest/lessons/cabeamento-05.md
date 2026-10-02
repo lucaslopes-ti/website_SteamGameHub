@@ -15,6 +15,9 @@ hints:
 references:
   - label: "Cisco — Networking Basics"
     url: "https://www.netacad.com/courses/networking-basics"
+images:
+  - alt: "Comparação entre fibra óptica monomodo (SMF) com feixe laser e fibra multimodo (MMF) com reflexão de luz"
+    src: "cabeamento_fibra_optica.jpg"
 challenge:
   kind: quiz
   instruction: "Responda às perguntas abaixo sobre fibra óptica."

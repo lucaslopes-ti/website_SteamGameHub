@@ -15,6 +15,9 @@ hints:
 references:
   - label: "Cisco — Networking Basics"
     url: "https://www.netacad.com/courses/networking-basics"
+images:
+  - alt: "Os seis subsistemas do cabeamento estruturado (ANSI/TIA-568) em corte transversal de um edifício comercial"
+    src: "cabeamento_seis_subsistemas.jpg"
 challenge:
   kind: quiz
   instruction: "Responda às perguntas abaixo sobre os seis subsistemas."

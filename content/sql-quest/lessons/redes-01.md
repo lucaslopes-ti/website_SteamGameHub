@@ -15,6 +15,9 @@ hints:
 references:
   - label: "Cisco — Networking Basics"
     url: "https://www.netacad.com/courses/networking-basics"
+images:
+  - alt: "Visão geral ilustrativa de uma rede de computadores com dispositivos conectados trocando dados"
+    src: "redes_conceito_geral.jpg"
 challenge:
   kind: quiz
   instruction: "Responda às perguntas abaixo sobre os conceitos básicos de rede."
