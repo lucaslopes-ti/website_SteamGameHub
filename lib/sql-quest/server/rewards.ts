@@ -1,7 +1,7 @@
 /**
  * Recompensas físicas da SQL Quest (camada server).
  *
- * Catálogo FIXO de 8 produtos (preço/estoque são constantes server-side, nunca
+ * Catálogo FIXO de 10 produtos (preço/estoque são constantes server-side, nunca
  * confiados no cliente), pedidos em `sql_quest_reward_requests/{uid}_{itemId}`,
  * estoque compartilhado globalmente em `sql_quest_reward_stock/{itemId}` e uma
  * marca de inventário versionada em `sql_quest_reward_inventory/current`.
@@ -13,9 +13,10 @@
  * - O aluno cria pedido `requested` apenas se tiver saldo atual suficiente;
  *   nada é descontado nem reservado na criação.
  * - Aprovar é idempotente; saldo/estoque insuficientes bloqueiam SEM mutar.
- * - O estoque inicial 5/1/1/5/5/5/5/5 é inicializado UMA única vez via marca de
- *   inventário versionada (transação create-only). Novas versões do catálogo
- *   (v2: +5 chaveiros) inicializam APENAS os estoques dos produtos novos;
+ * - O estoque inicial é inicializado UMA única vez via marca de inventário
+ *   versionada (transação create-only). Novas versões do catálogo (v2: +5
+ *   chaveiros; v3: +chaveiro pato nadador [3 unid, 550 XP], +item personalizado
+ *   15 cm [1 unid, 3300 XP]) inicializam APENAS os estoques dos produtos novos;
  *   estoques existentes nunca são restaurados. Após a marca existir na versão
  *   corrente, qualquer doc de estoque ausente/corrompido bloqueia a compra —
  *   nunca é restaurado.
@@ -47,7 +48,7 @@ import {
 export const REWARD_REQUESTS_COLLECTION = "sql_quest_reward_requests";
 export const REWARD_STOCK_COLLECTION = "sql_quest_reward_stock";
 export const REWARD_INVENTORY_COLLECTION = "sql_quest_reward_inventory";
-export const REWARD_INVENTORY_VERSION = 2;
+export const REWARD_INVENTORY_VERSION = 3;
 export const REWARD_INVENTORY_DOC_ID = "current";
 
 /** Produto físico da loja de recompensas (constante server-side). */
@@ -59,7 +60,7 @@ export interface RewardProduct {
   initialStock: number;
 }
 
-/** Catálogo fixo e versionado no servidor (v2: +5 chaveiros temáticos). */
+/** Catálogo fixo e versionado no servidor (v3: +chaveiro pato nadador [3 unid, 550 XP], +item personalizado 15 cm [1 unid, 3300 XP]). */
 export const REWARD_PRODUCTS: readonly RewardProduct[] = [
   {
     id: "keychain",
@@ -104,6 +105,13 @@ export const REWARD_PRODUCTS: readonly RewardProduct[] = [
     initialStock: 5,
   },
   {
+    id: "keychain-duck",
+    name: "Chaveiro Pato Nadador",
+    description: "Chaveiro temático em 3D de um pato nadador.",
+    costXp: 550,
+    initialStock: 3,
+  },
+  {
     id: "character-piece",
     name: "Peça de personagem",
     description:
@@ -117,6 +125,14 @@ export const REWARD_PRODUCTS: readonly RewardProduct[] = [
     description:
       "Objeto personalizado impresso em 3D com até 12 cm, conforme a descrição enviada no pedido.",
     costXp: 2072,
+    initialStock: 1,
+  },
+  {
+    id: "object-15cm",
+    name: "Item personalizado de até 15 cm",
+    description:
+      "Item personalizado impresso em 3D com até 15 cm, conforme a descrição enviada no pedido.",
+    costXp: 3300,
     initialStock: 1,
   },
 ];
