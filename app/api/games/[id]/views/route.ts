@@ -48,6 +48,9 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    if (!process.env.FIREBASE_SERVICE_ACCOUNT_KEY && process.env.NODE_ENV !== "production") {
+      return NextResponse.json({ views: 42 });
+    }
     const db = getAdminDb();
     const user = await getAuthUser(request);
     // Contagem só é exposta para jogos visíveis ao ator.

@@ -45,16 +45,19 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
 
   if (!isPlaying) {
     return (
-      <div className="relative aspect-video bg-senai-blueDark rounded-lg overflow-hidden group cursor-pointer" onClick={() => setIsPlaying(true)}>
-        <div className="absolute inset-0 bg-gradient-to-br from-senai-blue to-senai-dark flex items-center justify-center">
-          <div className="text-center">
-            <div className="bg-senai-orange bg-opacity-80 rounded-full p-6 mb-4 group-hover:bg-opacity-100 transition mx-auto w-20 h-20 flex items-center justify-center">
-              <Play className="w-10 h-10 text-white ml-1" />
+      <div
+        className="relative aspect-video bg-slate-950/80 border border-white/10 hover:border-senai-orange/40 rounded-2xl overflow-hidden group cursor-pointer shadow-2xl transition-all"
+        onClick={() => setIsPlaying(true)}
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-[#0b1324] to-slate-950 flex items-center justify-center">
+          <div className="text-center p-6">
+            <div className="bg-gradient-to-tr from-senai-orange to-amber-400 rounded-full mb-3 group-hover:scale-110 group-hover:shadow-glow-orange transition-all duration-300 mx-auto w-16 h-16 flex items-center justify-center shadow-lg text-slate-950">
+              <Play className="w-7 h-7 fill-current ml-1" />
             </div>
             {title && (
-              <p className="text-white font-semibold text-lg">{title}</p>
+              <p className="text-white font-display font-semibold text-lg drop-shadow">{title}</p>
             )}
-            <p className="text-gray-300 text-sm mt-2">Clique para assistir</p>
+            <p className="text-slate-400 text-xs mt-1 font-mono uppercase tracking-wider">Clique para assistir ao trailer</p>
           </div>
         </div>
       </div>
@@ -62,10 +65,11 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
   }
 
   return (
-    <div className="relative aspect-video bg-senai-blueDark rounded-lg overflow-hidden">
+    <div className="relative aspect-video bg-slate-950 rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
       <button
         onClick={() => setIsPlaying(false)}
-        className="absolute top-2 right-2 z-10 bg-black bg-opacity-70 hover:bg-opacity-90 text-white rounded-full p-2 transition"
+        className="absolute top-3 right-3 z-10 bg-slate-900/80 hover:bg-red-500/80 text-white rounded-full p-2.5 transition backdrop-blur-md border border-white/10"
+        aria-label="Fechar vídeo"
       >
         <CloseIcon className="w-5 h-5" />
       </button>

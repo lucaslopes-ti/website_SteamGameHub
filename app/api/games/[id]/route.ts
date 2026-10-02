@@ -6,7 +6,7 @@ import {
   requireOwnerOrStaff,
 } from "@/lib/server-auth";
 import { loadVisibleGame } from "@/lib/game-access";
-import { Game } from "@/lib/games";
+import { Game, mockGames } from "@/lib/games";
 import {
   isValidUrl,
   isValidDownloadUrl,
@@ -59,6 +59,10 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    if (!process.env.FIREBASE_SERVICE_ACCOUNT_KEY && process.env.NODE_ENV !== "production") {
+      const mockGame = mockGames.find((g) => g.id === params.id) || mockGames[0];
+      return NextResponse.json(mockGame);
+    }
     const db = getAdminDb();
     const user = await getAuthUser(request);
     const loaded = await loadVisibleGame(db, params.id, user);

@@ -12,5 +12,115 @@ export default function ChapterClient({ chapter, lessons }: ChapterClientProps) 
   const completed = lessons.filter((lesson) => isCompleted(lesson.chapter, lesson.lesson)).length;
   const percent = lessons.length ? Math.round((completed / lessons.length) * 100) : 0;
   const firstOpen = lessons.find((lesson) => isUnlocked(lesson.chapter, lesson.lesson) && !isCompleted(lesson.chapter, lesson.lesson));
-  return <div className="min-h-screen bg-[var(--surface)] text-[var(--on-surface)]"><header className="border-b border-[var(--outline-variant)]/20 bg-[var(--surface-container-low)]/55"><div className="mx-auto max-w-5xl px-5 py-9 sm:px-8"><Link href="/sql-quest/learn" className="inline-flex items-center gap-2 text-sm text-[var(--on-surface-variant)] [@media(hover:hover)_and_(pointer:fine)]:hover:text-[var(--primary-text)]"><ArrowLeft className="h-4 w-4" /> Central de estudos</Link><div className="mt-8 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--primary-text)]">Briefing · capítulo {chapter.number}</p><h1 className="mt-2 font-display text-4xl font-bold tracking-tight sm:text-5xl">{chapter.title}</h1><p className="mt-3 max-w-2xl text-lg leading-8 text-[var(--on-surface-variant)]">{chapter.description}</p></div><div className="min-w-[170px] rounded-2xl border border-[var(--outline-variant)]/35 bg-[var(--surface-container-lowest)] p-4"><div className="flex items-end justify-between"><span className="text-3xl font-bold text-[var(--secondary)]">{percent}%</span><span className="text-xs text-[var(--on-surface-variant)]">progresso</span></div><div className="mt-3 h-2 rounded-full bg-[var(--surface-container-high)]"><div className="h-2 rounded-full bg-[var(--secondary)] transition-[width] duration-500 ease-linear motion-reduce:transition-none" style={{ width: `${percent}%` }} /></div><p className="mt-2 text-xs text-[var(--on-surface-variant)]">{completed} de {lessons.length} lições</p></div></div></div></header><main className="mx-auto grid max-w-5xl gap-10 px-5 py-10 sm:px-8 lg:grid-cols-[280px_1fr]"><aside className="h-fit rounded-3xl border border-[var(--primary)]/20 bg-[var(--primary-10)]/40 p-6"><Target className="h-6 w-6 text-[var(--primary-text)]" /><h2 className="mt-5 text-lg font-bold">O que você vai praticar</h2><p className="mt-2 text-sm leading-6 text-[var(--on-surface-variant)]">Avance em pequenos passos. Cada desafio prepara a habilidade necessária para o próximo.</p>{firstOpen && <Link href={`/sql-quest/learn/${firstOpen.chapter}/${firstOpen.lesson}`} className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--secondary-container)] px-4 py-3 text-sm font-bold text-[var(--on-secondary-container)]">{completed ? "Continuar" : "Começar capítulo"}<ArrowRight className="h-4 w-4" /></Link>}</aside><section><div className="mb-5"><h2 className="text-2xl font-bold">Rota de lições</h2><p className="mt-1 text-sm text-[var(--on-surface-variant)]">Uma lição por vez. O próximo passo aparece quando você conclui o atual.</p></div><ol className="relative space-y-3 before:absolute before:bottom-7 before:left-6 before:top-7 before:w-px before:bg-[var(--outline-variant)]/40">{lessons.map((lesson, index) => { const done = isCompleted(lesson.chapter, lesson.lesson); const unlocked = isUnlocked(lesson.chapter, lesson.lesson); return <li key={lesson.id} className="relative"><Link href={unlocked ? `/sql-quest/learn/${lesson.chapter}/${lesson.lesson}` : "#"} aria-disabled={!unlocked} onClick={(event) => !unlocked && event.preventDefault()} className={`group relative flex items-center gap-4 rounded-2xl border p-4 pl-3 transition [@media(hover:hover)_and_(pointer:fine)]:hover:-translate-y-0.5 sm:p-5 ${done ? "border-emerald-500/30 bg-emerald-500/5" : unlocked ? "border-[var(--outline-variant)]/35 bg-[var(--surface-container-lowest)] [@media(hover:hover)_and_(pointer:fine)]:hover:border-[var(--primary)]/50" : "cursor-not-allowed border-[var(--outline-variant)]/20 bg-[var(--surface-container-low)]/50 opacity-55"}`}><span className="z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[var(--surface-container-high)] font-bold">{done ? <CheckCircle2 className="h-5 w-5 text-emerald-400" /> : unlocked ? <PlayCircle className="h-5 w-5 text-[var(--primary-text)]" /> : <Lock className="h-4 w-4" />}</span><span className="min-w-0 flex-1"><span className="block text-xs font-bold uppercase tracking-[0.12em] text-[var(--on-surface-variant)]">Lição {index + 1}</span><span className="mt-1 block text-base font-bold">{lesson.title}</span><span className="mt-1 block text-sm leading-5 text-[var(--on-surface-variant)]">{lesson.summary}</span></span><span className="hidden text-xs font-bold text-[var(--secondary)] sm:block">{done ? "Concluído" : unlocked ? `${lesson.xpReward} XP` : "Bloqueado"}</span></Link></li>; })}</ol></section></main></div>;
+
+  return (
+    <div className="min-h-screen bg-[var(--surface)] text-[var(--on-surface)]">
+      <header className="border-b border-[var(--outline-variant)]/20 bg-[var(--surface-container-low)]/55">
+        <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+          <Link
+            href="/sql-quest/learn"
+            className="inline-flex items-center gap-2 text-xs sm:text-sm text-[var(--on-surface-variant)] [@media(hover:hover)_and_(pointer:fine)]:hover:text-[var(--primary-text)]"
+          >
+            <ArrowLeft className="h-4 w-4" /> Central de estudos
+          </Link>
+          <div className="mt-5 sm:mt-6 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <p className="text-[11px] sm:text-xs font-bold uppercase tracking-[0.18em] text-[var(--primary-text)]">
+                Briefing · capítulo {chapter.number}
+              </p>
+              <h1 className="mt-1.5 font-display text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+                {chapter.title}
+              </h1>
+              <p className="mt-2.5 max-w-2xl text-sm sm:text-base lg:text-lg leading-6 sm:leading-7 lg:leading-8 text-[var(--on-surface-variant)]">
+                {chapter.description}
+              </p>
+            </div>
+            <div className="min-w-[160px] sm:min-w-[170px] shrink-0 rounded-2xl border border-[var(--outline-variant)]/35 bg-[var(--surface-container-lowest)] p-3.5 sm:p-4">
+              <div className="flex items-end justify-between">
+                <span className="text-2xl sm:text-3xl font-bold text-[var(--secondary)]">{percent}%</span>
+                <span className="text-xs text-[var(--on-surface-variant)]">progresso</span>
+              </div>
+              <div className="mt-2.5 sm:mt-3 h-2 rounded-full bg-[var(--surface-container-high)]">
+                <div
+                  className="h-2 rounded-full bg-[var(--secondary)] transition-[width] duration-500 ease-linear motion-reduce:transition-none"
+                  style={{ width: `${percent}%` }}
+                />
+              </div>
+              <p className="mt-2 text-xs text-[var(--on-surface-variant)]">
+                {completed} de {lessons.length} lições
+              </p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="mx-auto grid max-w-5xl gap-6 sm:gap-8 lg:gap-10 px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:grid-cols-[260px_1fr] xl:grid-cols-[280px_1fr]">
+        <aside className="h-fit rounded-2xl sm:rounded-3xl border border-[var(--primary)]/20 bg-[var(--primary-10)]/40 p-4 sm:p-6">
+          <Target className="h-5 w-5 sm:h-6 sm:w-6 text-[var(--primary-text)]" />
+          <h2 className="mt-3 sm:mt-4 text-base sm:text-lg font-bold">O que você vai praticar</h2>
+          <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm leading-5 sm:leading-6 text-[var(--on-surface-variant)]">
+            Avance em pequenos passos. Cada desafio prepara a habilidade necessária para o próximo.
+          </p>
+          {firstOpen && (
+            <Link
+              href={`/sql-quest/learn/${firstOpen.chapter}/${firstOpen.lesson}`}
+              className="mt-5 sm:mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--secondary-container)] px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold text-[var(--on-secondary-container)] transition-transform duration-150 active:scale-[0.98]"
+            >
+              {completed ? "Continuar" : "Começar capítulo"}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          )}
+        </aside>
+
+        <section>
+          <div className="mb-4 sm:mb-5">
+            <h2 className="text-xl sm:text-2xl font-bold">Rota de lições</h2>
+            <p className="mt-1 text-xs sm:text-sm text-[var(--on-surface-variant)]">
+              Uma lição por vez. O próximo passo aparece quando você conclui o atual.
+            </p>
+          </div>
+          <ol className="relative space-y-3 before:absolute before:bottom-7 before:left-5 sm:before:left-6 before:top-7 before:w-px before:bg-[var(--outline-variant)]/40">
+            {lessons.map((lesson, index) => {
+              const done = isCompleted(lesson.chapter, lesson.lesson);
+              const unlocked = isUnlocked(lesson.chapter, lesson.lesson);
+              return (
+                <li key={lesson.id} className="relative">
+                  <Link
+                    href={unlocked ? `/sql-quest/learn/${lesson.chapter}/${lesson.lesson}` : "#"}
+                    aria-disabled={!unlocked}
+                    onClick={(event) => !unlocked && event.preventDefault()}
+                    className={`group relative flex items-center gap-3 sm:gap-4 rounded-xl sm:rounded-2xl border p-3.5 sm:p-5 pl-2.5 sm:pl-3 transition [@media(hover:hover)_and_(pointer:fine)]:hover:-translate-y-0.5 ${
+                      done
+                        ? "border-emerald-500/30 bg-emerald-500/5"
+                        : unlocked
+                        ? "border-[var(--outline-variant)]/35 bg-[var(--surface-container-lowest)] [@media(hover:hover)_and_(pointer:fine)]:hover:border-[var(--primary)]/50"
+                        : "cursor-not-allowed border-[var(--outline-variant)]/20 bg-[var(--surface-container-low)]/50 opacity-55"
+                    }`}
+                  >
+                    <span className="z-10 flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-[var(--surface-container-high)] font-bold text-sm sm:text-base">
+                      {done ? <CheckCircle2 className="h-5 w-5 text-emerald-400" /> : unlocked ? <PlayCircle className="h-5 w-5 text-[var(--primary-text)]" /> : <Lock className="h-4 w-4" />}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[11px] sm:text-xs font-bold uppercase tracking-[0.12em] text-[var(--on-surface-variant)]">
+                        Lição {index + 1}
+                      </span>
+                      <span className="mt-0.5 sm:mt-1 block text-sm sm:text-base font-bold truncate">
+                        {lesson.title}
+                      </span>
+                      <span className="mt-0.5 sm:mt-1 block text-xs sm:text-sm leading-5 text-[var(--on-surface-variant)] line-clamp-2">
+                        {lesson.summary}
+                      </span>
+                    </span>
+                    <span className="hidden text-xs font-bold text-[var(--secondary)] sm:block shrink-0">
+                      {done ? "Concluído" : unlocked ? `${lesson.xpReward} XP` : "Bloqueado"}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+      </main>
+    </div>
+  );
 }

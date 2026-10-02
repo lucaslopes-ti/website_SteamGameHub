@@ -103,25 +103,35 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
   };
 
   return (
-    <div className="bg-senai-blueDark rounded-lg p-6">
-      <h2 className="text-2xl font-bold mb-6 text-senai-orange flex items-center gap-2">
-        <MessageSquare className="w-6 h-6" />
-        Comentários ({comments.length})
-      </h2>
+    <div className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-5 sm:p-6 md:p-8 shadow-xl relative overflow-hidden">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.15)] shrink-0">
+          <MessageSquare className="w-5 h-5" />
+        </div>
+        <div>
+          <h2 className="text-xl md:text-2xl font-display font-bold text-white flex items-center gap-2">
+            Comentários
+            <span className="text-xs font-mono font-medium px-2 py-0.5 rounded-full bg-white/10 text-slate-300">
+              {comments.length}
+            </span>
+          </h2>
+          <p className="text-xs text-slate-400">Participe da conversa e deixe seu feedback para os criadores</p>
+        </div>
+      </div>
 
       <form onSubmit={handleSubmit} className="mb-6" aria-label="Formulário de comentários">
         {!isAuthenticated && (
-          <div className="mb-4 bg-senai-dark border border-senai-blue rounded p-4 text-gray-300">
-            <p className="mb-2">Faça login para deixar um comentário.</p>
+          <div className="mb-4 bg-slate-950/60 border border-white/10 rounded-xl p-3.5 sm:p-4 text-slate-300 flex items-center justify-between flex-wrap gap-3">
+            <p className="text-xs sm:text-sm text-slate-300">Faça login para deixar um comentário.</p>
             <Link
               href="/login"
-              className="inline-block bg-senai-orange hover:bg-senai-blue text-slate-950 hover:text-white px-4 py-2 rounded transition"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-senai-orange to-amber-500 hover:brightness-110 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs sm:text-sm transition shadow-glow-orange active:scale-95"
             >
               Entrar
             </Link>
           </div>
         )}
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-3">
           <div className="flex-1">
             <label htmlFor="comment-text" className="sr-only">
               Escreva seu comentário
@@ -130,9 +140,9 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
               id="comment-text"
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Escreva um comentário..."
+              placeholder="Escreva um comentário sobre o jogo..."
               rows={3}
-              className="w-full bg-senai-dark border border-senai-blue rounded px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-senai-orange focus-visible:ring-2 focus-visible:ring-senai-orange resize-y"
+              className="w-full bg-slate-950/60 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-senai-orange focus:ring-1 focus:ring-senai-orange/50 resize-y transition-colors text-sm"
               aria-label="Campo de texto para escrever seu comentário"
               aria-required="true"
             />
@@ -140,17 +150,17 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
           <button
             type="submit"
             disabled={!newComment.trim() || submitting || !isAuthenticated}
-            className="bg-senai-orange hover:bg-senai-blue disabled:opacity-50 disabled:cursor-not-allowed text-slate-950 hover:text-white px-6 py-2 rounded transition flex items-center gap-2 h-fit focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
+            className="bg-gradient-to-r from-senai-orange to-amber-500 hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed text-slate-950 font-bold px-6 py-3 rounded-xl transition shadow-glow-orange flex items-center justify-center gap-2 h-fit active:scale-95 text-sm w-full sm:w-auto"
             aria-label={submitting ? "Enviando comentário, aguarde" : "Enviar comentário"}
           >
             {submitting ? (
               <>
-                <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
+                <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                 <span className="sr-only">Enviando</span>
               </>
             ) : (
               <>
-                <Send className="w-5 h-5" aria-hidden="true" />
+                <Send className="w-4 h-4" aria-hidden="true" />
                 <span>Enviar</span>
               </>
             )}
@@ -164,26 +174,28 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
           <span className="sr-only">Carregando comentários</span>
         </div>
       ) : comments.length === 0 ? (
-        <div className="text-center py-8 text-gray-400" role="status">
-          <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" aria-hidden="true" />
-          <p>Nenhum comentário ainda. Seja o primeiro a comentar!</p>
+        <div className="text-center py-10 text-slate-400 bg-slate-950/30 rounded-xl border border-white/5" role="status">
+          <MessageSquare className="w-10 h-10 mx-auto mb-3 opacity-40 text-slate-400" aria-hidden="true" />
+          <p className="text-sm">Nenhum comentário ainda. Seja o primeiro a comentar!</p>
         </div>
       ) : (
-        <div className="space-y-4" role="list" aria-label={`Lista de ${comments.length} comentário${comments.length > 1 ? "s" : ""}`}>
-          {comments.map((comment, index) => (
+        <div className="space-y-3" role="list" aria-label={`Lista de ${comments.length} comentário${comments.length > 1 ? "s" : ""}`}>
+          {comments.map((comment) => (
             <article
               key={comment.id}
-              className="bg-senai-dark rounded p-4 border border-senai-blue"
+              className="bg-slate-950/50 rounded-xl p-4 border border-white/10 hover:border-white/20 transition-all"
               role="listitem"
               aria-labelledby={`comment-author-${comment.id}`}
             >
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <User className="w-5 h-5 text-senai-orange" aria-hidden="true" />
+              <div className="flex items-start justify-between mb-2 gap-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-senai-orange shrink-0">
+                    <User className="w-4 h-4" aria-hidden="true" />
+                  </div>
                   <div id={`comment-author-${comment.id}`}>
-                    <p className="text-white font-semibold">{comment.author}</p>
+                    <p className="text-white text-sm font-semibold leading-tight">{comment.author}</p>
                     <time 
-                      className="text-gray-400 text-xs"
+                      className="text-slate-400 text-xs"
                       dateTime={comment.createdAt}
                       aria-label={`Comentário publicado em ${new Date(comment.createdAt).toLocaleDateString("pt-BR", {
                         day: "2-digit",
@@ -207,7 +219,7 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
                   <button
                     type="button"
                     onClick={() => handleDelete(comment.id)}
-                    className="text-red-400 hover:text-red-300 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-400 focus-visible:outline-offset-2 rounded p-1"
+                    className="text-slate-400 hover:text-red-400 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-400 rounded-lg p-1.5 hover:bg-red-500/10"
                     aria-label={`Excluir comentário de ${comment.author}`}
                   >
                     <Trash2 className="w-4 h-4" aria-hidden="true" />
@@ -215,7 +227,7 @@ export default function CommentsSection({ gameId }: CommentsSectionProps) {
                   </button>
                 )}
               </div>
-              <p className="text-gray-300 whitespace-pre-wrap">{comment.content}</p>
+              <p className="text-slate-200 text-sm whitespace-pre-wrap leading-relaxed pl-10">{comment.content}</p>
             </article>
           ))}
         </div>

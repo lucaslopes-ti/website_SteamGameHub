@@ -66,6 +66,7 @@ docs/GUIA_RAPIDO_FIREBASE.md
 
 # local deepwork state
 .slim/deepwork/
+.opencode/
 
 # scripts adicionais (questões, etc)
 scripts/*.json

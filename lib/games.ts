@@ -38,6 +38,8 @@ export const mockGames: Game[] = [
     totalRatings: 23,
     featured: true,
     approved: true,
+    playableLink: "https://itch.io",
+    downloadLink: "https://drive.google.com",
   },
   {
     id: "2",

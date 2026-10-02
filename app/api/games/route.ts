@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAdminDb, serializeTimestamps, stripUndefined } from "@/lib/firebase/admin";
 import type { QuerySnapshot } from "firebase-admin/firestore";
 import { getAuthUser, requireAuth } from "@/lib/server-auth";
-import { Game } from "@/lib/games";
+import { Game, mockGames } from "@/lib/games";
 import {
   isValidUrl,
   isValidDownloadUrl,
@@ -26,6 +26,9 @@ function toGame(id: string, data: Record<string, unknown>): Game {
 
 export async function GET(request: NextRequest) {
   try {
+    if (!process.env.FIREBASE_SERVICE_ACCOUNT_KEY && process.env.NODE_ENV !== "production") {
+      return NextResponse.json(mockGames);
+    }
     const db = getAdminDb();
     const user = await getAuthUser(request);
     const approvedOnly = request.nextUrl.searchParams.get("approved") === "true";

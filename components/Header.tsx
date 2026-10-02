@@ -461,7 +461,7 @@ export default function Header() {
         </div>
 
         {/* Faixa de novidades */}
-        <div className="bg-[var(--primary)] border-b border-[var(--primary-container)] overflow-hidden">
+        <div id="header-marquee" className="bg-[var(--primary)] border-b border-[var(--primary-container)] overflow-hidden">
           <div className="flex animate-marquee whitespace-nowrap py-2 text-xs font-mono uppercase tracking-widest text-[var(--on-primary)]">
             {Array.from({ length: 2 }).map((_, i) => (
               <div key={i} className="flex items-center shrink-0">

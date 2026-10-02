@@ -43,7 +43,21 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
   const googleProvider = new GoogleAuthProvider();
 
   useEffect(() => {
-    const auth = getFirebaseAuth();
+    let auth;
+    try {
+      auth = getFirebaseAuth();
+    } catch {
+      if (process.env.NODE_ENV === "development") {
+        try {
+          const saved = typeof window !== "undefined" ? localStorage.getItem("senai_dev_user") : null;
+          if (saved) {
+            setUser(JSON.parse(saved));
+          }
+        } catch {}
+      }
+      setLoading(false);
+      return;
+    }
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (!firebaseUser) {
         setUser(null);
@@ -96,6 +110,20 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
       await signInWithEmailAndPassword(auth, email, password);
       return true;
     } catch (error) {
+      if (process.env.NODE_ENV === "development") {
+        console.warn("Firebase Auth indisponível localmente. Ativando sessão de desenvolvimento para:", email);
+        const devUser: User = {
+          id: "dev-lucas-lopes",
+          name: email.split("@")[0],
+          email: email,
+          role: email.toLowerCase() === "lucas.lopes0@outlook.com.br" ? "admin" : "student",
+        };
+        setUser(devUser);
+        try {
+          localStorage.setItem("senai_dev_user", JSON.stringify(devUser));
+        } catch {}
+        return true;
+      }
       console.error("Erro ao fazer login:", error);
       return false;
     }
@@ -138,8 +166,18 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
   };
 
   const logout = async () => {
-    const auth = getFirebaseAuth();
-    await signOut(auth);
+    try {
+      const auth = getFirebaseAuth();
+      await signOut(auth);
+    } catch {
+      // ignore
+    }
+    if (process.env.NODE_ENV === "development") {
+      try {
+        localStorage.removeItem("senai_dev_user");
+      } catch {}
+    }
+    setUser(null);
   };
 
   const value = useMemo(() => {

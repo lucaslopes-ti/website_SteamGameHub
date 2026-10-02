@@ -66,78 +66,93 @@ export default function RatingSection({
   };
 
   return (
-    <section className="bg-senai-blueDark rounded-lg p-6" aria-labelledby="rating-heading">
-      <h2 id="rating-heading" className="text-2xl font-bold mb-4 text-senai-orange">
-        Avaliar este jogo
-      </h2>
+    <section className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-5 sm:p-6 md:p-8 shadow-xl relative overflow-hidden" aria-labelledby="rating-heading">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-10 h-10 rounded-xl bg-senai-orange/10 border border-senai-orange/30 flex items-center justify-center text-senai-orange shadow-[0_0_15px_rgba(243,112,33,0.15)] shrink-0">
+          <Star className="w-5 h-5 fill-current" />
+        </div>
+        <div>
+          <h2 id="rating-heading" className="text-xl md:text-2xl font-display font-bold text-white">
+            Avaliar este jogo
+          </h2>
+          <p className="text-xs text-slate-400">Dê sua nota de 1 a 5 estrelas para apoiar o desenvolvedor</p>
+        </div>
+      </div>
+
       {!isAuthenticated && (
-        <div className="mb-4 bg-senai-dark border border-senai-blue rounded p-4 text-gray-300">
-          <p className="mb-2">Faça login para avaliar este jogo.</p>
+        <div className="mb-5 bg-slate-950/60 border border-white/10 rounded-xl p-3.5 sm:p-4 text-slate-300 flex items-center justify-between flex-wrap gap-3">
+          <p className="text-xs sm:text-sm text-slate-300">Faça login para registrar sua avaliação.</p>
           <Link
             href="/login"
-            className="inline-block bg-senai-orange hover:bg-senai-blue text-slate-950 hover:text-white px-4 py-2 rounded transition"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-senai-orange to-amber-500 hover:brightness-110 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs sm:text-sm transition shadow-glow-orange active:scale-95"
           >
             Entrar
           </Link>
         </div>
       )}
-      <div className="flex items-center gap-2 mb-4" role="radiogroup" aria-label="Selecione uma avaliação de 1 a 5 estrelas">
-        {[1, 2, 3, 4, 5].map((value) => (
-          <button
-            key={value}
-            type="button"
-            role="radio"
-            aria-checked={rating === value}
-            aria-label={`${value} ${value === 1 ? "estrela" : "estrelas"}`}
-            onMouseEnter={() => setHoveredRating(value)}
-            onMouseLeave={() => setHoveredRating(0)}
-            onFocus={() => setHoveredRating(value)}
-            onBlur={() => setHoveredRating(0)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                handleRating(value);
-              }
-            }}
-            onClick={() => handleRating(value)}
-            disabled={submitted || loading}
-            className="transition-transform hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-yellow-400 focus-visible:outline-offset-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Star
-              className={`w-8 h-8 ${
-                value <= (hoveredRating || rating)
-                  ? "fill-yellow-400 text-yellow-400"
-                  : "text-gray-600"
-              }`}
-              aria-hidden="true"
-            />
-          </button>
-        ))}
+
+      <div className="flex items-center gap-1.5 sm:gap-2 mb-4 flex-wrap" role="radiogroup" aria-label="Selecione uma avaliação de 1 a 5 estrelas">
+        <div className="flex items-center gap-1">
+          {[1, 2, 3, 4, 5].map((value) => (
+            <button
+              key={value}
+              type="button"
+              role="radio"
+              aria-checked={rating === value}
+              aria-label={`${value} ${value === 1 ? "estrela" : "estrelas"}`}
+              onMouseEnter={() => setHoveredRating(value)}
+              onMouseLeave={() => setHoveredRating(0)}
+              onFocus={() => setHoveredRating(value)}
+              onBlur={() => setHoveredRating(0)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleRating(value);
+                }
+              }}
+              onClick={() => handleRating(value)}
+              disabled={submitted || loading}
+              className="p-1 sm:p-1.5 transition-transform hover:scale-125 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 focus-visible:outline-offset-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Star
+                className={`w-7 h-7 sm:w-8 sm:h-8 transition-colors ${
+                  value <= (hoveredRating || rating)
+                    ? "fill-amber-400 text-amber-400 drop-shadow-[0_0_12px_rgba(251,191,36,0.5)]"
+                    : "text-slate-600 hover:text-slate-400"
+                }`}
+                aria-hidden="true"
+              />
+            </button>
+          ))}
+        </div>
         {rating > 0 && (
-          <span className="ml-4 text-gray-300" aria-live="polite">
+          <span className="text-xs sm:text-sm font-medium text-slate-200" aria-live="polite">
             {rating} {rating === 1 ? "estrela" : "estrelas"} selecionada{rating === 1 ? "" : "s"}
           </span>
         )}
       </div>
+
       {rating > 0 && !submitted && !loading && (
         <button
           type="button"
           onClick={handleSubmit}
-          className="bg-senai-orange hover:bg-senai-blue text-slate-950 hover:text-white px-6 py-2 rounded transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
+          className="bg-gradient-to-r from-senai-orange to-amber-500 hover:brightness-110 text-slate-950 font-bold px-6 py-2.5 rounded-xl transition shadow-glow-orange active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 text-sm sm:text-base w-full sm:w-auto"
           aria-label={`Enviar avaliação de ${rating} ${rating === 1 ? "estrela" : "estrelas"}`}
         >
           Enviar Avaliação
         </button>
       )}
+
       {loading && (
-        <div className="flex items-center gap-2 text-gray-400" role="status" aria-live="polite" aria-label="Enviando avaliação">
-          <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+        <div className="flex items-center gap-2 text-slate-400 text-sm" role="status" aria-live="polite" aria-label="Enviando avaliação">
+          <Loader2 className="w-4 h-4 animate-spin text-senai-orange" aria-hidden="true" />
           <span>Enviando avaliação...</span>
         </div>
       )}
+
       {submitted && (
-        <p className="text-senai-blueLight" role="status" aria-live="polite" aria-atomic="true">
-          Obrigado pela sua avaliação!
+        <p className="text-emerald-400 text-sm font-semibold flex items-center gap-2" role="status" aria-live="polite" aria-atomic="true">
+          ✓ Obrigado pela sua avaliação!
         </p>
       )}
     </section>

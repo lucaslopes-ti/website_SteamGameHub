@@ -30,21 +30,21 @@ function ResultTable({ columns, rows }: { columns: string[]; rows: SQLValue[][] 
   if (columns.length === 0) return null;
   return (
     <div className="overflow-auto rounded-lg border border-[var(--outline-variant)]">
-      <table className="w-full text-left text-sm">
-        <thead className="bg-[var(--surface-container-high)] text-xs uppercase tracking-wide text-[var(--on-surface-variant)]">
+      <table className="w-full text-left text-xs sm:text-sm">
+        <thead className="bg-[var(--surface-container-high)] text-[11px] sm:text-xs uppercase tracking-wide text-[var(--on-surface-variant)]">
           <tr>
             {columns.map((col) => (
-              <th key={col} className="whitespace-nowrap px-4 py-2 font-semibold">
+              <th key={col} className="whitespace-nowrap px-3 py-1.5 sm:px-4 sm:py-2 font-semibold">
                 {col}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-[var(--outline-variant)]/30">
+        <tbody className="divide-y divide-[var(--outline-variant)]/30 font-mono text-xs">
           {rows.map((row, i) => (
             <tr key={i} className="bg-[var(--surface-container-lowest)]">
               {row.map((cell, j) => (
-                <td key={j} className="whitespace-nowrap px-4 py-2 text-[var(--on-surface)]">
+                <td key={j} className="whitespace-nowrap px-3 py-1.5 sm:px-4 sm:py-2 text-[var(--on-surface)]">
                   {cell === null ? (
                     <span className="text-[var(--outline)]">NULL</span>
                   ) : (
@@ -198,6 +198,12 @@ const SQL_LESSON_SHELL_CSS = `
   @media (min-width: 1024px) {
     #main-content:has([data-sql-lesson-shell]) { min-height: 0; }
     body:has([data-sql-lesson-shell]) #footer { display: none; }
+    body:has([data-sql-lesson-shell]) #header-marquee { display: none; }
+    [data-sql-lesson-shell] {
+      height: calc(100dvh - 4rem) !important;
+      max-height: calc(100dvh - 4rem) !important;
+      overflow: hidden !important;
+    }
   }
 `;
 
@@ -433,7 +439,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
       </p>
       {/* Contexto compacto do módulo: navegação, título e progresso */}
       <header className="shrink-0 border-b border-[var(--outline-variant)]/25 bg-[var(--surface-container-low)]/55">
-        <div className="flex flex-col gap-3 px-4 py-3 sm:px-5 lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:px-6">
+        <div className="flex flex-col gap-2.5 px-4 py-2 sm:px-5 sm:py-2.5 lg:flex-row lg:items-center lg:justify-between lg:gap-5 lg:px-6">
           <div className="min-w-0 flex-1">
             <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-[var(--on-surface-variant)]">
               <Link
@@ -455,8 +461,8 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
               </span>
             </nav>
 
-            <div className="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
-              <h1 className="font-display text-lg font-bold tracking-tight sm:text-xl">{lesson.title}</h1>
+            <div className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-1">
+              <h1 className="font-display text-base font-bold tracking-tight sm:text-lg lg:text-xl">{lesson.title}</h1>
               <span className="rounded-full bg-[var(--secondary)]/10 px-2 py-0.5 text-[11px] font-bold text-[var(--secondary)]">
                 +{lesson.xpReward} XP
               </span>
@@ -470,7 +476,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
           </div>
 
           <div className="flex items-center justify-between gap-3 sm:justify-end sm:gap-4">
-            <div className="hidden w-36 shrink-0 sm:block">
+            <div className="hidden w-32 shrink-0 sm:block xl:w-36">
               <div className="flex items-center justify-between text-[11px] text-[var(--on-surface-variant)]">
                 <span className="font-medium">
                   {completedCount}/{totalLessons} lições
@@ -520,36 +526,36 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
         {/* Painel esquerdo: teoria */}
         <section
           aria-label="Conteúdo da lição"
-          className="min-w-0 space-y-4 border-b border-[var(--outline-variant)]/25 px-4 py-4 sm:px-6 sm:py-5 lg:min-h-0 lg:space-y-5 lg:overflow-y-auto lg:overscroll-contain lg:border-b-0 lg:py-5"
+          className="min-w-0 space-y-3.5 border-b border-[var(--outline-variant)]/25 px-3.5 py-3.5 sm:px-5 sm:py-4 lg:min-h-0 lg:space-y-4 lg:overflow-y-auto lg:overscroll-contain lg:border-b-0 lg:p-4 xl:p-5"
           style={{
             backgroundImage:
               "radial-gradient(130% 90% at 0% 0%, color-mix(in srgb, var(--primary) 16%, transparent), transparent 60%)",
           }}
         >
-          <section className="rounded-2xl border border-[var(--primary)]/25 bg-[var(--primary-10)]/35 p-5 shadow-lg shadow-[var(--primary)]/5">
-            <h2 className="mb-2 flex items-center gap-2 text-base font-bold">
-              <Sparkles className="h-5 w-5 text-[var(--secondary)]" />
+          <section className="rounded-2xl border border-[var(--primary)]/25 bg-[var(--primary-10)]/35 p-3.5 sm:p-4 xl:p-5 shadow-lg shadow-[var(--primary)]/5">
+            <h2 className="mb-1.5 flex items-center gap-2 text-sm font-bold sm:text-base">
+              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-[var(--secondary)]" />
               Objetivo
             </h2>
-            <p className="text-sm leading-6 text-[var(--on-surface-variant)]">{instruction}</p>
+            <p className="text-xs sm:text-sm leading-5 sm:leading-6 text-[var(--on-surface-variant)]">{instruction}</p>
           </section>
 
           <LessonImages images={lesson.images} />
 
-          <section className="rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-5">
-            <h2 className="mb-3 flex items-center gap-2 text-base font-bold">
-              <BookOpen className="h-5 w-5 text-[var(--primary-text)]" />
+          <section className="rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-3.5 sm:p-4 xl:p-5">
+            <h2 className="mb-2 sm:mb-3 flex items-center gap-2 text-sm font-bold sm:text-base">
+              <BookOpen className="h-4 w-4 sm:h-5 sm:w-5 text-[var(--primary-text)]" />
               Teoria
             </h2>
             <div
-              className="max-w-none text-sm leading-7 text-[var(--on-surface-variant)] [&>*:first-child]:mt-0 [&_a]:font-semibold [&_a]:text-[var(--primary-text)] [&_blockquote]:my-4 [&_blockquote]:border-l-2 [&_blockquote]:border-[var(--secondary)] [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-[var(--surface-container-high)] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-xs [&_code]:text-[var(--primary-text)] [&_h1]:mb-3 [&_h1]:mt-6 [&_h1]:font-display [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:leading-tight [&_h2]:mb-3 [&_h2]:mt-6 [&_h2]:font-display [&_h2]:text-xl [&_h2]:font-bold [&_h2]:leading-tight [&_h3]:mb-2 [&_h3]:mt-5 [&_h3]:font-bold [&_h3]:text-lg [&_li]:pl-1 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-5 [&_p]:my-3 [&_pre]:my-4 [&_pre]:overflow-x-auto [&_pre]:rounded-xl [&_pre]:border [&_pre]:border-[var(--outline-variant)]/40 [&_pre]:bg-[var(--surface-container-lowest)] [&_pre]:p-4 [&_pre_code]:block [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-sm [&_pre_code]:leading-6 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5"
+              className="max-w-none text-xs sm:text-sm leading-6 sm:leading-7 text-[var(--on-surface-variant)] [&>*:first-child]:mt-0 [&_a]:font-semibold [&_a]:text-[var(--primary-text)] [&_blockquote]:my-4 [&_blockquote]:border-l-2 [&_blockquote]:border-[var(--secondary)] [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-[var(--surface-container-high)] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-xs [&_code]:text-[var(--primary-text)] [&_h1]:mb-3 [&_h1]:mt-6 [&_h1]:font-display [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:leading-tight [&_h2]:mb-3 [&_h2]:mt-6 [&_h2]:font-display [&_h2]:text-xl [&_h2]:font-bold [&_h2]:leading-tight [&_h3]:mb-2 [&_h3]:mt-5 [&_h3]:font-bold [&_h3]:text-lg [&_li]:pl-1 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-5 [&_p]:my-3 [&_pre]:my-4 [&_pre]:overflow-x-auto [&_pre]:rounded-xl [&_pre]:border [&_pre]:border-[var(--outline-variant)]/40 [&_pre]:bg-[var(--surface-container-lowest)] [&_pre]:p-3 sm:[&_pre]:p-4 [&_pre_code]:block [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-xs sm:[&_pre_code]:text-sm [&_pre_code]:leading-5 sm:[&_pre_code]:leading-6 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5"
               dangerouslySetInnerHTML={{ __html: theoryHtml }}
             />
           </section>
 
-          <section className="rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-5">
-            <h2 className="mb-3 flex items-center gap-2 text-base font-bold">
-              <Table2 className="h-5 w-5 text-[var(--primary-text)]" />
+          <section className="rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-3.5 sm:p-4 xl:p-5">
+            <h2 className="mb-2 sm:mb-3 flex items-center gap-2 text-sm font-bold sm:text-base">
+              <Table2 className="h-4 w-4 sm:h-5 sm:w-5 text-[var(--primary-text)]" />
               Esquema
             </h2>
             <SchemaViewer
@@ -560,10 +566,10 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
             />
           </section>
 
-          <section className="rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-5">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="flex items-center gap-2 text-base font-bold">
-                <Lightbulb className="h-5 w-5 text-[var(--secondary)]" />
+          <section className="rounded-2xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/40 p-3.5 sm:p-4 xl:p-5">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="flex items-center gap-2 text-sm font-bold sm:text-base">
+                <Lightbulb className="h-4 w-4 sm:h-5 sm:w-5 text-[var(--secondary)]" />
                 Dicas
               </h2>
               <span className="text-xs font-medium text-[var(--on-surface-variant)]">
@@ -571,12 +577,12 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
               </span>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2.5 sm:space-y-3">
               {lesson.hints.slice(0, revealedHints).map((hint, i) => (
                 <HintCard key={i} hint={hint} index={i} />
               ))}
               {revealedHints === 0 && (
-                <p className="text-sm text-[var(--on-surface-variant)]">
+                <p className="text-xs sm:text-sm text-[var(--on-surface-variant)]">
                   As dicas são liberadas uma a cada clique. Use-as com moderação para não perder o desafio.
                 </p>
               )}
@@ -587,7 +593,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                 type="button"
                 onClick={revealHint}
                 disabled={!unlocked}
-                className="mt-4 inline-flex items-center gap-2 rounded-lg border border-[var(--secondary-20)] bg-[var(--secondary-10)] px-4 py-2 text-sm font-semibold text-[var(--secondary)] transition-[background-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--secondary-20)] disabled:cursor-not-allowed disabled:opacity-50"
+                className="mt-3.5 inline-flex items-center gap-2 rounded-lg border border-[var(--secondary-20)] bg-[var(--secondary-10)] px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-[var(--secondary)] transition-[background-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--secondary-20)] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Lightbulb className="h-4 w-4" />
                 Mostrar próxima dica
@@ -601,8 +607,8 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
           aria-label="Área de prática"
           className={
             isSqlChallenge
-              ? "relative flex min-h-0 flex-1 flex-col gap-3 border-t border-[var(--outline-variant)]/25 bg-[var(--surface-container-lowest)]/30 p-3 sm:p-4 lg:gap-4 lg:overflow-hidden lg:border-l lg:border-t-0 lg:p-5"
-              : "relative min-h-0 flex-1 space-y-4 border-t border-[var(--outline-variant)]/25 bg-[var(--surface-container-lowest)]/30 p-4 sm:p-5 lg:overflow-y-auto lg:overscroll-contain lg:border-l lg:border-t-0"
+              ? "relative flex min-h-0 flex-1 flex-col gap-2.5 sm:gap-3 border-t border-[var(--outline-variant)]/25 bg-[var(--surface-container-lowest)]/30 p-2.5 sm:p-3.5 lg:gap-3 lg:overflow-hidden lg:border-l lg:border-t-0 lg:p-3 xl:p-5"
+              : "relative min-h-0 flex-1 space-y-4 border-t border-[var(--outline-variant)]/25 bg-[var(--surface-container-lowest)]/30 p-3.5 sm:p-4 lg:overflow-y-auto lg:overscroll-contain lg:border-l lg:border-t-0"
           }
           style={{
             backgroundImage:
@@ -629,11 +635,11 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
           )}
 
           {lesson.setupSql.trim() && (
-            <details className="shrink-0 rounded-xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/60 px-4 py-2.5">
+            <details className="shrink-0 rounded-xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)]/60 px-3.5 py-2">
               <summary className="cursor-pointer text-xs font-semibold text-[var(--on-surface-variant)]">
                 Código de setup
               </summary>
-              <pre className="mt-2 max-h-56 overflow-auto rounded-lg bg-[var(--surface-container-high)] p-3 font-mono text-xs leading-6 text-[var(--on-surface)]">
+              <pre className="mt-2 max-h-48 overflow-auto rounded-lg bg-[var(--surface-container-high)] p-2.5 font-mono text-xs leading-5 text-[var(--on-surface)]">
                 <code>{lesson.setupSql}</code>
               </pre>
             </details>
@@ -641,39 +647,39 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
 
           {isSqlChallenge && (
             <section className="flex min-h-0 flex-1 flex-col rounded-2xl border border-[var(--primary)]/30 bg-[var(--surface-container-low)]/60 shadow-xl shadow-black/20 lg:overflow-hidden">
-              <div className="flex shrink-0 items-center justify-between gap-3 rounded-t-2xl border-b border-[var(--outline-variant)]/25 bg-[var(--surface-container-high)]/40 px-4 py-2.5">
+              <div className="flex shrink-0 items-center justify-between gap-3 rounded-t-2xl border-b border-[var(--outline-variant)]/25 bg-[var(--surface-container-high)]/40 px-3.5 py-2">
                 <span className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-[var(--on-surface-variant)]">
-                  <Database className="h-4 w-4 text-[var(--primary-text)]" />
+                  <Database className="h-3.5 w-3.5 text-[var(--primary-text)]" />
                   Editor SQL
                 </span>
                 {engineLoading && (
-                  <span className="inline-flex items-center gap-2 text-xs font-medium text-[var(--primary-text)]">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--primary-text)]">
                     <span className="h-2 w-2 animate-pulse rounded-full bg-[var(--primary-text)] motion-reduce:animate-none" />
                     Inicializando motor
                   </span>
                 )}
                 {completed && !engineLoading && !engineError && (
                   <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400">
-                    <CheckCircle2 className="h-4 w-4" />
+                    <CheckCircle2 className="h-3.5 w-3.5" />
                     Concluído
                   </span>
                 )}
               </div>
 
-              <div className="shrink-0 border-b border-[var(--outline-variant)]/25 bg-[var(--secondary-10)]/40 px-4 py-3">
-                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--secondary)]">Tarefa</p>
-                <p className="mt-1 text-sm leading-6 text-[var(--on-surface)]">{instruction}</p>
+              <div className="shrink-0 border-b border-[var(--outline-variant)]/25 bg-[var(--secondary-10)]/40 px-3.5 py-2">
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--secondary)]">Tarefa</p>
+                <p className="mt-0.5 text-xs sm:text-sm leading-5 text-[var(--on-surface)]">{instruction}</p>
               </div>
 
               {engineError && (
-                <div role="alert" className="flex shrink-0 flex-col items-start gap-3 border-b border-[var(--outline-variant)]/25 p-4">
+                <div role="alert" className="flex shrink-0 flex-col items-start gap-3 border-b border-[var(--outline-variant)]/25 p-3.5">
                   <div className="flex items-start gap-3">
                     <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-400" />
                     <div>
                       <p className="font-semibold text-red-400">
                         Não foi possível iniciar o editor
                       </p>
-                      <p className="mt-1 text-sm text-[var(--on-surface-variant)]">
+                      <p className="mt-1 text-xs sm:text-sm text-[var(--on-surface-variant)]">
                         {engineError}
                       </p>
                     </div>
@@ -681,7 +687,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                   <button
                     type="button"
                     onClick={startEngine}
-                    className="inline-flex items-center gap-2 rounded-lg bg-[var(--secondary-container)] px-4 py-2 text-sm font-bold text-[var(--on-secondary-container)]"
+                    className="inline-flex items-center gap-2 rounded-lg bg-[var(--secondary-container)] px-3.5 py-1.5 text-xs sm:text-sm font-bold text-[var(--on-secondary-container)]"
                   >
                     <RotateCcw className="h-4 w-4" />
                     Tentar novamente
@@ -690,10 +696,8 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
               )}
 
               {/* O editor preenche todo o espaço vertical disponível no desktop;
-                  no mobile mantém altura fixa com piso estável (16rem) para
-                  seguir visível e editável mesmo depois de um feedback. O
-                  `overflow-hidden` impede que ele vaze sobre a barra de ações. */}
-              <div className="h-[clamp(16rem,40vh,24rem)] min-h-0 overflow-hidden p-3 sm:p-4 lg:h-auto lg:flex-1">
+                  garante altura mínima de 180px para seguir sempre visível e editável. */}
+              <div className="h-[clamp(15rem,35vh,22rem)] min-h-[160px] sm:min-h-[180px] lg:min-h-[180px] overflow-hidden p-2.5 sm:p-3 lg:h-auto lg:flex-1">
                 <SqlEditor
                   value={code}
                   onChange={setCode}
@@ -702,40 +706,34 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                 />
               </div>
 
-              {/* Console de resultados: altura limitada com rolagem interna em
-                  qualquer tela. No mobile o teto em `vh` evita que um erro
-                  grande cresça sem fim e empurre/oculte o editor; no desktop o
-                  teto em `%` mantém a barra de ações sempre acessível. A região
-                  rola pelo teclado (`tabIndex`) e é anunciada por leitores. */}
+              {/* Console de resultados: altura calibrada para telas HD com rolagem interna */}
               {hasFeedback && (
                 <div
                   role="region"
                   aria-label="Console de resultados"
                   tabIndex={0}
-                  className="max-h-[38vh] shrink-0 space-y-3 overflow-y-auto overscroll-contain border-t border-[var(--outline-variant)]/25 bg-[var(--surface-container-low)]/40 p-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--primary-text)]/50 sm:max-h-[42vh] sm:p-4 lg:max-h-[45%]"
+                  className="max-h-[30vh] shrink-0 space-y-2.5 overflow-y-auto overscroll-contain border-t border-[var(--outline-variant)]/25 bg-[var(--surface-container-low)]/40 p-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--primary-text)]/50 sm:max-h-[35vh] sm:p-3.5 lg:max-h-[38%]"
                 >
                   {feedback}
                 </div>
               )}
 
-              {/* Rodapé do painel: ações sempre visíveis. No desktop o painel tem
-                  altura própria (fica fixo no fim); no mobile a página rola e o
-                  rodapé acompanha a viewport para nunca esconder o Executar. */}
-              <div className="sticky bottom-0 z-20 flex shrink-0 flex-wrap items-center gap-2 rounded-b-2xl border-t border-[var(--outline-variant)]/25 bg-[var(--surface-container-low)]/95 px-3 py-2.5 backdrop-blur-sm sm:gap-3 sm:px-4 sm:py-3">
+              {/* Rodapé do painel: ações sempre visíveis */}
+              <div className="sticky bottom-0 z-20 flex shrink-0 flex-wrap items-center gap-2 rounded-b-2xl border-t border-[var(--outline-variant)]/25 bg-[var(--surface-container-low)]/95 px-3 py-2 backdrop-blur-sm sm:gap-3 sm:px-4 sm:py-2.5">
                 <button
                   type="button"
                   onClick={handleRun}
                   disabled={!unlocked || engineLoading || !!engineError || executing || !code.trim()}
-                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[var(--secondary-container)] px-5 py-2.5 text-sm font-bold text-[var(--on-secondary-container)] shadow-md transition-transform duration-[160ms] ease-out active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
+                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[var(--secondary-container)] px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-bold text-[var(--on-secondary-container)] shadow-md transition-transform duration-[160ms] ease-out active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
                 >
                   {executing ? (
                     <>
-                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--on-secondary-container)] border-t-transparent motion-reduce:animate-none" />
+                      <span className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin rounded-full border-2 border-[var(--on-secondary-container)] border-t-transparent motion-reduce:animate-none" />
                       Executando...
                     </>
                   ) : (
                     <>
-                      <Play className="h-4 w-4" />
+                      <Play className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                       Executar
                     </>
                   )}
@@ -746,9 +744,9 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
                   onClick={handleReset}
                   disabled={executing}
                   aria-label="Reiniciar código"
-                  className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] px-3 py-2.5 text-sm font-semibold text-[var(--on-surface)] transition-[background-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--surface-container-high)] disabled:opacity-50 sm:px-4"
+                  className="inline-flex shrink-0 items-center gap-1.5 sm:gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] px-2.5 sm:px-3.5 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-[var(--on-surface)] transition-[background-color,transform] duration-[160ms] ease-out active:scale-[0.98] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[var(--surface-container-high)] disabled:opacity-50"
                 >
-                  <RotateCcw className="h-4 w-4" />
+                  <RotateCcw className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   <span className="hidden sm:inline">Reiniciar</span>
                 </button>
 
