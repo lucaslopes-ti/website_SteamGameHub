@@ -49,12 +49,13 @@ claro e um editor SQL integrado com execução e validação em tempo real.
     `{ completedLessonIds: string[] }` (a lista completa de ids concluídos).
   - XP calculado exclusivamente no servidor a partir do catálogo (não confia no
     cliente); conclusão repetida é idempotente.
-  - As conclusões são validadas como **progressão linear estrita**: não aceita
-    remoção de conclusões existentes, não aceita saltos nem lições fora da
-    próxima disponível e permite **no máximo UMA nova lição por requisição** —
-    sempre a próxima na ordem do catálogo (o conjunto final precisa ser um
-    prefixo contíguo da trilha em ordem). O XP é derivado apenas do conjunto
-    final validado.
+  - As conclusões são validadas como **progressão sequencial**: não aceita
+    remoção de conclusões existentes, não aceita saltos e permite **no máximo
+    UMA nova lição por requisição**. A próxima lição válida é a primeira não
+    concluída na ordem do catálogo **ou** a entrada/continuação de um capítulo
+    independente (12 redes e 13 cabeamento podem ser iniciados sem os capítulos
+    anteriores e entre si, mantendo a ordem interna de cada capítulo). O XP é
+    derivado apenas do conjunto final validado.
 - **Regras do Firestore** para `sql_quest_progress` com acesso exclusivo via API
   Admin (server-side).
 
@@ -119,9 +120,10 @@ não saem do dispositivo), mas tem consequências de integridade que precisam se
 honestas:
 
 - **O servidor não consegue provar que a query foi digitada.** A validação
-  server-side impõe **ordem** (progressão linear estrita: sem saltos, sem
-  remoções e no máximo uma nova lição por requisição — sempre a próxima da
-  trilha) e reduz a adulteração de XP, mas um usuário técnico ainda pode marcar
+  server-side impõe **ordem** (progressão sequencial: sem saltos, sem remoções
+  e no máximo uma nova lição por requisição — a primeira não concluída da
+  trilha ou a entrada/continuação de um capítulo independente 12/13) e reduz a
+  adulteração de XP, mas um usuário técnico ainda pode marcar
   uma lição como concluída sem realmente resolvê-la (ex.: chamando a API
   diretamente com um `{ "completedLessonIds": [...] }` válido). Não há como
   verificar no servidor o conteúdo do editor, porque a execução do SQL é

@@ -7,8 +7,7 @@ chapterSlug: cabeamento
 lesson: 1
 difficulty: iniciante
 xp: 20
-prerequisites:
-  - redes-06
+prerequisites: []
 hints:
   - "O switch conecta hosts dentro da mesma rede local; o roteador conecta redes diferentes."
   - "O access point é a ponte entre o mundo dos cabos e o mundo sem fio."

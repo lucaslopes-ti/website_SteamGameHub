@@ -3,7 +3,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { authedFetch } from "@/lib/client-auth";
-import { lessons } from "@/lib/sql-quest/catalog";
+import {
+  isChapterEntryLesson,
+  isIndependentChapter,
+  lessons,
+} from "@/lib/sql-quest/catalog";
 import { resolveLessonId, resolveLessonIds } from "@/lib/sql-quest/content/migrate";
 
 /**
@@ -150,6 +154,21 @@ export function useSqlProgress() {
 
   const isUnlocked = useCallback(
     (chapter: number, lesson: number) => {
+      // Entrada de capítulo independente (ex.: 12/1, 13/1): sempre liberada,
+      // sem exigir os capítulos anteriores nem o outro capítulo independente.
+      if (isChapterEntryLesson(chapter, lesson)) return true;
+
+      // Progressão interna de um capítulo independente: exige apenas a lição
+      // imediatamente anterior do MESMO capítulo (12/2 só após 12/1 etc.).
+      if (isIndependentChapter(chapter)) {
+        const previousInChapter = lessons.find(
+          (l) => l.chapter === chapter && l.lesson === lesson - 1
+        );
+        if (!previousInChapter) return true;
+        return isCompleted(previousInChapter.chapter, previousInChapter.lesson);
+      }
+
+      // Trilha principal (capítulos 1–11): exige a lição anterior global.
       const flatIndex = lessons.findIndex(
         (l) => l.chapter === chapter && l.lesson === lesson
       );

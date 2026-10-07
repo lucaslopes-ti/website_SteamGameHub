@@ -185,11 +185,12 @@ export default function LandingClient() {
           <span className="text-xs sm:text-sm text-[var(--on-surface-variant)]">{chapters.length} capítulos · {totalLessons} lições</span>
         </div>
         <div className="grid gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {chapters.map((chapter, idx) => {
+          {chapters.map((chapter) => {
             const chapterLessons = lessonsByChapter.get(chapter.number) ?? [];
             const completed = chapterLessons.filter((l) => isCompleted(l.chapter, l.lesson)).length;
             const percent = chapterLessons.length ? Math.round((completed / chapterLessons.length) * 100) : 0;
-            const locked = idx > 0 && !isCompleted(chapters[idx - 1].number, (lessonsByChapter.get(chapters[idx - 1].number) ?? []).slice(-1)[0]?.lesson ?? 0);
+            const entryLesson = chapterLessons[0];
+            const locked = entryLesson ? !isUnlocked(entryLesson.chapter, entryLesson.lesson) : true;
             return (
               <article key={chapter.number} className={`relative rounded-2xl sm:rounded-3xl border p-4 sm:p-6 transition-[transform,border-color,box-shadow] duration-[180ms] ease-out [@media(hover:hover)_and_(pointer:fine)]:hover:-translate-y-1 ${locked ? "border-[var(--outline-variant)]/20 bg-[var(--surface-container-low)]/40 opacity-70" : "border-[var(--outline-variant)]/40 bg-[var(--surface-container-lowest)] [@media(hover:hover)_and_(pointer:fine)]:hover:border-[var(--primary)]/50"}`}>
                 <div className="mb-5 sm:mb-6 flex items-center justify-between">

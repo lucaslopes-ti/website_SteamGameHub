@@ -48,6 +48,35 @@ function Harness({ chapter, lesson }: { chapter: number; lesson: number }) {
   );
 }
 
+function UnlockHarness({
+  checks,
+  completeCell,
+}: {
+  checks: [number, number][];
+  completeCell: [number, number];
+}) {
+  const { loaded, complete, isUnlocked } = useSqlProgress();
+  return (
+    <div>
+      <span data-testid="loaded">{String(loaded)}</span>
+      {checks.map(([chapter, lesson]) => (
+        <span
+          key={`${chapter}-${lesson}`}
+          data-testid={`unlocked-${chapter}-${lesson}`}
+        >
+          {String(isUnlocked(chapter, lesson))}
+        </span>
+      ))}
+      <button
+        type="button"
+        onClick={() => complete(completeCell[0], completeCell[1])}
+      >
+        completar
+      </button>
+    </div>
+  );
+}
+
 describe("useSqlProgress — persistência por UID autenticado", () => {
   beforeEach(() => {
     mockUseAuth.mockReset();
@@ -171,5 +200,83 @@ describe("useSqlProgress — persistência por UID autenticado", () => {
     );
     expect(screen.getByTestId("count").textContent).toBe("0");
     expect(screen.getByTestId("xp").textContent).toBe("0");
+  });
+});
+
+describe("useSqlProgress — capítulos independentes (12/13)", () => {
+  beforeEach(() => {
+    mockUseAuth.mockReset();
+    mockAuthedFetch.mockReset();
+    mockUseAuth.mockReturnValue({
+      user: { id: "u-1" },
+      isAuthenticated: true,
+      loading: false,
+    });
+  });
+
+  it("com progresso vazio libera 12/1 e 13/1 e bloqueia 12/2, 13/2 e 1/2", async () => {
+    mockAuthedFetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({ uid: "u-1", completedLessonIds: [] }),
+    });
+
+    render(
+      <UnlockHarness
+        checks={[
+          [12, 1],
+          [13, 1],
+          [12, 2],
+          [13, 2],
+          [1, 2],
+        ]}
+        completeCell={[12, 1]}
+      />
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId("loaded").textContent).toBe("true")
+    );
+    expect(screen.getByTestId("unlocked-12-1").textContent).toBe("true");
+    expect(screen.getByTestId("unlocked-13-1").textContent).toBe("true");
+    expect(screen.getByTestId("unlocked-12-2").textContent).toBe("false");
+    expect(screen.getByTestId("unlocked-13-2").textContent).toBe("false");
+    expect(screen.getByTestId("unlocked-1-2").textContent).toBe("false");
+  });
+
+  it("concluir 12/1 libera 12/2 sem liberar 13/2", async () => {
+    mockAuthedFetch
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ uid: "u-1", completedLessonIds: [] }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ uid: "u-1", completedLessonIds: ["redes-01"] }),
+      });
+
+    render(
+      <UnlockHarness
+        checks={[
+          [12, 1],
+          [12, 2],
+          [13, 1],
+          [13, 2],
+        ]}
+        completeCell={[12, 1]}
+      />
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId("loaded").textContent).toBe("true")
+    );
+    expect(screen.getByTestId("unlocked-12-2").textContent).toBe("false");
+
+    await userEvent.click(screen.getByRole("button", { name: "completar" }));
+
+    await waitFor(() =>
+      expect(screen.getByTestId("unlocked-12-2").textContent).toBe("true")
+    );
+    expect(screen.getByTestId("unlocked-13-2").textContent).toBe("false");
+    expect(screen.getByTestId("unlocked-13-1").textContent).toBe("true");
   });
 });

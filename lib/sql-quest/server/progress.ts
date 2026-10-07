@@ -171,10 +171,15 @@ export async function applyCompletion(
   }
 
   const merged = validated.final;
-  const isNewCompletion = merged.length > previous.length;
-  const xpEarned = merged
-    .slice(previous.length)
-    .reduce((acc, id) => acc + (getLessonById(id)?.xpReward ?? 0), 0);
+  // XP apenas da(s) lição(ões) efetivamente adicionada(s): diferença de
+  // conjuntos (não `merged.slice(previous.length)`, que erra o XP quando o
+  // progresso tem lacunas válidas — ex.: iniciar um capítulo independente).
+  const addedIds = merged.filter((id) => !previous.includes(id));
+  const isNewCompletion = addedIds.length > 0;
+  const xpEarned = addedIds.reduce(
+    (acc, id) => acc + (getLessonById(id)?.xpReward ?? 0),
+    0
+  );
   const totalXp = computeTotalXp(merged);
   const updatedAt = now.toISOString();
 

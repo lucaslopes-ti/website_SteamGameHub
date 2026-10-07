@@ -128,6 +128,82 @@ describe("validateCompletions — progressão linear (delta)", () => {
   });
 });
 
+describe("validateCompletions — capítulos independentes (12/13)", () => {
+  it("aceita iniciar redes-01 sem concluir a trilha principal", () => {
+    const res = validateCompletions([], ["redes-01"]);
+    expect(res.ok).toBe(true);
+    if (res.ok) expect(res.final).toEqual(["redes-01"]);
+  });
+
+  it("aceita iniciar cabeamento-01 sem a trilha principal nem redes", () => {
+    const res = validateCompletions([], ["cabeamento-01"]);
+    expect(res.ok).toBe(true);
+    if (res.ok) expect(res.final).toEqual(["cabeamento-01"]);
+  });
+
+  it("aceita 12/1 e 13/1 de forma independente entre si", () => {
+    const first = validateCompletions([], ["redes-01"]);
+    expect(first.ok).toBe(true);
+    const second = validateCompletions(
+      ["redes-01"],
+      ["redes-01", "cabeamento-01"]
+    );
+    expect(second.ok).toBe(true);
+    if (second.ok) {
+      expect(second.final).toEqual(["redes-01", "cabeamento-01"]);
+    }
+  });
+
+  it("mantém a sequência interna: 12/2 só depois de 12/1", () => {
+    expect(validateCompletions([], ["redes-02"]).ok).toBe(false);
+    const res = validateCompletions(["redes-01"], ["redes-01", "redes-02"]);
+    expect(res.ok).toBe(true);
+    if (res.ok) expect(res.final).toEqual(["redes-01", "redes-02"]);
+  });
+
+  it("mantém a sequência interna: 13/2 só depois de 13/1", () => {
+    expect(validateCompletions([], ["cabeamento-02"]).ok).toBe(false);
+    const res = validateCompletions(
+      ["cabeamento-01"],
+      ["cabeamento-01", "cabeamento-02"]
+    );
+    expect(res.ok).toBe(true);
+    if (res.ok) {
+      expect(res.final).toEqual(["cabeamento-01", "cabeamento-02"]);
+    }
+  });
+
+  it("rejeita saltos internos dentro de 12/13", () => {
+    expect(
+      validateCompletions(["redes-01"], ["redes-01", "redes-03"]).ok
+    ).toBe(false);
+    expect(
+      validateCompletions(["cabeamento-01"], ["cabeamento-01", "cabeamento-03"])
+        .ok
+    ).toBe(false);
+  });
+
+  it("não libera 13/2 por ter concluído 12/1", () => {
+    expect(
+      validateCompletions(["redes-01"], ["redes-01", "cabeamento-02"]).ok
+    ).toBe(false);
+  });
+
+  it("continua aceitando a trilha principal após iniciar um independente", () => {
+    const res = validateCompletions(["redes-01"], ["redes-01", "select-01"]);
+    expect(res.ok).toBe(true);
+    if (res.ok) expect(res.final).toEqual(["select-01", "redes-01"]);
+  });
+
+  it("mantém as regras dos caps. 1–11 (rejeita pulo do SQL)", () => {
+    expect(validateCompletions([], ["select-02"]).ok).toBe(false);
+    expect(validateCompletions([], ["1-2"]).ok).toBe(false);
+    expect(
+      validateCompletions(["select-01"], ["select-01", "select-03"]).ok
+    ).toBe(false);
+  });
+});
+
 describe("computeTotalXp — deriva XP do catálogo", () => {
   it("soma o XP das lições do catálogo", () => {
     const expected = lessons

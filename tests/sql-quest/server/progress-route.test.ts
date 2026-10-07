@@ -254,3 +254,109 @@ describe("PUT /api/sql-quest/progress", () => {
     }
   });
 });
+
+describe("PUT /api/sql-quest/progress — capítulos independentes (12/13)", () => {
+  it("aceita iniciar redes-01 sem concluir a trilha principal", async () => {
+    const res = await PUT(makePutRequest({ completedLessonIds: ["redes-01"] }));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.completedLessonIds).toEqual(["redes-01"]);
+    expect(body.totalXp).toBe(xpOf("redes-01"));
+    expect(body.xpEarned).toBe(xpOf("redes-01"));
+    expect(body.isNewCompletion).toBe(true);
+  });
+
+  it("aceita iniciar cabeamento-01 sem a trilha principal nem redes", async () => {
+    const res = await PUT(
+      makePutRequest({ completedLessonIds: ["cabeamento-01"] })
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.completedLessonIds).toEqual(["cabeamento-01"]);
+    expect(body.totalXp).toBe(xpOf("cabeamento-01"));
+  });
+
+  it("aceita 12/1 e 13/1 de forma independente entre si", async () => {
+    await PUT(makePutRequest({ completedLessonIds: ["redes-01"] }));
+    const res = await PUT(
+      makePutRequest({ completedLessonIds: ["redes-01", "cabeamento-01"] })
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.completedLessonIds).toEqual(["redes-01", "cabeamento-01"]);
+    expect(body.totalXp).toBe(xpOf("redes-01") + xpOf("cabeamento-01"));
+    expect(body.xpEarned).toBe(xpOf("cabeamento-01"));
+  });
+
+  it("rejeita pulo interno (12/2 sem 12/1)", async () => {
+    const res = await PUT(makePutRequest({ completedLessonIds: ["redes-02"] }));
+    expect(res.status).toBe(400);
+  });
+
+  it("rejeita pulo interno (13/3 após 13/1)", async () => {
+    await PUT(makePutRequest({ completedLessonIds: ["cabeamento-01"] }));
+    const res = await PUT(
+      makePutRequest({
+        completedLessonIds: ["cabeamento-01", "cabeamento-03"],
+      })
+    );
+    expect(res.status).toBe(400);
+  });
+
+  it("não libera 13/2 por ter concluído 12/1", async () => {
+    await PUT(makePutRequest({ completedLessonIds: ["redes-01"] }));
+    const res = await PUT(
+      makePutRequest({ completedLessonIds: ["redes-01", "cabeamento-02"] })
+    );
+    expect(res.status).toBe(400);
+  });
+
+  it("continua rejeitando pulo do SQL (select-02 sem select-01)", async () => {
+    const res = await PUT(
+      makePutRequest({ completedLessonIds: ["select-02"] })
+    );
+    expect(res.status).toBe(400);
+  });
+
+  it("permite alternar trilha principal e capítulo independente", async () => {
+    await PUT(makePutRequest({ completedLessonIds: ["redes-01"] }));
+    const res = await PUT(
+      makePutRequest({ completedLessonIds: ["redes-01", "select-01"] })
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.completedLessonIds).toEqual(["select-01", "redes-01"]);
+    expect(body.totalXp).toBe(xpOf("select-01") + xpOf("redes-01"));
+    expect(body.xpEarned).toBe(xpOf("select-01"));
+  });
+
+  it("xpEarned usa diferença de conjuntos com 12/1 já concluída", async () => {
+    mockDbHolder.db!.collection("sql_quest_progress").doc("u-student").set({
+      uid: "u-student",
+      completedLessonIds: ["redes-01"],
+      totalXp: xpOf("redes-01"),
+      spentXp: 0,
+      updatedAt: "2026-09-08T12:00:00.000Z",
+      streak: 1,
+      lastActivityDate: "2026-09-08",
+      achievements: [],
+    });
+    const res = await PUT(
+      makePutRequest({ completedLessonIds: ["redes-01", "select-01"] })
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.xpEarned).toBe(xpOf("select-01"));
+    expect(body.totalXp).toBe(xpOf("select-01") + xpOf("redes-01"));
+  });
+
+  it("replay da mesma lição independente não acumula XP", async () => {
+    await PUT(makePutRequest({ completedLessonIds: ["redes-01"] }));
+    const res = await PUT(makePutRequest({ completedLessonIds: ["redes-01"] }));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.isNewCompletion).toBe(false);
+    expect(body.xpEarned).toBe(0);
+    expect(body.totalXp).toBe(xpOf("redes-01"));
+  });
+});

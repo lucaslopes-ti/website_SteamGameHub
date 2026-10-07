@@ -12,14 +12,46 @@
  * "1-1" ou posicional "capitulo-licao"); todas as funções resolvem para o id
  * semântico canônico antes de validar/calcular.
  */
-import { lessons } from "./catalog";
+import {
+  getChapterEntryLesson,
+  getLesson,
+  isIndependentChapter,
+  lessons,
+} from "./catalog";
 import { resolveLessonId, resolveLessonIds } from "./content/migrate";
 
 /** Ordem oficial da trilha (ids semânticos na ordem de conclusão). */
 const orderedIds = lessons.map((l) => l.id);
 
+/** Lições indexadas por id semântico canônico. */
+const lessonById = new Map(lessons.map((l) => [l.id, l]));
+
 /** Mapa oficial de XP por lição (fonte única de verdade). */
 const xpById = new Map(lessons.map((l) => [l.id, l.xpReward]));
+
+/**
+ * Verdadeiro quando `candidateId` é uma próxima lição VÁLIDA dado o conjunto
+ * `previousIds` já concluído:
+ * - a primeira lição ainda não concluída na ordem oficial da trilha (regra
+ *   original, preenchendo lacunas de progresso migrado em ordem); OU
+ * - a lição de entrada de um capítulo independente (12/13), mesmo sem os
+ *   capítulos anteriores; OU
+ * - a continuação sequencial DENTRO de um capítulo independente (a lição
+ *   imediatamente anterior do mesmo capítulo já concluída).
+ */
+function isValidNextLesson(previousIds: string[], candidateId: string): boolean {
+  const nextGlobal = orderedIds.find((id) => !previousIds.includes(id));
+  if (candidateId === nextGlobal) return true;
+
+  const lesson = lessonById.get(candidateId);
+  if (!lesson || !isIndependentChapter(lesson.chapter)) return false;
+
+  const entry = getChapterEntryLesson(lesson.chapter);
+  if (entry !== null && entry.id === candidateId) return true;
+
+  const previousInChapter = getLesson(lesson.chapter, lesson.lesson - 1);
+  return previousInChapter !== null && previousIds.includes(previousInChapter.id);
+}
 
 /**
  * Soma o XP apenas pelas lições do catálogo (nunca confia no cliente).
@@ -74,10 +106,11 @@ export function validateCompletions(
     };
   }
 
-  // 3) A nova lição deve ser a primeira não concluída na ordem oficial.
+  // 3) A nova lição deve ser uma próxima válida: a primeira não concluída na
+  //    ordem oficial OU a entrada/continuação de um capítulo independente
+  //    (capítulos 12/13 podem ser iniciados sem os anteriores e entre si).
   if (newIds.length === 1) {
-    const nextId = orderedIds.find((id) => !prev.includes(id));
-    if (newIds[0] !== nextId) {
+    if (!isValidNextLesson(prev, newIds[0])) {
       return {
         ok: false,
         error:

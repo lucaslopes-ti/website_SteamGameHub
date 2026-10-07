@@ -7,8 +7,7 @@ chapterSlug: redes
 lesson: 1
 difficulty: iniciante
 xp: 20
-prerequisites:
-  - performance-05
+prerequisites: []
 hints:
   - "Pense no que um celular, um caixa eletrônico e um console online têm em comum."
   - "Uma rede não precisa de internet para existir — dois computadores ligados por um cabo já formam uma rede."

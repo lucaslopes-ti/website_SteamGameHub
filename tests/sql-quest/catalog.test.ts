@@ -16,12 +16,16 @@ import {
   totalLessons,
   getChapter,
   getChapterCount,
+  getChapterEntryLesson,
   getLesson,
   getLessonById,
   getLessonCount,
   getLessonsPerChapter,
   getNextLesson,
   getPreviousLesson,
+  independentChapterNumbers,
+  isChapterEntryLesson,
+  isIndependentChapter,
 } from "@/lib/sql-quest/catalog";
 
 describe("catálogo — capítulos", () => {
@@ -233,6 +237,38 @@ describe("catálogo — lições", () => {
     for (const chapter of chapters) {
       expect(perChapter[chapter.number]).toBeGreaterThan(0);
     }
+  });
+});
+
+describe("catálogo — capítulos independentes (12/13)", () => {
+  it("identifica apenas 12 e 13 como capítulos independentes", () => {
+    expect(independentChapterNumbers).toEqual([12, 13]);
+    expect(isIndependentChapter(12)).toBe(true);
+    expect(isIndependentChapter(13)).toBe(true);
+    expect(isIndependentChapter(1)).toBe(false);
+    expect(isIndependentChapter(11)).toBe(false);
+    expect(isIndependentChapter(99)).toBe(false);
+  });
+
+  it("getChapterEntryLesson devolve a primeira lição do capítulo", () => {
+    expect(getChapterEntryLesson(12)?.id).toBe("redes-01");
+    expect(getChapterEntryLesson(13)?.id).toBe("cabeamento-01");
+    expect(getChapterEntryLesson(1)?.id).toBe("select-01");
+    expect(getChapterEntryLesson(99)).toBeNull();
+  });
+
+  it("isChapterEntryLesson marca só 12/1 e 13/1", () => {
+    expect(isChapterEntryLesson(12, 1)).toBe(true);
+    expect(isChapterEntryLesson(13, 1)).toBe(true);
+    expect(isChapterEntryLesson(12, 2)).toBe(false);
+    expect(isChapterEntryLesson(13, 2)).toBe(false);
+    expect(isChapterEntryLesson(11, 1)).toBe(false);
+    expect(isChapterEntryLesson(1, 1)).toBe(false);
+  });
+
+  it("as lições de entrada não têm pré-requisitos", () => {
+    expect(getLesson(12, 1)?.prerequisites).toEqual([]);
+    expect(getLesson(13, 1)?.prerequisites).toEqual([]);
   });
 });
 
