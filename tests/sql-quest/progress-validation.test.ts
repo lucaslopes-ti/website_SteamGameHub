@@ -128,7 +128,7 @@ describe("validateCompletions — progressão linear (delta)", () => {
   });
 });
 
-describe("validateCompletions — capítulos independentes (12/13)", () => {
+describe("validateCompletions — capítulos independentes (12/13/14)", () => {
   it("aceita iniciar redes-01 sem concluir a trilha principal", () => {
     const res = validateCompletions([], ["redes-01"]);
     expect(res.ok).toBe(true);
@@ -141,7 +141,13 @@ describe("validateCompletions — capítulos independentes (12/13)", () => {
     if (res.ok) expect(res.final).toEqual(["cabeamento-01"]);
   });
 
-  it("aceita 12/1 e 13/1 de forma independente entre si", () => {
+  it("aceita iniciar packet-tracer-01 sem a trilha principal nem redes/cabeamento", () => {
+    const res = validateCompletions([], ["packet-tracer-01"]);
+    expect(res.ok).toBe(true);
+    if (res.ok) expect(res.final).toEqual(["packet-tracer-01"]);
+  });
+
+  it("aceita 12/1, 13/1 e 14/1 de forma independente entre si", () => {
     const first = validateCompletions([], ["redes-01"]);
     expect(first.ok).toBe(true);
     const second = validateCompletions(
@@ -151,6 +157,18 @@ describe("validateCompletions — capítulos independentes (12/13)", () => {
     expect(second.ok).toBe(true);
     if (second.ok) {
       expect(second.final).toEqual(["redes-01", "cabeamento-01"]);
+    }
+    const third = validateCompletions(
+      ["redes-01", "cabeamento-01"],
+      ["redes-01", "cabeamento-01", "packet-tracer-01"]
+    );
+    expect(third.ok).toBe(true);
+    if (third.ok) {
+      expect(third.final).toEqual([
+        "redes-01",
+        "cabeamento-01",
+        "packet-tracer-01",
+      ]);
     }
   });
 
@@ -228,13 +246,13 @@ describe("computeTotalXp — deriva XP do catálogo", () => {
     expect(computeTotalXp([])).toBe(0);
   });
 
-  it("soma integral do catálogo reflete as 110 unidades (3356)", () => {
+  it("soma integral do catálogo reflete as 111 unidades (3396)", () => {
     // O total é apenas a soma das recompensas das lições ativas do catálogo;
     // os limiares de nível, conquistas e loja são constantes calibradas e não
     // são recalculados quando o currículo cresce.
     const total = lessons.reduce((acc, l) => acc + l.xpReward, 0);
-    expect(total).toBe(3356);
-    expect(computeTotalXp(lessons.map((l) => l.id))).toBe(3356);
+    expect(total).toBe(3396);
+    expect(computeTotalXp(lessons.map((l) => l.id))).toBe(3396);
   });
 
   it("distribuição de XP por lição reflete o catálogo atual", () => {
@@ -242,7 +260,7 @@ describe("computeTotalXp — deriva XP do catálogo", () => {
     for (const lesson of lessons) {
       counts[lesson.xpReward] = (counts[lesson.xpReward] ?? 0) + 1;
     }
-    expect(counts).toEqual({ 20: 14, 21: 7, 25: 1, 28: 38, 34: 24, 35: 7, 41: 19 });
+    expect(counts).toEqual({ 20: 14, 21: 7, 25: 1, 28: 38, 34: 24, 35: 7, 40: 1, 41: 19 });
     const unitSum = Object.values(counts).reduce((acc, n) => acc + n, 0);
     expect(unitSum).toBe(lessons.length);
   });

@@ -53,6 +53,10 @@ chapters:
     slug: cabeamento
     title: "Infraestrutura e cabeamento estruturado"
     description: "A viagem do sinal: dispositivos de interconexão, cabeamento estruturado, par trançado e suas categorias, conectores e pinagem T568, fibra óptica, redes sem fio, normas TIA/EIA e os seis subsistemas que levam o sinal da operadora até a tomada do usuário."
+  - number: 14
+    slug: packet-tracer
+    title: "Cisco Packet Tracer: primeiros passos"
+    description: "Sua primeira aula no Cisco Packet Tracer: conheça o simulador, adicione computadores e cabos, configure endereços IPv4 e máscaras de sub-rede e teste a comunicação entre dois PCs com o comando ping."
 ---
 
 # Capítulos da SQL Quest

@@ -171,4 +171,33 @@ describe("RewardsStoreClient — aviso do formulário de pedido", () => {
     ).toBeInTheDocument();
     expect(screen.queryByText(/não reserva estoque/i)).not.toBeInTheDocument();
   });
+
+  it("mostra a nota mecânica de disponibilidade do item personalizado de 20 cm", async () => {
+    mockAuthedFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        earnedXp: 6000,
+        spentXp: 0,
+        xpBalance: 6000,
+        items: [
+          {
+            id: "object-20cm",
+            name: "Item personalizado de até 20 cm",
+            description:
+              "Item personalizado impresso em 3D com até 20 cm, conforme a descrição enviada no pedido.",
+            costXp: 5500,
+            initialStock: 1,
+            remainingStock: 1,
+            requestStatus: null,
+          },
+        ],
+      }),
+    });
+
+    render(<RewardsStoreClient />);
+    expect(
+      await screen.findByText("Item personalizado de até 20 cm")
+    ).toBeInTheDocument();
+    expect(screen.getByText("1 unidade global")).toBeInTheDocument();
+  });
 });

@@ -13,7 +13,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /**
- * Loja de recompensas físicas da SQL Quest (v3: 10 produtos).
+ * Loja de recompensas físicas da SQL Quest (v4: 11 produtos).
  *
  * - GET: catálogo fixo + saldo derivado do aluno autenticado:
  *   `{ earnedXp, spentXp, xpBalance, items }`, com cada item

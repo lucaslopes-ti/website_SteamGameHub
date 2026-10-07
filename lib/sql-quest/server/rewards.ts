@@ -1,7 +1,7 @@
 /**
  * Recompensas físicas da SQL Quest (camada server).
  *
- * Catálogo FIXO de 10 produtos (preço/estoque são constantes server-side, nunca
+ * Catálogo FIXO de 11 produtos (preço/estoque são constantes server-side, nunca
  * confiados no cliente), pedidos em `sql_quest_reward_requests/{uid}_{itemId}`,
  * estoque compartilhado globalmente em `sql_quest_reward_stock/{itemId}` e uma
  * marca de inventário versionada em `sql_quest_reward_inventory/current`.
@@ -16,7 +16,8 @@
  * - O estoque inicial é inicializado UMA única vez via marca de inventário
  *   versionada (transação create-only). Novas versões do catálogo (v2: +5
  *   chaveiros; v3: +chaveiro pato nadador [3 unid, 550 XP], +item personalizado
- *   15 cm [1 unid, 3300 XP]) inicializam APENAS os estoques dos produtos novos;
+ *   15 cm [1 unid, 3300 XP]; v4: +item personalizado 20 cm [1 unid, 5500 XP])
+ *   inicializam APENAS os estoques dos produtos novos;
  *   estoques existentes nunca são restaurados. Após a marca existir na versão
  *   corrente, qualquer doc de estoque ausente/corrompido bloqueia a compra —
  *   nunca é restaurado.
@@ -48,7 +49,7 @@ import {
 export const REWARD_REQUESTS_COLLECTION = "sql_quest_reward_requests";
 export const REWARD_STOCK_COLLECTION = "sql_quest_reward_stock";
 export const REWARD_INVENTORY_COLLECTION = "sql_quest_reward_inventory";
-export const REWARD_INVENTORY_VERSION = 3;
+export const REWARD_INVENTORY_VERSION = 4;
 export const REWARD_INVENTORY_DOC_ID = "current";
 
 /** Produto físico da loja de recompensas (constante server-side). */
@@ -60,7 +61,7 @@ export interface RewardProduct {
   initialStock: number;
 }
 
-/** Catálogo fixo e versionado no servidor (v3: +chaveiro pato nadador [3 unid, 550 XP], +item personalizado 15 cm [1 unid, 3300 XP]). */
+/** Catálogo fixo e versionado no servidor (v4: +item personalizado 20 cm [1 unid, 5500 XP]). */
 export const REWARD_PRODUCTS: readonly RewardProduct[] = [
   {
     id: "keychain",
@@ -133,6 +134,14 @@ export const REWARD_PRODUCTS: readonly RewardProduct[] = [
     description:
       "Item personalizado impresso em 3D com até 15 cm, conforme a descrição enviada no pedido.",
     costXp: 3300,
+    initialStock: 1,
+  },
+  {
+    id: "object-20cm",
+    name: "Item personalizado de até 20 cm",
+    description:
+      "Item personalizado impresso em 3D com até 20 cm, conforme a descrição enviada no pedido.",
+    costXp: 5500,
     initialStock: 1,
   },
 ];

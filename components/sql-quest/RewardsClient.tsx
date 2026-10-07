@@ -16,6 +16,7 @@ const productNotes: Record<string, string> = {
   "objeto personalizado de até 12 cm": "1 unidade global",
   "item personalizado de até 15 cm": "1 unidade global",
   "objeto personalizado de até 15 cm": "1 unidade global",
+  "item personalizado de até 20 cm": "1 unidade global",
 };
 
 function getProductNote(item: RewardItem) {

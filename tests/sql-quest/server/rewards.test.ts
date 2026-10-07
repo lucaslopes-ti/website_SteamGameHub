@@ -29,6 +29,14 @@ jest.mock("@/lib/firebase/admin", () => ({
   getAdminDb: () => mockDbHolder.db,
 }));
 
+// O catálogo real soma 3356 XP — menos que o custo de 5500 do novo produto.
+// Este mock delega para o cálculo real por padrão e permite sobrescrever o XP
+// somente nos testes que precisam de saldo >= 5500.
+jest.mock("@/lib/sql-quest/progress", () => {
+  const actual = jest.requireActual("@/lib/sql-quest/progress");
+  return { ...actual, computeTotalXp: jest.fn(actual.computeTotalXp) };
+});
+
 import { GET as getRewards } from "@/app/api/sql-quest/rewards/route";
 import {
   GET as listRequests,
@@ -243,7 +251,7 @@ describe("GET /api/sql-quest/rewards", () => {
     expect(body.spentXp).toBe(345);
     expect(body.xpBalance).toBe(xpFor(LESSONS_WITH_CHARACTER_PIECE) - 345);
 
-    expect(body.items).toHaveLength(10);
+    expect(body.items).toHaveLength(11);
     const keychain = body.items.find((i: { id: string }) => i.id === "keychain");
     expect(keychain).toMatchObject({
       id: "keychain",
@@ -261,15 +269,23 @@ describe("GET /api/sql-quest/rewards", () => {
     expect(duck).toMatchObject({ costXp: 550, initialStock: 3, remainingStock: 3 });
     const item15 = body.items.find((i: { id: string }) => i.id === "object-15cm");
     expect(item15).toMatchObject({ costXp: 3300, initialStock: 1, remainingStock: 1 });
+    const item20 = body.items.find((i: { id: string }) => i.id === "object-20cm");
+    expect(item20).toMatchObject({
+      id: "object-20cm",
+      name: "Item personalizado de até 20 cm",
+      costXp: 5500,
+      initialStock: 1,
+      remainingStock: 1,
+    });
   });
 
-  it("inicializa o inventário 5/1/1/5/5/5/5/5/3/1 uma única vez (create-only)", async () => {
+  it("inicializa o inventário completo uma única vez (create-only)", async () => {
     mockGetAuthUser.mockResolvedValue(student);
     const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
 
     await getRewards(new NextRequest("http://localhost/api/sql-quest/rewards"));
     expect(store["sql_quest_reward_inventory"]["current"]).toMatchObject({
-      version: 3,
+      version: 4,
       itemIds: [
         "keychain",
         ...NEW_KEYCHAIN_IDS,
@@ -277,6 +293,7 @@ describe("GET /api/sql-quest/rewards", () => {
         "character-piece",
         "object-12cm",
         "object-15cm",
+        "object-20cm",
       ],
     });
     expect(store["sql_quest_reward_stock"]["keychain"]).toMatchObject({
@@ -296,6 +313,10 @@ describe("GET /api/sql-quest/rewards", () => {
       remainingStock: 3,
     });
     expect(store["sql_quest_reward_stock"]["object-15cm"]).toMatchObject({
+      initialStock: 1,
+      remainingStock: 1,
+    });
+    expect(store["sql_quest_reward_stock"]["object-20cm"]).toMatchObject({
       initialStock: 1,
       remainingStock: 1,
     });
@@ -323,7 +344,7 @@ describe("GET /api/sql-quest/rewards", () => {
 
     // Marca sobe para a versão corrente com todos os ids.
     expect(store["sql_quest_reward_inventory"]["current"]).toMatchObject({
-      version: 3,
+      version: 4,
       itemIds: [
         "keychain",
         ...NEW_KEYCHAIN_IDS,
@@ -331,6 +352,7 @@ describe("GET /api/sql-quest/rewards", () => {
         "character-piece",
         "object-12cm",
         "object-15cm",
+        "object-20cm",
       ],
     });
     // Estoque existente é preservado (nunca restaurado).
@@ -357,6 +379,57 @@ describe("GET /api/sql-quest/rewards", () => {
     store["sql_quest_reward_stock"]["keychain-join"].remainingStock = 0;
     await getRewards(new NextRequest("http://localhost/api/sql-quest/rewards"));
     expect(store["sql_quest_reward_stock"]["keychain-join"].remainingStock).toBe(0);
+  });
+
+  it("migra o inventário v3→v4: cria só o object-20cm e preserva os estoques esgotados", async () => {
+    mockGetAuthUser.mockResolvedValue(student);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
+    // Marca v3 (10 produtos) com estoques existentes, incluindo um já esgotado.
+    const v3ItemIds = [
+      "keychain",
+      ...NEW_KEYCHAIN_IDS,
+      "keychain-duck",
+      "character-piece",
+      "object-12cm",
+      "object-15cm",
+    ];
+    store["sql_quest_reward_inventory"] = {
+      current: {
+        version: 3,
+        itemIds: v3ItemIds,
+        createdAt: "2026-09-01T00:00:00.000Z",
+      },
+    };
+    store["sql_quest_reward_stock"] = {
+      keychain: { itemId: "keychain", initialStock: 5, remainingStock: 2, updatedAt: "2026-09-10T00:00:00.000Z" },
+      "character-piece": { itemId: "character-piece", initialStock: 1, remainingStock: 0, updatedAt: "2026-09-10T00:00:00.000Z" },
+      "object-12cm": { itemId: "object-12cm", initialStock: 1, remainingStock: 0, updatedAt: "2026-09-10T00:00:00.000Z" },
+      "object-15cm": { itemId: "object-15cm", initialStock: 1, remainingStock: 0, updatedAt: "2026-09-10T00:00:00.000Z" },
+    };
+
+    await getRewards(new NextRequest("http://localhost/api/sql-quest/rewards"));
+
+    // A marca sobe para v4 com todos os ids, incluindo o novo produto.
+    expect(store["sql_quest_reward_inventory"]["current"]).toMatchObject({
+      version: 4,
+      itemIds: [...v3ItemIds, "object-20cm"],
+    });
+    // Apenas o novo produto é inicializado, com 1 unidade.
+    expect(store["sql_quest_reward_stock"]["object-20cm"]).toMatchObject({
+      initialStock: 1,
+      remainingStock: 1,
+    });
+    // Estoques antigos são preservados — inclusive os esgotados (não repostos).
+    expect(store["sql_quest_reward_stock"]["keychain"].remainingStock).toBe(2);
+    expect(store["sql_quest_reward_stock"]["character-piece"].remainingStock).toBe(0);
+    expect(store["sql_quest_reward_stock"]["object-12cm"].remainingStock).toBe(0);
+    expect(store["sql_quest_reward_stock"]["object-15cm"].remainingStock).toBe(0);
+
+    // Idempotente: nova chamada não repõe e o novo estoque permanece 1.
+    store["sql_quest_reward_stock"]["object-15cm"].remainingStock = 0;
+    await getRewards(new NextRequest("http://localhost/api/sql-quest/rewards"));
+    expect(store["sql_quest_reward_stock"]["object-15cm"].remainingStock).toBe(0);
+    expect(store["sql_quest_reward_stock"]["object-20cm"].remainingStock).toBe(1);
   });
 
   it("inicialização parcial: lê tudo antes de escrever e cria apenas docs ausentes", async () => {
@@ -439,6 +512,10 @@ describe("GET /api/sql-quest/rewards", () => {
       remainingStock: 3,
     });
     expect(store["sql_quest_reward_stock"]["object-15cm"]).toMatchObject({
+      initialStock: 1,
+      remainingStock: 1,
+    });
+    expect(store["sql_quest_reward_stock"]["object-20cm"]).toMatchObject({
       initialStock: 1,
       remainingStock: 1,
     });
@@ -859,6 +936,66 @@ describe("estoque global limitado (POST)", () => {
     expect(store["sql_quest_reward_stock"]).toBeUndefined();
     expect(store["sql_quest_reward_inventory"]).toBeUndefined();
   });
+
+  it("novo item personalizado 20 cm (5500 XP) aceita apenas 1 pedido global", async () => {
+    const actual = jest.requireActual("@/lib/sql-quest/progress");
+    const mockedComputeTotalXp = jest.mocked(computeTotalXp);
+    mockedComputeTotalXp.mockReturnValue(5500);
+    try {
+      const { db, store } = createFakeDb();
+      mockDbHolder.db = db;
+      store["sql_quest_progress"] = {
+        "u-student": {
+          uid: "u-student",
+          completedLessonIds: LESSONS_WITH_CHARACTER_PIECE,
+          totalXp: 999999,
+          spentXp: 0,
+          classId: null,
+        },
+        "u-student2": {
+          uid: "u-student2",
+          completedLessonIds: LESSONS_WITH_CHARACTER_PIECE,
+          totalXp: 999999,
+          spentXp: 0,
+          classId: null,
+        },
+      };
+
+      mockGetAuthUser.mockResolvedValueOnce(student);
+      const first = await createRequest(
+        makeJsonRequest("http://localhost/api/sql-quest/rewards/requests", "POST", {
+          itemId: "object-20cm",
+          requestDetails: "Quero imprimir meu objeto em 3D.",
+        })
+      );
+      expect(first.status).toBe(201);
+      const firstBody = await first.json();
+      expect(firstBody.itemId).toBe("object-20cm");
+      expect(firstBody.itemName).toBe("Item personalizado de até 20 cm");
+      expect(firstBody.costXp).toBe(5500);
+
+      // O produto tem estoque global 1: o segundo aluno é bloqueado.
+      mockGetAuthUser.mockResolvedValueOnce(student2);
+      const second = await createRequest(
+        makeJsonRequest("http://localhost/api/sql-quest/rewards/requests", "POST", {
+          itemId: "object-20cm",
+          requestDetails: "Também quero imprimir meu objeto.",
+        })
+      );
+      expect(second.status).toBe(409);
+      expect(store["sql_quest_reward_requests"]["u-student2_object-20cm"]).toBeUndefined();
+      expect(
+        Object.keys(store["sql_quest_reward_requests"] ?? {}).filter((id) =>
+          id.endsWith("_object-20cm")
+        )
+      ).toHaveLength(1);
+      // O POST nunca inicializa estoque/inventário.
+      expect(store["sql_quest_reward_stock"]).toBeUndefined();
+      expect(store["sql_quest_reward_inventory"]).toBeUndefined();
+    } finally {
+      mockedComputeTotalXp.mockImplementation(actual.computeTotalXp);
+    }
+  });
 });
 
 describe("GET /api/sql-quest/rewards/requests", () => {
@@ -1111,6 +1248,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
     }
     expect(store["sql_quest_reward_stock"]["keychain-duck"]).toBeDefined();
     expect(store["sql_quest_reward_stock"]["object-15cm"]).toBeDefined();
+    expect(store["sql_quest_reward_stock"]["object-20cm"]).toBeDefined();
     expect(store["sql_quest_reward_requests"]["u-student_keychain"].status).toBe("requested");
   });
 

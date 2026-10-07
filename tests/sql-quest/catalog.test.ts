@@ -30,15 +30,16 @@ import {
 
 describe("catálogo — capítulos", () => {
   it("define exatamente os capítulos esperados", () => {
-    expect(totalChapters).toBe(13);
-    expect(getChapterCount()).toBe(13);
+    expect(totalChapters).toBe(14);
+    expect(getChapterCount()).toBe(14);
   });
 
   it("está ordenado por número e tem metadados completos", () => {
     // A trilha preserva os números históricos dos capítulos; com a expansão,
-    // a sequência atual vai de 1 a 13 sem lacunas (11 SQL + 12-13 redes).
+    // a sequência atual vai de 1 a 14 sem lacunas (11 SQL + 12-14 redes e
+    // simulação).
     expect(chapters.map((c) => c.number)).toEqual([
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
     ]);
     expect(chapters.map((c) => c.slug)).toEqual([
       "select",
@@ -54,6 +55,7 @@ describe("catálogo — capítulos", () => {
       "performance",
       "redes",
       "cabeamento",
+      "packet-tracer",
     ]);
     for (const chapter of chapters) {
       expect(chapter.slug).toBeTruthy();
@@ -75,8 +77,8 @@ describe("catálogo — capítulos", () => {
 });
 
 describe("catálogo — lições", () => {
-  it("tem 110 lições (7+10+8+13+11+6+9+5+11+10+5+6+9)", () => {
-    expect(totalLessons).toBe(110);
+  it("tem 111 lições (7+10+8+13+11+6+9+5+11+10+5+6+9+1)", () => {
+    expect(totalLessons).toBe(111);
     expect(getLessonCount()).toBe(totalLessons);
     expect(getLessonsPerChapter()).toEqual({
       1: 7,
@@ -92,6 +94,7 @@ describe("catálogo — lições", () => {
       11: 5,
       12: 6,
       13: 9,
+      14: 1,
     });
   });
 
@@ -179,6 +182,8 @@ describe("catálogo — lições", () => {
     expect(getLesson(11, 3)?.challenge.kind).toBe("schema");
     expect(getLesson(11, 4)?.challenge.kind).toBe("quiz");
     expect(getLesson(11, 5)?.challenge.kind).toBe("quiz");
+    // Cap. 14 — Packet Tracer (primeira aula, quiz)
+    expect(getLesson(14, 1)?.challenge.kind).toBe("quiz");
   });
 
   it("cobre os índices dos desafios de performance", () => {
@@ -240,11 +245,12 @@ describe("catálogo — lições", () => {
   });
 });
 
-describe("catálogo — capítulos independentes (12/13)", () => {
-  it("identifica apenas 12 e 13 como capítulos independentes", () => {
-    expect(independentChapterNumbers).toEqual([12, 13]);
+describe("catálogo — capítulos independentes (12/13/14)", () => {
+  it("identifica 12, 13 e 14 como capítulos independentes", () => {
+    expect(independentChapterNumbers).toEqual([12, 13, 14]);
     expect(isIndependentChapter(12)).toBe(true);
     expect(isIndependentChapter(13)).toBe(true);
+    expect(isIndependentChapter(14)).toBe(true);
     expect(isIndependentChapter(1)).toBe(false);
     expect(isIndependentChapter(11)).toBe(false);
     expect(isIndependentChapter(99)).toBe(false);
@@ -253,15 +259,18 @@ describe("catálogo — capítulos independentes (12/13)", () => {
   it("getChapterEntryLesson devolve a primeira lição do capítulo", () => {
     expect(getChapterEntryLesson(12)?.id).toBe("redes-01");
     expect(getChapterEntryLesson(13)?.id).toBe("cabeamento-01");
+    expect(getChapterEntryLesson(14)?.id).toBe("packet-tracer-01");
     expect(getChapterEntryLesson(1)?.id).toBe("select-01");
     expect(getChapterEntryLesson(99)).toBeNull();
   });
 
-  it("isChapterEntryLesson marca só 12/1 e 13/1", () => {
+  it("isChapterEntryLesson marca só as entradas de 12, 13 e 14", () => {
     expect(isChapterEntryLesson(12, 1)).toBe(true);
     expect(isChapterEntryLesson(13, 1)).toBe(true);
+    expect(isChapterEntryLesson(14, 1)).toBe(true);
     expect(isChapterEntryLesson(12, 2)).toBe(false);
     expect(isChapterEntryLesson(13, 2)).toBe(false);
+    expect(isChapterEntryLesson(14, 2)).toBe(false);
     expect(isChapterEntryLesson(11, 1)).toBe(false);
     expect(isChapterEntryLesson(1, 1)).toBe(false);
   });
@@ -269,6 +278,7 @@ describe("catálogo — capítulos independentes (12/13)", () => {
   it("as lições de entrada não têm pré-requisitos", () => {
     expect(getLesson(12, 1)?.prerequisites).toEqual([]);
     expect(getLesson(13, 1)?.prerequisites).toEqual([]);
+    expect(getLesson(14, 1)?.prerequisites).toEqual([]);
   });
 });
 
@@ -285,7 +295,8 @@ describe("catálogo — navegação", () => {
     expect(getNextLesson(10, 10)?.id).toBe("performance-01");
     expect(getNextLesson(11, 5)?.id).toBe("redes-01");
     expect(getNextLesson(12, 6)?.id).toBe("cabeamento-01");
-    expect(getNextLesson(13, 9)).toBeNull();
+    expect(getNextLesson(13, 9)?.id).toBe("packet-tracer-01");
+    expect(getNextLesson(14, 1)).toBeNull();
   });
 
   it("getPreviousLesson atravessa a fronteira entre capítulos", () => {
@@ -300,6 +311,7 @@ describe("catálogo — navegação", () => {
     expect(getPreviousLesson(11, 1)?.id).toBe("joins-10");
     expect(getPreviousLesson(12, 1)?.id).toBe("performance-05");
     expect(getPreviousLesson(13, 1)?.id).toBe("redes-06");
+    expect(getPreviousLesson(14, 1)?.id).toBe("cabeamento-09");
   });
 
   it("devolve null para posições inexistentes", () => {
