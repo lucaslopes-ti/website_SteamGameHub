@@ -223,65 +223,94 @@ são bem-vindos: "tomada", "patch cord", "equipamento".
 
 ---
 
-## 6. Plenum e closed riser
+## 6. Plenum e closed riser — REGENERAR (prompt corrigido)
 
 **Arquivo:** `subsistemas_plenum_riser.jpg`
 **Lição:** `subsistemas-07`
 **Alt sugerido:** "Comparação entre um espaço plenum de tratamento de ar e um shaft de riser fechado, com o tipo de cabo adequado a cada rota"
 
+> **Por que o prompt anterior falhou:** pediu "uma faixa comparando os dois
+> cabos", e o gerador desenhou um corte transversal. Saiu um condutor de cobre
+> único e grosso, que parece cabo de energia em vez dos 4 pares de um UTP.
+> Além disso, os rótulos pequenos viraram pseudo-texto (`CREÑO`, `HIGIV`,
+> `SMCK`). **Correção abaixo: sem corte de cabo e sem texto nenhum.**
+
 ```
-<bloco de estilo>
+Ilustração técnica didática, vista em corte transversal (seção) de um
+edifício comercial moderno, estilo corte de prancha técnica. Comparação lado
+a lado de dois espaços de instalação de cabo, em dois painéis.
 
-Comparação lado a lado de dois espaços de instalação de cabo, como numa
-prancha técnica com duas vistas:
+PAINEL DA ESQUERDA — espaço plenum: corte de um forro de teto falso com
+ladrilho, mostrando o espaço de retorno de ar com um duto de ventilação
+metálico e uma grelha de ventilação. Um feixe de cabos de rede passa por esse
+espaço, junto à ventilação. Um dos cabos tem invólucro amarelo espesso,
+apropriado a esse espaço.
 
-À esquerda, um espaço plenum: um duto grande de retorno de ar com uma
-grelha, visto por dentro, com cabos de rede passando junto a um duto de
-ventilação. Mostre um cabo com invólucro amarelado apropriado a esse espaço.
+PAINEL DA DIREITA — shaft de riser: corte vertical de um duto técnico com
+paredes firmes e fechadas, atravessando as lajes de dois pavimentos. Cabos
+subem dentro dele por uma esteira de suporte. Onde o duto atravessa cada laje,
+mostre um colar de vedação corta-fogo em torno dos cabos. Um dos cabos tem
+invólucro amarelo mais fino.
 
-À direita, um shaft de riser fechado: um duto vertical com paredes firmes,
-fechado nas passagens entre pavimentos, com cabos subindo dentro dele.
+Na parte inferior, longe dos dois painéis, mostre um cabo comum de par
+trançado com capa simples, junto a um símbolo circular vermelho de
+proibição. É a ideia: esse cabo não pode ir no plenum.
 
-No centro inferior, uma faixa comparando visualmente os dois cabos: o do
-plenum tem capa amarela mais espessa, o do riser tem capa amarela mais
-fina, deixando claro que são produtos diferentes para espaços diferentes.
-
-Incorpore visualmente a regra da imagem: um cabo comum não deve aparecer no
-trecho plenum, nem mesmo embrulhado em uma capa improvisada — mostre esse
-cabo comum barrado por um símbolo de prohibition discreto ao lado do trecho
-plenum.
-
-Sem texto, exceto rótulos curtos "plenum" e "riser".
+REGRAS IMPORTANTES:
+- NÃO desenhe corte transversal de cabo. Nenhum corte, nenhuma camada de
+  isolação, nenhum condutor exposto.
+- NÃO escreva NENHUMA palavra, letra, número ou rótulo na imagem. Nenhum
+  texto em nenhum idioma. Os rótulos serão aplicados depois na lição.
+- Os três cabos devem aparecer sempre inteiros, da ponta à ponta.
+- Sem pessoas, sem rostos, sem logotipos de terceiros, sem desfoque de
+  profundidade de campo. Alta resolução.
 ```
 
 ---
 
-## 7. Rotulagem e teste de aceitação
+## 7. Rotulagem e teste de aceitação — REGENERAR (prompt corrigido)
 
 **Arquivo:** `subsistemas_rotulagem_certificador.jpg`
 **Lição:** `subsistemas-08`
 **Alt sugerido:** "Rotulagem de ponta a ponta entre patch panel e tomada, e teste do enlace com certificador de cabo"
 
+> **Por que o prompt anterior falhou:** pediu "rótulos pequenos e legíveis nas
+> etiquetas" e "fileiras de portas". O gerador produziu pseudo-texto
+> (`PAICK DE`, `IDENTIFÃO`, `TESTTATIL`) e, pior, numeração de portas
+> **duplicada e incorreta** — justamente na aula que ensina identificação
+> correta. **Correção abaixo: identificação por cor, nunca por número
+> impresso, e nenhum texto.**
+
 ```
-<bloco de estilo>
+Ilustração técnica didática, em vista de cima e em ângulo, de um armário
+técnico de rede. Duas zonas na mesma cena.
 
-Cena de teste de aceitação de rede, vista de cima e em ângulo, em um armário
-técnico.
+ZONA DA ESQUERDA — identificação nas duas pontas: mostre um painel patch de
+cobre com fileiras de portas RJ45 e, ao lado, uma tomada de rede de parede.
+Identifique a ligação SEM USAR TEXTO: use marcadores de identificação
+plásticos removíveis, do tipo etiqueta de envelope ou braçadeira de
+identificação, com CORES diferentes por porta. Uma porta do painel e a tomada
+correspondente compartilham o mesmo marcador na mesma cor, e uma única linha
+visual fina e contínua liga os dois marcadores. Portas não usadas ficam sem
+marcador. Isso comunica "a mesma identificação nos dois extremos" sem uma
+única palavra.
 
-À esquerda, o painel patch com etiquetas claramente visíveis em cada porta.
-Ao lado, uma tomada de rede com uma etiqueta correspondente. Uma linha
-visual fina e contínua liga a etiqueta do painel à etiqueta da tomada,
-indicando que a identificação é a mesma nos dois pontos.
+ZONA DA DIREITA — teste de aceitação: mostre um certificador de cabo portátil,
+aparelho de mão com visor e dois conectores, ligado por um cabo de par trançado
+a um módulo remoto menor na outra ponta do enlace. Um símbolo de aprovado
+(quadro com tique) no visor. A topologia do teste deve estar correta: um
+módulo em cada ponta do trecho testado.
 
-À direita, um certificador de cabo (aparelho de teste de rede, com visor
-pequeno e dois conectores) conectado a um dos lados de um trecho de cabo de
-par trançado, com o cabo passando por uma canaleta. No visor, um símbolo
-sinalizando aprovação do teste.
-
-A cena transmite: rotulagem consistente nos dois extremos e medição real do
-enlace com equipamento de teste.
-
-Sem texto, exceto rótulos curtos e pequenos nas etiquetas.
+REGRAS IMPORTANTES:
+- NÃO escreva NENHUMA palavra, letra, número ou rótulo na imagem, nem no
+  visor, nem nas etiquetas, nem nas portas. Nenhum texto em nenhum idioma.
+- NÃO mostre números de porta impressos. A identificação é sempre por cor.
+- Conectores do painel e da tomada são RJ45 de COBRE. Não desenhe conectores
+  ópticos (LC ou SC) em nenhum ponto.
+- Um cabo de par trançado tem dois condutores: uma ponta em cada módulo. Não
+  deixe nenhum conector solto no ar.
+- Sem pessoas, sem rostos, sem logotipos de terceiros, sem desfoque de
+  profundidade de campo. Alta resolução.
 ```
 
 ---
