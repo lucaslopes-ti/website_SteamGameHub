@@ -54,6 +54,8 @@ As imagens ficam em `images/` e são referenciadas no front matter das unidades
 | `subsistemas_rack_patch_panel.jpg` | `subsistemas-04` | Rack com patch panel, switches e patch cords |
 | `subsistemas_horizontal_90m.jpg` | `subsistemas-05` | Trecho horizontal do rack até a tomada e a cota de distância |
 | `subsistemas_area_trabalho.jpg` | `subsistemas-06` | Tomada, patch cord de manobra e equipamento do usuário |
+| `subsistemas_plenum_riser.jpg` | `subsistemas-07` | Comparação plenum x riser e o cabo não permitido |
+| `subsistemas_rotulagem_certificador.jpg` | `subsistemas-08` | Identificação nas duas pontas e teste com certificador |
 
 Prompts prontos para gerar as imagens do capítulo 15 no Gemini estão em
 `images/SUBSISTEMAS_PENDING.md`; o manifesto `images/PENDING.md` mantém as

@@ -16,6 +16,9 @@ references:
     url: "https://tiaonline.org/what-we-do/standards/"
   - label: "ISO/IEC 11801 — Cabeamento genérico"
     url: "https://www.iso.org/standard/66182.html"
+images:
+  - alt: "Comparação em corte de dois espaços de instalação de cabo. À esquerda, o plenum: forro falso com duto de ventilação e grelha de ar, um feixe de cabo azul e um cabo comum de capa amarela sob um símbolo de proibição. À direita, o shaft de riser atravessando duas lajes, com cabos sobre esteira e colar de vedação corta-fogo em cada laje, e um cabo verde. O código de cores é azul no plenum, verde no riser e amarelo no cabo não permitido."
+    src: "subsistemas_plenum_riser.jpg"
 challenge:
   kind: quiz
   instruction: "Responda às perguntas sobre classificação de cabos e espaços."

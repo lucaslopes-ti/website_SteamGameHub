@@ -1,13 +1,12 @@
 # Imagens do capítulo 15 — prompts prontos para o Gemini
 
-> **Status:** parcial. Três das sete imagens já foram geradas e estão ligadas no
-> front matter das respectivas unidades. As quatro restantes seguem pendentes:
-> não são referenciadas por nenhuma lição, porque o build falha com "Imagem
-> não encontrada" quando o arquivo não está em `images/`.
+> **Status:** concluído. As sete imagens foram geradas, revisadas e estão
+> ligadas no front matter das respectivas unidades.
 >
-> **Como usar:** gere uma imagem por prompt, salve com o nome exato indicado
-> em "Convenção de nomes" e me avise. Eu ligo o bloco `images:` no front
-> matter de cada lição, rodo a validação e faço o commit.
+> As imagens das lições 07 e 08 passaram por uma regeneração: a primeira
+> geração tinha defeitos que atingiam o conceito ensinado na aula. Os prompts
+> corrigidos estão nas seções 6 e 7, marcadas como "REGENERAR". Eles
+> funcionaram, mas ainda valem para quem quiser refazer.
 
 **Já geradas e ligadas**
 
@@ -19,31 +18,11 @@
 | `subsistemas_horizontal_90m.jpg` | `subsistemas-05` | Texto correto e legível. Não tem canaleta de piso nem folga em espiral; o `alt` omite ambos |
 | `subsistemas_area_trabalho.jpg` | `subsistemas-06` | Sem texto. O conector aparece solto ao lado da tomada; o `alt` fala em "posição de conexão" |
 
-**Reprovadas na revisão — regenerar**
+| `subsistemas_area_trabalho.jpg` | `subsistemas-06` | Sem texto. O conector aparece solto ao lado da tomada; o `alt` fala em "posição de conexão" |
+| `subsistemas_plenum_riser.jpg` | `subsistemas-07` | Regenerada. Pseudo-texto e corte transversal eliminados. Sem texto nenhum; o `alt` traduz o código de cores (azul plenum, verde riser, amarelo proibido) |
+| `subsistemas_rotulagem_certificador.jpg` | `subsistemas-08` | Regenerada. Pseudo-texto e numeração de portas eliminados. O `alt` declara o texto "IDA#107" na tomada e o conector ainda solto |
 
-As duas imagens abaixo foram geradas, mas ficaram fora do front matter porque
-os defeitos atingem justamente o conceito que a aula ensina:
-
-| Arquivo | Lição | Motivo |
-|---|---|---|
-| `subsistemas_plenum_riser.jpg` | `subsistemas-07` | Pseudo-texto em 6+ rótulos (`CREÑO`, `HIGIV`, `SMCK`, `MIGH`). Pior: o corte transversal do cabo mostra um único condutor grosso, parecendo cabo de energia em vez dos 4 pares de um UTP |
-| `subsistemas_rotulagem_certificador.jpg` | `subsistemas-08` | Pseudo-texto em 4 rótulos (`PAICK DE`, `IDENTIFÃO`, `TESTTATIL`) e numeração de portas duplicada e incorreta — em uma lição sobre identificação correta, é um defeito que se anula a si mesmo |
-
-**Ainda pendentes**
-
-Nenhuma: as sete imagens foram geradas.
-
-### Ajustes para as regenerações
-
-1. Peça **"sem texto embutido na imagem"**. Os rótulos serão aplicados depois
-   como legenda da lição. Texto pequeno é a origem de quase todo pseudo-texto.
-2. Peça **poucos rótulos grandes**, se quiser rótulos. Rótulo pequeno e
-   repetido é o pior caso para o gerador.
-3. Na lição 07, **não peça corte transversal do cabo**. Se precisar mostrar a
-   diferença entre produtos, peça os dois cabos inteiros lado a lado.
-4. Se o conceito depender de conectores, **escreva o tipo explicitamente**
-   ("conector óptico LC", "RJ45 de cobre com 8 pinos visíveis"). Ambíguo
-   demais sai errado.
+**Nada pendente:** as sete imagens estão ligadas.
 
 A `subsistemas-01` **já tem** imagem (`cabeamento_seis_subsistemas.jpg`) e
 não aparece aqui.

@@ -16,6 +16,9 @@ references:
     url: "https://www.flukenetworks.com/knowledge-base"
   - label: "ANSI/TIA — Standards"
     url: "https://tiaonline.org/what-we-do/standards/"
+images:
+  - alt: "Cena de identificação e teste de rede. À esquerda, o painel patch com um marcador amarelo em uma das portas e as demais faixas de etiqueta em branco. No centro, a tomada de parede com uma pequena etiqueta, ligada ao marcador do painel por um filete fino e contínuo. À direita, o certificador de cabo portátil com um tique verde no visor e um conector RJ45 ainda solto no fim do cabo."
+    src: "subsistemas_rotulagem_certificador.jpg"
 challenge:
   kind: quiz
   instruction: "Responda às perguntas sobre rotas, identificação e aceitação."
