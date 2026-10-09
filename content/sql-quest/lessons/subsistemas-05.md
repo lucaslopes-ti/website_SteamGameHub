@@ -16,6 +16,9 @@ references:
     url: "https://tiaonline.org/what-we-do/standards/"
   - label: "Fluke Networks — Cable testing and certification"
     url: "https://www.flukenetworks.com/knowledge-base"
+images:
+  - alt: "Corte de um pavimento: o rack à esquerda, o cabo azul subindo por bandeja suspensa no forro e atravessando até a sala de escritório à direita, onde termina na tomada de rede da parede; na base, uma linha de cota indica a distância máxima do cabeamento horizontal."
+    src: "subsistemas_horizontal_90m.jpg"
 challenge:
   kind: quiz
   instruction: "Responda às perguntas sobre o trecho horizontal e seus limites."

@@ -49,6 +49,11 @@ As imagens ficam em `images/` e são referenciadas no front matter das unidades
 | `cabeamento_pinagem_t568.jpg` | `cabeamento-04` | Conectores 8P8C e pinagem T568A/T568B |
 | `cabeamento_fibra_optica.jpg` | `cabeamento-05` | Fibra óptica monomodo x multimodo |
 | `cabeamento_seis_subsistemas.jpg` | `cabeamento-08`, `subsistemas-01` | Os seis subsistemas em corte de edifício |
+| `subsistemas_entrada_sala_equipamentos.jpg` | `subsistemas-02` | Entrada da operadora e sala de equipamentos |
+| `subsistemas_backbone_mmr_shaft.jpg` | `subsistemas-03` | Cabeamento vertical ligando MMR e sala de telecom |
+| `subsistemas_rack_patch_panel.jpg` | `subsistemas-04` | Rack com patch panel, switches e patch cords |
+| `subsistemas_horizontal_90m.jpg` | `subsistemas-05` | Trecho horizontal do rack até a tomada e a cota de distância |
+| `subsistemas_area_trabalho.jpg` | `subsistemas-06` | Tomada, patch cord de manobra e equipamento do usuário |
 
 Prompts prontos para gerar as imagens do capítulo 15 no Gemini estão em
 `images/SUBSISTEMAS_PENDING.md`; o manifesto `images/PENDING.md` mantém as

@@ -16,6 +16,9 @@ references:
     url: "https://tiaonline.org/what-we-do/standards/"
   - label: "ISO/IEC 11801 — Cabeamento genérico"
     url: "https://www.iso.org/standard/66182.html"
+images:
+  - alt: "Corte de um edifício de quatro pavimentos: MMR com dois racks no térreo, sala de telecomunicações no terceiro andar e cabos de par trançado e de fibra subindo pelo shaft vertical entre os dois pontos de distribuição."
+    src: "subsistemas_backbone_mmr_shaft.jpg"
 challenge:
   kind: quiz
   instruction: "Responda às perguntas sobre backbone e caminhos do edifício."

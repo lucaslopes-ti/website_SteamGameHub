@@ -16,6 +16,9 @@ references:
     url: "https://tiaonline.org/what-we-do/standards/"
   - label: "Cisco — Networking Basics"
     url: "https://www.netacad.com/courses/networking-basics"
+images:
+  - alt: "Rack de 19 polegadas visto de frente, com painel patch e switches no topo e cordões de manobra azuis organizados em curvas suaves, gerenciadores horizontais e uma PDU com no-break na base."
+    src: "subsistemas_rack_patch_panel.jpg"
 challenge:
   kind: quiz
   instruction: "Responda às perguntas sobre a sala de telecomunicações e sua organização."

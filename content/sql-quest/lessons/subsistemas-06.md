@@ -16,6 +16,9 @@ references:
     url: "https://tiaonline.org/what-we-do/standards/"
   - label: "Cisco — Networking Basics"
     url: "https://www.netacad.com/courses/networking-basics"
+images:
+  - alt: "Área de trabalho: tomada de rede na parede com jack keystone e placa de rosto, patch cord de manobra azul em curva larga descendo sobre a mesa até o notebook, e ao lado um painel de detalhe com a tomada e a porta de rede do equipamento."
+    src: "subsistemas_area_trabalho.jpg"
 challenge:
   kind: quiz
   instruction: "Responda às perguntas sobre os componentes da área de trabalho."

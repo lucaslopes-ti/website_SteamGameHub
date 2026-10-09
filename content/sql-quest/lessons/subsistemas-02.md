@@ -16,6 +16,9 @@ references:
     url: "https://tiaonline.org/what-we-do/standards/"
   - label: "ISO/IEC 11801 — Cabeamento genérico"
     url: "https://www.iso.org/standard/66182.html"
+images:
+  - alt: "Corte do térreo de um edifício: à esquerda, o cabo do serviço da operadora chegando pelo exterior e passando por uma caixa de proteção aterrada; à direita, a sala de equipamentos com o rack e os eletrodutos de alimentação."
+    src: "subsistemas_entrada_sala_equipamentos.jpg"
 challenge:
   kind: quiz
   instruction: "Responda às perguntas sobre a entrada e a sala de equipamentos."
