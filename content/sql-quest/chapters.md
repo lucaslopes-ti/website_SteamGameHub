@@ -57,6 +57,10 @@ chapters:
     slug: packet-tracer
     title: "Cisco Packet Tracer: primeiros passos"
     description: "Sua primeira aula no Cisco Packet Tracer: conheça o simulador, adicione computadores e cabos, configure endereços IPv4 e máscaras de sub-rede e teste a comunicação entre dois PCs com o comando ping."
+  - number: 15
+    slug: subsistemas
+    title: "Os seis subsistemas do cabeamento estruturado"
+    description: "Aprofundamento dos seis subsistemas da ANSI/TIA-568: entrada do edifício, sala de equipamentos, cabeamento vertical com MMR e shaft, sala de telecomunicações, cabeamento horizontal com seus limites de distância e a área de trabalho — incluindo meios e rotas (plenum, closed riser, CPR), rotulagem, pathways e teste de aceitação."
 ---
 
 # Capítulos da SQL Quest

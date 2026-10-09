@@ -246,13 +246,13 @@ describe("computeTotalXp — deriva XP do catálogo", () => {
     expect(computeTotalXp([])).toBe(0);
   });
 
-  it("soma integral do catálogo reflete as 111 unidades (3396)", () => {
+  it("soma integral do catálogo reflete as 120 unidades (3716)", () => {
     // O total é apenas a soma das recompensas das lições ativas do catálogo;
     // os limiares de nível, conquistas e loja são constantes calibradas e não
     // são recalculados quando o currículo cresce.
     const total = lessons.reduce((acc, l) => acc + l.xpReward, 0);
-    expect(total).toBe(3396);
-    expect(computeTotalXp(lessons.map((l) => l.id))).toBe(3396);
+    expect(total).toBe(3716);
+    expect(computeTotalXp(lessons.map((l) => l.id))).toBe(3716);
   });
 
   it("distribuição de XP por lição reflete o catálogo atual", () => {
@@ -260,7 +260,7 @@ describe("computeTotalXp — deriva XP do catálogo", () => {
     for (const lesson of lessons) {
       counts[lesson.xpReward] = (counts[lesson.xpReward] ?? 0) + 1;
     }
-    expect(counts).toEqual({ 20: 14, 21: 7, 25: 1, 28: 38, 34: 24, 35: 7, 40: 1, 41: 19 });
+    expect(counts).toEqual({ 20: 15, 21: 7, 25: 1, 28: 38, 30: 1, 34: 24, 35: 11, 40: 3, 41: 19, 50: 1 });
     const unitSum = Object.values(counts).reduce((acc, n) => acc + n, 0);
     expect(unitSum).toBe(lessons.length);
   });

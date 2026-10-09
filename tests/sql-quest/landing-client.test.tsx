@@ -68,7 +68,7 @@ beforeEach(() => {
 });
 
 describe("LandingClient — cards de capítulos independentes", () => {
-  it("libera os links de 12, 13 e 14 e mantém 2–11 bloqueados sem progresso", async () => {
+  it("libera os links de 12, 13, 14 e 15 e mantém 2–11 bloqueados sem progresso", async () => {
     const { container } = render(<LandingClient />);
 
     // Aguarda progresso e ranking carregarem (evita atualizações fora do act).
@@ -78,7 +78,7 @@ describe("LandingClient — cards de capítulos independentes", () => {
       ).toBeInTheDocument()
     );
 
-    for (const number of [1, 12, 13, 14]) {
+    for (const number of [1, 12, 13, 14, 15]) {
       const link = container.querySelector(
         `a[href="/sql-quest/learn/${number}"]`
       );
@@ -92,7 +92,7 @@ describe("LandingClient — cards de capítulos independentes", () => {
       ).toBeNull();
     }
 
-    expect(screen.getAllByText("Explorar capítulo").length).toBe(4);
+    expect(screen.getAllByText("Explorar capítulo").length).toBe(5);
     expect(screen.getAllByText("Complete o anterior").length).toBe(10);
   });
 });

@@ -30,16 +30,16 @@ import {
 
 describe("catálogo — capítulos", () => {
   it("define exatamente os capítulos esperados", () => {
-    expect(totalChapters).toBe(14);
-    expect(getChapterCount()).toBe(14);
+    expect(totalChapters).toBe(15);
+    expect(getChapterCount()).toBe(15);
   });
 
   it("está ordenado por número e tem metadados completos", () => {
     // A trilha preserva os números históricos dos capítulos; com a expansão,
-    // a sequência atual vai de 1 a 14 sem lacunas (11 SQL + 12-14 redes e
-    // simulação).
+    // a sequência atual vai de 1 a 15 sem lacunas (11 SQL + 12-15 redes,
+    // cabeamento estruturado, simulação e subsistemas).
     expect(chapters.map((c) => c.number)).toEqual([
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
     ]);
     expect(chapters.map((c) => c.slug)).toEqual([
       "select",
@@ -56,6 +56,7 @@ describe("catálogo — capítulos", () => {
       "redes",
       "cabeamento",
       "packet-tracer",
+      "subsistemas",
     ]);
     for (const chapter of chapters) {
       expect(chapter.slug).toBeTruthy();
@@ -77,8 +78,8 @@ describe("catálogo — capítulos", () => {
 });
 
 describe("catálogo — lições", () => {
-  it("tem 111 lições (7+10+8+13+11+6+9+5+11+10+5+6+9+1)", () => {
-    expect(totalLessons).toBe(111);
+  it("tem 120 lições (7+10+8+13+11+6+9+5+11+10+5+6+9+1+9)", () => {
+    expect(totalLessons).toBe(120);
     expect(getLessonCount()).toBe(totalLessons);
     expect(getLessonsPerChapter()).toEqual({
       1: 7,
@@ -95,6 +96,7 @@ describe("catálogo — lições", () => {
       12: 6,
       13: 9,
       14: 1,
+      15: 9,
     });
   });
 
@@ -245,12 +247,13 @@ describe("catálogo — lições", () => {
   });
 });
 
-describe("catálogo — capítulos independentes (12/13/14)", () => {
-  it("identifica 12, 13 e 14 como capítulos independentes", () => {
-    expect(independentChapterNumbers).toEqual([12, 13, 14]);
+describe("catálogo — capítulos independentes (12/13/14/15)", () => {
+  it("identifica 12, 13, 14 e 15 como capítulos independentes", () => {
+    expect(independentChapterNumbers).toEqual([12, 13, 14, 15]);
     expect(isIndependentChapter(12)).toBe(true);
     expect(isIndependentChapter(13)).toBe(true);
     expect(isIndependentChapter(14)).toBe(true);
+    expect(isIndependentChapter(15)).toBe(true);
     expect(isIndependentChapter(1)).toBe(false);
     expect(isIndependentChapter(11)).toBe(false);
     expect(isIndependentChapter(99)).toBe(false);
@@ -260,6 +263,7 @@ describe("catálogo — capítulos independentes (12/13/14)", () => {
     expect(getChapterEntryLesson(12)?.id).toBe("redes-01");
     expect(getChapterEntryLesson(13)?.id).toBe("cabeamento-01");
     expect(getChapterEntryLesson(14)?.id).toBe("packet-tracer-01");
+    expect(getChapterEntryLesson(15)?.id).toBe("subsistemas-01");
     expect(getChapterEntryLesson(1)?.id).toBe("select-01");
     expect(getChapterEntryLesson(99)).toBeNull();
   });
@@ -296,7 +300,8 @@ describe("catálogo — navegação", () => {
     expect(getNextLesson(11, 5)?.id).toBe("redes-01");
     expect(getNextLesson(12, 6)?.id).toBe("cabeamento-01");
     expect(getNextLesson(13, 9)?.id).toBe("packet-tracer-01");
-    expect(getNextLesson(14, 1)).toBeNull();
+    expect(getNextLesson(14, 1)?.id).toBe("subsistemas-01");
+    expect(getNextLesson(15, 9)).toBeNull();
   });
 
   it("getPreviousLesson atravessa a fronteira entre capítulos", () => {
