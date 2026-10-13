@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Star, Download, Sparkles, User } from "lucide-react";
 import { Game } from "@/lib/games";
 import FavoriteButton from "@/components/FavoriteButton";
+import GameCoverFallback from "@/components/GameCoverFallback";
 import type { MouseEvent } from "react";
 import { useI18n } from "./I18nProvider";
 
@@ -65,14 +66,14 @@ export default function GameCard({ game, variant = "default" }: Readonly<GameCar
     );
   } else {
     mediaContent = (
-      <div className="w-full h-full flex items-center justify-center bg-senai-blueDark text-gray-400" role="img" aria-label={`${game.title} - ${t("game.noCoverImageAvailable")}`}>
-        <span className="sr-only">{t("game.noCoverImageAvailable")}</span>
-        <span aria-hidden="true" className="text-xs">{t("game.noImage")}</span>
+      <div className="w-full h-full" role="img" aria-label={`${game.title} - ${t("game.noCoverImageAvailable")}`}>
+        <GameCoverFallback title={game.title} />
       </div>
     );
   }
 
   const isNew = isNewGame(game.releaseDate);
+  const compact = variant === "compact";
 
   return (
     <article className="game-card group cursor-pointer h-full flex flex-col animate-fadeIn">
@@ -128,9 +129,9 @@ export default function GameCard({ game, variant = "default" }: Readonly<GameCar
         </div>
 
         {/* Body */}
-        <div className="p-4 space-y-3 flex-1 flex flex-col">
+        <div className={`${compact ? "p-3 sm:p-4 space-y-2 sm:space-y-3" : "p-4 space-y-3"} flex-1 flex flex-col`}>
           <div>
-            <h3 className="font-display font-semibold text-base leading-tight line-clamp-1 group-hover:text-senai-orange transition-colors text-white">
+            <h3 className={`font-display font-semibold ${compact ? "text-sm sm:text-base" : "text-base"} leading-tight line-clamp-1 group-hover:text-senai-orange transition-colors text-white`}>
               {game.title}
             </h3>
             <div className="flex items-center gap-1 text-xs text-gray-400 mt-0.5 line-clamp-1">
@@ -144,21 +145,22 @@ export default function GameCard({ game, variant = "default" }: Readonly<GameCar
             </p>
           )}
 
-          <div className="flex items-center justify-between pt-3 mt-auto border-t border-white/10">
-            <div className="flex flex-wrap gap-1">
-              {game.genres.slice(0, 2).map((g) => (
+          <div className="flex items-center justify-between gap-2 pt-3 mt-auto border-t border-white/10">
+            <div className="flex flex-wrap gap-1 min-w-0">
+              {game.genres.slice(0, compact ? 1 : 2).map((g) => (
                 <span
                   key={g}
-                  className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-white/5 text-gray-400 border border-white/10"
+                  className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-white/5 text-gray-300 border border-white/10 truncate"
                 >
                   {g}
                 </span>
               ))}
             </div>
             {game.totalRatings > 0 && (
-              <div className="flex items-center gap-1 text-[11px] font-mono text-gray-400">
-                <Star className="w-3 h-3" />
-                {game.totalRatings} avaliações
+              <div className="flex shrink-0 items-center gap-1 text-[11px] text-gray-400 tabular-nums">
+                <Star className="w-3 h-3" aria-hidden="true" />
+                {game.totalRatings}
+                <span className={compact ? "sr-only sm:not-sr-only" : ""}>avaliações</span>
               </div>
             )}
           </div>

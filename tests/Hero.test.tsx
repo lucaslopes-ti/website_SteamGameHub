@@ -16,7 +16,7 @@ jest.mock("next/link", () => {
   );
 });
 
-// Mock do fetch para API de jogos
+// Jogos aprovados recebidos da página inicial
 const mockGames = [
   {
     id: "1",
@@ -48,20 +48,14 @@ const mockGames = [
     rating: 3.5,
     totalRatings: 5,
   },
-];
+] as unknown as Game[];
 
-global.fetch = jest.fn(() =>
-  Promise.resolve({
-    json: () => Promise.resolve(mockGames),
-  })
-) as jest.Mock;
-
+import type { Game } from "@/lib/games";
 import Hero from "@/components/Hero";
 
 describe("Hero", () => {
   beforeEach(() => {
     jest.useFakeTimers();
-    (global.fetch as jest.Mock).mockClear();
   });
 
   afterEach(() => {
@@ -69,40 +63,37 @@ describe("Hero", () => {
   });
 
   it("renderiza o título principal SENAI Game Hub", () => {
-    render(<Hero />);
+    render(<Hero games={mockGames} totalViews={1200} totalDownloads={340} />);
     expect(screen.getByText("SENAI")).toBeInTheDocument();
     expect(screen.getByText("Game Hub")).toBeInTheDocument();
   });
 
   it("renderiza os botões de ação", () => {
-    render(<Hero />);
+    render(<Hero games={mockGames} totalViews={1200} totalDownloads={340} />);
     expect(screen.getByText("Explorar jogos")).toBeInTheDocument();
     expect(screen.getByText("Enviar meu jogo")).toBeInTheDocument();
   });
 
   it("renderiza os cards de estatísticas", () => {
-    render(<Hero />);
-    expect(screen.getByText("Avaliação média")).toBeInTheDocument();
+    render(<Hero games={mockGames} totalViews={1200} totalDownloads={340} />);
     expect(screen.getByText("Jogos publicados")).toBeInTheDocument();
     expect(screen.getByText("Desenvolvedores")).toBeInTheDocument();
-    expect(screen.getByText("Avaliações")).toBeInTheDocument();
+    expect(screen.getByText("Visualizações")).toBeInTheDocument();
+    expect(screen.getByText("Downloads")).toBeInTheDocument();
   });
 
   it("renderiza o badge 'Aberto a todos os alunos SENAI'", () => {
-    render(<Hero />);
+    render(<Hero games={mockGames} totalViews={1200} totalDownloads={340} />);
     expect(screen.getByText("Aberto a todos os alunos SENAI")).toBeInTheDocument();
   });
 
-  it("faz fetch dos jogos ao montar", () => {
-    render(<Hero />);
-    expect(global.fetch).toHaveBeenCalledWith("/api/games?approved=true");
+  it("destaca o jogo com melhor média ponderada", () => {
+    render(<Hero games={mockGames} totalViews={0} totalDownloads={0} />);
+    expect(screen.getByText("Space Adventure")).toBeInTheDocument();
   });
 
   it("mostra 'Projeto em destaque' quando não há jogos carregados", () => {
-    (global.fetch as jest.Mock).mockImplementationOnce(() =>
-      Promise.resolve({ json: () => Promise.resolve([]) })
-    );
-    render(<Hero />);
+    render(<Hero games={[]} totalViews={0} totalDownloads={0} />);
     expect(screen.getByText("Projeto em destaque")).toBeInTheDocument();
   });
 });
