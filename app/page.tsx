@@ -7,14 +7,10 @@ import {
   ArrowRight,
   Award,
   Cpu,
-  Download,
-  Eye,
-  Gamepad2,
   GraduationCap,
   Search,
   SearchX,
   SlidersHorizontal,
-  Tags,
   Upload,
   Users,
   X,
@@ -142,7 +138,7 @@ export default function Home() {
   // Clique num gênero popular filtra o catálogo e leva o usuário até o resultado
   const handlePopularGenre = (gen: string) => {
     toggleGenre(gen);
-    const reduceMotion = globalThis.window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduceMotion = globalThis.window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
     catalogRef.current?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
   };
 
@@ -181,13 +177,6 @@ export default function Home() {
   const activeFilterCount = (query.trim() ? 1 : 0) + selectedGenres.length + selectedTechs.length;
   const hasActiveFilters = activeFilterCount > 0;
 
-  const impactItems = [
-    { icon: Gamepad2, value: games.length, label: "Jogos publicados", color: "text-[var(--primary-text)]" },
-    { icon: Eye, value: totalViews, label: "Visualizações", color: "text-[var(--secondary)]" },
-    { icon: Download, value: totalDownloads, label: "Downloads", color: "text-[var(--primary-container-text)]" },
-    { icon: Tags, value: uniqueGenres.length, label: "Gêneros", color: "text-[var(--secondary)]" },
-  ];
-
   const aboutItems = [
     { icon: GraduationCap, title: "Curso Técnico", text: "Focado em Programação de Jogos Digitais com a excelência SENAI." },
     { icon: Cpu, title: "Tecnologia diversa", text: "Projetos em Unity, Unreal, Godot e linguagens nativas." },
@@ -224,7 +213,7 @@ export default function Home() {
 
   return (
     <div className="bg-[var(--surface)] text-[var(--on-surface)]">
-      <Hero />
+      <Hero games={games} totalViews={totalViews} totalDownloads={totalDownloads} />
 
       {loading ? (
         <section className={`${CONTAINER} ${SECTION_Y}`} aria-busy="true" aria-label="Carregando jogos">
@@ -232,32 +221,6 @@ export default function Home() {
         </section>
       ) : (
         <>
-          <section aria-labelledby="impacto-title" className={`${CONTAINER} ${SECTION_Y} flex flex-col gap-8`}>
-            <SectionHeader
-              id="impacto-title"
-              eyebrow="Em números"
-              title="Impacto do Hub"
-              description="O alcance dos projetos criados pelos alunos SENAI."
-            />
-            {/* "!" vence a regra global de .grid no mobile (globals.css), mantendo 2 colunas */}
-            <dl className="grid !grid-cols-2 lg:!grid-cols-4 gap-4 md:gap-6">
-              {impactItems.map(({ icon: Icon, value, label, color }) => (
-                <div
-                  key={label}
-                  className="rounded-2xl border border-[var(--outline-variant)]/60 bg-[var(--surface-container)] p-5 md:p-6 flex flex-col gap-3 transition-colors hover:border-[var(--primary-text)]/40"
-                >
-                  <Icon className={`w-6 h-6 ${color}`} strokeWidth={2} aria-hidden="true" />
-                  <dt className="order-3 text-xs font-semibold uppercase tracking-wider text-[var(--on-surface-variant)]">
-                    {label}
-                  </dt>
-                  <dd className={`order-2 text-3xl md:text-4xl font-bold tabular-nums ${color}`}>
-                    {value.toLocaleString(locale)}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </section>
-
           <TopRatedGames games={games} />
 
           {popularGenres.length > 0 && (
@@ -447,7 +410,7 @@ export default function Home() {
               >
                 {uniqueGenres.length > 0 && (
                   <fieldset>
-                    <legend className="text-xs font-semibold uppercase tracking-wider text-[var(--on-surface-variant)] mb-3">
+                    <legend className="text-sm font-semibold text-[var(--on-surface)] mb-3">
                       {t("home.genres")}
                     </legend>
                     <div className="flex flex-wrap gap-2">
@@ -471,7 +434,7 @@ export default function Home() {
                 )}
                 {uniqueTechs.length > 0 && (
                   <fieldset>
-                    <legend className="text-xs font-semibold uppercase tracking-wider text-[var(--on-surface-variant)] mb-3">
+                    <legend className="text-sm font-semibold text-[var(--on-surface)] mb-3">
                       {t("home.technologies")}
                     </legend>
                     <div className="flex flex-wrap gap-2">
@@ -497,7 +460,7 @@ export default function Home() {
             )}
 
             {recentGames.length > 0 ? (
-              <div className="grid grid-cols-1 min-[480px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              <div className="grid !grid-cols-2 md:!grid-cols-3 lg:!grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                 {recentGames.map((game) => (
                   <GameCard key={game.id} game={game} variant="compact" />
                 ))}

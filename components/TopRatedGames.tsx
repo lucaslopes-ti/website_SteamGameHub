@@ -50,11 +50,14 @@ export default function TopRatedGames({ games }: Readonly<TopRatedGamesProps>) {
           <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
         </Link>
       </div>
-      <div className="grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+      {/* Celular: faixa com rolagem lateral; a partir de sm: grade */}
+      <ul className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:!grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:!grid-cols-4 md:gap-6">
         {topRated.map((game) => (
-          <GameCard key={game.id} game={game} />
+          <li key={game.id} className="w-[72%] shrink-0 snap-start sm:w-auto">
+            <GameCard game={game} />
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 }

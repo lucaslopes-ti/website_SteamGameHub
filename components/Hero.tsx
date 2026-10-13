@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
-  BarChart3,
   ChevronLeft,
   ChevronRight,
+  Download,
+  Eye,
   Gamepad2,
   Play,
   Sparkles,
@@ -14,6 +15,8 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
+import { Game } from "@/lib/games";
+import GameCoverFallback from "@/components/GameCoverFallback";
 
 function useAnimatedCounter(target: number, duration = 2000, decimals = 0) {
   const [count, setCount] = useState(0);
@@ -42,16 +45,13 @@ function useAnimatedCounter(target: number, duration = 2000, decimals = 0) {
   return count;
 }
 
-export default function Hero() {
-  const [stats, setStats] = useState({
-    totalGames: 0,
-    totalAuthors: 0,
-    avgRating: 0,
-    totalRatings: 0,
-  });
+interface HeroProps {
+  games: Game[];
+  totalViews: number;
+  totalDownloads: number;
+}
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [topGames, setTopGames] = useState<any[]>([]);
+export default function Hero({ games, totalViews, totalDownloads }: Readonly<HeroProps>) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   // Pausa a rotação automática enquanto o usuário interage (WCAG 2.2.2)
@@ -59,57 +59,27 @@ export default function Hero() {
   const heroRef = useRef<HTMLElement>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const animatedGames = useAnimatedCounter(stats.totalGames, 1500);
-  const animatedAuthors = useAnimatedCounter(stats.totalAuthors, 1800);
-  const animatedRating = useAnimatedCounter(stats.avgRating, 2200, 1);
-  const animatedRatings = useAnimatedCounter(stats.totalRatings, 2000);
+  const approved = useMemo(() => games.filter((g) => g.approved), [games]);
+  const totalAuthors = useMemo(() => new Set(approved.map((g) => g.authorEmail)).size, [approved]);
 
-  useEffect(() => {
-    fetch("/api/games?approved=true")
-      .then((res) => res.json())
-      .then((games) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const approved = games.filter((g: any) => g.approved);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const uniqueAuthors = new Set(approved.map((g: any) => g.authorEmail));
-        const avgRating =
-          approved.length > 0
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ? approved.reduce((sum: number, g: any) => sum + (g.rating || 0), 0) /
-              approved.length
-            : 0;
-        const totalRatings = approved.reduce(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (sum: number, g: any) => sum + (g.totalRatings || 0),
-          0
-        );
+  // Destaques: média bayesiana (evita que 1 voto 5★ passe na frente de jogos bem avaliados por muitos)
+  const topGames = useMemo(() => {
+    if (approved.length === 0) return [];
+    const m = 3;
+    const C = approved.reduce((sum, g) => sum + (g.rating || 0), 0) / approved.length;
+    const getScore = (g: Game) => {
+      const v = g.totalRatings || 0;
+      const R = g.rating || 0;
+      if (v === 0) return 0;
+      return (v * R + m * C) / (v + m);
+    };
+    return [...approved].sort((a, b) => getScore(b) - getScore(a)).slice(0, 5);
+  }, [approved]);
 
-        setStats({
-          totalGames: approved.length,
-          totalAuthors: uniqueAuthors.size,
-          avgRating: avgRating,
-          totalRatings,
-        });
-
-        if (approved.length > 0) {
-          const m = 3;
-          const C = avgRating || 0;
-
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const getScore = (g: any) => {
-            const v = g.totalRatings || 0;
-            const R = g.rating || 0;
-            if (v === 0) return 0;
-            return (v * R + m * C) / (v + m);
-          };
-
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const sorted = [...approved].sort((a: any, b: any) => getScore(b) - getScore(a));
-          setTopGames(sorted.slice(0, 5));
-        }
-      })
-      .catch(() => {});
-  }, []);
+  const animatedGames = useAnimatedCounter(approved.length, 1500);
+  const animatedAuthors = useAnimatedCounter(totalAuthors, 1800);
+  const animatedViews = useAnimatedCounter(totalViews, 2200);
+  const animatedDownloads = useAnimatedCounter(totalDownloads, 2000);
 
   // Troca com transição suave (fade out → troca → fade in)
   const goToIndex = useCallback(
@@ -144,7 +114,7 @@ export default function Hero() {
   // Auto-rotação a cada 5 segundos (desligada com movimento reduzido ou em pausa)
   useEffect(() => {
     if (topGames.length <= 1 || isPaused) return;
-    if (globalThis.window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (globalThis.window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
     timerRef.current = setInterval(() => {
       goNext();
     }, 5000);
@@ -170,40 +140,14 @@ export default function Hero() {
 
   const topGame = topGames[currentIndex] || null;
 
-  const ratingValue = stats.avgRating > 0 ? animatedRating.toFixed(1) : "-";
-  const ratingSuffix = stats.avgRating > 0 ? "/ 5" : "";
   const locale = "pt-BR";
 
+  // Único lugar da home com os números do Hub
   const statsItems = [
-    {
-      icon: Star,
-      value: ratingValue,
-      suffix: ratingSuffix,
-      label: "Avaliação média",
-      ring: "ring-senai-orange/40",
-      iconColor: "text-senai-orange",
-    },
-    {
-      icon: Gamepad2,
-      value: Math.round(animatedGames).toLocaleString(locale),
-      label: "Jogos publicados",
-      ring: "ring-senai-blueLight/40",
-      iconColor: "text-senai-blueLight",
-    },
-    {
-      icon: Users,
-      value: Math.round(animatedAuthors).toLocaleString(locale),
-      label: "Desenvolvedores",
-      ring: "ring-emerald-400/40",
-      iconColor: "text-emerald-300",
-    },
-    {
-      icon: BarChart3,
-      value: Math.round(animatedRatings).toLocaleString(locale),
-      label: "Avaliações",
-      ring: "ring-yellow-400/40",
-      iconColor: "text-yellow-300",
-    },
+    { icon: Gamepad2, value: animatedGames, label: "Jogos publicados", iconColor: "text-senai-blueLight" },
+    { icon: Users, value: animatedAuthors, label: "Desenvolvedores", iconColor: "text-senai-orange" },
+    { icon: Eye, value: animatedViews, label: "Visualizações", iconColor: "text-senai-blueLight" },
+    { icon: Download, value: animatedDownloads, label: "Downloads", iconColor: "text-senai-orange" },
   ];
 
   return (
@@ -213,7 +157,7 @@ export default function Hero() {
       <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-senai-blueLight/20 rounded-full blur-[120px]" />
       <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] bg-senai-orange/20 rounded-full blur-[140px]" />
 
-      <div className="container mx-auto px-6 sm:px-8 pt-16 pb-24 md:pt-24 md:pb-32 relative">
+      <div className="container mx-auto px-6 sm:px-8 pt-12 pb-16 md:pt-20 md:pb-24 relative">
         <div className="grid lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-7 space-y-7">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-xs font-mono uppercase tracking-[0.2em] text-senai-orange">
@@ -236,14 +180,14 @@ export default function Hero() {
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <Link
                 href="/games"
-                className="group inline-flex min-h-[48px] items-center gap-2 rounded-full bg-senai-orange px-6 py-3 text-sm font-bold uppercase tracking-widest text-slate-950 shadow-glow-orange transition hover:-translate-y-0.5"
+                className="group inline-flex min-h-[48px] items-center gap-2 rounded-full bg-senai-orange px-6 py-3 text-base font-bold text-slate-950 shadow-glow-orange transition hover:-translate-y-0.5"
               >
                 <Play className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
                 Explorar jogos
               </Link>
               <Link
                 href="/upload"
-                className="group inline-flex min-h-[48px] items-center gap-2 rounded-full glass px-6 py-3 text-sm font-semibold uppercase tracking-widest text-white/90 transition hover:border-senai-orange/60 hover:text-white"
+                className="group inline-flex min-h-[48px] items-center gap-2 rounded-full glass px-6 py-3 text-base font-semibold text-white/90 transition hover:border-senai-orange/60 hover:text-white"
               >
                 Enviar meu jogo
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" strokeWidth={2.2} aria-hidden="true" />
@@ -256,15 +200,14 @@ export default function Hero() {
                 return (
                   <div key={stat.label} className="flex items-center gap-3">
                     <div
-                      className={`h-10 w-10 rounded-xl bg-senai-blueDark/70 border border-senai-blue/40 ring-1 ${stat.ring} flex items-center justify-center shadow-[0_12px_30px_rgba(0,39,118,0.25)]`}
+                      className="h-10 w-10 shrink-0 rounded-xl bg-senai-blueDark/70 border border-senai-blue/40 flex items-center justify-center shadow-[0_12px_30px_rgba(0,39,118,0.25)]"
                     >
                       <Icon className={`w-5 h-5 ${stat.iconColor}`} strokeWidth={2.1} aria-hidden="true" />
                     </div>
                     <div className="flex flex-col">
-                      <dt className="order-2 text-xs uppercase tracking-wider text-gray-400">{stat.label}</dt>
-                      <dd className="order-1 flex items-baseline gap-1 text-white font-bold text-xl md:text-2xl tabular-nums">
-                        <span>{stat.value}</span>
-                        {stat.suffix && <span className="text-sm text-gray-400">{stat.suffix}</span>}
+                      <dt className="order-2 text-sm text-gray-400">{stat.label}</dt>
+                      <dd className="order-1 text-white font-bold text-xl md:text-2xl tabular-nums">
+                        {Math.round(stat.value).toLocaleString(locale)}
                       </dd>
                     </div>
                   </div>
@@ -290,7 +233,7 @@ export default function Hero() {
                   if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setIsPaused(false);
                 }}
               >
-                <div className="relative aspect-[3/4] overflow-hidden">
+                <div className="relative aspect-[4/3] sm:aspect-[16/10] lg:aspect-[3/4] overflow-hidden">
                   {/* Imagem com transição fade */}
                   <div
                     className="absolute inset-0 transition-opacity duration-500 ease-in-out"
@@ -306,7 +249,7 @@ export default function Hero() {
                         decoding="async"
                       />
                     ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-senai-blueDark to-senai-blue" />
+                      <GameCoverFallback title={topGame?.title ?? "SENAI Game Hub"} size="lg" />
                     )}
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-senai-dark via-senai-dark/40 to-transparent" />
@@ -400,32 +343,11 @@ export default function Hero() {
                 )}
               </div>
 
-              <div className="absolute -top-3 -right-3 w-16 h-16 border-2 border-senai-orange/40 rounded-tr-2xl" />
-              <div className="absolute -bottom-3 -left-3 w-16 h-16 border-2 border-senai-blueLight/40 rounded-bl-2xl" />
             </div>
           </div>
         </div>
       </div>
 
-      <div className="absolute bottom-0 w-full bg-senai-blueDark text-white py-2 overflow-hidden z-30 shadow-lg" aria-hidden="true">
-        <div className="flex whitespace-nowrap animate-marquee">
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-white font-sans">
-            Todo aluno SENAI pode publicar seu jogo
-          </span>
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest opacity-50 font-sans">•</span>
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-slate-100 font-sans">
-            Divulgue seu projeto no HUB
-          </span>
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest opacity-50 font-sans">•</span>
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-white font-sans">
-            Todo aluno SENAI pode publicar seu jogo
-          </span>
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest opacity-50 font-sans">•</span>
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-slate-100 font-sans">
-            Divulgue seu projeto no HUB
-          </span>
-        </div>
-      </div>
     </section>
   );
 }
