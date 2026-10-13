@@ -54,6 +54,8 @@ export default function Hero() {
   const [topGames, setTopGames] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  // Pausa a rotação automática enquanto o usuário interage (WCAG 2.2.2)
+  const [isPaused, setIsPaused] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -133,21 +135,23 @@ export default function Hero() {
   // Reset do timer automático ao navegar manualmente
   const resetTimer = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
+    if (isPaused) return;
     timerRef.current = setInterval(() => {
       goNext();
     }, 5000);
-  }, [goNext]);
+  }, [goNext, isPaused]);
 
-  // Auto-rotação a cada 5 segundos
+  // Auto-rotação a cada 5 segundos (desligada com movimento reduzido ou em pausa)
   useEffect(() => {
-    if (topGames.length <= 1) return;
+    if (topGames.length <= 1 || isPaused) return;
+    if (globalThis.window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     timerRef.current = setInterval(() => {
       goNext();
     }, 5000);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [topGames.length, goNext]);
+  }, [topGames.length, goNext, isPaused]);
 
   const handleDotClick = (index: number) => {
     goToIndex(index);
@@ -232,21 +236,21 @@ export default function Hero() {
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <Link
                 href="/games"
-                className="group inline-flex items-center gap-2 rounded-full bg-senai-orange px-6 py-3 text-sm font-bold uppercase tracking-widest text-slate-950 shadow-glow-orange transition hover:-translate-y-0.5"
+                className="group inline-flex min-h-[48px] items-center gap-2 rounded-full bg-senai-orange px-6 py-3 text-sm font-bold uppercase tracking-widest text-slate-950 shadow-glow-orange transition hover:-translate-y-0.5"
               >
-                <Play className="w-4 h-4" strokeWidth={2.2} />
+                <Play className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
                 Explorar jogos
               </Link>
               <Link
                 href="/upload"
-                className="group inline-flex items-center gap-2 rounded-full glass px-6 py-3 text-sm font-semibold uppercase tracking-widest text-white/90 transition hover:border-senai-orange/60"
+                className="group inline-flex min-h-[48px] items-center gap-2 rounded-full glass px-6 py-3 text-sm font-semibold uppercase tracking-widest text-white/90 transition hover:border-senai-orange/60 hover:text-white"
               >
                 Enviar meu jogo
-                <ArrowRight className="w-4 h-4" strokeWidth={2.2} />
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" strokeWidth={2.2} aria-hidden="true" />
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 gap-6 pt-6 border-t border-senai-blue/40">
+            <dl className="grid !grid-cols-2 gap-x-6 gap-y-5 pt-6 border-t border-senai-blue/40">
               {statsItems.map((stat) => {
                 const Icon = stat.icon;
                 return (
@@ -254,19 +258,19 @@ export default function Hero() {
                     <div
                       className={`h-10 w-10 rounded-xl bg-senai-blueDark/70 border border-senai-blue/40 ring-1 ${stat.ring} flex items-center justify-center shadow-[0_12px_30px_rgba(0,39,118,0.25)]`}
                     >
-                      <Icon className={`w-5 h-5 ${stat.iconColor}`} strokeWidth={2.1} />
+                      <Icon className={`w-5 h-5 ${stat.iconColor}`} strokeWidth={2.1} aria-hidden="true" />
                     </div>
-                    <div>
-                      <div className="flex items-baseline gap-1 text-gray-300 font-bold text-xl md:text-2xl">
+                    <div className="flex flex-col">
+                      <dt className="order-2 text-xs uppercase tracking-wider text-gray-400">{stat.label}</dt>
+                      <dd className="order-1 flex items-baseline gap-1 text-white font-bold text-xl md:text-2xl tabular-nums">
                         <span>{stat.value}</span>
                         {stat.suffix && <span className="text-sm text-gray-400">{stat.suffix}</span>}
-                      </div>
-                      <p className="text-[11px] uppercase tracking-widest text-gray-400">{stat.label}</p>
+                      </dd>
                     </div>
                   </div>
                 );
               })}
-            </div>
+            </dl>
           </div>
 
           {/* ===== CARD DO JOGO EM DESTAQUE COM TRANSIÇÃO ===== */}
@@ -274,7 +278,18 @@ export default function Hero() {
             <div className="relative animate-float">
               <div className="absolute -inset-8 bg-gradient-to-br from-senai-orange/30 via-senai-blueLight/20 to-transparent blur-3xl rounded-full" />
 
-              <div className="relative rounded-2xl overflow-hidden glass-strong shadow-hero">
+              <div
+                className="relative rounded-2xl overflow-hidden glass-strong shadow-hero"
+                role="region"
+                aria-roledescription="carrossel"
+                aria-label="Jogos em destaque"
+                onMouseEnter={() => setIsPaused(true)}
+                onMouseLeave={() => setIsPaused(false)}
+                onFocus={() => setIsPaused(true)}
+                onBlur={(e) => {
+                  if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setIsPaused(false);
+                }}
+              >
                 <div className="relative aspect-[3/4] overflow-hidden">
                   {/* Imagem com transição fade */}
                   <div
@@ -311,14 +326,14 @@ export default function Hero() {
                     <>
                       <button
                         onClick={handlePrev}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-senai-dark/60 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white/80 hover:text-white hover:bg-senai-dark/80 transition-all z-10"
+                        className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-senai-dark/60 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white/80 hover:text-white hover:bg-senai-dark/80 transition-all z-10"
                         aria-label="Jogo anterior"
                       >
                         <ChevronLeft className="w-5 h-5" />
                       </button>
                       <button
                         onClick={handleNext}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-senai-dark/60 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white/80 hover:text-white hover:bg-senai-dark/80 transition-all z-10"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-senai-dark/60 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white/80 hover:text-white hover:bg-senai-dark/80 transition-all z-10"
                         aria-label="Próximo jogo"
                       >
                         <ChevronRight className="w-5 h-5" />
@@ -333,7 +348,7 @@ export default function Hero() {
                   style={{ opacity: isTransitioning ? 0 : 1 }}
                 >
                   <div>
-                    <h3 className="font-gaming font-bold text-2xl leading-tight mb-1 text-white">
+                    <h3 className="font-gaming font-bold text-2xl leading-tight mb-1 text-white line-clamp-2" aria-live={isPaused ? "polite" : "off"}>
                       {topGame ? topGame.title : "Projeto em destaque"}
                     </h3>
                     <p className="text-sm text-gray-400">
@@ -362,18 +377,24 @@ export default function Hero() {
 
                 {/* Dots de navegação */}
                 {topGames.length > 1 && (
-                  <div className="absolute bottom-[120px] left-0 right-0 flex justify-center gap-2 z-10">
+                  <div className="absolute bottom-[112px] left-0 right-0 flex justify-center z-10">
                     {topGames.map((_, idx) => (
                       <button
                         key={idx}
+                        type="button"
                         onClick={() => handleDotClick(idx)}
-                        className={`rounded-full transition-all duration-300 ${
-                          idx === currentIndex
-                            ? "w-6 h-2 bg-senai-orange shadow-glow-orange"
-                            : "w-2 h-2 bg-white/40 hover:bg-white/70"
-                        }`}
-                        aria-label={`Ir para jogo ${idx + 1}`}
-                      />
+                        className="group/dot flex h-6 items-center justify-center px-1"
+                        aria-label={`Ir para jogo ${idx + 1} de ${topGames.length}`}
+                        aria-current={idx === currentIndex ? "true" : undefined}
+                      >
+                        <span
+                          className={`block rounded-full transition-all duration-300 ${
+                            idx === currentIndex
+                              ? "w-6 h-2 bg-senai-orange shadow-glow-orange"
+                              : "w-2 h-2 bg-white/40 group-hover/dot:bg-white/70"
+                          }`}
+                        />
+                      </button>
                     ))}
                   </div>
                 )}
@@ -386,7 +407,7 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="absolute bottom-0 w-full bg-senai-blueDark text-white py-2 overflow-hidden z-30 shadow-lg">
+      <div className="absolute bottom-0 w-full bg-senai-blueDark text-white py-2 overflow-hidden z-30 shadow-lg" aria-hidden="true">
         <div className="flex whitespace-nowrap animate-marquee">
           <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-white font-sans">
             Todo aluno SENAI pode publicar seu jogo

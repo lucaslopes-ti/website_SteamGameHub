@@ -26,30 +26,31 @@ export default function TopRatedGames({ games }: Readonly<TopRatedGamesProps>) {
   if (topRated.length === 0) return null;
 
   return (
-    <section className="container mx-auto px-4 py-8">
-      <div className="flex items-end justify-between mb-8">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-senai-orange/10 border border-senai-orange/30 flex items-center justify-center shadow-glow-orange">
-            <Star className="w-5 h-5 fill-senai-orange text-senai-orange" />
+    <section aria-labelledby="top-rated-title" className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20 flex flex-col gap-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex items-start gap-4">
+          <div className="hidden sm:flex w-12 h-12 shrink-0 rounded-xl bg-senai-orange/10 border border-senai-orange/30 items-center justify-center">
+            <Star className="w-6 h-6 fill-senai-orange text-senai-orange" aria-hidden="true" />
           </div>
           <div>
-            <h2 className="font-display font-bold text-3xl md:text-4xl text-gradient-orange">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--secondary)]">Escolha da comunidade</p>
+            <h2 id="top-rated-title" className="mt-2 font-display font-bold text-2xl md:text-3xl text-gradient-orange">
               {t("topRated.title")}
             </h2>
-            <p className="text-sm text-gray-400 mt-1">
+            <p className="mt-2 text-sm md:text-base text-[var(--on-surface-variant)]">
               Os jogos mais bem cotados pela comunidade
             </p>
           </div>
         </div>
         <Link
           href="/games?sort=rating"
-          className="hidden sm:inline-flex items-center gap-1.5 text-sm text-senai-orange hover:text-senai-orange/80 transition-colors font-medium"
+          className="group inline-flex min-h-[44px] items-center gap-1.5 self-start sm:self-auto text-sm text-senai-orange hover:text-senai-blueLight transition-colors font-semibold"
         >
           {t("common.seeAll")}
-          <ArrowRight className="w-4 h-4" />
+          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
         </Link>
       </div>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {topRated.map((game) => (
           <GameCard key={game.id} game={game} />
         ))}
