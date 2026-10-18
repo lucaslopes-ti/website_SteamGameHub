@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Game } from "@/lib/games";
 import GameCoverFallback from "@/components/GameCoverFallback";
+import HeroBackground from "@/components/HeroBackground";
 
 function useAnimatedCounter(target: number, duration = 2000, decimals = 0) {
   const [count, setCount] = useState(0);
@@ -152,10 +153,7 @@ export default function Hero({ games, totalViews, totalDownloads }: Readonly<Her
 
   return (
     <section ref={heroRef} className="relative overflow-hidden">
-      <div className="absolute inset-0 grid-pattern opacity-40" />
-      <div className="absolute inset-0 bg-gradient-glow" />
-      <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-senai-blueLight/20 rounded-full blur-[120px]" />
-      <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] bg-senai-orange/20 rounded-full blur-[140px]" />
+      <HeroBackground />
 
       <div className="container mx-auto px-6 sm:px-8 pt-12 pb-16 md:pt-20 md:pb-24 relative">
         <div className="grid lg:grid-cols-12 gap-12 items-center">
@@ -166,9 +164,9 @@ export default function Hero({ games, totalViews, totalDownloads }: Readonly<Her
             </div>
 
             <div className="space-y-3">
-              <h1 className="font-bold text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[0.95] tracking-tighter">
-                <span className="block text-gradient-blue">SENAI</span>
-                <span className="block text-gradient-orange">Game Hub</span>
+              <h1 className="font-display font-black text-[2.75rem] leading-[1.02] sm:text-6xl lg:text-[4.25rem] xl:text-7xl tracking-tight">
+                <span className="block text-gradient-blue text-neon-blue">SENAI</span>
+                <span className="block text-gradient-orange text-neon-orange">Game Hub</span>
               </h1>
             </div>
 
