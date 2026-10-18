@@ -1355,3 +1355,12 @@ html.light .bg-gradient-glow {
     animation: none;
   }
 }
+
+/* Brilho neon para títulos com texto em degradê (drop-shadow funciona com background-clip: text) */
+.text-neon-blue {
+  filter: drop-shadow(0 0 2px rgba(0, 165, 226, 0.6)) drop-shadow(0 0 22px rgba(0, 165, 226, 0.45));
+}
+
+.text-neon-orange {
+  filter: drop-shadow(0 0 2px rgba(243, 112, 33, 0.6)) drop-shadow(0 0 26px rgba(243, 112, 33, 0.45));
+}

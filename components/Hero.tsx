@@ -164,9 +164,9 @@ export default function Hero({ games, totalViews, totalDownloads }: Readonly<Her
             </div>
 
             <div className="space-y-3">
-              <h1 className="font-bold text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[0.95] tracking-tighter">
-                <span className="block text-gradient-blue">SENAI</span>
-                <span className="block text-gradient-orange">Game Hub</span>
+              <h1 className="font-display font-black text-[2.75rem] leading-[1.02] sm:text-6xl lg:text-[4.25rem] xl:text-7xl tracking-tight">
+                <span className="block text-gradient-blue text-neon-blue">SENAI</span>
+                <span className="block text-gradient-orange text-neon-orange">Game Hub</span>
               </h1>
             </div>
 
