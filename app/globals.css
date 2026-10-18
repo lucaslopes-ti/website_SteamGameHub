@@ -1305,3 +1305,53 @@ html.light .bg-gradient-glow {
   border-radius: var(--radius);
   transition: all 0.2s;
 }
+
+/* ========== HERO BACKGROUND (arcade SENAI) ========== */
+.hero-bg-sky {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0, 79, 159, 0.55), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 50% 45%, rgba(0, 165, 226, 0.18), transparent 70%),
+    linear-gradient(180deg, #071233 0%, #0a0f1d 55%, #0a0f1d 100%);
+}
+
+.hero-bg-horizon {
+  background: linear-gradient(90deg, transparent, #00A5E2 25%, #F37021 50%, #00A5E2 75%, transparent);
+  box-shadow: 0 0 24px 4px rgba(243, 112, 33, 0.45), 0 0 60px 12px rgba(0, 165, 226, 0.25);
+}
+
+.hero-bg-floor {
+  background-image:
+    linear-gradient(rgba(0, 165, 226, 0.45) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 165, 226, 0.35) 1px, transparent 1px);
+  background-size: 64px 64px;
+  transform: perspective(420px) rotateX(62deg);
+  transform-origin: top center;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.35) 55%, transparent 90%);
+  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.35) 55%, transparent 90%);
+  animation: heroFloor 3s linear infinite;
+}
+
+@keyframes heroFloor {
+  from { background-position: 0 0; }
+  to { background-position: 0 64px; }
+}
+
+.hero-bg-shape {
+  animation: heroShape 12s ease-in-out infinite;
+}
+
+@keyframes heroShape {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-18px) rotate(45deg); }
+}
+
+.hero-bg-scanlines {
+  background: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-bg-floor,
+  .hero-bg-shape {
+    animation: none;
+  }
+}
