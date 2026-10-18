@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
-  BarChart3,
   ChevronLeft,
   ChevronRight,
+  Download,
+  Eye,
   Gamepad2,
   Play,
   Sparkles,
@@ -14,6 +15,8 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
+import { Game } from "@/lib/games";
+import GameCoverFallback from "@/components/GameCoverFallback";
 
 function useAnimatedCounter(target: number, duration = 2000, decimals = 0) {
   const [count, setCount] = useState(0);
@@ -42,72 +45,41 @@ function useAnimatedCounter(target: number, duration = 2000, decimals = 0) {
   return count;
 }
 
-export default function Hero() {
-  const [stats, setStats] = useState({
-    totalGames: 0,
-    totalAuthors: 0,
-    avgRating: 0,
-    totalRatings: 0,
-  });
+interface HeroProps {
+  games: Game[];
+  totalViews: number;
+  totalDownloads: number;
+}
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [topGames, setTopGames] = useState<any[]>([]);
+export default function Hero({ games, totalViews, totalDownloads }: Readonly<HeroProps>) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  // Pausa a rotação automática enquanto o usuário interage (WCAG 2.2.2)
+  const [isPaused, setIsPaused] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const animatedGames = useAnimatedCounter(stats.totalGames, 1500);
-  const animatedAuthors = useAnimatedCounter(stats.totalAuthors, 1800);
-  const animatedRating = useAnimatedCounter(stats.avgRating, 2200, 1);
-  const animatedRatings = useAnimatedCounter(stats.totalRatings, 2000);
+  const approved = useMemo(() => games.filter((g) => g.approved), [games]);
+  const totalAuthors = useMemo(() => new Set(approved.map((g) => g.authorEmail)).size, [approved]);
 
-  useEffect(() => {
-    fetch("/api/games?approved=true")
-      .then((res) => res.json())
-      .then((games) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const approved = games.filter((g: any) => g.approved);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const uniqueAuthors = new Set(approved.map((g: any) => g.authorEmail));
-        const avgRating =
-          approved.length > 0
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ? approved.reduce((sum: number, g: any) => sum + (g.rating || 0), 0) /
-              approved.length
-            : 0;
-        const totalRatings = approved.reduce(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (sum: number, g: any) => sum + (g.totalRatings || 0),
-          0
-        );
+  // Destaques: média bayesiana (evita que 1 voto 5★ passe na frente de jogos bem avaliados por muitos)
+  const topGames = useMemo(() => {
+    if (approved.length === 0) return [];
+    const m = 3;
+    const C = approved.reduce((sum, g) => sum + (g.rating || 0), 0) / approved.length;
+    const getScore = (g: Game) => {
+      const v = g.totalRatings || 0;
+      const R = g.rating || 0;
+      if (v === 0) return 0;
+      return (v * R + m * C) / (v + m);
+    };
+    return [...approved].sort((a, b) => getScore(b) - getScore(a)).slice(0, 5);
+  }, [approved]);
 
-        setStats({
-          totalGames: approved.length,
-          totalAuthors: uniqueAuthors.size,
-          avgRating: avgRating,
-          totalRatings,
-        });
-
-        if (approved.length > 0) {
-          const m = 3;
-          const C = avgRating || 0;
-
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const getScore = (g: any) => {
-            const v = g.totalRatings || 0;
-            const R = g.rating || 0;
-            if (v === 0) return 0;
-            return (v * R + m * C) / (v + m);
-          };
-
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const sorted = [...approved].sort((a: any, b: any) => getScore(b) - getScore(a));
-          setTopGames(sorted.slice(0, 5));
-        }
-      })
-      .catch(() => {});
-  }, []);
+  const animatedGames = useAnimatedCounter(approved.length, 1500);
+  const animatedAuthors = useAnimatedCounter(totalAuthors, 1800);
+  const animatedViews = useAnimatedCounter(totalViews, 2200);
+  const animatedDownloads = useAnimatedCounter(totalDownloads, 2000);
 
   // Troca com transição suave (fade out → troca → fade in)
   const goToIndex = useCallback(
@@ -133,21 +105,23 @@ export default function Hero() {
   // Reset do timer automático ao navegar manualmente
   const resetTimer = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
+    if (isPaused) return;
     timerRef.current = setInterval(() => {
       goNext();
     }, 5000);
-  }, [goNext]);
+  }, [goNext, isPaused]);
 
-  // Auto-rotação a cada 5 segundos
+  // Auto-rotação a cada 5 segundos (desligada com movimento reduzido ou em pausa)
   useEffect(() => {
-    if (topGames.length <= 1) return;
+    if (topGames.length <= 1 || isPaused) return;
+    if (globalThis.window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
     timerRef.current = setInterval(() => {
       goNext();
     }, 5000);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [topGames.length, goNext]);
+  }, [topGames.length, goNext, isPaused]);
 
   const handleDotClick = (index: number) => {
     goToIndex(index);
@@ -166,40 +140,14 @@ export default function Hero() {
 
   const topGame = topGames[currentIndex] || null;
 
-  const ratingValue = stats.avgRating > 0 ? animatedRating.toFixed(1) : "-";
-  const ratingSuffix = stats.avgRating > 0 ? "/ 5" : "";
   const locale = "pt-BR";
 
+  // Único lugar da home com os números do Hub
   const statsItems = [
-    {
-      icon: Star,
-      value: ratingValue,
-      suffix: ratingSuffix,
-      label: "Avaliação média",
-      ring: "ring-senai-orange/40",
-      iconColor: "text-senai-orange",
-    },
-    {
-      icon: Gamepad2,
-      value: Math.round(animatedGames).toLocaleString(locale),
-      label: "Jogos publicados",
-      ring: "ring-senai-blueLight/40",
-      iconColor: "text-senai-blueLight",
-    },
-    {
-      icon: Users,
-      value: Math.round(animatedAuthors).toLocaleString(locale),
-      label: "Desenvolvedores",
-      ring: "ring-emerald-400/40",
-      iconColor: "text-emerald-300",
-    },
-    {
-      icon: BarChart3,
-      value: Math.round(animatedRatings).toLocaleString(locale),
-      label: "Avaliações",
-      ring: "ring-yellow-400/40",
-      iconColor: "text-yellow-300",
-    },
+    { icon: Gamepad2, value: animatedGames, label: "Jogos publicados", iconColor: "text-senai-blueLight" },
+    { icon: Users, value: animatedAuthors, label: "Desenvolvedores", iconColor: "text-senai-orange" },
+    { icon: Eye, value: animatedViews, label: "Visualizações", iconColor: "text-senai-blueLight" },
+    { icon: Download, value: animatedDownloads, label: "Downloads", iconColor: "text-senai-orange" },
   ];
 
   return (
@@ -209,7 +157,7 @@ export default function Hero() {
       <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-senai-blueLight/20 rounded-full blur-[120px]" />
       <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] bg-senai-orange/20 rounded-full blur-[140px]" />
 
-      <div className="container mx-auto px-6 sm:px-8 pt-16 pb-24 md:pt-24 md:pb-32 relative">
+      <div className="container mx-auto px-6 sm:px-8 pt-12 pb-16 md:pt-20 md:pb-24 relative">
         <div className="grid lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-7 space-y-7">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-xs font-mono uppercase tracking-[0.2em] text-senai-orange">
@@ -232,41 +180,40 @@ export default function Hero() {
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <Link
                 href="/games"
-                className="group inline-flex items-center gap-2 rounded-full bg-senai-orange px-6 py-3 text-sm font-bold uppercase tracking-widest text-slate-950 shadow-glow-orange transition hover:-translate-y-0.5"
+                className="group inline-flex min-h-[48px] items-center gap-2 rounded-full bg-senai-orange px-6 py-3 text-base font-bold text-slate-950 shadow-glow-orange transition hover:-translate-y-0.5"
               >
-                <Play className="w-4 h-4" strokeWidth={2.2} />
+                <Play className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
                 Explorar jogos
               </Link>
               <Link
                 href="/upload"
-                className="group inline-flex items-center gap-2 rounded-full glass px-6 py-3 text-sm font-semibold uppercase tracking-widest text-white/90 transition hover:border-senai-orange/60"
+                className="group inline-flex min-h-[48px] items-center gap-2 rounded-full glass px-6 py-3 text-base font-semibold text-white/90 transition hover:border-senai-orange/60 hover:text-white"
               >
                 Enviar meu jogo
-                <ArrowRight className="w-4 h-4" strokeWidth={2.2} />
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" strokeWidth={2.2} aria-hidden="true" />
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 gap-6 pt-6 border-t border-senai-blue/40">
+            <dl className="grid !grid-cols-2 gap-x-6 gap-y-5 pt-6 border-t border-senai-blue/40">
               {statsItems.map((stat) => {
                 const Icon = stat.icon;
                 return (
                   <div key={stat.label} className="flex items-center gap-3">
                     <div
-                      className={`h-10 w-10 rounded-xl bg-senai-blueDark/70 border border-senai-blue/40 ring-1 ${stat.ring} flex items-center justify-center shadow-[0_12px_30px_rgba(0,39,118,0.25)]`}
+                      className="h-10 w-10 shrink-0 rounded-xl bg-senai-blueDark/70 border border-senai-blue/40 flex items-center justify-center shadow-[0_12px_30px_rgba(0,39,118,0.25)]"
                     >
-                      <Icon className={`w-5 h-5 ${stat.iconColor}`} strokeWidth={2.1} />
+                      <Icon className={`w-5 h-5 ${stat.iconColor}`} strokeWidth={2.1} aria-hidden="true" />
                     </div>
-                    <div>
-                      <div className="flex items-baseline gap-1 text-gray-300 font-bold text-xl md:text-2xl">
-                        <span>{stat.value}</span>
-                        {stat.suffix && <span className="text-sm text-gray-400">{stat.suffix}</span>}
-                      </div>
-                      <p className="text-[11px] uppercase tracking-widest text-gray-400">{stat.label}</p>
+                    <div className="flex flex-col">
+                      <dt className="order-2 text-sm text-gray-400">{stat.label}</dt>
+                      <dd className="order-1 text-white font-bold text-xl md:text-2xl tabular-nums">
+                        {Math.round(stat.value).toLocaleString(locale)}
+                      </dd>
                     </div>
                   </div>
                 );
               })}
-            </div>
+            </dl>
           </div>
 
           {/* ===== CARD DO JOGO EM DESTAQUE COM TRANSIÇÃO ===== */}
@@ -274,8 +221,19 @@ export default function Hero() {
             <div className="relative animate-float">
               <div className="absolute -inset-8 bg-gradient-to-br from-senai-orange/30 via-senai-blueLight/20 to-transparent blur-3xl rounded-full" />
 
-              <div className="relative rounded-2xl overflow-hidden glass-strong shadow-hero">
-                <div className="relative aspect-[3/4] overflow-hidden">
+              <div
+                className="relative rounded-2xl overflow-hidden glass-strong shadow-hero"
+                role="region"
+                aria-roledescription="carrossel"
+                aria-label="Jogos em destaque"
+                onMouseEnter={() => setIsPaused(true)}
+                onMouseLeave={() => setIsPaused(false)}
+                onFocus={() => setIsPaused(true)}
+                onBlur={(e) => {
+                  if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setIsPaused(false);
+                }}
+              >
+                <div className="relative aspect-[4/3] sm:aspect-[16/10] lg:aspect-[3/4] overflow-hidden">
                   {/* Imagem com transição fade */}
                   <div
                     className="absolute inset-0 transition-opacity duration-500 ease-in-out"
@@ -291,7 +249,7 @@ export default function Hero() {
                         decoding="async"
                       />
                     ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-senai-blueDark to-senai-blue" />
+                      <GameCoverFallback title={topGame?.title ?? "SENAI Game Hub"} size="lg" />
                     )}
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-senai-dark via-senai-dark/40 to-transparent" />
@@ -311,14 +269,14 @@ export default function Hero() {
                     <>
                       <button
                         onClick={handlePrev}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-senai-dark/60 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white/80 hover:text-white hover:bg-senai-dark/80 transition-all z-10"
+                        className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-senai-dark/60 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white/80 hover:text-white hover:bg-senai-dark/80 transition-all z-10"
                         aria-label="Jogo anterior"
                       >
                         <ChevronLeft className="w-5 h-5" />
                       </button>
                       <button
                         onClick={handleNext}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-senai-dark/60 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white/80 hover:text-white hover:bg-senai-dark/80 transition-all z-10"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-senai-dark/60 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white/80 hover:text-white hover:bg-senai-dark/80 transition-all z-10"
                         aria-label="Próximo jogo"
                       >
                         <ChevronRight className="w-5 h-5" />
@@ -333,7 +291,7 @@ export default function Hero() {
                   style={{ opacity: isTransitioning ? 0 : 1 }}
                 >
                   <div>
-                    <h3 className="font-gaming font-bold text-2xl leading-tight mb-1 text-white">
+                    <h3 className="font-gaming font-bold text-2xl leading-tight mb-1 text-white line-clamp-2" aria-live={isPaused ? "polite" : "off"}>
                       {topGame ? topGame.title : "Projeto em destaque"}
                     </h3>
                     <p className="text-sm text-gray-400">
@@ -362,49 +320,34 @@ export default function Hero() {
 
                 {/* Dots de navegação */}
                 {topGames.length > 1 && (
-                  <div className="absolute bottom-[120px] left-0 right-0 flex justify-center gap-2 z-10">
+                  <div className="absolute bottom-[112px] left-0 right-0 flex justify-center z-10">
                     {topGames.map((_, idx) => (
                       <button
                         key={idx}
+                        type="button"
                         onClick={() => handleDotClick(idx)}
-                        className={`rounded-full transition-all duration-300 ${
-                          idx === currentIndex
-                            ? "w-6 h-2 bg-senai-orange shadow-glow-orange"
-                            : "w-2 h-2 bg-white/40 hover:bg-white/70"
-                        }`}
-                        aria-label={`Ir para jogo ${idx + 1}`}
-                      />
+                        className="group/dot flex h-6 items-center justify-center px-1"
+                        aria-label={`Ir para jogo ${idx + 1} de ${topGames.length}`}
+                        aria-current={idx === currentIndex ? "true" : undefined}
+                      >
+                        <span
+                          className={`block rounded-full transition-all duration-300 ${
+                            idx === currentIndex
+                              ? "w-6 h-2 bg-senai-orange shadow-glow-orange"
+                              : "w-2 h-2 bg-white/40 group-hover/dot:bg-white/70"
+                          }`}
+                        />
+                      </button>
                     ))}
                   </div>
                 )}
               </div>
 
-              <div className="absolute -top-3 -right-3 w-16 h-16 border-2 border-senai-orange/40 rounded-tr-2xl" />
-              <div className="absolute -bottom-3 -left-3 w-16 h-16 border-2 border-senai-blueLight/40 rounded-bl-2xl" />
             </div>
           </div>
         </div>
       </div>
 
-      <div className="absolute bottom-0 w-full bg-senai-blueDark text-white py-2 overflow-hidden z-30 shadow-lg">
-        <div className="flex whitespace-nowrap animate-marquee">
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-white font-sans">
-            Todo aluno SENAI pode publicar seu jogo
-          </span>
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest opacity-50 font-sans">•</span>
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-slate-100 font-sans">
-            Divulgue seu projeto no HUB
-          </span>
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest opacity-50 font-sans">•</span>
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-white font-sans">
-            Todo aluno SENAI pode publicar seu jogo
-          </span>
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest opacity-50 font-sans">•</span>
-          <span className="mx-6 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-slate-100 font-sans">
-            Divulgue seu projeto no HUB
-          </span>
-        </div>
-      </div>
     </section>
   );
 }
