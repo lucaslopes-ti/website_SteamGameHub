@@ -165,10 +165,11 @@ function formatTheory(markdown: string): string {
   const formatted = typeof html === "string" ? html : "";
   const practiceHeadingClass =
     "border-l-4 border-[var(--secondary)] bg-[var(--secondary-10)] px-4 py-3 text-[var(--secondary)] shadow-sm shadow-[var(--secondary)]/10";
-  const highlighted = formatted.replace(
-    /<h2>\s*Sua vez\s*<\/h2>/g,
-    `<h2 class="${practiceHeadingClass}">Sua vez</h2>`
-  );
+  const highlighted = formatted
+    .replace(/<h2>\s*Sua vez\s*<\/h2>/g, `<h2 class="${practiceHeadingClass}">Sua vez</h2>`)
+    // Tabelas largas rolam na horizontal no celular em vez de estourar o card.
+    .replace(/<table>/g, '<div class="theory-table"><table>')
+    .replace(/<\/table>/g, "</table></div>");
   return DOMPurify.sanitize(highlighted);
 }
 
@@ -548,7 +549,7 @@ export default function LessonClient({ lesson, previous, next }: LessonClientPro
               Teoria
             </h2>
             <div
-              className="max-w-none text-xs sm:text-sm leading-6 sm:leading-7 text-[var(--on-surface-variant)] [&>*:first-child]:mt-0 [&_a]:font-semibold [&_a]:text-[var(--primary-text)] [&_blockquote]:my-4 [&_blockquote]:border-l-2 [&_blockquote]:border-[var(--secondary)] [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-[var(--surface-container-high)] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-xs [&_code]:text-[var(--primary-text)] [&_h1]:mb-3 [&_h1]:mt-6 [&_h1]:font-display [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:leading-tight [&_h2]:mb-3 [&_h2]:mt-6 [&_h2]:font-display [&_h2]:text-xl [&_h2]:font-bold [&_h2]:leading-tight [&_h3]:mb-2 [&_h3]:mt-5 [&_h3]:font-bold [&_h3]:text-lg [&_li]:pl-1 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-5 [&_p]:my-3 [&_pre]:my-4 [&_pre]:overflow-x-auto [&_pre]:rounded-xl [&_pre]:border [&_pre]:border-[var(--outline-variant)]/40 [&_pre]:bg-[var(--surface-container-lowest)] [&_pre]:p-3 sm:[&_pre]:p-4 [&_pre_code]:block [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-xs sm:[&_pre_code]:text-sm [&_pre_code]:leading-5 sm:[&_pre_code]:leading-6 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5"
+              className="max-w-none text-xs sm:text-sm leading-6 sm:leading-7 text-[var(--on-surface-variant)] [&>*:first-child]:mt-0 [&_a]:font-semibold [&_a]:text-[var(--primary-text)] [&_blockquote]:my-4 [&_blockquote]:border-l-2 [&_blockquote]:border-[var(--secondary)] [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-[var(--surface-container-high)] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-xs [&_code]:text-[var(--primary-text)] [&_h1]:mb-3 [&_h1]:mt-6 [&_h1]:font-display [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:leading-tight [&_h2]:mb-3 [&_h2]:mt-6 [&_h2]:font-display [&_h2]:text-xl [&_h2]:font-bold [&_h2]:leading-tight [&_h3]:mb-2 [&_h3]:mt-5 [&_h3]:font-bold [&_h3]:text-lg [&_li]:pl-1 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-5 [&_p]:my-3 [&_pre]:my-4 [&_pre]:overflow-x-auto [&_pre]:rounded-xl [&_pre]:border [&_pre]:border-[var(--outline-variant)]/40 [&_pre]:bg-[var(--surface-container-lowest)] [&_pre]:p-3 sm:[&_pre]:p-4 [&_pre_code]:block [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-xs sm:[&_pre_code]:text-sm [&_pre_code]:leading-5 sm:[&_pre_code]:leading-6 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5 [&_.theory-table]:my-4 [&_.theory-table]:overflow-x-auto [&_.theory-table]:rounded-xl [&_.theory-table]:border [&_.theory-table]:border-[var(--outline-variant)]/40 [&_table]:w-full [&_table]:border-collapse [&_table]:text-left [&_table]:text-xs sm:[&_table]:text-sm [&_thead]:bg-[var(--surface-container-high)] [&_th]:whitespace-nowrap [&_th]:px-3 [&_th]:py-2 [&_th]:font-bold [&_th]:text-[var(--on-surface)] [&_td]:border-t [&_td]:border-[var(--outline-variant)]/30 [&_td]:px-3 [&_td]:py-2 [&_td]:align-top"
               dangerouslySetInnerHTML={{ __html: theoryHtml }}
             />
           </section>

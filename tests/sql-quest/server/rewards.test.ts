@@ -219,6 +219,12 @@ const NEW_KEYCHAIN_IDS = [
   "keychain-join",
 ];
 
+const BLACK_KEYCHAIN_IDS = [
+  "keychain-black-rj45",
+  "keychain-black-router",
+  "keychain-black-gamepad",
+];
+
 beforeEach(() => {
   process.env.FIREBASE_SERVICE_ACCOUNT_KEY = "test-key";
   mockGetAuthUser.mockReset();
@@ -251,7 +257,7 @@ describe("GET /api/sql-quest/rewards", () => {
     expect(body.spentXp).toBe(345);
     expect(body.xpBalance).toBe(xpFor(LESSONS_WITH_CHARACTER_PIECE) - 345);
 
-    expect(body.items).toHaveLength(11);
+    expect(body.items).toHaveLength(14);
     const keychain = body.items.find((i: { id: string }) => i.id === "keychain");
     expect(keychain).toMatchObject({
       id: "keychain",
@@ -277,6 +283,11 @@ describe("GET /api/sql-quest/rewards", () => {
       initialStock: 1,
       remainingStock: 1,
     });
+    for (const id of BLACK_KEYCHAIN_IDS) {
+      const black = body.items.find((i: { id: string }) => i.id === id);
+      expect(black).toMatchObject({ costXp: 4000, initialStock: 3, remainingStock: 3 });
+      expect(black.name).toMatch(/^Chaveiro preto /);
+    }
   });
 
   it("inicializa o inventário completo uma única vez (create-only)", async () => {
@@ -285,7 +296,7 @@ describe("GET /api/sql-quest/rewards", () => {
 
     await getRewards(new NextRequest("http://localhost/api/sql-quest/rewards"));
     expect(store["sql_quest_reward_inventory"]["current"]).toMatchObject({
-      version: 4,
+      version: 5,
       itemIds: [
         "keychain",
         ...NEW_KEYCHAIN_IDS,
@@ -294,6 +305,7 @@ describe("GET /api/sql-quest/rewards", () => {
         "object-12cm",
         "object-15cm",
         "object-20cm",
+        ...BLACK_KEYCHAIN_IDS,
       ],
     });
     expect(store["sql_quest_reward_stock"]["keychain"]).toMatchObject({
@@ -344,7 +356,7 @@ describe("GET /api/sql-quest/rewards", () => {
 
     // Marca sobe para a versão corrente com todos os ids.
     expect(store["sql_quest_reward_inventory"]["current"]).toMatchObject({
-      version: 4,
+      version: 5,
       itemIds: [
         "keychain",
         ...NEW_KEYCHAIN_IDS,
@@ -353,6 +365,7 @@ describe("GET /api/sql-quest/rewards", () => {
         "object-12cm",
         "object-15cm",
         "object-20cm",
+        ...BLACK_KEYCHAIN_IDS,
       ],
     });
     // Estoque existente é preservado (nunca restaurado).
@@ -381,7 +394,7 @@ describe("GET /api/sql-quest/rewards", () => {
     expect(store["sql_quest_reward_stock"]["keychain-join"].remainingStock).toBe(0);
   });
 
-  it("migra o inventário v3→v4: cria só o object-20cm e preserva os estoques esgotados", async () => {
+  it("migra o inventário v3→v5: cria só os produtos novos e preserva os estoques esgotados", async () => {
     mockGetAuthUser.mockResolvedValue(student);
     const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
     // Marca v3 (10 produtos) com estoques existentes, incluindo um já esgotado.
@@ -409,10 +422,10 @@ describe("GET /api/sql-quest/rewards", () => {
 
     await getRewards(new NextRequest("http://localhost/api/sql-quest/rewards"));
 
-    // A marca sobe para v4 com todos os ids, incluindo o novo produto.
+    // A marca sobe para a versão corrente com todos os ids, incluindo os novos produtos.
     expect(store["sql_quest_reward_inventory"]["current"]).toMatchObject({
-      version: 4,
-      itemIds: [...v3ItemIds, "object-20cm"],
+      version: 5,
+      itemIds: [...v3ItemIds, "object-20cm", ...BLACK_KEYCHAIN_IDS],
     });
     // Apenas o novo produto é inicializado, com 1 unidade.
     expect(store["sql_quest_reward_stock"]["object-20cm"]).toMatchObject({
@@ -430,6 +443,47 @@ describe("GET /api/sql-quest/rewards", () => {
     await getRewards(new NextRequest("http://localhost/api/sql-quest/rewards"));
     expect(store["sql_quest_reward_stock"]["object-15cm"].remainingStock).toBe(0);
     expect(store["sql_quest_reward_stock"]["object-20cm"].remainingStock).toBe(1);
+  });
+
+  it("migra o inventário v4→v5: cria só os chaveiros pretos (3 unid) e preserva o restante", async () => {
+    mockGetAuthUser.mockResolvedValue(student);
+    const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
+    const v4ItemIds = [
+      "keychain",
+      ...NEW_KEYCHAIN_IDS,
+      "keychain-duck",
+      "character-piece",
+      "object-12cm",
+      "object-15cm",
+      "object-20cm",
+    ];
+    store["sql_quest_reward_inventory"] = {
+      current: {
+        version: 4,
+        itemIds: v4ItemIds,
+        createdAt: "2026-10-07T00:00:00.000Z",
+      },
+    };
+    store["sql_quest_reward_stock"] = {
+      keychain: { itemId: "keychain", initialStock: 5, remainingStock: 1, updatedAt: "2026-10-10T00:00:00.000Z" },
+      "object-20cm": { itemId: "object-20cm", initialStock: 1, remainingStock: 0, updatedAt: "2026-10-10T00:00:00.000Z" },
+    };
+
+    await getRewards(new NextRequest("http://localhost/api/sql-quest/rewards"));
+
+    expect(store["sql_quest_reward_inventory"]["current"]).toMatchObject({
+      version: 5,
+      itemIds: [...v4ItemIds, ...BLACK_KEYCHAIN_IDS],
+    });
+    for (const id of BLACK_KEYCHAIN_IDS) {
+      expect(store["sql_quest_reward_stock"][id]).toMatchObject({
+        initialStock: 3,
+        remainingStock: 3,
+      });
+    }
+    expect(store["sql_quest_reward_stock"]["keychain"].remainingStock).toBe(1);
+    expect(store["sql_quest_reward_stock"]["object-20cm"].remainingStock).toBe(0);
+    expect(store["sql_quest_reward_stock"]["keychain-duck"]).toBeUndefined();
   });
 
   it("inicialização parcial: lê tudo antes de escrever e cria apenas docs ausentes", async () => {

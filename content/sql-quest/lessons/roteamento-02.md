@@ -70,13 +70,52 @@ challenge:
 
 ## Contexto
 
-O roteador é o equipamento que **liga redes diferentes**. Cada porta (interface) fica numa rede e recebe um IP dela.
+No chamado nº 6, os dois prédios têm redes diferentes. O equipamento que vai
+ligar essas redes é o **roteador** (*router*). Nesta lição você vai entender
+**como ele faz isso**.
 
-| Porta | Rede | IP (gateway) |
+## Switch e roteador: qual é a diferença
+
+| Equipamento | Liga o quê | Olha qual endereço |
+|---|---|---|
+| **Switch** (comutador) | os PCs **da mesma rede** | o **MAC** (endereço físico da placa) |
+| **Roteador** | **redes diferentes** entre si | o **IP** (endereço lógico) |
+
+O switch só entrega dentro da rede. Para sair dela, a mensagem precisa passar
+por um roteador.
+
+## Uma porta em cada rede
+
+O roteador tem várias **portas**, também chamadas de **interfaces**. Cada porta
+fica ligada a **uma rede** e recebe **um IP daquela rede**. Esse IP é o
+**gateway** dos PCs daquela rede.
+
+No chamado nº 6, o Router0 fica assim:
+
+| Porta | Rede onde está ligada | IP da porta (gateway dos PCs) |
 |---|---|---|
 | G0/0 | 192.168.10.0/24 (prédio 1) | 192.168.10.1 |
 | G0/1 | 192.168.20.0/24 (prédio 2) | 192.168.20.1 |
 
-## E o roteador de casa?
+**G0/0** quer dizer porta *GigabitEthernet* 0/0, uma porta de rede de 1 Gbit/s.
 
-Ele também liga duas redes: a **WAN** (internet, do provedor) e a **LAN** (os aparelhos da casa). Explore um de verdade nos **emuladores oficiais da TP-Link**.
+Por que uma porta em cada rede? Porque o PC só entrega mensagens para quem
+está **na mesma rede** que ele. Se o roteador tem um pé em cada rede, ele
+consegue receber de um lado e entregar do outro.
+
+## E o roteador da sua casa?
+
+Ele faz a mesma coisa, só que com duas redes fixas:
+
+- a **WAN** (*Wide Area Network*, rede de longa distância): a porta ligada ao
+  **provedor de internet**;
+- a **LAN** (*Local Area Network*, rede local): as portas e o Wi-Fi dos
+  aparelhos da casa.
+
+Você pode explorar a tela de um roteador de verdade nos **emuladores oficiais
+da TP-Link** (pesquise "TP-Link emulator" no Google).
+
+## Sua vez
+
+Responda sobre o papel do roteador. Lembre: cada porta fica numa rede e usa um
+IP dela.

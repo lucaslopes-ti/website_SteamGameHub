@@ -63,15 +63,45 @@ challenge:
 
 ## Contexto
 
-Na caça à falha, uma dupla provoca uma falha e a dupla vizinha diagnostica. Aqui você treina o diagnóstico.
+Na aula, cada dupla **provoca uma falha** escondida na rede do Packet Tracer e
+a dupla vizinha precisa **descobrir o problema**, como um técnico de verdade
+atendendo um chamado. Nesta lição você treina esse diagnóstico.
 
-## Método: de perto para longe
+## As falhas mais comuns
 
-1. **Olhar o PC**: `ipconfig` (IP, máscara e gateway conferem com o plano?)
-2. **Pingar o gateway**
-3. **Olhar o roteador**: `show ip interface brief`
-4. **Pingar o destino**
+| Sintoma | Causa provável |
+|---|---|
+| O PC pinga os vizinhos e o gateway, mas não pinga a outra rede | **gateway errado** no PC |
+| O PC não pinga ninguém, nem o vizinho do lado | **IP ou máscara errados** (o PC ficou em outra rede) |
+| Ninguém da rede pinga o gateway | **porta do roteador desligada** (falta `no shutdown`) |
+
+## Método do técnico: de perto para longe
+
+Comece pelo que está mais perto do usuário e vá se afastando. Assim você acha
+o problema sem chutar:
+
+1. **Olhar o PC**: rode `ipconfig`. O IP, a máscara e o gateway batem com o
+   plano de endereçamento?
+2. **Pingar o gateway**: se falhar, o problema está entre o PC e o roteador.
+3. **Olhar o roteador**: `show ip interface brief`. As portas estão **up/up**?
+4. **Pingar o destino**: se agora funciona, a falha foi resolvida.
 
 ## O laudo técnico
 
-Sintoma · evidência (comando + resultado) · causa · correção · teste de confirmação.
+O **laudo técnico** é o documento que o técnico entrega depois de resolver o
+chamado. Ele tem 5 partes:
+
+1. **Sintoma**: o que o usuário reclamou ("o PC2 não acessa o servidor").
+2. **Evidência**: o **comando** que você rodou **e o resultado** que apareceu
+   (por exemplo, `ipconfig` mostrando o gateway 192.168.20.254).
+3. **Causa**: o que estava errado.
+4. **Correção**: o que você mudou.
+5. **Teste de confirmação**: o comando que prova que voltou a funcionar.
+
+A evidência é o que separa um diagnóstico de um palpite: sem comando e
+resultado, não há prova.
+
+## Sua vez
+
+Cada pergunta é um chamado. Leia o sintoma e a evidência e escolha o
+diagnóstico certo.

@@ -68,13 +68,54 @@ challenge:
 
 ## Contexto
 
-Com as portas ligadas, o **PC2** (prédio 2) finalmente pinga o **servidor** (prédio 1).
+Com as portas do roteador ligadas, o **PC2** (prédio 2, 192.168.20.11)
+finalmente consegue pingar o **servidor** (prédio 1, 192.168.10.10). Nesta
+lição vamos acompanhar **o caminho que esse ping faz**.
+
+## Dois endereços em cada mensagem
+
+Cada mensagem que viaja pela rede leva **dois tipos de endereço**:
+
+- o **IP**: diz **de onde saiu e para onde vai no final** (como o remetente e
+  o destinatário de uma carta);
+- o **MAC**: diz **qual é o próximo equipamento do trecho** (como o carteiro
+  de cada bairro).
 
 ## Trecho a trecho
 
-| Trecho | IP origem → destino | MAC origem → destino |
-|---|---|---|
-| 1 · PC2 → roteador | 192.168.20.11 → 192.168.10.10 | PC2 → G0/1 |
-| 2 · roteador → servidor | 192.168.20.11 → 192.168.10.10 | G0/0 → servidor |
+O ping passa por dois trechos: do PC2 até o roteador e do roteador até o
+servidor.
 
-**O IP fica, o MAC muda.** No modo Simulação do Packet Tracer, filtre ICMP e ARP para ver isso acontecer.
+| Trecho | IP de origem → destino | MAC de origem → destino |
+|---|---|---|
+| 1 · PC2 até o roteador | 192.168.20.11 → 192.168.10.10 | PC2 → porta G0/1 do roteador |
+| 2 · roteador até o servidor | 192.168.20.11 → 192.168.10.10 | porta G0/0 do roteador → servidor |
+
+Repare: o **IP não muda** nos dois trechos, mas o **MAC muda** em cada um.
+
+> **O IP fica, o MAC muda.**
+
+## Por que o primeiro ping falha
+
+Muitas vezes o **primeiro** ping entre redes dá *Request timed out* (tempo
+esgotado) e os seguintes funcionam. Isso é normal: na primeira vez, o PC e o
+roteador ainda estão descobrindo os MACs com o **ARP**. Depois disso, eles
+guardam a resposta e os próximos pings passam direto.
+
+## Vendo o caminho com o tracert
+
+O comando `tracert` (*trace route*, rastrear rota) mostra **cada roteador** por
+onde a mensagem passa. Cada roteador é um **salto** (*hop*).
+
+- No Packet Tracer, `tracert 192.168.10.10` no PC2 mostra 2 saltos: primeiro o
+  gateway **192.168.20.1** e depois o próprio servidor.
+- No laboratório, `tracert google.com` mostra vários roteadores da internet.
+  Copie um IP do resultado no site **ipinfo.io** para descobrir **em que cidade
+  e empresa** fica aquele roteador.
+
+No modo **Simulação** do Packet Tracer, filtre **ICMP** (o ping) e **ARP** para
+ver os envelopes passando e o MAC mudando.
+
+## Sua vez
+
+Responda sobre o caminho do ping do PC2 até o servidor.
