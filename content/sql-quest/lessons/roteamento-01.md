@@ -65,13 +65,52 @@ challenge:
 
 ## Contexto
 
-Chamado nº 6 do Escritório Horizonte: **"o prédio 2 não acessa o servidor do prédio 1"**. Agora cada prédio tem uma rede /24.
+O Escritório Horizonte abriu o **chamado nº 6**: **"o prédio 2 não acessa o
+servidor do prédio 1"**. Agora cada prédio tem a sua própria rede:
 
-## A pergunta que o PC faz
+| Prédio | Rede | Exemplo de equipamento |
+|---|---|---|
+| Prédio 1 | 192.168.10.0/24 | Server0: 192.168.10.10 |
+| Prédio 2 | 192.168.20.0/24 | PC2: 192.168.20.11 |
 
-Antes de enviar, o PC compara a rede do destino com a dele:
+Para resolver o chamado, primeiro precisamos entender **como um PC decide para
+onde mandar uma mensagem**.
 
-- **Mesma rede** → entrega direto (pergunta o MAC do destino com ARP).
-- **Outra rede** → manda para o **gateway padrão** (*default gateway*), a porta do roteador.
+## A pergunta que o PC faz antes de enviar
 
-Veja o seu: no `cmd`, digite `ipconfig` e procure **Gateway Padrão**.
+Toda vez que um PC vai mandar algo (um ping, uma página, um arquivo), ele
+compara a **rede do destino** com a **rede dele**, usando a máscara:
+
+- **Mesma rede** → ele entrega **direto** para o destino. Antes, descobre o
+  endereço físico (MAC) do destino com o **ARP** (*Address Resolution
+  Protocol*, protocolo de resolução de endereços), como vimos na aula de 14/10.
+- **Outra rede** → ele **não** entrega direto. Manda a mensagem para o
+  **gateway padrão**, que vai levá-la adiante.
+
+## O que é o gateway padrão
+
+O **gateway padrão** (*default gateway*) é o endereço da **porta do roteador**
+que fica na rede do PC. Ele funciona como a **portaria de um prédio**: tudo
+que vai para fora passa por ali.
+
+Por isso o gateway precisa estar **na mesma rede do PC**. Um PC da rede
+192.168.20.0/24 usa um gateway que começa com 192.168.20, por exemplo
+192.168.20.1.
+
+## Exemplo
+
+- O **PC0** (192.168.10.11/24) pinga o **Server0** (192.168.10.10): os dois
+  começam com 192.168.10, é a **mesma rede** → entrega direto.
+- O **PC0** pinga o **PC2** (192.168.20.11): 192.168.10 é diferente de
+  192.168.20, é **outra rede** → manda para o gateway.
+
+## Veja o seu
+
+No laboratório, abra o `cmd`, digite `ipconfig` e procure a linha **Gateway
+Padrão**. Esse é o endereço do roteador que leva o seu PC para fora da rede
+do SENAI.
+
+## Sua vez
+
+Em cada pergunta, compare os 3 primeiros números do PC e do destino: iguais,
+entrega direto; diferentes, vai pelo gateway.

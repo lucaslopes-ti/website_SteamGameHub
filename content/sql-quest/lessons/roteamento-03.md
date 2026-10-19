@@ -63,9 +63,30 @@ challenge:
 
 ## Contexto
 
-Com os prédios montados no Packet Tracer, o ping entre eles ainda falha: as portas do roteador estão **desligadas**.
+No Packet Tracer, os dois prédios do chamado nº 6 já estão montados, com o
+roteador no meio. Mesmo assim, **o ping entre os prédios ainda falha**.
 
-## Os comandos
+O motivo: nos roteadores Cisco, as portas vêm **desligadas de fábrica**
+(*administratively down*). É uma medida de segurança. O técnico precisa
+**configurar o IP e ligar cada porta** pelos comandos.
+
+## O que é a CLI
+
+A **CLI** (*Command Line Interface*, interface de linha de comando) é a tela
+de texto onde se configura o roteador. No Packet Tracer, clique no roteador e
+abra a aba **CLI**.
+
+A CLI tem **modos**, como andares de um prédio. Cada modo tem um sinal
+diferente no fim da linha:
+
+| Sinal | Modo | Para que serve |
+|---|---|---|
+| `Router>` | usuário | só olhar algumas coisas |
+| `Router#` | privilegiado | ver tudo e salvar |
+| `Router(config)#` | configuração global | mudar o roteador |
+| `Router(config-if)#` | configuração da porta (*interface*) | mudar uma porta |
+
+## Os comandos, um por um
 
 ```
 Router> enable
@@ -78,4 +99,22 @@ Router# show ip interface brief
 Router# show ip route
 ```
 
-**CLI** (*Command Line Interface*) = linha de comando. **up/up** = porta ligada e funcionando.
+- `enable`: sobe para o modo privilegiado.
+- `configure terminal`: entra no modo de configuração.
+- `interface g0/0`: escolhe a porta G0/0.
+- `ip address ...`: dá à porta o IP e a máscara (o gateway do prédio 1).
+- `no shutdown`: **liga a porta**. Sem ele, nada funciona.
+- `end`: volta para o modo privilegiado.
+
+Depois, repita para a **G0/1** com o IP **192.168.20.1**.
+
+## Como conferir
+
+- `show ip interface brief`: mostra cada porta. **up / up** = porta ligada e
+  funcionando. **administratively down** = esqueceram o `no shutdown`.
+- `show ip route`: mostra as rotas. A letra **C** (*connected*) indica uma rede
+  **diretamente conectada** a uma porta do roteador.
+
+## Sua vez
+
+Responda como quem está digitando no CLI do Router0.
