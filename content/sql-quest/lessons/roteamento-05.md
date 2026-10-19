@@ -1,0 +1,77 @@
+---
+id: roteamento-05
+title: "Caça à falha: o laudo do técnico"
+summary: "Diagnostique gateway errado, IP errado e porta desligada seguindo o método de perto para longe."
+chapter: 17
+chapterSlug: roteamento
+lesson: 5
+difficulty: iniciante
+xp: 40
+prerequisites:
+  - roteamento-04
+hints:
+  - "Método: olhar o PC (ipconfig), pingar o gateway, olhar o roteador, pingar o destino."
+  - "Laudo: sintoma, evidência, causa, correção e teste."
+references:
+  - label: "Cisco — Introduction to Networks (ITN)"
+    url: "https://www.netacad.com/courses/ccna-introduction-networks"
+challenge:
+  kind: quiz
+  instruction: "Cada pergunta é um chamado. Escolha o diagnóstico certo."
+  questions:
+    - prompt: "O PC2 pinga o PC3 e o 192.168.20.1, mas não pinga o servidor. O ipconfig mostra Gateway Padrão 192.168.20.254. A causa é..."
+      options:
+        - "Porta do roteador desligada"
+        - "Gateway errado no PC2"
+        - "Servidor desligado"
+        - "Cabo cruzado"
+      answer: 1
+      explanation: "O gateway certo é 192.168.20.1. Com .254, o PC2 manda para um endereço que não existe."
+    - prompt: "O PC2 não pinga ninguém, nem o PC3 do lado. O ipconfig mostra IPv4 192.168.21.11. A causa é..."
+      options:
+        - "IP do PC2 digitado errado: 21 não é a rede do prédio 2"
+        - "Gateway em branco"
+        - "Porta G0/0 desligada"
+        - "Máscara certa"
+      answer: 0
+      explanation: "O prédio 2 é 192.168.20.0/24. Com 192.168.21.11, as respostas não acham o caminho de volta."
+    - prompt: "Ninguém do prédio 2 pinga o gateway 192.168.20.1. O show ip interface brief mostra G0/1 administratively down. A correção é..."
+      options:
+        - "Trocar o IP dos PCs"
+        - "no shutdown na G0/1"
+        - "Reiniciar o servidor"
+        - "Apagar o roteador"
+      answer: 1
+      explanation: "A porta foi desligada por comando. Entre na interface g0/1 e digite no shutdown."
+    - prompt: "Qual é a ordem do método do técnico?"
+      options:
+        - "Destino → roteador → gateway → PC"
+        - "PC → gateway → roteador → destino"
+        - "Roteador → PC → destino → gateway"
+        - "Trocar tudo de uma vez"
+      answer: 1
+      explanation: "De perto para longe: começa pelo PC e vai até o destino. Quem pula passo, chuta."
+    - prompt: "Num laudo técnico, a evidência é..."
+      options:
+        - "A opinião do técnico"
+        - "O comando usado e o resultado que ele mostrou"
+        - "O nome do cliente"
+        - "O preço do serviço"
+      answer: 1
+      explanation: "Evidência é prova: por exemplo, ipconfig mostrando Gateway Padrão 192.168.20.254."
+---
+
+## Contexto
+
+Na caça à falha, uma dupla provoca uma falha e a dupla vizinha diagnostica. Aqui você treina o diagnóstico.
+
+## Método: de perto para longe
+
+1. **Olhar o PC**: `ipconfig` (IP, máscara e gateway conferem com o plano?)
+2. **Pingar o gateway**
+3. **Olhar o roteador**: `show ip interface brief`
+4. **Pingar o destino**
+
+## O laudo técnico
+
+Sintoma · evidência (comando + resultado) · causa · correção · teste de confirmação.

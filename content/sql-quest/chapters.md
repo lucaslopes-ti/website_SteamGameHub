@@ -61,6 +61,14 @@ chapters:
     slug: subsistemas
     title: "Os seis subsistemas do cabeamento estruturado"
     description: "Aprofundamento dos seis subsistemas da ANSI/TIA-568: entrada do edifício, sala de equipamentos, cabeamento vertical com MMR e shaft, sala de telecomunicações, cabeamento horizontal com seus limites de distância e a área de trabalho — incluindo meios e rotas (plenum, closed riser, CPR), rotulagem, pathways e teste de aceitação."
+  - number: 16
+    slug: ipv4
+    title: "Endereços IPv4 e sub-redes /24 e /25"
+    description: "Leia um endereço IPv4 como um técnico: público, privado ou especial; endereço de rede, broadcast e faixa de hosts no /24; como partir a rede ao meio com o /25 para separar setores; e, como desafio extra, os quatro blocos do /26."
+  - number: 17
+    slug: roteamento
+    title: "Roteador e gateway padrão"
+    description: "Por que um PC precisa do gateway padrão para falar com outra rede: mesma rede ou outra rede, uma porta do roteador em cada rede, o comando no shutdown, o percurso do ping (o IP fica, o MAC muda) e a caça à falha com laudo técnico."
 ---
 
 # Capítulos da SQL Quest

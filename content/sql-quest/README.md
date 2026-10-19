@@ -10,7 +10,7 @@ esta base: `lib/sql-quest/catalog.ts` consome o catálogo gerado
 O currículo completo foi convertido de `docs/sql_bootdev.md` para esta base,
 em Português do Brasil, ambientado no **Senai Pay** (aplicativo de pagamentos
 fictício) e no **Senai Pay Comunidade** (recurso de rede social). São
-**120 unidades** organizadas em **15 capítulos**:
+**130 unidades** organizadas em **17 capítulos**:
 
 | Capítulo | Slug | Unidades |
 |---|---|---|
@@ -29,6 +29,8 @@ fictício) e no **Senai Pay Comunidade** (recurso de rede social). São
 | 13 — Infraestrutura e cabeamento estruturado | `cabeamento` | 9 |
 | 14 — Cisco Packet Tracer: primeiros passos | `packet-tracer` | 1 |
 | 15 — Os seis subsistemas do cabeamento estruturado | `subsistemas` | 9 |
+| 16 — Endereços IPv4 e sub-redes /24 e /25 | `ipv4` | 5 |
+| 17 — Roteador e gateway padrão | `roteamento` | 5 |
 
 As imagens ficam em `images/` e são referenciadas no front matter das unidades
 (a UI resolve o `src` relativo para `/uploads/images/<src>`):
@@ -56,6 +58,11 @@ As imagens ficam em `images/` e são referenciadas no front matter das unidades
 | `subsistemas_area_trabalho.jpg` | `subsistemas-06` | Tomada, patch cord de manobra e equipamento do usuário |
 | `subsistemas_plenum_riser.jpg` | `subsistemas-07` | Comparação plenum x riser e o cabo não permitido |
 | `subsistemas_rotulagem_certificador.jpg` | `subsistemas-08` | Identificação nas duas pontas e teste com certificador |
+| `ipv4_regua_sub_redes.gif` | `ipv4-03` | Régua de sub-redes: /24 partido em /25 e /26 |
+| `roteamento_local_gateway.gif` | `roteamento-01` | Pacote local x pacote enviado ao gateway |
+| `roteamento_portas_roteador.png` | `roteamento-02` | Roteador com uma porta em cada rede |
+| `roteamento_roteador_de_casa.png` | `roteamento-02` | Portas do roteador de casa (WAN e LAN) |
+| `roteamento_tracert_real.png` | `roteamento-04` | Saída de um tracert real até a internet |
 
 Prompts prontos para gerar as imagens do capítulo 15 no Gemini estão em
 `images/SUBSISTEMAS_PENDING.md`; o manifesto `images/PENDING.md` mantém as
