@@ -10,7 +10,7 @@ esta base: `lib/sql-quest/catalog.ts` consome o catálogo gerado
 O currículo completo foi convertido de `docs/sql_bootdev.md` para esta base,
 em Português do Brasil, ambientado no **Senai Pay** (aplicativo de pagamentos
 fictício) e no **Senai Pay Comunidade** (recurso de rede social). São
-**130 unidades** organizadas em **17 capítulos**:
+**136 unidades** organizadas em **18 capítulos**:
 
 | Capítulo | Slug | Unidades |
 |---|---|---|
@@ -31,6 +31,7 @@ fictício) e no **Senai Pay Comunidade** (recurso de rede social). São
 | 15 — Os seis subsistemas do cabeamento estruturado | `subsistemas` | 9 |
 | 16 — Endereços IPv4 e sub-redes /24 e /25 | `ipv4` | 5 |
 | 17 — Roteador e gateway padrão | `roteamento` | 5 |
+| 18 — Treino SAEP: a rede em situações de trabalho | `treino-saep` | 6 |
 
 As imagens ficam em `images/` e são referenciadas no front matter das unidades
 (a UI resolve o `src` relativo para `/uploads/images/<src>`):
@@ -63,6 +64,9 @@ As imagens ficam em `images/` e são referenciadas no front matter das unidades
 | `roteamento_portas_roteador.png` | `roteamento-02` | Roteador com uma porta em cada rede |
 | `roteamento_roteador_de_casa.png` | `roteamento-02` | Portas do roteador de casa (WAN e LAN) |
 | `roteamento_tracert_real.png` | `roteamento-04` | Saída de um tracert real até a internet |
+| `saep_simbolos.png` | `treino-saep-02` | Símbolos dos equipamentos nos diagramas |
+| `saep_topologias.png` | `treino-saep-02` | Topologias estrela, barramento, anel e malha |
+| `ipv4_regua_sub_redes.gif` | `treino-saep-04` | A mesma régua de sub-redes, reaproveitada |
 
 Prompts prontos para gerar as imagens do capítulo 15 no Gemini estão em
 `images/SUBSISTEMAS_PENDING.md`; o manifesto `images/PENDING.md` mantém as
