@@ -69,6 +69,10 @@ chapters:
     slug: roteamento
     title: "Roteador e gateway padrão"
     description: "Por que um PC precisa do gateway padrão para falar com outra rede: mesma rede ou outra rede, uma porta do roteador em cada rede, o comando no shutdown, o percurso do ping (o IP fica, o MAC muda) e a caça à falha com laudo técnico."
+  - number: 18
+    slug: treino-saep
+    title: "Treino SAEP: a rede em situações de trabalho"
+    description: "Questões no formato da prova objetiva do SAEP (contexto, comando e alternativas) sobre tudo o que caiu em Infraestrutura de Redes: diagnóstico com ipconfig, ping e nslookup, símbolos e topologias, cabos e distâncias, IPv4 e IPv6, ARP, portas do roteador e do firewall, unidades, instrumentos de medição e segurança."
 ---
 
 # Capítulos da SQL Quest
