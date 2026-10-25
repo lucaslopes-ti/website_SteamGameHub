@@ -8,6 +8,8 @@
  *    `SQLChapter`) via `mapContentBundle`.
  * 3. Serializa em `data/sql-quest/generated.ts` (módulo puro de dados, sem
  *    fs/Node) — idempotente: só escreve quando o conteúdo muda.
+ * 4. Copia para `public/uploads/images/` as imagens das lições que ainda não
+ *    estão lá (ou mudaram), já que é de lá que o navegador as carrega.
  *
  * Uso:
  *   npm run generate:sql-quest-catalog
@@ -21,9 +23,15 @@ import path from "node:path";
 import { buildContentBundle } from "../lib/sql-quest/content/build";
 import { mapContentBundle } from "../lib/sql-quest/content/mapper";
 import { serializeCatalogSource } from "../lib/sql-quest/content/codegen";
+import {
+  PUBLIC_LESSON_IMAGES_DIR,
+  collectLessonImageSrcs,
+  syncPublicImages,
+} from "../lib/sql-quest/content/public-images";
 
 const CONTENT_DIR = path.resolve(process.cwd(), "content/sql-quest");
 const OUT_FILE = path.resolve(process.cwd(), "data/sql-quest/generated.ts");
+const PUBLIC_IMAGES_DIR = path.resolve(process.cwd(), PUBLIC_LESSON_IMAGES_DIR);
 
 function printIssues(issues: { file: string; severity: string; field?: string; message: string }[]): void {
   for (const issue of issues) {
@@ -59,5 +67,16 @@ if (existing === source) {
   fs.writeFileSync(OUT_FILE, source, "utf8");
   console.log(
     `SQL Quest — catálogo gerado em ${path.relative(process.cwd(), OUT_FILE)} (${mapped.chapters.length} capítulo(s), ${mapped.lessons.length} lição(ões)).`
+  );
+}
+
+const copied = syncPublicImages(
+  CONTENT_DIR,
+  PUBLIC_IMAGES_DIR,
+  collectLessonImageSrcs(result.bundle)
+);
+if (copied.length > 0) {
+  console.log(
+    `SQL Quest — ${copied.length} imagem(ns) copiada(s) para ${PUBLIC_LESSON_IMAGES_DIR}: ${copied.join(", ")}.`
   );
 }

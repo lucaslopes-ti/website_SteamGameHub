@@ -10,3 +10,4 @@ export * from "./frontmatter";
 export * from "./validate";
 export * from "./loader";
 export * from "./build";
+export * from "./public-images";
