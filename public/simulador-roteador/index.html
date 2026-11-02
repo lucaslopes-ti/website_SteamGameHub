@@ -1,0 +1,3761 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Roteadores dos provedores · Simulador SOHO</title>
+  <!-- Arquivo único gerado por redes-soho/simulador-roteador/provedores/geradores/empacotar.py. Não edite aqui: edite os arquivos do simulador e gere de novo. -->
+  <style>
+:root {
+  --fundo: #eef1f5;
+  --superficie: #ffffff;
+  --texto: #1d2733;
+  --texto-suave: #5b6878;
+  --borda: #d5dbe3;
+  --destaque: #0b5cad;
+  --ok: #1f8a4c;
+  --term-fundo: #0c0c0c;
+  --term-texto: #d6d6d6;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: var(--fundo);
+  color: var(--texto);
+}
+button, select, input { font: inherit; }
+
+.topo {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  justify-content: space-between; align-items: center;
+  padding: 10px 16px; background: #13263d; color: #fff;
+}
+.topo-titulo { display: flex; flex-direction: column; }
+.topo-titulo span { font-size: 13px; opacity: .8; }
+.topo-acoes { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 14px; }
+.topo-link { color: #fff; padding: 5px 10px; border: 1px solid #5d7189; border-radius: 4px; text-decoration: none; }
+.topo-acoes select, .topo-acoes button { padding: 5px 8px; border-radius: 4px; border: 1px solid #5d7189; }
+
+.missoes {
+  margin: 12px 16px 0; padding: 12px 16px;
+  background: var(--superficie); border: 1px solid var(--borda); border-radius: 6px;
+}
+.missoes-cab { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.missoes-cab span { color: var(--texto-suave); font-size: 14px; }
+.missoes p { margin: 6px 0 10px; line-height: 1.45; }
+.missoes-nav { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.missoes-nav button { padding: 5px 12px; border: 1px solid var(--borda); background: #f7f9fb; border-radius: 4px; cursor: pointer; }
+.missoes-nav button:disabled { opacity: .4; cursor: default; }
+.missao-status { font-weight: 600; color: var(--texto-suave); }
+.missao-status.ok { color: var(--ok); }
+
+.area {
+  display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 12px; padding: 12px 16px 16px;
+}
+@media (max-width: 980px) { .area { grid-template-columns: 1fr; } }
+
+.janela { background: var(--superficie); border: 1px solid var(--borda); border-radius: 6px; overflow: hidden; min-width: 0; }
+.janela-barra { display: flex; align-items: center; gap: 10px; padding: 6px 10px; background: #e3e7ec; border-bottom: 1px solid var(--borda); }
+.bolinhas i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #b9c1cb; margin-right: 4px; }
+.janela-url { flex: 1; background: #fff; border-radius: 12px; padding: 3px 12px; font-size: 13px; color: var(--texto-suave); }
+.janela-corpo { min-height: 480px; }
+
+.mapa-area { background: var(--superficie); border: 1px solid var(--borda); border-radius: 6px; padding: 8px; min-width: 0; }
+.mapa-dica { margin: 4px 8px; font-size: 13px; color: var(--texto-suave); }
+
+.dlg { border: none; border-radius: 8px; padding: 0; width: min(680px, calc(100vw - 32px)); box-shadow: 0 10px 40px rgba(0,0,0,.35); }
+.dlg::backdrop { background: rgba(10, 20, 30, .5); }
+.dlg-cab { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #13263d; color: #fff; }
+.dlg-fechar { background: none; border: none; color: #fff; font-size: 18px; cursor: pointer; }
+
+.term {
+  background: var(--term-fundo); color: var(--term-texto);
+  font-family: Consolas, "Courier New", monospace; font-size: 14px;
+  height: 320px; overflow-y: auto; padding: 10px 14px; white-space: pre-wrap;
+}
+.term-entrada { display: flex; gap: 6px; align-items: center; background: var(--term-fundo); color: var(--term-texto); padding: 6px 14px 10px; font-family: Consolas, monospace; }
+.term-entrada input { flex: 1; background: transparent; border: none; color: #fff; outline: none; font-family: Consolas, monospace; }
+.term-atalhos { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 14px; }
+.term-atalhos button { padding: 4px 10px; border: 1px solid var(--borda); background: #f7f9fb; border-radius: 4px; cursor: pointer; font-family: Consolas, monospace; font-size: 13px; }
+
+.nat-form { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; padding: 14px; }
+.nat-form label { display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+.nat-form input, .nat-form select { padding: 5px 8px; border: 1px solid var(--borda); border-radius: 4px; }
+.nat-form button { padding: 6px 14px; background: var(--destaque); color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+.nat-passos { margin: 0 14px 16px; padding-left: 22px; line-height: 1.6; }
+.nat-passos.ok li:last-child { color: var(--ok); font-weight: 600; }
+.nat-passos.falha li:last-child { color: #b3261e; font-weight: 600; }
+
+</style>
+  <style>
+/* Mapa da rede — Worker 3. Todos os seletores deste arquivo usam o prefixo mp-.
+   Paleta herdada de base.css (--destaque, --ok), com cores de estado próprias. */
+
+.mp-mapa {
+  --mp-ok: #1f8a4c;
+  --mp-alerta: #b8790a;
+  --mp-falha: #c22a1e;
+  --mp-neutro: #64748b;
+  --mp-tinta: #1d2733;
+  --mp-tinta-fraca: #5b6878;
+  --mp-linha: #d5dbe3;
+  position: relative;
+  background: #fbfcfd;
+  border: 1px solid var(--borda, #d5dbe3);
+  border-radius: 6px;
+  overflow: hidden;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+.mp-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ---------------- fundo ---------------- */
+
+.mp-fundo-cor { fill: #f8fafc; }
+.mp-ponto-grade { fill: #cbd6e2; opacity: .55; }
+.mp-linha-grade { stroke: #e6ecf3; stroke-width: 1.5; }
+
+/* ---------------- estados por dispositivo ---------------- */
+
+.mp-estado-ok { --mp-cor: var(--mp-ok); }
+.mp-estado-alerta { --mp-cor: var(--mp-alerta); }
+.mp-estado-falha { --mp-cor: var(--mp-falha); }
+.mp-estado-neutro { --mp-cor: var(--mp-neutro); }
+
+/* ---------------- Internet (nuvem) ---------------- */
+
+.mp-nuvem { transition: opacity .45s ease, filter .45s ease; }
+.mp-nuvem.mp-apagada { opacity: .5; filter: grayscale(1); }
+.mp-nuvem-luz { fill: #ffffff; opacity: .35; }
+.mp-nuvem-titulo {
+  fill: #22374d;
+  font-size: 18.5px;
+  font-weight: 600;
+  letter-spacing: .3px;
+}
+.mp-nuvem-ip {
+  fill: #40566e;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 14px;
+}
+.mp-nuvem-ip.mp-off { fill: #8e9aa8; }
+
+.mp-parada-1 { stop-color: #ffffff; }
+.mp-parada-2 { stop-color: #d3e0ee; }
+
+/* ---------------- enlace WAN ---------------- */
+
+.mp-wan {
+  stroke: #7e8fa3;
+  stroke-width: 4;
+  stroke-linecap: round;
+  transition: stroke .4s ease;
+}
+.mp-wan.mp-tracejada {
+  stroke: var(--mp-falha);
+  stroke-dasharray: 9 9;
+  animation: mp-corre 1s linear infinite;
+}
+
+.mp-pilha-fundo {
+  fill: #ffffff;
+  stroke: #c9d4e1;
+  stroke-width: 1.5;
+  transition: stroke .4s ease;
+}
+.mp-pilha-txt {
+  fill: #56677c;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .8px;
+}
+.mp-pilha-wan.mp-off .mp-pilha-fundo { stroke: #e6b6b0; }
+.mp-pilha-wan.mp-off .mp-pilha-txt { fill: #a02318; }
+
+.mp-wan-msg { font-size: 15.5px; font-weight: 600; }
+.mp-txt-ok { fill: var(--mp-ok); }
+.mp-txt-falha { fill: var(--mp-falha); }
+
+/* ---------------- roteador ---------------- */
+
+.mp-antenna {
+  fill: none;
+  stroke: #90a2b6;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.mp-antenna-base { fill: #a9b8c8; }
+.mp-roteador-corpo {
+  fill: #ffffff;
+  stroke: #c6d2e0;
+  stroke-width: 2;
+}
+.mp-marca { fill: #17293d; font-size: 20.5px; font-weight: 700; letter-spacing: .2px; }
+.mp-marca-ax { fill: #0b5cad; }
+.mp-marca-sub { fill: #74849a; font-size: 12.5px; }
+.mp-painel { fill: #16283c; }
+
+.mp-led {
+  stroke: #0a1726;
+  stroke-width: 1.4;
+  transition: fill .35s ease;
+}
+.mp-led-verde { fill: #3ecf7a; }
+.mp-led-ambar { fill: #f0b429; }
+.mp-led-vermelho { fill: #e5483c; }
+.mp-led-cinza { fill: #4d6076; }
+
+.mp-lan-status {
+  fill: #c7d6e6;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 12.5px;
+  letter-spacing: .3px;
+  transition: fill .35s ease;
+}
+.mp-lan-status.mp-off { fill: #ff9c92; }
+
+/* ---------------- chip de interferência ---------------- */
+
+.mp-chip-corpo {
+  fill: #ffffff;
+  stroke: #d3dce6;
+  stroke-width: 1.5;
+}
+.mp-chip-titulo {
+  fill: #6b7a8d;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: .3px;
+}
+.mp-barra {
+  fill: #dde4ec;
+  transition: fill .35s ease;
+}
+.mp-barra-baixa { fill: var(--mp-ok); }
+.mp-barra-media { fill: var(--mp-alerta); }
+.mp-barra-alta { fill: var(--mp-falha); }
+
+.mp-interf-nivel { font-size: 21px; font-weight: 700; transition: fill .35s ease; }
+.mp-nivel-baixa { fill: var(--mp-ok); }
+.mp-nivel-media { fill: var(--mp-alerta); }
+.mp-nivel-alta { fill: var(--mp-falha); }
+.mp-nivel-off { fill: #97a3b1; }
+.mp-interf-status { fill: #6b7a8d; font-size: 13.5px; }
+
+/* ---------------- fiação ---------------- */
+
+.mp-tronco {
+  stroke: #93a1b1;
+  stroke-width: 4;
+  stroke-linecap: round;
+  fill: none;
+}
+
+/* A cor do enlace vem sempre da classe de estado aplicada no próprio grupo */
+.mp-cabo {
+  stroke: var(--mp-cor);
+  stroke-width: 4;
+  stroke-linecap: round;
+  fill: none;
+  transition: stroke .4s ease;
+}
+.mp-conector { fill: var(--mp-cor); transition: fill .4s ease; }
+.mp-juncao { fill: #ffffff; stroke: #93a1b1; stroke-width: 2.5; }
+
+/* Wi-Fi: ondas no lugar do cabo */
+.mp-ondas path {
+  stroke: var(--mp-cor);
+  stroke-width: 3.4;
+  stroke-linecap: round;
+  fill: none;
+  transition: stroke .4s ease;
+  animation: mp-onda 2.4s ease-in-out infinite;
+}
+.mp-ondas path:nth-child(1) { animation-delay: 0s; stroke-opacity: .85; }
+.mp-ondas path:nth-child(2) { animation-delay: .45s; stroke-opacity: .6; }
+.mp-ondas path:nth-child(3) { animation-delay: .9s; stroke-opacity: .4; }
+
+.mp-ar-ligacao {
+  stroke: var(--mp-cor);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-dasharray: 2 9;
+  opacity: .55;
+  animation: mp-fluxo 1.8s linear infinite;
+  transition: stroke .4s ease;
+}
+
+.mp-enlace.mp-estado-neutro .mp-ar-ligacao,
+.mp-enlace.mp-estado-falha .mp-ar-ligacao { opacity: .32; }
+
+/* ---------------- dispositivos ---------------- */
+
+.mp-host {
+  color: var(--mp-cor);
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.mp-host:hover .mp-placa { fill: #f2f7fd; }
+
+.mp-halo {
+  fill: none;
+  stroke: #0b5cad;
+  stroke-width: 3;
+  opacity: 0;
+  transition: opacity .18s ease;
+}
+.mp-host.mp-focado .mp-halo,
+.mp-host:focus .mp-halo { opacity: .9; }
+
+.mp-placa {
+  fill: #ffffff;
+  stroke: var(--mp-cor);
+  stroke-width: 2.5;
+  transition: stroke .4s ease, fill .2s ease;
+}
+
+.mp-icone {
+  fill: none;
+  stroke: var(--mp-cor);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke .4s ease;
+}
+.mp-icone .mp-cheio { fill: var(--mp-cor); stroke: none; transition: fill .4s ease; }
+.mp-icone .mp-papel { fill: #ffffff; }
+
+.mp-tag-fundo {
+  fill: #ffffff;
+  stroke: #dbe2ea;
+  stroke-width: 1.4;
+}
+.mp-tag-conexao path,
+.mp-tag-conexao rect {
+  fill: none;
+  stroke: #5b6878;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.mp-tag-conexao .mp-tag-cheio { fill: #5b6878; stroke: none; }
+
+.mp-nome {
+  fill: var(--mp-tinta);
+  font-size: 21.5px;
+  font-weight: 600;
+}
+.mp-ip {
+  fill: #46566a;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 19px;
+  transition: fill .35s ease;
+}
+.mp-ip.mp-ip-vazio { fill: #8b97a6; }
+
+.mp-selo-rect {
+  fill: var(--mp-cor);
+  transition: fill .35s ease;
+}
+.mp-selo-txt {
+  fill: #ffffff;
+  font-size: 16.5px;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+/* balão com o primeiro problema */
+.mp-balao {
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.mp-host.mp-tem-balao .mp-balao { opacity: 1; }
+
+.mp-balao-rect {
+  fill: #ffffff;
+  stroke: var(--mp-cor);
+  stroke-width: 1.6;
+  stroke-opacity: .5;
+  transition: stroke .4s ease;
+}
+.mp-balao-barra {
+  fill: var(--mp-cor);
+  opacity: .85;
+  transition: fill .4s ease;
+}
+.mp-balao-txt {
+  fill: #2b3a4b;
+  font-size: 16px;
+}
+
+/* ---------------- animações ---------------- */
+
+@keyframes mp-onda {
+  0%, 100% { stroke-opacity: .12; }
+  45% { stroke-opacity: .9; }
+}
+
+@keyframes mp-fluxo {
+  to { stroke-dashoffset: -22; }
+}
+
+@keyframes mp-corre {
+  to { stroke-dashoffset: -18; }
+}
+
+@keyframes mp-pulso {
+  0% { transform: scale(1); }
+  32% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+@keyframes mp-halo-pulso {
+  0% { opacity: .8; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.28); }
+}
+
+.mp-host.mp-pulso .mp-placa,
+.mp-host.mp-pulso .mp-icone-miolo {
+  animation: mp-pulso .75s cubic-bezier(.2, .7, .3, 1);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.mp-host.mp-pulso .mp-halo {
+  animation: mp-halo-pulso .9s ease-out forwards;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* LAN fora do ar: toda a fiação fica vermelha */
+.mp-mapa.mp-lan-falha .mp-cabo { stroke: var(--mp-falha); }
+.mp-mapa.mp-lan-falha .mp-conector { fill: var(--mp-falha); }
+.mp-mapa.mp-lan-falha .mp-tronco {
+  stroke: var(--mp-falha);
+  stroke-dasharray: 8 8;
+  animation: mp-corre 1s linear infinite;
+}
+
+/* ---------------- pacote ---------------- */
+
+.mp-pacote-no {
+  fill: #0b5cad;
+  stroke: #ffffff;
+  stroke-width: 2.5;
+}
+.mp-pacote-halo {
+  fill: #0b5cad;
+  opacity: .18;
+}
+
+/* ---------------- barra de ações ---------------- */
+
+.mp-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px 9px;
+  border-top: 1px solid #e6ecf3;
+  background: #f6f9fc;
+  font-size: 12.5px;
+  color: var(--mp-tinta-fraca);
+}
+
+.mp-btn {
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid #0b5cad;
+  background: #ffffff;
+  color: #0b5cad;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease;
+}
+.mp-btn:hover { background: #0b5cad; color: #ffffff; }
+.mp-btn:focus-visible { outline: 2px solid #0b5cad; outline-offset: 2px; }
+.mp-btn:active { transform: translateY(1px); }
+
+.mp-legenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mp-legenda li {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.mp-ponto {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.mp-ponto-ok { background: #1f8a4c; }
+.mp-ponto-alerta { background: #b8790a; }
+.mp-ponto-falha { background: #c22a1e; }
+
+/* ---------------- acessibilidade ---------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .mp-mapa *,
+  .mp-mapa *::before,
+  .mp-mapa *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+</style>
+  <style>
+/* Página do simulador por provedor: roteiro + janela do navegador + mapa. */
+.sim-provedores { display: flex; flex-wrap: wrap; gap: 6px; }
+.sim-provedores a {
+  color: #fff; text-decoration: none; padding: 5px 12px; border-radius: 4px;
+  border: 1px solid #5d7189; font-size: 14px;
+}
+.sim-provedores a.ativo, .sim-provedores a:hover { background: #fff; color: #13263d; }
+
+.sim-area {
+  display: grid; gap: 12px; padding: 12px 16px 16px;
+  grid-template-columns: 280px minmax(0, 1.3fr) minmax(330px, 1fr);
+  align-items: start;
+}
+@media (max-width: 1280px) { .sim-area { grid-template-columns: 280px minmax(0, 1fr); } .mapa-area { grid-column: 1 / -1; max-width: 560px; } }
+@media (max-width: 760px) { .sim-area { grid-template-columns: 1fr; padding: 12px 16px; } }
+
+.sim-lado { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.sim-caixa { background: var(--superficie); border: 1px solid var(--borda); border-radius: 6px; padding: 10px 12px; }
+.sim-roteiro-cab { display: flex; justify-content: space-between; align-items: baseline; }
+.sim-roteiro-cab span { font-size: 13px; color: var(--texto-suave); }
+.sim-barra { height: 6px; background: #e3e7ec; border-radius: 3px; margin: 6px 0 8px; overflow: hidden; }
+.sim-barra i { display: block; height: 100%; width: 0; background: var(--ok); transition: width .4s; }
+.sim-passos { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.sim-passos li { display: flex; gap: 8px; padding: 6px; border-radius: 5px; opacity: .7; }
+.sim-passos li .num {
+  flex: 0 0 24px; height: 24px; border-radius: 50%; background: #e3e7ec; color: var(--texto);
+  display: grid; place-items: center; font-size: 13px; font-weight: 700;
+}
+.sim-passos li strong { font-size: 14px; }
+.sim-passos li p { margin: 2px 0 0; font-size: 13px; line-height: 1.4; display: none; }
+.sim-passos li.atual { opacity: 1; background: #fff7d6; border: 1px solid #f0d97a; }
+.sim-passos li.atual p { display: block; }
+.sim-passos li.atual .num { background: #f0b400; color: #fff; }
+.sim-passos li.feito { opacity: 1; }
+.sim-passos li.feito .num { background: var(--ok); color: #fff; }
+.sim-parabens { margin: 8px 0 0; padding: 8px; background: #e3f5ea; color: var(--ok); font-weight: 600; border-radius: 5px; }
+
+.sim-etiqueta {
+  margin-top: 6px; border: 2px dashed #9aa5b1; border-radius: 6px; padding: 8px 10px;
+  background: repeating-linear-gradient(135deg, #fbfbf7, #fbfbf7 8px, #f4f4ee 8px, #f4f4ee 16px);
+  font-size: 13px;
+}
+.sim-etiqueta .et-cab { font-weight: 700; border-bottom: 1px solid #c9ced6; margin-bottom: 4px; padding-bottom: 3px; }
+.sim-etiqueta div, .sim-os div { display: flex; justify-content: space-between; gap: 8px; padding: 2px 0; }
+.sim-etiqueta small { color: var(--texto-suave); }
+.sim-etiqueta code, .sim-os code { font-family: Consolas, monospace; font-weight: 700; user-select: all; }
+.sim-os { margin-top: 6px; font-size: 13px; }
+.sim-os p { margin: 6px 0 0; color: var(--texto-suave); line-height: 1.4; }
+
+.sim-btn { padding: 7px 12px; border: 1px solid var(--borda); background: #f7f9fb; border-radius: 5px; cursor: pointer; }
+.sim-btn-destaque { width: 100%; margin-top: 6px; background: #0b5cad; color: #fff; border-color: #0b5cad; font-weight: 600; }
+.mapa-area .mp-btn { display: none; } /* teste de NAT não faz parte deste roteiro */
+
+/* ---------------------------------------------------------------- painel */
+.pp-raiz {
+  --pp-cor: #0b5cad; --pp-cor-escura: #083f78; --pp-cor-clara: #e8f0fa; --pp-texto-cab: #fff;
+  --pp-fundo: #f4f6f9; --pp-raio: 6px; --pp-fonte: "Segoe UI", system-ui, sans-serif;
+  font-family: var(--pp-fonte); background: var(--pp-fundo); color: #222; min-height: 520px;
+  display: flex; flex-direction: column; font-size: 14px;
+}
+.pp-cab {
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  padding: 10px 16px; background: var(--pp-cor); color: var(--pp-texto-cab);
+}
+.pp-marca { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.pp-simbolo { width: 26px; height: 26px; border-radius: 50%; border: 3px solid currentColor; position: relative; opacity: .9; }
+.pp-simbolo::after { content: ""; position: absolute; inset: 5px; border-radius: 50%; background: currentColor; }
+.pp-marca-nome { font-size: 18px; font-weight: 700; letter-spacing: .3px; }
+.pp-modelo { font-size: 12px; opacity: .85; }
+.pp-sair { background: transparent; color: inherit; border: 1px solid currentColor; border-radius: var(--pp-raio); padding: 4px 12px; cursor: pointer; }
+.pp-sair .pp-trad { color: inherit; opacity: .8; }
+.pp-faixa-sim { background: #fff3c4; color: #6b5300; font-size: 12px; text-align: center; padding: 3px 8px; border-bottom: 1px solid #ecd98a; }
+
+.pp-termo { font-weight: inherit; }
+.pp-trad { color: #6a7480; font-weight: 400; font-size: 11.5px; }
+
+.pp-corpo { display: flex; flex: 1; min-height: 0; }
+.pp-conteudo { flex: 1; padding: 14px 18px 18px; min-width: 0; overflow-x: auto; }
+.pp-trilha { font-size: 16px; font-weight: 600; color: var(--pp-cor-escura); padding-bottom: 8px; margin-bottom: 12px; border-bottom: 2px solid var(--pp-cor-clara); }
+.pp-trilha .pp-trad { font-size: 12px; }
+.pp-seta { color: #999; margin: 0 4px; }
+
+/* menus */
+.pp-item { display: block; color: inherit; text-decoration: none; padding: 8px 14px; cursor: pointer; }
+.pp-layout-topo .pp-corpo { flex-direction: column; }
+.pp-nav-topo { display: flex; flex-wrap: wrap; background: #fff; border-bottom: 1px solid #ddd; padding: 0 10px; }
+.pp-nav-topo .pp-item { padding: 12px 14px; border-bottom: 3px solid transparent; font-weight: 600; color: #555; }
+.pp-nav-topo .pp-item.ativo { color: var(--pp-cor); border-bottom-color: var(--pp-cor); }
+
+.pp-nav-lateral { flex: 0 0 190px; background: #fff; border-right: 1px solid #ddd; padding: 8px 0; }
+.pp-grupo-titulo { font-size: 12px; text-transform: uppercase; letter-spacing: .6px; color: #888; padding: 10px 14px 4px; font-weight: 700; }
+.pp-nav-lateral .pp-item { border-left: 4px solid transparent; }
+.pp-nav-lateral .pp-item.ativo { border-left-color: var(--pp-cor); background: var(--pp-cor-clara); color: var(--pp-cor-escura); font-weight: 600; }
+
+.pp-layout-abas .pp-corpo { flex-wrap: wrap; }
+.pp-nav-abas { flex: 0 0 100%; display: flex; flex-wrap: wrap; background: var(--pp-cor-escura); }
+.pp-aba { color: #dfe; text-decoration: none; padding: 9px 16px; font-weight: 600; }
+.pp-aba .pp-trad { color: inherit; opacity: .75; }
+.pp-aba.ativo { background: var(--pp-fundo); color: var(--pp-cor-escura); }
+.pp-nav-sub { flex: 0 0 180px; background: #fff; border-right: 1px solid #ddd; padding: 6px 0; }
+.pp-nav-sub .pp-item.ativo { background: var(--pp-cor-clara); color: var(--pp-cor-escura); font-weight: 600; }
+.pp-layout-abas .pp-conteudo { flex: 1 1 300px; }
+
+.pp-nav-arvore { flex: 0 0 200px; background: #eef1f4; border-right: 1px solid #d3d8de; padding: 8px 0; font-size: 13.5px; }
+.pp-pasta-titulo { display: block; padding: 7px 12px; font-weight: 700; color: #333; text-decoration: none; }
+.pp-pasta-itens { display: none; }
+.pp-pasta.aberta .pp-pasta-itens { display: block; }
+.pp-pasta-itens .pp-item { padding: 6px 12px 6px 28px; }
+.pp-nav-arvore .pp-item.ativo { background: var(--pp-cor); color: #fff; }
+.pp-nav-arvore .pp-item.ativo .pp-trad { color: #e8eefc; }
+
+@media (max-width: 620px) {
+  .pp-corpo { flex-direction: column; }
+  .pp-nav-lateral, .pp-nav-sub, .pp-nav-arvore { flex: none; border-right: 0; border-bottom: 1px solid #ddd; }
+}
+
+/* formulários */
+.pp-form { max-width: 560px; }
+.pp-campo { display: grid; grid-template-columns: minmax(150px, 220px) minmax(0, 1fr); gap: 4px 12px; align-items: center; margin-bottom: 10px; }
+.pp-campo label { font-weight: 600; color: #333; }
+.pp-campo input, .pp-campo select {
+  padding: 7px 9px; border: 1px solid #b9c1cb; border-radius: var(--pp-raio); background: #fff; min-width: 0; font: inherit;
+}
+.pp-campo input:focus, .pp-campo select:focus { outline: 2px solid var(--pp-cor); outline-offset: 0; border-color: var(--pp-cor); }
+.pp-com-olho { grid-template-columns: minmax(150px, 220px) minmax(0, 1fr) auto; }
+.pp-olho { border: 1px solid #b9c1cb; background: #fff; border-radius: var(--pp-raio); cursor: pointer; padding: 5px 8px; }
+.pp-check { grid-template-columns: 1fr; }
+.pp-check label { font-weight: 600; display: flex; gap: 8px; align-items: center; }
+@media (max-width: 520px) { .pp-campo, .pp-com-olho { grid-template-columns: 1fr; } }
+.pp-secao { font-size: 15px; margin: 18px 0 10px; color: var(--pp-cor-escura); }
+.pp-sub { font-size: 14px; margin: 16px 0 8px; color: var(--pp-cor-escura); }
+.pp-nota { font-size: 12.5px; color: #66707b; margin: 4px 0 10px; }
+.pp-rodape { display: flex; gap: 8px; margin-top: 16px; padding-top: 12px; border-top: 1px solid #ddd; }
+.pp-btn { padding: 7px 18px; border-radius: var(--pp-raio); border: 1px solid #b9c1cb; background: #fff; cursor: pointer; font: inherit; }
+.pp-btn-primario { background: var(--pp-cor); color: #fff; border-color: var(--pp-cor); font-weight: 600; }
+.pp-btn-mini { padding: 4px 10px; font-size: 13px; }
+.pp-btn-largo { width: 100%; padding: 9px; }
+.pp-aviso { padding: 8px 12px; border-radius: var(--pp-raio); margin-bottom: 12px; font-weight: 600; }
+.pp-aviso-ok { background: #e3f5ea; color: #1f6b3c; border: 1px solid #a8dcbc; }
+.pp-aviso-erro { background: #fdecea; color: #a1261b; border: 1px solid #f2b8b2; }
+.pp-erro { color: #b3261e; font-weight: 600; margin: 4px 0 8px; }
+
+.pp-tabela { border-collapse: collapse; width: 100%; font-size: 13px; background: #fff; }
+.pp-tabela th, .pp-tabela td { border: 1px solid #dde2e8; padding: 5px 8px; text-align: left; }
+.pp-tabela th { background: var(--pp-cor-clara); color: var(--pp-cor-escura); }
+.pp-tabela input { width: 100%; min-width: 120px; padding: 5px 6px; border: 1px solid #b9c1cb; border-radius: 4px; font-family: Consolas, monospace; }
+.pp-reservas { margin-bottom: 8px; }
+
+.pp-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.pp-card { background: #fff; border: 1px solid #dde2e8; border-radius: var(--pp-raio); padding: 10px 12px; border-top: 3px solid var(--pp-cor); }
+.pp-card h4 { margin: 0 0 6px; color: var(--pp-cor-escura); }
+.pp-kv { width: 100%; font-size: 13px; border-collapse: collapse; }
+.pp-kv th { text-align: left; color: #66707b; font-weight: 400; padding: 2px 6px 2px 0; white-space: nowrap; }
+.pp-kv td { font-weight: 600; padding: 2px 0; word-break: break-word; }
+.pp-ok { color: #1f8a4c; } .pp-falha { color: #b3261e; } .pp-alerta { color: #a86400; }
+
+/* login */
+.pp-login { flex: 1; display: grid; place-items: center; padding: 30px 16px; }
+.pp-login-caixa { width: min(360px, 100%); background: #fff; padding: 22px; border-radius: calc(var(--pp-raio) * 1.5); box-shadow: 0 4px 18px rgba(0,0,0,.12); }
+.pp-login-caixa h2 { margin: 0 0 16px; font-size: 19px; color: var(--pp-cor-escura); }
+.pp-login-caixa .pp-campo { grid-template-columns: 1fr; }
+.pp-login-caixa .pp-com-olho { grid-template-columns: 1fr auto; }
+.pp-login-caixa .pp-com-olho label { grid-column: 1 / -1; }
+
+/* ------------------------------------------------- v2: escolha, chamado, extras */
+body.sem-perfil .so-com-perfil, body:not(.sem-perfil):not(.com-perfil) .so-com-perfil { display: none; }
+body.com-perfil .so-sem-perfil { display: none; }
+.escolha { max-width: 980px; margin: 20px auto; padding: 0 16px; }
+.escolha p { line-height: 1.5; }
+.cartoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 18px 0; }
+.cartao { display: block; text-decoration: none; color: inherit; background: #fff; border: 1px solid var(--borda); border-radius: 8px; overflow: hidden; }
+.cartao:hover { box-shadow: 0 4px 16px rgba(0,0,0,.12); }
+.cartao b { display: block; padding: 18px 14px; color: #fff; font-size: 20px; }
+.cartao span { display: block; padding: 10px 14px 14px; font-size: 14px; color: var(--texto-suave); line-height: 1.4; }
+.c-vivo b { background: linear-gradient(90deg, #660099, #8a2bb8); }
+.c-claro b { background: #da291c; }
+.c-algar b { background: linear-gradient(90deg, #00594f, #00a19a); }
+.c-mznet b { background: #0057b8; border-bottom: 4px solid #f39200; }
+.aviso { background: #fff3c4; border: 1px solid #ecd98a; border-radius: 6px; padding: 10px 14px; font-size: 14px; }
+.sim-provedores a[data-link-perfil=""] { border-style: dashed; }
+
+.sim-chamado { border-left: 5px solid #f0b400; }
+.sim-chamado p { margin: 6px 0 0; font-size: 13px; line-height: 1.45; }
+
+.pp-cab-dir { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.pp-info { background: #f1f4f8; border: 1px dashed #b9c1cb; border-radius: var(--pp-raio); padding: 14px; color: #4a5562; line-height: 1.5; max-width: 560px; }
+.pp-aplicando { position: absolute; inset: 0; background: rgba(255,255,255,.75); display: grid; place-items: center; z-index: 5; font-weight: 600; color: #333; }
+.pp-aplicando div { background: #fff; padding: 16px 22px; border-radius: 8px; box-shadow: 0 4px 18px rgba(0,0,0,.15); display: flex; gap: 10px; align-items: center; }
+.pp-giro { width: 18px; height: 18px; border-radius: 50%; border: 3px solid #ccd; border-top-color: var(--pp-cor); animation: pp-gira .8s linear infinite; }
+@keyframes pp-gira { to { transform: rotate(360deg); } }
+.pp-raiz { position: relative; }
+.pp-campo input:disabled { background: #eef0f3; color: #555; }
+
+.pp-layout-topo .pp-corpo, .pp-layout-abas .pp-corpo { flex-wrap: wrap; }
+.pp-nav-subtopo { flex: 0 0 100%; display: flex; flex-wrap: wrap; background: #fff; border-bottom: 1px solid #ddd; padding: 0 8px; }
+.pp-nav-subtopo .pp-item { padding: 10px 12px; border-bottom: 3px solid transparent; color: #444; }
+.pp-nav-subtopo .pp-item.ativo { color: var(--pp-cor); border-bottom-color: var(--pp-cor); font-weight: 600; }
+.pp-layout-topo .pp-conteudo { flex: 1 1 100%; }
+.pp-subgrupo-titulo { font-weight: 700; font-size: 12.5px; color: #555; padding: 8px 12px 2px; }
+.pp-subgrupo .pp-item { padding-left: 24px; }
+.pp-cards { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); align-items: start; }
+.pp-kv { table-layout: fixed; }
+.pp-kv th { white-space: normal; width: 46%; vertical-align: top; }
+.pp-kv td { word-break: break-all; vertical-align: top; }
+.pp-aba { padding: 8px 12px; }
+.pp-layout-topo .pp-corpo, .pp-layout-abas .pp-corpo { align-content: flex-start; align-items: stretch; }
+.pp-layout-abas .pp-nav-sub { align-self: stretch; }
+
+</style>
+  <style>
+/* Cores e formas de cada painel. Nenhum logotipo oficial: só texto, cores e layout. */
+
+/* Vivo: barra roxa, menu lateral branco, botões arredondados (estilo dos roteadores Fibra AC) */
+.pp-raiz[data-tema="vivo"] {
+  --pp-cor: #660099; --pp-cor-escura: #4a0070; --pp-cor-clara: #f1e6f7; --pp-fundo: #fafafa; --pp-raio: 18px;
+  --pp-fonte: "Roboto", "Segoe UI", Arial, sans-serif;
+}
+.pp-raiz[data-tema="vivo"] .pp-cab { background: #660099; }
+.pp-raiz[data-tema="vivo"] .pp-marca-nome { font-weight: 400; font-size: 22px; letter-spacing: .5px; }
+.pp-raiz[data-tema="vivo"] .pp-btn { border-radius: 20px; }
+.pp-raiz[data-tema="vivo"] .pp-nav-lateral { flex-basis: 210px; }
+.pp-raiz[data-tema="vivo"] .pp-grupo-titulo { color: #660099; text-transform: none; font-size: 14px; letter-spacing: 0; }
+.pp-raiz[data-tema="vivo"] .pp-card { border-top-width: 0; border-left: 4px solid #660099; border-radius: 12px; }
+
+/* Claro: barra vermelha, abas cinza-escuras, subabas brancas (estilo gateway de cabo) */
+.pp-raiz[data-tema="claro"] {
+  --pp-cor: #da291c; --pp-cor-escura: #9b1b12; --pp-cor-clara: #fde9e7; --pp-fundo: #f2f2f2; --pp-raio: 4px;
+  --pp-fonte: Arial, Helvetica, sans-serif;
+}
+.pp-raiz[data-tema="claro"] .pp-cab { background: #da291c; }
+.pp-raiz[data-tema="claro"] .pp-marca-nome { font-size: 20px; }
+.pp-raiz[data-tema="claro"] .pp-nav-abas { background: #333; }
+.pp-raiz[data-tema="claro"] .pp-aba { color: #eee; }
+.pp-raiz[data-tema="claro"] .pp-aba .pp-trad { color: #bbb; }
+.pp-raiz[data-tema="claro"] .pp-aba.ativo { background: #fff; color: #da291c; border-top: 3px solid #da291c; }
+.pp-raiz[data-tema="claro"] .pp-aba.ativo .pp-trad { color: #a55; }
+
+/* Algar: ONT GPON com cabeçalho claro, barra de abas escura e menu lateral cinza (estilo Huawei EG8145) */
+.pp-raiz[data-tema="algar"] {
+  --pp-cor: #00a19a; --pp-cor-escura: #00594f; --pp-cor-clara: #e0f4f2; --pp-fundo: #fff; --pp-raio: 2px;
+  --pp-fonte: Tahoma, Verdana, Arial, sans-serif;
+}
+.pp-raiz[data-tema="algar"] { font-size: 13px; }
+.pp-raiz[data-tema="algar"] .pp-cab { background: #fff; color: #00594f; border-bottom: 1px solid #ddd; }
+.pp-raiz[data-tema="algar"] .pp-sair { color: #00594f; }
+.pp-raiz[data-tema="algar"] .pp-nav-abas { background: linear-gradient(#4f5b66, #36404a); }
+.pp-raiz[data-tema="algar"] .pp-aba { color: #fff; font-weight: 400; padding: 9px 13px; }
+.pp-raiz[data-tema="algar"] .pp-aba .pp-trad { color: #c9d3dc; }
+.pp-raiz[data-tema="algar"] .pp-aba.ativo { background: #00a19a; color: #fff; }
+.pp-raiz[data-tema="algar"] .pp-aba.ativo .pp-trad { color: #e0fffb; }
+.pp-raiz[data-tema="algar"] .pp-nav-sub { background: #f0f2f4; flex-basis: 210px; }
+.pp-raiz[data-tema="algar"] .pp-nav-sub .pp-item.ativo { background: #fff; color: #00594f; border-left: 3px solid #00a19a; }
+.pp-raiz[data-tema="algar"] .pp-trilha { color: #333; font-size: 15px; border-bottom-color: #00a19a; }
+.pp-raiz[data-tema="algar"] .pp-tabela th { background: #e8ecef; color: #333; }
+
+/* MZNet: ONT GPON com barra azul, abas brancas e menu em árvore (estilo ZTE F670) */
+.pp-raiz[data-tema="mznet"] {
+  --pp-cor: #0068b7; --pp-cor-escura: #004a85; --pp-cor-clara: #e5eff8; --pp-fundo: #fafbfc; --pp-raio: 0;
+  --pp-fonte: Verdana, Tahoma, sans-serif;
+}
+.pp-raiz[data-tema="mznet"] { font-size: 12.5px; }
+.pp-raiz[data-tema="mznet"] .pp-cab { background: linear-gradient(90deg, #004a85, #0068b7); border-bottom: 3px solid #f39200; }
+.pp-raiz[data-tema="mznet"] .pp-simbolo { color: #f39200; }
+.pp-raiz[data-tema="mznet"] .pp-nav-abas { background: #fff; border-bottom: 2px solid #0068b7; }
+.pp-raiz[data-tema="mznet"] .pp-aba { color: #333; font-weight: 400; }
+.pp-raiz[data-tema="mznet"] .pp-aba .pp-trad { color: #888; }
+.pp-raiz[data-tema="mznet"] .pp-aba.ativo { background: #0068b7; color: #fff; }
+.pp-raiz[data-tema="mznet"] .pp-aba.ativo .pp-trad { color: #d6e6f5; }
+.pp-raiz[data-tema="mznet"] .pp-nav-sub { background: #eef1f4; flex-basis: 200px; }
+.pp-raiz[data-tema="mznet"] .pp-nav-sub .pp-item.ativo { background: #0068b7; color: #fff; }
+.pp-raiz[data-tema="mznet"] .pp-nav-sub .pp-item.ativo .pp-trad { color: #d6e6f5; }
+
+</style>
+</head>
+<body>
+  <header class="topo">
+    <div class="topo-titulo">
+      <strong>Simulador educativo · roteador no estilo <span id="nome-provedor">dos provedores</span></strong>
+      <span>Escritório Horizonte · Instrutor Lucas Lopes · SENAI · não é o site oficial do provedor</span>
+    </div>
+    <nav class="sim-provedores" aria-label="Trocar de provedor">
+      <a href="#vivo" data-link-perfil="vivo">Vivo</a><a href="#claro" data-link-perfil="claro">Claro</a><a href="#algar" data-link-perfil="algar">Algar</a><a href="#mznet" data-link-perfil="mznet">MZNet</a><a href="#" data-link-perfil="">Início</a>
+    </nav>
+  </header>
+
+  <!-- Escolha do provedor (aparece quando o endereço não tem #vivo, #claro…) -->
+  <main class="escolha so-sem-perfil">
+    <p>Cada provedor entrega um roteador com um painel diferente: as cores, os menus e os nomes mudam, mas as configurações são as mesmas. Escolha o provedor que o instrutor indicou para a sua fileira e siga o <strong>roteiro de 8 passos</strong> do lado esquerdo. Quando terminar, faça de novo em outro provedor.</p>
+    <div class="cartoes">
+      <a class="cartao c-vivo" href="#vivo"><b>Vivo</b><span>Menu do lado, tudo em português. Internet por PPPoE.</span></a>
+      <a class="cartao c-claro" href="#claro"><b>Claro</b><span>Menu em cima, parte em inglês. Internet automática (DHCP).</span></a>
+      <a class="cartao c-algar" href="#algar"><b>Algar</b><span>ONT com abas em cima e submenu do lado, em inglês. PPPoE.</span></a>
+      <a class="cartao c-mznet" href="#mznet"><b>MZNet</b><span>ONT com abas e menu em árvore, em inglês. PPPoE.</span></a>
+    </div>
+    <p class="aviso"><strong>Simulador educativo.</strong> As telas imitam o estilo dos painéis que esses provedores costumam entregar, para treino em sala. Não são as páginas oficiais e não usam logotipos. Modelos, senhas e etiquetas são inventados. Funciona sem internet.</p>
+  </main>
+
+  <main class="sim-area so-com-perfil">
+    <aside class="sim-lado" aria-label="Roteiro">
+      <section class="sim-caixa sim-chamado">
+        <strong id="chamado-titulo"></strong>
+        <p id="chamado-texto"></p>
+      </section>
+      <section class="sim-caixa">
+        <div class="sim-roteiro-cab"><strong>Roteiro</strong><span id="progresso"></span></div>
+        <div class="sim-barra"><i id="barra-progresso"></i></div>
+        <ol id="passos" class="sim-passos"></ol>
+        <p id="parabens" class="sim-parabens" hidden>Chamado concluído! Agora faça o mesmo roteiro em outro provedor.</p>
+      </section>
+      <section class="sim-caixa">
+        <strong>Etiqueta embaixo do roteador</strong>
+        <div id="etiqueta" class="sim-etiqueta"></div>
+      </section>
+      <section class="sim-caixa">
+        <strong>Ordem de serviço do provedor</strong>
+        <div id="ordem-servico" class="sim-os"></div>
+      </section>
+      <button id="btn-reiniciar" type="button" class="sim-btn">Começar de novo</button>
+    </aside>
+
+    <section class="janela" aria-label="Painel do roteador">
+      <div class="janela-barra">
+        <span class="bolinhas"><i></i><i></i><i></i></span>
+        <span class="janela-url" id="url-roteador">http://</span>
+      </div>
+      <div id="painel" class="janela-corpo"></div>
+    </section>
+
+    <section class="mapa-area" aria-label="Mapa da rede">
+      <div id="mapa"></div>
+      <button id="btn-reconectar" type="button" class="sim-btn sim-btn-destaque">📶 Digitar o Wi-Fi novo no notebook e no celular</button>
+      <p class="mapa-dica">Clique em um dispositivo para ver o <code>ipconfig</code> e testar <code>ping</code>.</p>
+    </section>
+  </main>
+
+  <dialog id="dlg-host" class="dlg">
+    <div class="dlg-cab">
+      <strong id="dlg-host-nome"></strong>
+      <button type="button" class="dlg-fechar" data-fechar>✕</button>
+    </div>
+    <div class="term" id="term-saida" aria-live="polite"></div>
+    <form class="term-entrada" id="term-form">
+      <span>C:\&gt;</span>
+      <input id="term-cmd" autocomplete="off" spellcheck="false" placeholder="ipconfig   ·   ping roteador   ·   ping google.com">
+    </form>
+    <div class="term-atalhos">
+      <button type="button" data-cmd="ipconfig">ipconfig</button>
+      <button type="button" data-cmd="ping roteador">ping roteador</button>
+      <button type="button" data-cmd="ping 8.8.8.8">ping 8.8.8.8</button>
+      <button type="button" data-cmd="ping google.com">ping google.com</button>
+    </div>
+  </dialog>
+
+  <script>
+/*
+ * Motor do Simulador de Roteador SOHO - NetHorizonte AX1500
+ * Cenário: Escritório Horizonte (fictício). Uso didático no SENAI.
+ *
+ * JavaScript puro, sem dependências. Anexa window.Motor no navegador
+ * e module.exports no Node (para os testes).
+ */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ */
+  /* Constantes do cenário                                              */
+  /* ------------------------------------------------------------------ */
+
+  var PROVEDOR = {
+    provedorExige: "pppoe",
+    usuarioPPPoE: "horizonte@fibra",
+    senhaPPPoE: "senai2026",
+    ipPublico: "177.10.20.30",
+    wanEstaticoValido: {
+      ip: "177.10.20.30",
+      mascara: "255.255.255.252",
+      gateway: "177.10.20.29"
+    },
+    redesVizinhasCanais: [1, 1, 6, 6, 6]
+  };
+
+  var HOSTS_PADRAO = [
+    {
+      id: "pc-recepcao",
+      nome: "PC Recepção",
+      tipo: "pc",
+      conexao: "cabo",
+      mac: "AA:BB:CC:00:00:01",
+      ipFixo: null
+    },
+    {
+      id: "pc-financeiro",
+      nome: "PC Financeiro",
+      tipo: "pc",
+      conexao: "cabo",
+      mac: "AA:BB:CC:00:00:02",
+      ipFixo: null
+    },
+    {
+      id: "notebook",
+      nome: "Notebook",
+      tipo: "notebook",
+      conexao: "wifi",
+      mac: "AA:BB:CC:00:00:03",
+      ipFixo: null,
+      wifiSuporta: ["wpa2", "wpa3", "wpa2wpa3", "aberta", "wep"],
+      wifiSalvo: { ssid: "NetHorizonte_2G", senha: "12345678" }
+    },
+    {
+      id: "celular",
+      nome: "Celular",
+      tipo: "celular",
+      conexao: "wifi",
+      mac: "AA:BB:CC:00:00:04",
+      ipFixo: null,
+      wifiSuporta: ["wpa2", "wpa2wpa3", "aberta"],
+      wifiSalvo: { ssid: "NetHorizonte_2G", senha: "12345678" }
+    },
+    {
+      id: "camera",
+      nome: "Câmera IP",
+      tipo: "camera",
+      conexao: "cabo",
+      mac: "AA:BB:CC:00:00:05",
+      ipFixo: null,
+      servico: { porta: 80, protocolo: "tcp" }
+    },
+    {
+      id: "impressora",
+      nome: "Impressora",
+      tipo: "impressora",
+      conexao: "cabo",
+      mac: "AA:BB:CC:00:00:06",
+      ipFixo: "192.168.0.20"
+    }
+  ];
+
+  var DNS_CONHECIDOS = ["8.8.8.8", "1.1.1.1", "8.8.4.4", "1.0.0.1", "177.10.0.53"];
+
+  /* ------------------------------------------------------------------ */
+  /* Utilidades                                                          */
+  /* ------------------------------------------------------------------ */
+
+  function clonar(valor) {
+    if (valor === undefined) return undefined;
+    return JSON.parse(JSON.stringify(valor));
+  }
+
+  function mesclar(base, extra) {
+    var saida = clonar(base);
+    if (extra && typeof extra === "object" && !Array.isArray(extra)) {
+      Object.keys(extra).forEach(function (chave) {
+        if (extra[chave] !== undefined) saida[chave] = clonar(extra[chave]);
+      });
+    }
+    return saida;
+  }
+
+  function textoCurto(valor, padrao) {
+    if (typeof valor === "string") return valor;
+    if (valor === null || valor === undefined) return padrao || "";
+    return String(valor);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Aritmética de IPv4 em 32 bits                                       */
+  /* ------------------------------------------------------------------ */
+
+  function validarIPv4(valor) {
+    if (typeof valor !== "string") return false;
+    if (valor === "" || valor !== valor.trim()) return false;
+    if (valor.indexOf(" ") !== -1) return false;
+    var partes = valor.split(".");
+    if (partes.length !== 4) return false;
+    for (var i = 0; i < 4; i++) {
+      var parte = partes[i];
+      if (!/^\d{1,3}$/.test(parte)) return false;
+      if (parte.length > 1 && parte.charAt(0) === "0") return false;
+      var numero = Number(parte);
+      if (numero < 0 || numero > 255) return false;
+    }
+    return true;
+  }
+
+  function ipParaInt(ip) {
+    if (!validarIPv4(ip)) return null;
+    var p = ip.split(".");
+    return (((Number(p[0]) << 24) | (Number(p[1]) << 16) | (Number(p[2]) << 8) | Number(p[3])) >>> 0);
+  }
+
+  function intParaIp(numero) {
+    var n = Number(numero) >>> 0;
+    return [
+      (n >>> 24) & 0xff,
+      (n >>> 16) & 0xff,
+      (n >>> 8) & 0xff,
+      n & 0xff
+    ].join(".");
+  }
+
+  function mascaraContigua(mascara) {
+    if (!validarIPv4(mascara)) return false;
+    var n = ipParaInt(mascara);
+    var inverso = (~n) >>> 0;
+    // Uma máscara contígua tem todos os bits 1 à esquerda.
+    // O inverso dela é do formato 2^k - 1.
+    return ((inverso & (inverso + 1)) >>> 0) === 0;
+  }
+
+  function ipNaSubrede(ip, ipRede, mascara) {
+    var a = ipParaInt(ip);
+    var b = ipParaInt(ipRede);
+    var m = ipParaInt(mascara);
+    if (a === null || b === null || m === null) return false;
+    return ((a & m) >>> 0) === ((b & m) >>> 0);
+  }
+
+  function mesmoEnlace(ipA, ipB, mascara) {
+    var a = ipParaInt(ipA);
+    var b = ipParaInt(ipB);
+    var m = ipParaInt(mascara);
+    if (a === null || b === null || m === null) return false;
+    return ((a & m) >>> 0) === ((b & m) >>> 0);
+  }
+
+  function apipaDoMac(mac, indice) {
+    var partes = String(mac || "").split(":");
+    var penultimo = null;
+    var ultimo = null;
+    if (partes.length >= 2) {
+      penultimo = parseInt(partes[partes.length - 2], 16);
+      ultimo = parseInt(partes[partes.length - 1], 16);
+    }
+    if (!isFinite(penultimo) || penultimo < 0 || penultimo > 255) penultimo = 0;
+    if (!isFinite(ultimo) || ultimo < 0 || ultimo > 255) ultimo = (Number(indice) + 1) % 255;
+    return "169.254." + penultimo + "." + ultimo;
+  }
+
+  function contarVizinhos(vizinhos, canal) {
+    var total = 0;
+    if (!Array.isArray(vizinhos)) return total;
+    var alvo = Number(canal);
+    for (var i = 0; i < vizinhos.length; i++) {
+      var v = Number(vizinhos[i]);
+      if (!isFinite(v)) continue;
+      if (Math.abs(v - alvo) <= 2) total++;
+    }
+    return total;
+  }
+
+  function escolherCanalAuto(vizinhos) {
+    var melhorCanal = 1;
+    var menorContagem = Infinity;
+    for (var canal = 1; canal <= 11; canal++) {
+      var contagem = contarVizinhos(vizinhos, canal);
+      if (contagem < menorContagem) {
+        menorContagem = contagem;
+        melhorCanal = canal;
+      }
+    }
+    return melhorCanal;
+  }
+
+  function interferenciaDe(vizinhosProximos) {
+    if (vizinhosProximos >= 3) return "alta";
+    if (vizinhosProximos === 2) return "media";
+    return "baixa";
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Configuração, cenário e hosts padrão                                */
+  /* ------------------------------------------------------------------ */
+
+  function configPadraoBase() {
+    return {
+      wan: {
+        tipo: "dinamico",
+        ip: "",
+        mascara: "",
+        gateway: "",
+        dns1: "",
+        dns2: "",
+        usuario: "",
+        senha: ""
+      },
+      lan: { ip: "192.168.0.1", mascara: "255.255.255.0" },
+      dhcp: {
+        ativo: true,
+        inicio: "192.168.0.100",
+        fim: "192.168.0.199",
+        dns1: "",
+        dns2: "",
+        reservas: []
+      },
+      wifi: {
+        ativo: true,
+        ssid: "NetHorizonte_2G",
+        seguranca: "wpa2",
+        senha: "12345678",
+        canal: 6,
+        oculto: false
+      },
+      nat: { regras: [] }
+    };
+  }
+
+  function configPadrao() {
+    return configPadraoBase();
+  }
+
+  function cenarioPadrao() {
+    return clonar(PROVEDOR);
+  }
+
+  function hostsPadrao() {
+    return clonar(HOSTS_PADRAO);
+  }
+
+  function normalizarConfig(config) {
+    var padrao = configPadraoBase();
+    var recebida = (config && typeof config === "object") ? clonar(config) : {};
+    var cfg = {
+      wan: mesclar(padrao.wan, recebida.wan),
+      lan: mesclar(padrao.lan, recebida.lan),
+      dhcp: mesclar(padrao.dhcp, recebida.dhcp),
+      wifi: mesclar(padrao.wifi, recebida.wifi),
+      nat: mesclar(padrao.nat, recebida.nat)
+    };
+    if (!Array.isArray(cfg.dhcp.reservas)) cfg.dhcp.reservas = [];
+    if (!Array.isArray(cfg.nat.regras)) cfg.nat.regras = [];
+    return cfg;
+  }
+
+  function normalizarCenario(cenario) {
+    var padrao = cenarioPadrao();
+    if (!cenario || typeof cenario !== "object") return padrao;
+    return mesclar(padrao, cenario);
+  }
+
+  function normalizarHosts(hosts) {
+    var lista = Array.isArray(hosts) && hosts.length ? clonar(hosts) : hostsPadrao();
+    var saida = [];
+    for (var i = 0; i < lista.length; i++) {
+      var h = lista[i];
+      if (!h || typeof h !== "object" || !h.id) continue;
+      var copia = clonar(h);
+      copia.id = String(copia.id);
+      if (!copia.nome) copia.nome = copia.id;
+      saida.push(copia);
+    }
+    return saida.length ? saida : hostsPadrao();
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Simulação                                                           */
+  /* ------------------------------------------------------------------ */
+
+  function simular(config, hosts, cenario) {
+    var cfg = normalizarConfig(config);
+    var lista = normalizarHosts(hosts);
+    var cen = normalizarCenario(cenario);
+    var avisos = [];
+
+    /* ---------- LAN ---------- */
+    var lanIpValido = validarIPv4(cfg.lan.ip);
+    var lanMascaraValida = validarIPv4(cfg.lan.mascara) && mascaraContigua(cfg.lan.mascara);
+    var lanOk = lanIpValido && lanMascaraValida;
+    var mensagensLan = [];
+
+    if (!lanIpValido) {
+      mensagensLan.push("IP da LAN inválido. Use um IPv4 como 192.168.0.1.");
+      avisos.push({
+        nivel: "erro",
+        texto: "LAN: o IP do roteador é inválido. Nenhum dispositivo alcança o roteador."
+      });
+    }
+    if (!lanMascaraValida) {
+      mensagensLan.push("Máscara da LAN inválida. Use uma máscara contígua, como 255.255.255.0.");
+      avisos.push({
+        nivel: "erro",
+        texto: "LAN: a máscara de sub-rede é inválida. Nenhum dispositivo alcança o roteador."
+      });
+    }
+    if (lanOk) {
+      mensagensLan.push("LAN ativa em " + cfg.lan.ip + "/" + cfg.lan.mascara + ".");
+    }
+
+    var lanInt = lanIpValido ? ipParaInt(cfg.lan.ip) : null;
+    var mascaraInt = lanMascaraValida ? ipParaInt(cfg.lan.mascara) : null;
+
+    function naSubrede(ip) {
+      if (!lanOk) return false;
+      var n = ipParaInt(ip);
+      if (n === null || lanInt === null || mascaraInt === null) return false;
+      return ((n & mascaraInt) >>> 0) === ((lanInt & mascaraInt) >>> 0);
+    }
+
+    /* ---------- WAN ---------- */
+    var tipoWan = String(cfg.wan.tipo || "").toLowerCase();
+    var exigido = String(cen.provedorExige || "").toLowerCase();
+    var wan = { status: "falha", ip: "", mensagem: "" };
+
+    if (tipoWan !== exigido) {
+      wan.mensagem = "Sem resposta do provedor";
+    } else if (tipoWan === "dinamico") {
+      wan.status = "conectado";
+      wan.ip = cen.ipPublico;
+    } else if (tipoWan === "pppoe") {
+      if (String(cfg.wan.usuario) === String(cen.usuarioPPPoE) &&
+          String(cfg.wan.senha) === String(cen.senhaPPPoE)) {
+        wan.status = "conectado";
+        wan.ip = cen.ipPublico;
+      } else {
+        wan.mensagem = "Falha na autenticação PPPoE";
+      }
+    } else if (tipoWan === "estatico") {
+      var valido = cen.wanEstaticoValido || {};
+      var bateIp = String(cfg.wan.ip).trim() === String(valido.ip);
+      var bateMascara = String(cfg.wan.mascara).trim() === String(valido.mascara);
+      var bateGateway = String(cfg.wan.gateway).trim() === String(valido.gateway);
+      var dnsWanOk = validarIPv4(String(cfg.wan.dns1).trim());
+      if (bateIp && bateMascara && bateGateway && dnsWanOk) {
+        wan.status = "conectado";
+        wan.ip = String(cfg.wan.ip).trim();
+      } else {
+        wan.mensagem = "Sem resposta do provedor";
+      }
+    } else {
+      wan.mensagem = "Sem resposta do provedor";
+    }
+
+    if (wan.status !== "conectado") {
+      avisos.push({ nivel: "erro", texto: "Internet: " + wan.mensagem + "." });
+    }
+
+    /* ---------- Wi-Fi ---------- */
+    var wifiCfg = cfg.wifi;
+    var vizinhos = Array.isArray(cen.redesVizinhasCanais) ? cen.redesVizinhasCanais.slice() : [];
+    var canalCfg = String(wifiCfg.canal);
+    var canalAuto = canalCfg.toLowerCase() === "auto" || canalCfg === "";
+    var canal = canalAuto ? escolherCanalAuto(vizinhos) : Number(wifiCfg.canal);
+
+    if (!canalAuto && (!isFinite(canal) || canal < 1 || canal > 11)) {
+      avisos.push({
+        nivel: "alerta",
+        texto: "Canal Wi-Fi inválido. Use um canal de 1 a 11 ou \"auto\"."
+      });
+      canal = 6;
+    }
+    canal = Math.round(canal);
+
+    var vizinhosProximos = contarVizinhos(vizinhos, canal);
+    var interferencia = interferenciaDe(vizinhosProximos);
+    var seguranca = String(wifiCfg.seguranca || "").toLowerCase();
+
+    var wifiStatus;
+    var wifiMensagem;
+    if (!wifiCfg.ativo) {
+      wifiStatus = "desligado";
+      wifiMensagem = "Wi-Fi desligado. Os dispositivos sem cabo ficam sem rede.";
+    } else if (seguranca === "wep") {
+      wifiStatus = "inseguro";
+      wifiMensagem = "Rede com WEP: segurança antiga e fácil de quebrar.";
+    } else if (seguranca === "aberta") {
+      wifiStatus = "inseguro";
+      wifiMensagem = "Rede aberta: qualquer pessoa por perto pode entrar.";
+    } else {
+      wifiStatus = "ativo";
+      wifiMensagem = "Rede \"" + wifiCfg.ssid + "\" ativa no canal " + canal + ".";
+    }
+
+    if (!wifiCfg.ativo) {
+      avisos.push({ nivel: "alerta", texto: "Wi-Fi desligado: notebooks e celulares ficam sem conexão." });
+    }
+    if (wifiCfg.ativo && (seguranca === "wep" || seguranca === "aberta")) {
+      avisos.push({
+        nivel: "alerta",
+        texto: seguranca === "wep"
+          ? "Segurança WEP é fraca e pode ser quebrada. Troque para WPA2 ou WPA3."
+          : "Rede sem senha (aberta): qualquer pessoa pode usar sua internet. Ative WPA2 ou WPA3."
+      });
+    }
+    if (wifiCfg.ativo && vizinhosProximos >= 3) {
+      avisos.push({
+        nivel: "alerta",
+        texto: "Canal " + canal + " com " + vizinhosProximos + " redes vizinhas próximas: interferência alta. Troque de canal ou use \"auto\"."
+      });
+    }
+
+    /* ---------- Enlace de cada host ---------- */
+    var resHosts = {};
+    var ids = [];
+    lista.forEach(function (h) {
+      ids.push(h.id);
+      resHosts[h.id] = {
+        enlace: "ok",
+        ip: "",
+        mascara: "",
+        gateway: "",
+        dns: "",
+        origemIP: "nenhum",
+        alcancaRoteador: false,
+        temInternet: false,
+        resolveNomes: false,
+        problemas: []
+      };
+    });
+
+    function avaliarWifi(h) {
+      var problemas = [];
+
+      if (!wifiCfg.ativo) {
+        problemas.push({
+          codigo: "WIFI_DESLIGADO",
+          texto: "Wi-Fi do roteador desligado: conecte por cabo ou ligue o Wi-Fi."
+        });
+        return { enlace: "sem-wifi", problemas: problemas };
+      }
+
+      var salvo = (h.wifiSalvo && typeof h.wifiSalvo === "object") ? h.wifiSalvo : null;
+      var ssidIgual = salvo ? String(salvo.ssid) === String(wifiCfg.ssid) : false;
+
+      if (wifiCfg.oculto && !ssidIgual) {
+        problemas.push({
+          codigo: "WIFI_OCULTA",
+          texto: "A rede está oculta: sem o SSID (nome da rede) salvo o dispositivo não a encontra."
+        });
+        return { enlace: "rede-oculta", problemas: problemas };
+      }
+
+      if (salvo && !ssidIgual) {
+        // Sem código próprio no contrato: o sintoma é o próprio enlace "sem-wifi".
+        return { enlace: "sem-wifi", problemas: problemas };
+      }
+
+      if (Array.isArray(h.wifiSuporta) && h.wifiSuporta.indexOf(seguranca) === -1) {
+        problemas.push({
+          codigo: "WIFI_INCOMPATIVEL",
+          texto: "Este dispositivo não aceita a segurança \"" + seguranca + "\" usada no Wi-Fi."
+        });
+        return { enlace: "incompativel", problemas: problemas };
+      }
+
+      if (seguranca !== "aberta" && salvo && String(salvo.senha) !== String(wifiCfg.senha)) {
+        problemas.push({
+          codigo: "WIFI_SENHA",
+          texto: "Senha do Wi-Fi diferente da senha salva neste dispositivo."
+        });
+        return { enlace: "senha-errada", problemas: problemas };
+      }
+
+      return { enlace: "ok", problemas: problemas };
+    }
+
+    lista.forEach(function (h) {
+      if (h.conexao !== "wifi") return;
+      var avaliacao = avaliarWifi(h);
+      resHosts[h.id].enlace = avaliacao.enlace;
+      resHosts[h.id].problemas = resHosts[h.id].problemas.concat(avaliacao.problemas);
+    });
+
+    /* Hosts sem enlace já estão fora: nada de IP. */
+    ids.forEach(function (id) {
+      var r = resHosts[id];
+      if (r.enlace === "ok") return;
+      r.ip = "";
+      r.mascara = "";
+      r.gateway = "";
+      r.dns = "";
+      r.origemIP = "nenhum";
+      r.alcancaRoteador = false;
+      r.temInternet = false;
+      r.resolveNomes = false;
+    });
+
+    /* ---------- IP fixo ---------- */
+    lista.forEach(function (h) {
+      var r = resHosts[h.id];
+      if (r.enlace !== "ok" || !h.ipFixo) return;
+      var ipFixo = String(h.ipFixo).trim();
+      r.origemIP = "fixo";
+      r.ip = validarIPv4(ipFixo) ? ipFixo : "";
+      r.mascara = lanMascaraValida ? cfg.lan.mascara : "";
+      r.gateway = lanIpValido ? cfg.lan.ip : "";
+
+      if (!validarIPv4(ipFixo) || !naSubrede(ipFixo)) {
+        r.problemas.push({
+          codigo: "FORA_DA_REDE",
+          texto: "O IP fixo " + (validarIPv4(ipFixo) ? ipFixo : "(inválido)") +
+            " está fora da rede da LAN (" + cfg.lan.ip + "/" + cfg.lan.mascara + ")."
+        });
+      }
+    });
+
+    /* ---------- Reservas de DHCP ---------- */
+    var reservas = Array.isArray(cfg.dhcp.reservas) ? cfg.dhcp.reservas : [];
+    var reservaPorMac = {};
+    var ipsReservados = {};
+
+    reservas.forEach(function (rv) {
+      if (!rv || !rv.mac) return;
+      var mac = String(rv.mac).toUpperCase();
+      var ip = String(rv.ip === null || rv.ip === undefined ? "" : rv.ip).trim();
+      var valida = validarIPv4(ip) && naSubrede(ip);
+
+      if (!valida) {
+        avisos.push({
+          nivel: "erro",
+          texto: "Reserva de DHCP ignorada (" + mac + "): o IP " + (validarIPv4(ip) ? ip : "(inválido)") +
+            " não pertence à rede da LAN."
+        });
+        reservaPorMac[mac] = { ip: ip, valida: false };
+        return;
+      }
+      reservaPorMac[mac] = { ip: ip, valida: true };
+      var numero = ipParaInt(ip);
+      if (numero !== null) ipsReservados[numero] = true;
+    });
+
+    lista.forEach(function (h) {
+      var r = resHosts[h.id];
+      if (r.enlace !== "ok" || h.ipFixo) return;
+      var rv = reservaPorMac[String(h.mac).toUpperCase()];
+      if (!rv) return;
+
+      if (!rv.valida) {
+        r.problemas.push({
+          codigo: "RESERVA_FORA_DA_REDE",
+          texto: "A reserva " + (validarIPv4(rv.ip) ? rv.ip : "(inválida)") +
+            " está fora da rede. Este dispositivo vai pegar IP pelo DHCP."
+        });
+        return;
+      }
+      r.ip = rv.ip;
+      r.mascara = lanMascaraValida ? cfg.lan.mascara : "";
+      r.gateway = lanIpValido ? cfg.lan.ip : "";
+      r.origemIP = "reserva";
+    });
+
+    /* ---------- Faixa do DHCP ---------- */
+    var dhcpAtivo = cfg.dhcp.ativo === true;
+    var problemaFaixa = null;
+
+    if (dhcpAtivo) {
+      var inicioInt = validarIPv4(String(cfg.dhcp.inicio)) ? ipParaInt(String(cfg.dhcp.inicio)) : null;
+      var fimInt = validarIPv4(String(cfg.dhcp.fim)) ? ipParaInt(String(cfg.dhcp.fim)) : null;
+
+      if (inicioInt === null || fimInt === null) {
+        problemaFaixa = "a faixa tem um IP inválido.";
+      } else if (!naSubrede(String(cfg.dhcp.inicio)) || !naSubrede(String(cfg.dhcp.fim))) {
+        problemaFaixa = "a faixa está fora da rede da LAN.";
+      } else if (inicioInt > fimInt) {
+        problemaFaixa = "o início da faixa é maior que o fim.";
+      } else if (lanInt !== null && inicioInt <= lanInt && lanInt <= fimInt) {
+        problemaFaixa = "a faixa inclui o IP do roteador.";
+      }
+
+      if (problemaFaixa) {
+        avisos.push({
+          nivel: "erro",
+          texto: "Faixa do DHCP inválida: " + problemaFaixa + " Os dispositivos sem IP fixo ficam sem endereço (APIPA)."
+        });
+      }
+    }
+
+    function aplicarApipa(h, r, problema) {
+      r.ip = apipaDoMac(h.mac, ids.indexOf(h.id));
+      r.mascara = "255.255.0.0";
+      r.gateway = "";
+      r.dns = "";
+      r.origemIP = "apipa";
+      if (problema) r.problemas.push(problema);
+    }
+
+    var pendentes = lista.filter(function (h) {
+      var r = resHosts[h.id];
+      return r.enlace === "ok" && !h.ipFixo && !r.ip;
+    });
+
+    var poolEsgotado = false;
+
+    if (!dhcpAtivo) {
+      pendentes.forEach(function (h) {
+        aplicarApipa(h, resHosts[h.id], {
+          codigo: "SEM_DHCP",
+          texto: "DHCP desligado: este dispositivo ficou com IP automático (APIPA) e não navega."
+        });
+      });
+      avisos.push({
+        nivel: "alerta",
+        texto: "DHCP desligado: os dispositivos sem IP fixo ficam sem endereço (APIPA)."
+      });
+    } else if (problemaFaixa) {
+      pendentes.forEach(function (h) {
+        aplicarApipa(h, resHosts[h.id], {
+          codigo: "APIPA",
+          texto: "Faixa do DHCP inválida: o dispositivo ficou com IP automático (APIPA) e não navega."
+        });
+      });
+    } else {
+      var cursor = ipParaInt(String(cfg.dhcp.inicio));
+      var fim = ipParaInt(String(cfg.dhcp.fim));
+
+      pendentes.forEach(function (h) {
+        var r = resHosts[h.id];
+        while (cursor <= fim && (ipsReservados[cursor] === true || (lanInt !== null && cursor === lanInt))) {
+          cursor++;
+        }
+        if (cursor > fim) {
+          poolEsgotado = true;
+          aplicarApipa(h, r, {
+            codigo: "POOL_ESGOTADO",
+            texto: "A faixa do DHCP acabou: o dispositivo ficou sem IP (APIPA)."
+          });
+          return;
+        }
+        r.ip = intParaIp(cursor);
+        r.mascara = cfg.lan.mascara;
+        r.gateway = cfg.lan.ip;
+        r.origemIP = "dhcp";
+        cursor++;
+      });
+
+      if (poolEsgotado) {
+        avisos.push({
+          nivel: "alerta",
+          texto: "Faixa DHCP pequena: faltaram IPs e alguns dispositivos ficaram com APIPA."
+        });
+      }
+    }
+
+    /* ---------- Conflito de IP ---------- */
+    var hostsPorIp = {};
+    ids.forEach(function (id) {
+      var r = resHosts[id];
+      if (r.enlace !== "ok" || !r.ip || r.origemIP === "apipa") return;
+      if (!hostsPorIp[r.ip]) hostsPorIp[r.ip] = [];
+      hostsPorIp[r.ip].push(id);
+    });
+
+    Object.keys(hostsPorIp).forEach(function (ip) {
+      var grupo = hostsPorIp[ip];
+      if (grupo.length < 2) return;
+      grupo.forEach(function (id) {
+        resHosts[id].problemas.push({
+          codigo: "CONFLITO_IP",
+          texto: "IP " + ip + " repetido na rede. Dois dispositivos com o mesmo IP param de se comunicar."
+        });
+      });
+    });
+
+    /* ---------- Internet e DNS ---------- */
+    var dnsEntregue = String(cfg.dhcp.dns1 === null || cfg.dhcp.dns1 === undefined ? "" : cfg.dhcp.dns1).trim();
+    if (!dnsEntregue) dnsEntregue = lanIpValido ? cfg.lan.ip : "";
+
+    function dnsValido(ip) {
+      if (!validarIPv4(ip)) return false;
+      if (lanIpValido && ip === cfg.lan.ip) return true;
+      return DNS_CONHECIDOS.indexOf(ip) !== -1;
+    }
+
+    ids.forEach(function (id) {
+      var r = resHosts[id];
+      var temConflito = r.problemas.some(function (p) { return p.codigo === "CONFLITO_IP"; });
+
+      var ipOk = validarIPv4(r.ip) && naSubrede(r.ip);
+      var gatewayOk = lanIpValido && r.gateway === cfg.lan.ip;
+
+      r.alcancaRoteador = r.enlace === "ok" && ipOk && gatewayOk && !temConflito;
+      r.temInternet = r.alcancaRoteador && wan.status === "conectado";
+      r.dns = (r.ip && r.origemIP !== "apipa") ? dnsEntregue : "";
+      r.resolveNomes = r.temInternet && dnsValido(dnsEntregue);
+
+      if (r.temInternet && !r.resolveNomes) {
+        r.problemas.push({
+          codigo: "DNS_FALHA",
+          texto: "DNS \"" + dnsEntregue + "\" inválido: abre sites por IP (8.8.8.8), mas não resolve nomes como google.com."
+        });
+      }
+      if (wan.status !== "conectado" && r.alcancaRoteador && !temConflito) {
+        r.problemas.push({
+          codigo: "WAN_FALHA",
+          texto: "A WAN está desconectada: o dispositivo não tem acesso à internet."
+        });
+      }
+    });
+
+    return {
+      roteador: {
+        wan: wan,
+        lanOk: lanOk,
+        mensagensLan: mensagensLan,
+        wifi: {
+          status: wifiStatus,
+          mensagem: wifiMensagem,
+          interferencia: interferencia
+        }
+      },
+      hosts: resHosts,
+      avisos: avisos
+    };
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Teste de acesso externo (NAT)                                       */
+  /* ------------------------------------------------------------------ */
+
+  function protocoloCombina(protocoloRegra, protocoloTeste) {
+    var regra = String(protocoloRegra || "").toLowerCase();
+    var teste = String(protocoloTeste || "").toLowerCase();
+    if (regra === "ambos") return true;
+    return regra === teste;
+  }
+
+  function testarAcessoExterno(config, hosts, cenario, portaExterna, protocolo) {
+    var cfg = normalizarConfig(config);
+    var lista = normalizarHosts(hosts);
+    var cen = normalizarCenario(cenario);
+    var resultado = simular(cfg, lista, cen);
+
+    var porta = Number(portaExterna);
+    var proto = String(protocolo || "tcp").toLowerCase();
+    var ipPublico = cen.ipPublico || "177.10.20.30";
+    var passos = [];
+    var falha = function () {
+      return { ok: false, passos: passos, hostDestino: null };
+    };
+
+    passos.push("Pacote chega em " + ipPublico + ":" + porta + " (" + proto + ") vindo da internet.");
+
+    if (resultado.roteador.wan.status !== "conectado") {
+      passos.push("A WAN está desconectada (" + resultado.roteador.wan.mensagem + "): o pacote não tem rota para entrar.");
+      return falha();
+    }
+
+    var regras = cfg.nat.regras || [];
+    var regrasDaPorta = regras.filter(function (r) {
+      return r && Number(r.portaExterna) === porta;
+    });
+
+    if (!regrasDaPorta.length) {
+      passos.push("Nenhuma regra de NAT usa a porta " + porta + ". O roteador descarta o pacote.");
+      return falha();
+    }
+
+    var compativeis = regrasDaPorta.filter(function (r) {
+      return protocoloCombina(r.protocolo, proto);
+    });
+
+    if (!compativeis.length) {
+      var regraConflitante = regrasDaPorta[0];
+      passos.push("A regra \"" + (regraConflitante.nome || "sem nome") + "\" aceita " +
+        String(regraConflitante.protocolo || "tcp") + ", mas o teste usou " + proto +
+        ". Protocolo incompatível: o pacote é descartado.");
+      return falha();
+    }
+
+    var regra = compativeis[0];
+    var nomeRegra = regra.nome || "sem nome";
+    var ipInterno = String(regra.ipInterno || "").trim();
+    var portaInterna = Number(regra.portaInterna);
+
+    passos.push("Regra \"" + nomeRegra + "\" encontrada para a porta " + porta + ".");
+    passos.push("Regra \"" + nomeRegra + "\" encaminha para " + ipInterno + ":" + portaInterna + ".");
+
+    var hostDestino = null;
+    var hostDestinoObj = null;
+
+    for (var i = 0; i < lista.length; i++) {
+      var h = lista[i];
+      var rh = resultado.hosts[h.id];
+      if (!rh) continue;
+      if (rh.ip !== ipInterno) continue;
+      if (!h.servico || Number(h.servico.porta) !== portaInterna) continue;
+      if (!rh.alcancaRoteador) continue;
+      hostDestino = h.id;
+      hostDestinoObj = h;
+      break;
+    }
+
+    if (!hostDestino) {
+      passos.push("Nenhum dispositivo respondeu em " + ipInterno + ":" + portaInterna +
+        ". Dica: crie uma reserva de DHCP para esse dispositivo manter sempre o mesmo IP.");
+      return falha();
+    }
+
+    passos.push(hostDestinoObj.nome + " responde na porta " + portaInterna + ": página carregada.");
+    passos.push("A resposta volta pelo roteador para " + ipPublico + ":" + porta + " (NAT reverso).");
+
+    return { ok: true, passos: passos, hostDestino: hostDestino };
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Ping (imita o comando do Windows em pt-BR)                          */
+  /* ------------------------------------------------------------------ */
+
+  function linhasResposta(alvo, ttl, tempo) {
+    var linhas = ["Disparando " + alvo + " com 32 bytes de dados:"];
+    for (var i = 0; i < 4; i++) {
+      linhas.push("Resposta de " + alvo + ": bytes=32 tempo=" + tempo + "ms TTL=" + ttl);
+    }
+    linhas.push("");
+    linhas.push("Estatísticas do Ping para " + alvo + ":");
+    linhas.push("    Pacotes: Enviados = 4, Recebidos = 4, Perdidos = 0 (0% de perda),");
+    return { ok: true, linhas: linhas };
+  }
+
+  function linhasTempoEsgotado(alvo) {
+    var linhas = ["Disparando " + alvo + " com 32 bytes de dados:"];
+    for (var i = 0; i < 4; i++) {
+      linhas.push("Esgotado o tempo limite do pedido.");
+    }
+    linhas.push("");
+    linhas.push("Estatísticas do Ping para " + alvo + ":");
+    linhas.push("    Pacotes: Enviados = 4, Recebidos = 0, Perdidos = 4 (100% de perda),");
+    return { ok: false, linhas: linhas };
+  }
+
+  function linhasDnsFalha(alvo) {
+    return {
+      ok: false,
+      linhas: [
+        "Disparando " + alvo + " com 32 bytes de dados:",
+        "A solicitação ping não pôde encontrar o host " + alvo + ". Verifique o nome e tente novamente."
+      ]
+    };
+  }
+
+  function ping(resultado, deHostId, destino) {
+    var hosts = (resultado && resultado.hosts) ? resultado.hosts : {};
+    var origem = hosts[deHostId];
+    var alvo = destino === null || destino === undefined ? "" : String(destino).trim();
+
+    if (!origem || origem.enlace !== "ok" || !origem.ip) {
+      return {
+        ok: false,
+        linhas: ["Falha geral.", "O dispositivo de origem está sem cabo/Wi-Fi ou sem IP válido."]
+      };
+    }
+
+    // Tem IP, mas pode não alcançar o roteador (APIPA, IP fora da rede, conflito).
+    var alcanca = origem.alcancaRoteador === true;
+    var gateway = origem.gateway || "";
+    var alvoMinusculo = alvo.toLowerCase();
+
+    if (alvoMinusculo === "roteador") {
+      if (!alcanca) return linhasTempoEsgotado(gateway || "192.168.0.1");
+      return linhasResposta(gateway || "192.168.0.1", 64, 1);
+    }
+
+    if (Object.prototype.hasOwnProperty.call(hosts, alvo)) {
+      var destinoHost = hosts[alvo];
+      var exibir = destinoHost.ip || alvo;
+      if (alcanca && destinoHost.alcancaRoteador && destinoHost.ip) {
+        return linhasResposta(exibir, 64, 2);
+      }
+      return linhasTempoEsgotado(exibir);
+    }
+
+    if (alvoMinusculo === "google.com") {
+      if (!origem.temInternet || !origem.resolveNomes) {
+        return {
+          ok: false,
+          linhas: [
+            "Disparando google.com com 32 bytes de dados:",
+            "A solicitação ping não pôde encontrar o host google.com. Verifique o nome e tente novamente."
+          ]
+        };
+      }
+      var resp = linhasResposta("142.250.79.46", 117, 20);
+      resp.linhas[0] = "Disparando google.com [142.250.79.46] com 32 bytes de dados:";
+      return resp;
+    }
+
+    if (validarIPv4(alvo)) {
+      if (gateway && alvo === gateway) {
+        return alcanca ? linhasResposta(alvo, 64, 1) : linhasTempoEsgotado(alvo);
+      }
+
+      var hostNoIp = null;
+      Object.keys(hosts).forEach(function (id) {
+        if (!hostNoIp && hosts[id].ip === alvo) hostNoIp = hosts[id];
+      });
+
+      if (hostNoIp) {
+        if (alcanca && hostNoIp.alcancaRoteador) return linhasResposta(alvo, 64, 2);
+        return linhasTempoEsgotado(alvo);
+      }
+
+      var naMesmaRede = mesmoEnlace(alvo, origem.ip, origem.mascara);
+      if (naMesmaRede) {
+        return linhasTempoEsgotado(alvo);
+      }
+
+      if (!origem.temInternet) {
+        return linhasTempoEsgotado(alvo);
+      }
+      return linhasResposta(alvo, 63, 20);
+    }
+
+    // Nome desconhecido (não é "google.com").
+    if (!origem.temInternet || !origem.resolveNomes) {
+      return linhasDnsFalha(alvo);
+    }
+    return linhasTempoEsgotado(alvo);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Exportação                                                          */
+  /* ------------------------------------------------------------------ */
+
+  var Motor = {
+    PROVEDOR: clonar(PROVEDOR),
+    configPadrao: configPadrao,
+    cenarioPadrao: cenarioPadrao,
+    hostsPadrao: hostsPadrao,
+    validarIPv4: validarIPv4,
+    simular: simular,
+    testarAcessoExterno: testarAcessoExterno,
+    ping: ping
+  };
+
+  if (typeof window !== "undefined") {
+    window.Motor = Motor;
+  }
+  if (typeof module !== "undefined" && module.exports) {
+    module.exports = Motor;
+  }
+})();
+
+</script>
+  <script>
+/* Mapa da rede do Escritório Horizonte — desenho em SVG puro, sem bibliotecas.
+   Funciona por file:// (IIFE, ES5). API pública em window.Mapa:
+     Mapa.montar(raiz, { hosts, onHostClick(id), onTesteExterno() })
+     Mapa.atualizar(resultado, hosts)
+     Mapa.mostrarPacote(caminho) -> Promise
+*/
+(function (window, document) {
+  "use strict";
+
+  var NS = "http://www.w3.org/2000/svg";
+
+  // Sistema de coordenadas do desenho (viewBox). Tudo é proporcional: nada em px fixo.
+  var LARG = 1000;
+  var ALT = 1205;
+  var CX = 500;                       // eixo do tronco da LAN
+  var NUVEM = { x: 490, y: 72 };      // centro da nuvem "Internet"
+  var ROTEADOR = { x: 500, y: 270 };  // centro do roteador
+  var TRECHO = 600;                   // ms por trecho do pacote
+  var MAX_BALAO = 42;                 // caracteres por linha do balão
+
+  // Lugares fixos dos seis dispositivos (y = centro do ícone)
+  var SLOTS = [
+    { id: "pc-recepcao", x: 212, y: 450, lado: "esq" },
+    { id: "pc-financeiro", x: 788, y: 450, lado: "dir" },
+    { id: "notebook", x: 212, y: 714, lado: "esq" },
+    { id: "celular", x: 788, y: 714, lado: "dir" },
+    { id: "camera", x: 212, y: 978, lado: "esq" },
+    { id: "impressora", x: 788, y: 978, lado: "dir" }
+  ];
+
+  // Selo curto a partir do código do problema
+  var ROTULOS = {
+    SEM_DHCP: "Sem DHCP",
+    APIPA: "IP APIPA",
+    CONFLITO_IP: "Conflito de IP",
+    FORA_DA_REDE: "Fora da rede",
+    WAN_FALHA: "Sem internet",
+    DNS_FALHA: "Sem DNS",
+    WIFI_SENHA: "Senha errada",
+    WIFI_INCOMPATIVEL: "Wi-Fi incompatível",
+    WIFI_OCULTA: "Rede oculta",
+    WIFI_DESLIGADO: "Wi-Fi desligado",
+    POOL_ESGOTADO: "Sem IP livre",
+    RESERVA_FORA_DA_REDE: "Reserva inválida"
+  };
+
+  // Problemas que deixam o enlace vermelho (e não só amarelo)
+  var GRAVES = {
+    CONFLITO_IP: 1, FORA_DA_REDE: 1, WIFI_SENHA: 1, WIFI_INCOMPATIVEL: 1,
+    WIFI_OCULTA: 1, WIFI_DESLIGADO: 1, RESERVA_FORA_DA_REDE: 1
+  };
+
+  var raiz = null;
+  var caixa = null;
+  var svg = null;
+  var camadaPacote = null;
+  var refs = {};
+  var hostsRef = {};
+  var coords = {};
+  var ordem = [];
+  var assin = {};
+  var timersPulso = {};
+  var opc = { onHostClick: null, onTesteExterno: null };
+  var pac = { id: 0, obj: null, no: null };
+
+  var pedirQuadro = window.requestAnimationFrame || function (f) {
+    return window.setTimeout(function () { f(agora()); }, 16);
+  };
+  var cancelarQuadro = window.cancelAnimationFrame || function (id) {
+    window.clearTimeout(id);
+  };
+
+  // ---------------------------------------------------------------- utilidades
+
+  function agora() {
+    return window.performance && window.performance.now ? window.performance.now() : new Date().getTime();
+  }
+
+  function nr(v) {
+    return Math.round(v * 10) / 10;
+  }
+
+  function criar(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    if (attrs) {
+      for (var k in attrs) {
+        if (Object.prototype.hasOwnProperty.call(attrs, k)) el.setAttribute(k, attrs[k]);
+      }
+    }
+    return el;
+  }
+
+  function texto(attrs, conteudo) {
+    var t = criar("text", attrs);
+    if (conteudo != null) t.textContent = conteudo;
+    return t;
+  }
+
+  function classe(el, valor) {
+    if (el) el.setAttribute("class", valor);
+  }
+
+  // Quebra um texto em linhas por contagem de caracteres (estimativa segura para Segoe UI).
+  function quebrar(txt, max, maxLinhas) {
+    var palavras = String(txt == null ? "" : txt).replace(/\s+/g, " ").replace(/^\s|\s$/g, "").split(" ");
+    var linhas = [];
+    var linha = "";
+    var i, j, p, tentativa;
+    for (i = 0; i < palavras.length; i++) {
+      p = palavras[i];
+      if (!p) continue;
+      tentativa = linha ? linha + " " + p : p;
+      if (tentativa.length <= max) { linha = tentativa; continue; }
+      linhas.push(linha);
+      linha = p;
+      if (linhas.length === maxLinhas - 1) {
+        var resto = linha;
+        for (j = i + 1; j < palavras.length; j++) resto += " " + palavras[j];
+        if (resto.length > max) resto = resto.slice(0, max - 1).replace(/\s+\S*$/, "") + "…";
+        linhas.push(resto);
+        return linhas;
+      }
+    }
+    if (linha) linhas.push(linha);
+    if (!linhas.length) linhas.push("");
+    return linhas;
+  }
+
+  function arco(ox, oy, r, dir) {
+    // Arco de ~110° aberto para o lado do roteador (dir 1 = direita, -1 = esquerda)
+    var ca = 0.5736;
+    var sa = 0.8192;
+    var sx = ox + dir * r * ca;
+    var sy = oy - r * sa;
+    var ey = oy + r * sa;
+    return "M" + nr(sx) + " " + nr(sy) + " A" + r + " " + r + " 0 0 " + (dir === 1 ? 1 : 0) + " " + nr(sx) + " " + nr(ey);
+  }
+
+  // ---------------------------------------------------------------- ícones
+
+  var FORMAS = {
+    pc: [
+      ["rect", { x: 4, y: 10, width: 34, height: 26, rx: 2.5 }],
+      ["path", { d: "M12 24h18" }],
+      ["path", { d: "M21 36v7" }],
+      ["path", { d: "M14 43h14" }],
+      ["rect", { x: 44, y: 10, width: 14, height: 44, rx: 2.5 }],
+      ["circle", { cx: 51, cy: 18, r: 1.7, "class": "mp-cheio" }],
+      ["path", { d: "M48 29h6" }],
+      ["path", { d: "M48 36h6" }]
+    ],
+    notebook: [
+      ["rect", { x: 12, y: 12, width: 40, height: 28, rx: 2.5 }],
+      ["path", { d: "M8 42h48l4 8H4z" }],
+      ["path", { d: "M26 46h12" }]
+    ],
+    celular: [
+      ["rect", { x: 21, y: 5, width: 22, height: 54, rx: 4.5 }],
+      ["path", { d: "M28 11h8" }],
+      ["path", { d: "M26 17h12" }],
+      ["circle", { cx: 32, cy: 52, r: 1.8, "class": "mp-cheio" }]
+    ],
+    camera: [
+      ["rect", { x: 10, y: 14, width: 42, height: 22, rx: 11 }],
+      ["circle", { cx: 46, cy: 25, r: 7 }],
+      ["circle", { cx: 46, cy: 25, r: 2.8, "class": "mp-cheio" }],
+      ["path", { d: "M28 36v7" }],
+      ["rect", { x: 18, y: 43, width: 28, height: 5, rx: 2 }],
+      ["circle", { cx: 17, cy: 25, r: 1.6, "class": "mp-cheio" }]
+    ],
+    impressora: [
+      ["rect", { x: 16, y: 8, width: 32, height: 16, rx: 2 }],
+      ["rect", { x: 8, y: 26, width: 48, height: 16, rx: 3 }],
+      ["rect", { x: 19, y: 38, width: 26, height: 14, rx: 1.5, "class": "mp-papel" }],
+      ["path", { d: "M24 44h16" }],
+      ["path", { d: "M24 48h10" }],
+      ["circle", { cx: 49, cy: 32, r: 1.8, "class": "mp-cheio" }]
+    ]
+  };
+
+  function icone(tipo) {
+    var formas = FORMAS[tipo] || FORMAS.pc;
+    var fora = criar("g", { "class": "mp-icone", transform: "translate(-29.4,-29.4) scale(0.92)" });
+    var miolo = criar("g", { "class": "mp-icone-miolo" });
+    for (var i = 0; i < formas.length; i++) {
+      miolo.appendChild(criar(formas[i][0], formas[i][1]));
+    }
+    fora.appendChild(miolo);
+    return fora;
+  }
+
+  function tagConexao(wifi) {
+    var g = criar("g", { "class": "mp-tag-conexao", transform: "translate(34,-34)" });
+    g.appendChild(criar("circle", { r: 9.5, "class": "mp-tag-fundo" }));
+    if (wifi) {
+      g.appendChild(criar("path", { d: "M-5.2 1.2a7.4 7.4 0 0 1 10.4 0" }));
+      g.appendChild(criar("path", { d: "M-2.6 4a3.8 3.8 0 0 1 5.2 0" }));
+      g.appendChild(criar("circle", { cy: 6.6, r: 1.3, "class": "mp-tag-cheio" }));
+    } else {
+      g.appendChild(criar("rect", { x: -4.6, y: -4.2, width: 9.2, height: 8.4, rx: 1.6 }));
+      g.appendChild(criar("path", { d: "M-2.4 -2v4M0 -2v4M2.4 -2v4" }));
+    }
+    return g;
+  }
+
+  // ---------------------------------------------------------------- montagem
+
+  function limpar(el) {
+    while (el.firstChild) el.removeChild(el.firstChild);
+  }
+
+  function montar(raizEl, opcoes) {
+    if (!raizEl) return;
+    opcoes = opcoes || {};
+    opc.onHostClick = typeof opcoes.onHostClick === "function" ? opcoes.onHostClick : null;
+    opc.onTesteExterno = typeof opcoes.onTesteExterno === "function" ? opcoes.onTesteExterno : null;
+
+    cancelarPacote();
+    cancelarPulsos();
+
+    raiz = raizEl;
+    hostsRef = {};
+    coords = {};
+    ordem = [];
+    assin = {};
+
+    limpar(raiz);
+
+    caixa = document.createElement("div");
+    caixa.className = "mp-mapa";
+
+    svg = criar("svg", {
+      "class": "mp-svg",
+      viewBox: "0 0 " + LARG + " " + ALT,
+      role: "group",
+      "aria-label": "Mapa da rede local do Escritório Horizonte. Use Tab para percorrer os dispositivos.",
+      preserveAspectRatio: "xMidYMid meet"
+    });
+    svg.appendChild(definicoes());
+    svg.appendChild(fundo());
+
+    var camLinks = criar("g", { "class": "mp-camada-links" });
+    var camHosts = criar("g", { "class": "mp-camada-hosts" });
+    var camTopo = criar("g", { "class": "mp-camada-topo" });
+    camadaPacote = criar("g", { "class": "mp-camada-pacote" });
+
+    svg.appendChild(camLinks);
+    svg.appendChild(camHosts);
+    svg.appendChild(camTopo);
+    svg.appendChild(camadaPacote);
+
+    refs = {};
+    refs.tronco = criar("path", { "class": "mp-tronco", d: "M" + CX + " 342 V978", fill: "none" });
+    camLinks.appendChild(refs.tronco);
+
+    var hosts = opcoes.hosts || [];
+    var livres = SLOTS.slice();
+    for (var i = 0; i < hosts.length; i++) {
+      var h = hosts[i];
+      var slot = null;
+      var j;
+      for (j = 0; j < livres.length; j++) {
+        if (livres[j].id === h.id) { slot = livres.splice(j, 1)[0]; break; }
+      }
+      if (!slot && livres.length) slot = livres.shift();
+      if (!slot) break;
+      montarHost(camLinks, camHosts, h, slot);
+      ordem.push(h.id);
+    }
+
+    topo(camTopo);
+
+    caixa.appendChild(svg);
+    caixa.appendChild(barra());
+    raiz.appendChild(caixa);
+  }
+
+  function barra() {
+    var div = document.createElement("div");
+    div.className = "mp-acoes";
+
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "mp-btn";
+    b.textContent = "Testar acesso de fora (NAT)";
+    b.addEventListener("click", function () {
+      if (typeof opc.onTesteExterno === "function") opc.onTesteExterno();
+    });
+
+    var leg = document.createElement("ul");
+    leg.className = "mp-legenda";
+    var itens = [["mp-ponto-ok", "conectado"], ["mp-ponto-alerta", "atenção"], ["mp-ponto-falha", "falha"]];
+    for (var i = 0; i < itens.length; i++) {
+      var li = document.createElement("li");
+      var ponto = document.createElement("i");
+      ponto.className = "mp-ponto " + itens[i][0];
+      li.appendChild(ponto);
+      li.appendChild(document.createTextNode(itens[i][1]));
+      leg.appendChild(li);
+    }
+
+    div.appendChild(b);
+    div.appendChild(leg);
+    return div;
+  }
+
+  function definicoes() {
+    var defs = criar("defs", {});
+
+    var pontos = criar("pattern", { id: "mp-grade-pontos", width: 26, height: 26, patternUnits: "userSpaceOnUse" });
+    pontos.appendChild(criar("circle", { cx: 2, cy: 2, r: 1.5, "class": "mp-ponto-grade" }));
+    defs.appendChild(pontos);
+
+    var linhas = criar("pattern", { id: "mp-grade-linhas", width: 130, height: 130, patternUnits: "userSpaceOnUse" });
+    linhas.appendChild(criar("path", { d: "M130 0H0v130", fill: "none", "class": "mp-linha-grade" }));
+    defs.appendChild(linhas);
+
+    var grad = criar("linearGradient", {
+      id: "mp-grad-nuvem", x1: "0", y1: "16", x2: "0", y2: "106", gradientUnits: "userSpaceOnUse"
+    });
+    grad.appendChild(criar("stop", { offset: "0", "class": "mp-parada-1" }));
+    grad.appendChild(criar("stop", { offset: "1", "class": "mp-parada-2" }));
+    defs.appendChild(grad);
+
+    var sombra = criar("filter", { id: "mp-sombra", x: "-40%", y: "-40%", width: "180%", height: "180%" });
+    sombra.appendChild(criar("feDropShadow", {
+      dx: 0, dy: 3, stdDeviation: 4, "flood-color": "#1b2b40", "flood-opacity": "0.16"
+    }));
+    defs.appendChild(sombra);
+
+    return defs;
+  }
+
+  function fundo() {
+    var g = criar("g", { "class": "mp-fundo" });
+    g.appendChild(criar("rect", { x: 0, y: 0, width: LARG, height: ALT, "class": "mp-fundo-cor" }));
+    g.appendChild(criar("rect", { x: 0, y: 0, width: LARG, height: ALT, fill: "url(#mp-grade-pontos)" }));
+    g.appendChild(criar("rect", { x: 0, y: 0, width: LARG, height: ALT, fill: "url(#mp-grade-linhas)" }));
+    return g;
+  }
+
+  function montarHost(camLinks, camHosts, host, slot) {
+    var wifi = host.conexao === "wifi";
+    var x = slot.x;
+    var y = slot.y;
+    var lado = slot.lado;
+    var dir = lado === "esq" ? 1 : -1;
+    coords[host.id] = { x: x, y: y };
+
+    // ---- enlace (cabo ou ondas) ----
+    var enlace = criar("g", { "class": "mp-enlace mp-estado-neutro" });
+    var borda = x + 46 * dir;
+
+    if (wifi) {
+      enlace.appendChild(criar("path", {
+        "class": "mp-ar-ligacao",
+        d: "M" + nr(borda + 40 * dir) + " " + y + " H" + CX,
+        fill: "none"
+      }));
+      var ondas = criar("g", { "class": "mp-ondas" });
+      var raios = [14, 26, 38];
+      for (var k = 0; k < raios.length; k++) {
+        ondas.appendChild(criar("path", { d: arco(borda, y, raios[k], dir), fill: "none" }));
+      }
+      enlace.appendChild(ondas);
+    } else {
+      enlace.appendChild(criar("path", {
+        "class": "mp-cabo",
+        d: "M" + CX + " " + y + " H" + borda,
+        fill: "none"
+      }));
+      enlace.appendChild(criar("circle", { "class": "mp-conector", cx: borda, cy: y, r: 3.6 }));
+      enlace.appendChild(criar("circle", { "class": "mp-juncao", cx: CX, cy: y, r: 4.2 }));
+    }
+    camLinks.appendChild(enlace);
+
+    // ---- dispositivo ----
+    var g = criar("g", {
+      "class": "mp-host mp-estado-neutro" + (wifi ? " mp-sem-fio" : " mp-com-cabo"),
+      transform: "translate(" + x + "," + y + ")",
+      tabindex: "0",
+      focusable: "true",
+      role: "button",
+      "aria-label": host.nome + ", aguardando simulação"
+    });
+
+    g.appendChild(criar("rect", { "class": "mp-halo", x: -52, y: -52, width: 104, height: 104, rx: 20 }));
+    g.appendChild(criar("rect", { "class": "mp-placa", x: -42, y: -42, width: 84, height: 84, rx: 18 }));
+    g.appendChild(icone(host.tipo));
+    g.appendChild(tagConexao(wifi));
+
+    var nome = texto({ x: 0, y: 64, "class": "mp-nome", "text-anchor": "middle" }, host.nome);
+    var ip = texto({ x: 0, y: 88, "class": "mp-ip", "text-anchor": "middle" }, "—");
+
+    var selo = criar("g", { "class": "mp-selo", transform: "translate(0,98)" });
+    var w0 = larguraSelo("Aguardando");
+    var seloRect = criar("rect", { "class": "mp-selo-rect", x: nr(-w0 / 2), y: 0, width: w0, height: 27, rx: 13.5 });
+    var seloTxt = texto({ x: 0, y: 19, "class": "mp-selo-txt", "text-anchor": "middle" }, "Aguardando");
+    selo.appendChild(seloRect);
+    selo.appendChild(seloTxt);
+
+    var balao = criar("g", { "class": "mp-balao", transform: "translate(0,132)" });
+    var balaoRect = criar("rect", { "class": "mp-balao-rect", x: -200, y: 0, width: 400, height: 38, rx: 10 });
+    var balaoBarra = criar("rect", { "class": "mp-balao-barra", x: -194, y: 8, width: 4, height: 25, rx: 2 });
+    balao.appendChild(balaoRect);
+    balao.appendChild(balaoBarra);
+    var linhas = [];
+    for (var i = 0; i < 3; i++) {
+      var t = texto({ x: -180, y: 21 + i * 21, "class": "mp-balao-txt" }, "");
+      linhas.push(t);
+      balao.appendChild(t);
+    }
+
+    g.appendChild(nome);
+    g.appendChild(ip);
+    g.appendChild(selo);
+    g.appendChild(balao);
+
+    g.addEventListener("click", function () {
+      if (typeof opc.onHostClick === "function") opc.onHostClick(host.id);
+    });
+    g.addEventListener("keydown", function (ev) {
+      if (ev.key === "Enter" || ev.key === " " || ev.key === "Spacebar") {
+        ev.preventDefault();
+        if (typeof opc.onHostClick === "function") opc.onHostClick(host.id);
+      }
+    });
+    g.addEventListener("focus", function () {
+      if (g.getAttribute("class").indexOf("mp-focado") < 0) {
+        g.setAttribute("class", g.getAttribute("class") + " mp-focado");
+      }
+    });
+    g.addEventListener("blur", function () {
+      g.setAttribute("class", g.getAttribute("class").replace(/\s*mp-focado/, ""));
+    });
+
+    camHosts.appendChild(g);
+
+    hostsRef[host.id] = {
+      g: g,
+      enlace: enlace,
+      wifi: wifi,
+      nome: nome,
+      ip: ip,
+      seloRect: seloRect,
+      seloTxt: seloTxt,
+      balao: balao,
+      balaoRect: balaoRect,
+      balaoBarra: balaoBarra,
+      linhas: linhas,
+      nomeHost: host.nome
+    };
+  }
+
+  // ---------------------------------------------------------------- céu, roteador, chips
+
+  // Formas da nuvem em duas camadas: contorno grosso embaixo e miolo por cima,
+  // para não aparecerem as bordas internas das elipses.
+  function formasNuvem(attrs) {
+    var g = criar("g", attrs);
+    g.appendChild(criar("ellipse", { cx: 424, cy: 72, rx: 36, ry: 32, "class": "mp-nuvem-corpo" }));
+    g.appendChild(criar("ellipse", { cx: 492, cy: 56, rx: 46, ry: 40, "class": "mp-nuvem-corpo" }));
+    g.appendChild(criar("ellipse", { cx: 556, cy: 72, rx: 34, ry: 30, "class": "mp-nuvem-corpo" }));
+    g.appendChild(criar("rect", { x: 398, y: 66, width: 182, height: 40, rx: 20, "class": "mp-nuvem-corpo" }));
+    return g;
+  }
+
+  function topo(cam) {
+    // --- nuvem Internet (contorno + miolo, sem costura interna) ---
+    var nuvem = criar("g", { "class": "mp-nuvem", "aria-label": "Internet (WAN)" });
+    var corpo = criar("g", { filter: "url(#mp-sombra)" });
+    corpo.appendChild(formasNuvem({ fill: "#b3c5d7", stroke: "#b3c5d7", "stroke-width": 5 }));
+    var miolo = formasNuvem({ fill: "url(#mp-grad-nuvem)" });
+    miolo.appendChild(criar("ellipse", { cx: 466, cy: 42, rx: 44, ry: 14, "class": "mp-nuvem-luz" }));
+    corpo.appendChild(miolo);
+    nuvem.appendChild(corpo);
+    nuvem.appendChild(texto({ x: 489, y: 78, "class": "mp-nuvem-titulo", "text-anchor": "middle" }, "Internet"));
+    refs.nuvemIp = texto({ x: 489, y: 96, "class": "mp-nuvem-ip", "text-anchor": "middle" }, "sem IP público");
+    nuvem.appendChild(refs.nuvemIp);
+    cam.appendChild(nuvem);
+    refs.nuvem = nuvem;
+
+    // --- enlace WAN ---
+    refs.wan = criar("path", { "class": "mp-wan", d: "M" + NUVEM.x + " 106 V218", fill: "none" });
+    cam.appendChild(refs.wan);
+
+    refs.pilhaWan = criar("g", { "class": "mp-pilha-wan" });
+    refs.pilhaWan.appendChild(criar("rect", { x: 463, y: 156, width: 54, height: 22, rx: 11, "class": "mp-pilha-fundo" }));
+    refs.pilhaWan.appendChild(texto({ x: 490, y: 171, "class": "mp-pilha-txt", "text-anchor": "middle" }, "WAN"));
+    cam.appendChild(refs.pilhaWan);
+
+    refs.wanMsg = [
+      texto({ x: 452, y: 148, "class": "mp-wan-msg", "text-anchor": "end" }, ""),
+      texto({ x: 452, y: 166, "class": "mp-wan-msg", "text-anchor": "end" }, "")
+    ];
+    cam.appendChild(refs.wanMsg[0]);
+    cam.appendChild(refs.wanMsg[1]);
+
+    // --- roteador ---
+    var rot = criar("g", { "class": "mp-roteador", role: "img", "aria-label": "Roteador NetHorizonte AX1500" });
+    // Antenas saindo da tampa do roteador (base escondida atrás do corpo, sem parecer traço solto)
+    rot.appendChild(criar("path", { d: "M588 219 L570 184 M652 219 L670 186", "class": "mp-antenna" }));
+    rot.appendChild(criar("circle", { cx: 588, cy: 216, r: 3.2, "class": "mp-antenna-base" }));
+    rot.appendChild(criar("circle", { cx: 652, cy: 216, r: 3.2, "class": "mp-antenna-base" }));
+    var corpo3 = criar("g", { filter: "url(#mp-sombra)" });
+    corpo3.appendChild(criar("rect", { x: 326, y: 218, width: 348, height: 124, rx: 14, "class": "mp-roteador-corpo" }));
+    rot.appendChild(corpo3);
+
+    var marca = texto({ x: 350, y: 250, "class": "mp-marca" });
+    marca.appendChild(document.createTextNode("NetHorizonte "));
+    var ax = criar("tspan", { "class": "mp-marca-ax" });
+    ax.textContent = "AX1500";
+    marca.appendChild(ax);
+    rot.appendChild(marca);
+
+    rot.appendChild(texto({ x: 350, y: 272, "class": "mp-marca-sub" }, "Roteador da rede local"));
+
+    rot.appendChild(criar("rect", { x: 338, y: 300, width: 324, height: 30, rx: 8, "class": "mp-painel" }));
+    refs.ledEnergia = criar("circle", { "class": "mp-led mp-led-cinza", cx: 356, cy: 315, r: 4.4 });
+    refs.ledWan = criar("circle", { "class": "mp-led mp-led-cinza", cx: 378, cy: 315, r: 4.4 });
+    refs.ledWifi = criar("circle", { "class": "mp-led mp-led-cinza", cx: 400, cy: 315, r: 4.4 });
+    refs.ledLan = criar("circle", { "class": "mp-led mp-led-cinza", cx: 422, cy: 315, r: 4.4 });
+    rot.appendChild(refs.ledEnergia);
+    rot.appendChild(refs.ledWan);
+    rot.appendChild(refs.ledWifi);
+    rot.appendChild(refs.ledLan);
+
+    refs.lanTxt = texto({ x: 650, y: 319, "class": "mp-lan-status", "text-anchor": "end" }, "—");
+    rot.appendChild(refs.lanTxt);
+    cam.appendChild(rot);
+
+    // --- chip de interferência do Wi-Fi ---
+    var chip = criar("g", { "class": "mp-interf", "aria-label": "Interferência do Wi-Fi" });
+    chip.appendChild(criar("rect", { x: 700, y: 222, width: 264, height: 112, rx: 12, "class": "mp-chip-corpo" }));
+    chip.appendChild(texto({ x: 716, y: 246, "class": "mp-chip-titulo" }, "Interferência do Wi-Fi"));
+
+    refs.barras = [];
+    var alturas = [16, 26, 36];
+    for (var i = 0; i < 3; i++) {
+      var b = criar("rect", {
+        "class": "mp-barra", x: 716 + i * 14, y: 300 - alturas[i],
+        width: 10, height: alturas[i], rx: 2.5
+      });
+      refs.barras.push(b);
+      chip.appendChild(b);
+    }
+
+    refs.interfNivel = texto({ x: 762, y: 276, "class": "mp-interf-nivel mp-nivel-off" }, "—");
+    refs.interfStatus = texto({ x: 762, y: 298, "class": "mp-interf-status" }, "aguardando leitura");
+    chip.appendChild(refs.interfNivel);
+    chip.appendChild(refs.interfStatus);
+    cam.appendChild(chip);
+  }
+
+  // ---------------------------------------------------------------- atualização
+
+  function mesmosIds(lista) {
+    if (lista.length !== ordem.length) return false;
+    for (var i = 0; i < lista.length; i++) {
+      if (lista[i].id !== ordem[i]) return false;
+    }
+    return true;
+  }
+
+  function corDoHost(h) {
+    if (!h) return "neutro";
+    var probs = h.problemas || [];
+    var i;
+    for (i = 0; i < probs.length; i++) {
+      if (GRAVES[probs[i].codigo]) return "falha";
+    }
+    if (h.enlace !== "ok") return "falha";
+    // APIPA é amarelo: o dispositivo liga, mas não conversa com a rede
+    if (h.origemIP === "apipa") return "alerta";
+    if (!h.ip) {
+      for (i = 0; i < probs.length; i++) {
+        if (probs[i].codigo === "SEM_DHCP" || probs[i].codigo === "POOL_ESGOTADO" ||
+            probs[i].codigo === "APIPA" || probs[i].codigo === "WAN_FALHA") {
+          return "alerta";
+        }
+      }
+      return "falha";
+    }
+    if (h.alcancaRoteador === false) return "falha";
+    if (h.temInternet === false) return "alerta";
+    if (h.resolveNomes === false) return "alerta";
+    return "ok";
+  }
+
+  function rotuloDoHost(h) {
+    if (!h) return "Sem dados";
+    if (h.problemas && h.problemas.length && h.problemas[0].codigo) {
+      var r = ROTULOS[h.problemas[0].codigo];
+      if (r) return r;
+    }
+    if (h.enlace === "sem-wifi") return "Sem conexão";
+    if (h.enlace === "senha-errada") return "Senha errada";
+    if (h.enlace === "incompativel") return "Wi-Fi incompatível";
+    if (h.enlace === "rede-oculta") return "Rede oculta";
+    if (!h.ip) return "Sem IP";
+    if (h.alcancaRoteador === false) return "Sem rota";
+    if (h.temInternet === false) return "Sem internet";
+    if (h.resolveNomes === false) return "Sem DNS";
+    return "Internet ok";
+  }
+
+  function ipDoHost(h) {
+    if (!h || !h.ip) return "—";
+    return h.ip + (h.origemIP === "apipa" ? " (APIPA)" : "");
+  }
+
+  function balaoDoHost(h, chave) {
+    if (h && h.problemas && h.problemas.length && h.problemas[0].texto) return h.problemas[0].texto;
+    if (chave === "falha" || chave === "alerta") {
+      if (h && h.resolveNomes === false) return "O host navega por IP, mas não abre sites: confira o DNS entregue.";
+      if (h && h.temInternet === false) return "A rede local funciona, mas não há caminho para a internet.";
+      if (!h || !h.ip) return "Sem endereço IP: este dispositivo não conversa com a rede.";
+      return "Este dispositivo está fora da rede local.";
+    }
+    return "";
+  }
+
+  function larguraSelo(t) {
+    var w = String(t).length * 9.4 + 30;
+    if (w < 96) w = 96;
+    if (w > 215) w = 215;
+    return w;
+  }
+
+  function assinatura(h) {
+    if (!h) return "vazio";
+    var p = h.problemas && h.problemas[0];
+    return [
+      h.enlace, h.ip || "", h.origemIP || "",
+      h.alcancaRoteador ? 1 : 0, h.temInternet ? 1 : 0, h.resolveNomes ? 1 : 0,
+      p ? p.codigo : ""
+    ].join("|");
+  }
+
+  function atualizarHost(id, h) {
+    var ref = hostsRef[id];
+    if (!ref) return;
+
+    var chave = corDoHost(h);
+    var selo = rotuloDoHost(h);
+    var balao = balaoDoHost(h, chave);
+
+    var cls = "mp-host mp-estado-" + chave + (ref.wifi ? " mp-sem-fio" : " mp-com-cabo") +
+      (balao ? " mp-tem-balao" : "");
+    if (document.activeElement === ref.g) cls += " mp-focado";
+    ref.g.setAttribute("class", cls);
+    classe(ref.enlace, "mp-enlace mp-estado-" + chave);
+
+    // IP
+    var txt = ipDoHost(h);
+    ref.ip.textContent = txt;
+    ref.ip.setAttribute("class", "mp-ip" + (txt === "—" ? " mp-ip-vazio" : ""));
+
+    // selo
+    ref.seloTxt.textContent = selo;
+    var w = larguraSelo(selo);
+    ref.seloRect.setAttribute("width", w);
+    ref.seloRect.setAttribute("x", nr(-w / 2));
+
+    // balão
+    var linhas = balao ? quebrar(balao, MAX_BALAO, 3) : [];
+    var i;
+    for (i = 0; i < ref.linhas.length; i++) {
+      ref.linhas[i].textContent = linhas[i] || "";
+    }
+    var n = linhas.length;
+    var hBalao = 12 + n * 21 + 5;
+    ref.balaoRect.setAttribute("height", nr(n ? hBalao : 38));
+    ref.balaoBarra.setAttribute("height", nr(n ? hBalao - 16 : 25));
+    ref.balao.setAttribute("aria-hidden", n ? "false" : "true");
+
+    // rótulo acessível
+    var partes = [ref.nomeHost, txt === "—" ? "sem IP" : txt, selo];
+    if (balao) partes.push(balao);
+    ref.g.setAttribute("aria-label", partes.join(", "));
+
+    // pulso quando o estado muda entre duas atualizações
+    var assinaturaNova = assinatura(h);
+    var anterior = assin[id];
+    assin[id] = assinaturaNova;
+    if (anterior !== undefined && anterior !== assinaturaNova) pulsar(id);
+  }
+
+  function pulsar(id) {
+    var ref = hostsRef[id];
+    if (!ref) return;
+    ref.g.setAttribute("class", ref.g.getAttribute("class").replace(/\s*mp-pulso/, ""));
+    if (timersPulso[id]) window.clearTimeout(timersPulso[id]);
+    // pequeno atraso para o navegador reiniciar a animação
+    timersPulso[id] = window.setTimeout(function () {
+      var atual = hostsRef[id];
+      if (!atual) return;
+      if (atual.g.getAttribute("class").indexOf("mp-pulso") < 0) {
+        atual.g.setAttribute("class", atual.g.getAttribute("class") + " mp-pulso");
+      }
+      timersPulso[id] = window.setTimeout(function () {
+        var r = hostsRef[id];
+        if (r) r.g.setAttribute("class", r.g.getAttribute("class").replace(/\s*mp-pulso/, ""));
+        timersPulso[id] = null;
+      }, 1000);
+    }, 40);
+  }
+
+  function cancelarPulsos() {
+    for (var id in timersPulso) {
+      if (Object.prototype.hasOwnProperty.call(timersPulso, id) && timersPulso[id]) {
+        window.clearTimeout(timersPulso[id]);
+      }
+    }
+    timersPulso = {};
+  }
+
+  function atualizarWan(wan) {
+    var ok = wan.status === "conectado";
+    classe(refs.nuvem, "mp-nuvem" + (ok ? "" : " mp-apagada"));
+    refs.nuvemIp.textContent = ok ? (wan.ip || "conectado") : "sem conexão";
+    refs.nuvemIp.setAttribute("class", "mp-nuvem-ip" + (ok ? "" : " mp-off"));
+    classe(refs.wan, "mp-wan" + (ok ? "" : " mp-tracejada"));
+    classe(refs.pilhaWan, "mp-pilha-wan" + (ok ? "" : " mp-off"));
+
+    var msg = ok
+      ? (wan.mensagem || "Conexão com o provedor ativa")
+      : (wan.mensagem || "Sem resposta do provedor");
+    var linhas = quebrar(msg, 34, 2);
+    var partes = linhas.length > 1 ? 2 : 1;
+    refs.wanMsg[0].textContent = linhas[0] || "";
+    refs.wanMsg[1].textContent = partes > 1 ? (linhas[1] || "") : "";
+    refs.wanMsg[0].setAttribute("class", "mp-wan-msg " + (ok ? "mp-txt-ok" : "mp-txt-falha"));
+    refs.wanMsg[1].setAttribute("class", "mp-wan-msg " + (ok ? "mp-txt-ok" : "mp-txt-falha"));
+  }
+
+  function led(el, cor) {
+    classe(el, "mp-led mp-led-" + cor);
+  }
+
+  function atualizarRoteador(rot) {
+    var lanOk = rot.lanOk !== false;
+    var wifi = rot.wifi || {};
+    var wanOk = !!(rot.wan && rot.wan.status === "conectado");
+
+    led(refs.ledEnergia, lanOk ? "verde" : "vermelho");
+    led(refs.ledWan, wanOk ? "verde" : "vermelho");
+    led(refs.ledWifi, wifi.status === "desligado" ? "cinza" : (wifi.status === "inseguro" ? "ambar" : "verde"));
+    led(refs.ledLan, lanOk ? "verde" : "vermelho");
+
+    refs.lanTxt.textContent = lanOk ? "LAN ok" : "LAN com falha";
+    refs.lanTxt.setAttribute("class", "mp-lan-status" + (lanOk ? "" : " mp-off"));
+
+    var nivel = wifi.interferencia === "alta" ? "alta" : (wifi.interferencia === "media" ? "media" : "baixa");
+    if (wifi.status === "desligado") nivel = "off";
+    var lit = nivel === "alta" ? 3 : (nivel === "media" ? 2 : 1);
+    for (var i = 0; i < refs.barras.length; i++) {
+      refs.barras[i].setAttribute("class",
+        "mp-barra" + (nivel !== "off" && i < lit ? " mp-barra-" + nivel : ""));
+    }
+    var nomes = { baixa: "Baixa", media: "Média", alta: "Alta", off: "—" };
+    refs.interfNivel.textContent = nomes[nivel];
+    refs.interfNivel.setAttribute("class", "mp-interf-nivel mp-nivel-" + nivel);
+    refs.interfStatus.textContent = wifi.status === "desligado" ? "Wi-Fi desligado"
+      : (wifi.status === "inseguro" ? "Rede sem segurança" : "Wi-Fi ligado");
+  }
+
+  function atualizar(resultado, hosts) {
+    if (!raiz || !svg) return;
+
+    var lista = hosts || [];
+    if (lista.length && !mesmosIds(lista)) {
+      montar(raiz, { hosts: lista, onHostClick: opc.onHostClick, onTesteExterno: opc.onTesteExterno });
+    }
+
+    var r = resultado || {};
+    var rot = r.roteador || {};
+    var wanOk = !!(rot.wan && rot.wan.status === "conectado");
+    var lanOk = rot.lanOk !== false;
+
+    caixa.classList.toggle("mp-wan-falha", !wanOk);
+    caixa.classList.toggle("mp-lan-falha", !lanOk);
+
+    atualizarWan(rot.wan || {});
+    atualizarRoteador(rot);
+
+    var rh = r.hosts || {};
+    for (var i = 0; i < ordem.length; i++) {
+      atualizarHost(ordem[i], rh[ordem[i]]);
+    }
+  }
+
+  // ---------------------------------------------------------------- pacote
+
+  function posicaoDe(id) {
+    if (id === "internet") return { x: NUVEM.x, y: NUVEM.y };
+    if (id === "roteador") return { x: ROTEADOR.x, y: ROTEADOR.y };
+    return coords[id] || null;
+  }
+
+  function finalizarPacote(obj) {
+    if (obj.g && obj.g.parentNode) obj.g.parentNode.removeChild(obj.g);
+    if (pac.obj === obj) { pac.obj = null; pac.no = null; pac.id = 0; }
+    if (obj.resolve) {
+      var fim = obj.resolve;
+      obj.resolve = null;
+      fim(true);
+    }
+  }
+
+  function cancelarPacote() {
+    if (pac.id) { cancelarQuadro(pac.id); pac.id = 0; }
+    if (pac.no && pac.no.parentNode) pac.no.parentNode.removeChild(pac.no);
+    pac.no = null;
+    if (pac.obj) {
+      var obj = pac.obj;
+      pac.obj = null;
+      if (obj.resolve) {
+        var fim = obj.resolve;
+        obj.resolve = null;
+        fim(false);
+      }
+    }
+  }
+
+  function animar(obj) {
+    return pedirQuadro(function (t) {
+      if (pac.obj !== obj) return;
+      if (!obj.inicio) obj.inicio = t;
+      var d = Math.min(t - obj.inicio, obj.total);
+      var seg = Math.min(Math.floor(d / TRECHO), obj.pts.length - 2);
+      var f = (d - seg * TRECHO) / TRECHO;
+      var k = f < 0.5 ? 2 * f * f : -1 + (4 - 2 * f) * f;
+      var a = obj.pts[seg];
+      var b = obj.pts[seg + 1];
+      var x = nr(a.x + (b.x - a.x) * k);
+      var y = nr(a.y + (b.y - a.y) * k);
+      obj.no.setAttribute("cx", x);
+      obj.no.setAttribute("cy", y);
+      obj.halo.setAttribute("cx", x);
+      obj.halo.setAttribute("cy", y);
+      if (d >= obj.total) { finalizarPacote(obj); return; }
+      pac.id = animar(obj);
+    });
+  }
+
+  function mostrarPacote(caminho) {
+    return new Promise(function (resolve) {
+      cancelarPacote();
+
+      if (!camadaPacote || !caminho || typeof caminho.length !== "number") {
+        resolve(false);
+        return;
+      }
+
+      var pontos = [];
+      var ultimo = null;
+      for (var i = 0; i < caminho.length; i++) {
+        var p = posicaoDe(caminho[i]);   // id desconhecido é simplesmente ignorado
+        if (!p) continue;
+        if (ultimo && ultimo.x === p.x && ultimo.y === p.y) continue;
+        pontos.push(p);
+        ultimo = p;
+      }
+      if (pontos.length < 2) { resolve(false); return; }
+
+      var g = criar("g", { "class": "mp-pacote" });
+      var halo = criar("circle", { "class": "mp-pacote-halo", cx: pontos[0].x, cy: pontos[0].y, r: 15 });
+      var no = criar("circle", { "class": "mp-pacote-no", cx: pontos[0].x, cy: pontos[0].y, r: 7.5 });
+      g.appendChild(halo);
+      g.appendChild(no);
+      camadaPacote.appendChild(g);
+
+      var obj = {
+        pts: pontos, g: g, halo: halo, no: no,
+        inicio: 0, resolve: resolve,
+        total: (pontos.length - 1) * TRECHO
+      };
+      pac.obj = obj;
+      pac.no = g;
+      pac.id = animar(obj);
+    });
+  }
+
+  // ---------------------------------------------------------------- API
+
+  window.Mapa = {
+    montar: montar,
+    atualizar: atualizar,
+    mostrarPacote: mostrarPacote
+  };
+})(window, document);
+
+</script>
+  <script>
+/*
+ * Perfis dos painéis "no estilo" dos roteadores entregues pelos provedores.
+ * Simulador educativo do SENAI: as telas imitam o jeito dos painéis que esses
+ * provedores costumam entregar (cores, menus, nomes, termos em inglês), mas não
+ * usam logotipos e não são as páginas oficiais. Senhas e etiquetas são inventadas.
+ *
+ * Rótulos "Termo|tradução": a parte depois da barra aparece menor, como tradução.
+ *
+ * Páginas: { titulo, blocos: [...] }. Blocos que o painel sabe desenhar:
+ *   statusCards, clientes, wan, lanIp, dhcpPool, reservas,
+ *   wifiNome, wifiSeg, wifiCanal, wifi5, admin, info:<texto>
+ * Uma página só com "info:" é uma tela que existe no aparelho real, mas que não
+ * faz parte da prática (o aluno aprende a não mexer no que não precisa).
+ *
+ * Menu: [{ titulo, itens: [idPagina | { sub: "Título", itens: [ids] }] }]
+ * ES5, sem módulos (abre por file://). Os geradores leem este arquivo pelo Node.
+ */
+(function () {
+  "use strict";
+
+  var NAO_USADO = "info:Esta tela existe no roteador de verdade. Nesta prática não mexemos aqui.";
+
+  var PERFIS = {};
+
+  /* ============================================================ Vivo */
+  PERFIS.vivo = {
+    id: "vivo",
+    provedor: "Vivo",
+    tema: "vivo",
+    layout: "lateral",
+    marca: "Vivo Fibra",
+    modelo: "Roteador Wi-Fi Fibra AC (simulado)",
+    url: "192.168.15.1",
+    etiqueta: { usuario: "admin", senha: "fibra1515", ssid: "VIVOFIBRA-2C01", wifiSenha: "vivofibra15", mac: "D8:4A:2C:7A:2C:01", serie: "VVFB2C7A2C01" },
+    os: { tipo: "pppoe", usuario: "horizonte@cliente", senha: "fibra2026",
+          texto: "Conexão PPPoE com usuário e senha do cliente. A fibra (ONT) e a VLAN já estão prontas." },
+    chamado: {
+      titulo: "Chamado Vivo · Instalação nova",
+      texto: "A Vivo instalou a fibra no Escritório Horizonte hoje. O técnico do provedor só ligou o roteador e foi embora. " +
+             "O dono quer a internet funcionando, um Wi-Fi com o nome do escritório e uma senha forte, a câmera da porta sempre no mesmo IP " +
+             "e ninguém de fora conseguindo entrar no painel com a senha da etiqueta."
+    },
+    lan: { ip: "192.168.15.1", mascara: "255.255.255.0" },
+    dhcp: { inicio: "192.168.15.2", fim: "192.168.15.200" },
+    wanFabrica: "dinamico",
+    canalFabrica: 6,
+    vizinhos: [1, 1, 6, 6, 6],
+    statusExtra: [["Modelo", "RTF-AC (simulado)"], ["Versão do firmware|programa interno", "BR_SV_g13.12_RTF_TEF001"], ["Número de série", "VVFB2C7A2C01"]],
+    menu: [
+      { titulo: "Status", itens: ["status", "clientes"] },
+      { titulo: "Configurações", itens: ["wifi", "wifi5", "lan", "wan"] },
+      { titulo: "Avançado", itens: ["firewall", "portas", "dmz"] },
+      { titulo: "Gerenciamento", itens: ["admin", "reiniciar", "firmware"] }
+    ],
+    paginas: {
+      status: { titulo: "Status", blocos: ["statusCards"] },
+      clientes: { titulo: "Dispositivos conectados", blocos: ["clientes"] },
+      wifi: { titulo: "Rede Wi-Fi 2.4 GHz", blocos: ["wifiNome", "wifiSeg", "wifiCanal"] },
+      wifi5: { titulo: "Rede Wi-Fi 5 GHz", blocos: ["wifi5"] },
+      lan: { titulo: "Rede Local", blocos: ["lanIp", "dhcpPool", "reservas"] },
+      wan: { titulo: "Internet", blocos: ["wan"] },
+      firewall: { titulo: "Firewall", blocos: [NAO_USADO] },
+      portas: { titulo: "Redirecionamento de portas", blocos: [NAO_USADO] },
+      dmz: { titulo: "DMZ", blocos: [NAO_USADO] },
+      admin: { titulo: "Senha de acesso", blocos: ["admin"] },
+      reiniciar: { titulo: "Reiniciar", blocos: [NAO_USADO] },
+      firmware: { titulo: "Atualização de firmware", blocos: [NAO_USADO] }
+    },
+    botaoSalvar: "Salvar",
+    botaoSair: "Sair",
+    login: { titulo: "Acesse as configurações do seu roteador", usuario: "Usuário", senha: "Senha", botao: "Entrar",
+             dica: "Usuário e senha estão na etiqueta embaixo do aparelho.", erro: "Usuário ou senha inválidos. Tente novamente." },
+    rotulos: {
+      "wan.tipo": "Tipo de conexão", "wan.usuario": "Usuário PPPoE|login do provedor", "wan.senha": "Senha PPPoE",
+      "wan.ip": "Endereço IP", "wan.mascara": "Máscara", "wan.gateway": "Gateway|porta de saída", "wan.dns1": "DNS primário",
+      "lan.ip": "Endereço IP do roteador", "lan.mascara": "Máscara de sub-rede",
+      "dhcp.ativo": "Servidor DHCP|entrega IP automático", "dhcp.inicio": "Endereço IP inicial", "dhcp.fim": "Endereço IP final",
+      "dhcp.reservas": "IP fixo por dispositivo|reserva", "reserva.mac": "Endereço MAC|número da placa de rede", "reserva.ip": "Endereço IP",
+      "wifi.ativo": "Habilitar Wi-Fi 2.4 GHz", "wifi.ssid": "Nome da rede (SSID)", "wifi.oculto": "Ocultar nome da rede",
+      "wifi.seguranca": "Segurança", "wifi.senha": "Senha do Wi-Fi", "wifi.canal": "Canal",
+      "wifi5.ativo": "Habilitar Wi-Fi 5 GHz", "wifi5.ssid": "Nome da rede (SSID)", "wifi5.seguranca": "Segurança", "wifi5.senha": "Senha do Wi-Fi", "wifi5.canal": "Canal",
+      "admin.usuario": "Usuário", "admin.atual": "Senha atual", "admin.nova": "Nova senha", "admin.confirmar": "Confirme a nova senha"
+    },
+    wanTipos: [{ valor: "pppoe", rotulo: "PPPoE" }, { valor: "dinamico", rotulo: "DHCP (IP automático)" }, { valor: "estatico", rotulo: "IP fixo" }],
+    seguranca: [{ valor: "wpa2wpa3", rotulo: "WPA2/WPA3" }, { valor: "wpa2", rotulo: "WPA2" }, { valor: "wpa3", rotulo: "WPA3" },
+                { valor: "wep", rotulo: "WEP" }, { valor: "aberta", rotulo: "Sem segurança" }]
+  };
+
+  /* =========================================================== Claro */
+  PERFIS.claro = {
+    id: "claro",
+    provedor: "Claro",
+    tema: "claro",
+    layout: "topo",
+    marca: "Claro Wi-Fi",
+    modelo: "Gateway Wi-Fi DOCSIS 3.1 (simulado)",
+    url: "192.168.0.1",
+    etiqueta: { usuario: "admin", senha: "claro0101", ssid: "CLARO_2G7B20", wifiSenha: "claro2g0101", mac: "A4:91:B1:93:7B:20", serie: "CLGW937B20" },
+    os: { tipo: "dinamico", usuario: "", senha: "",
+          texto: "Conexão automática (DHCP / IP dinâmico) pelo cabo coaxial. Não usa usuário nem senha." },
+    chamado: {
+      titulo: "Chamado Claro · O técnico anterior errou",
+      texto: "Um técnico mexeu no gateway da Claro do Escritório Horizonte e a internet parou. Ele colocou a internet em PPPoE, " +
+             "que a Claro não usa no cabo. O Wi-Fi ainda está com o nome e a senha de fábrica, num canal cheio de vizinhos, " +
+             "e a senha do painel continua a da etiqueta. Arrume tudo e deixe a câmera da porta com IP fixo."
+    },
+    lan: { ip: "192.168.0.1", mascara: "255.255.255.0" },
+    dhcp: { inicio: "192.168.0.10", fim: "192.168.0.254" },
+    wanFabrica: "pppoe",
+    canalFabrica: 11,
+    vizinhos: [6, 6, 11, 11, 11],
+    statusExtra: [["Hardware Version|versão do aparelho", "1.0"], ["Software Version|versão do programa", "CL3.1.7.24-BR"], ["Cable Modem Status|sinal do cabo", "Operacional"]],
+    menu: [
+      { titulo: "Status", itens: ["status", "clientes"] },
+      { titulo: "Gateway", itens: ["wan", "lan", "reservas"] },
+      { titulo: "Wireless|sem fio", itens: ["wifi", "wifiRadio", "wifi5"] },
+      { titulo: "Firewall", itens: ["firewall", "portas"] },
+      { titulo: "Admin", itens: ["admin", "reiniciar"] }
+    ],
+    paginas: {
+      status: { titulo: "Status do Gateway", blocos: ["statusCards"] },
+      clientes: { titulo: "Connected Devices|dispositivos conectados", blocos: ["clientes"] },
+      wan: { titulo: "WAN|internet", blocos: ["wan"] },
+      lan: { titulo: "LAN|rede local", blocos: ["lanIp", "dhcpPool"] },
+      reservas: { titulo: "DHCP Reservation|reserva de IP", blocos: ["reservas"] },
+      wifi: { titulo: "Wi-Fi 2.4 GHz · Primary Network|rede principal", blocos: ["wifiNome", "wifiSeg"] },
+      wifiRadio: { titulo: "Wi-Fi 2.4 GHz · Radio|rádio", blocos: ["wifiCanal"] },
+      wifi5: { titulo: "Wi-Fi 5 GHz", blocos: ["wifi5"] },
+      firewall: { titulo: "Firewall", blocos: [NAO_USADO] },
+      portas: { titulo: "Port Forwarding|redirecionar portas", blocos: [NAO_USADO] },
+      admin: { titulo: "Password|senha de acesso", blocos: ["admin"] },
+      reiniciar: { titulo: "Reboot|reiniciar", blocos: [NAO_USADO] }
+    },
+    botaoSalvar: "Aplicar",
+    botaoSair: "Sair",
+    login: { titulo: "Bem-vindo! Faça login para configurar seu gateway", usuario: "Nome de usuário", senha: "Senha", botao: "Login|entrar",
+             dica: "Use o usuário e a senha impressos na etiqueta do modem.", erro: "Nome de usuário ou senha incorretos." },
+    rotulos: {
+      "wan.tipo": "WAN Connection Type|tipo de conexão", "wan.usuario": "PPPoE Username|usuário", "wan.senha": "PPPoE Password|senha",
+      "wan.ip": "IP Address|endereço IP", "wan.mascara": "Subnet Mask|máscara", "wan.gateway": "Default Gateway|gateway", "wan.dns1": "Primary DNS|DNS",
+      "lan.ip": "LAN IP Address|IP do roteador", "lan.mascara": "Subnet Mask|máscara de sub-rede",
+      "dhcp.ativo": "DHCP Server|servidor que entrega IP", "dhcp.inicio": "Starting Local Address|primeiro IP", "dhcp.fim": "Ending Local Address|último IP",
+      "dhcp.reservas": "Reserved IP List|lista de IPs reservados", "reserva.mac": "MAC Address|número da placa", "reserva.ip": "Reserved IP|IP reservado",
+      "wifi.ativo": "Wireless Enable|Wi-Fi ligado", "wifi.ssid": "Network Name (SSID)|nome da rede", "wifi.oculto": "Hide SSID|esconder o nome",
+      "wifi.seguranca": "Security Mode|tipo de proteção", "wifi.senha": "Passphrase|senha do Wi-Fi", "wifi.canal": "Channel|canal",
+      "wifi5.ativo": "Wireless Enable|Wi-Fi ligado", "wifi5.ssid": "Network Name (SSID)|nome da rede", "wifi5.seguranca": "Security Mode|tipo de proteção",
+      "wifi5.senha": "Passphrase|senha do Wi-Fi", "wifi5.canal": "Channel|canal",
+      "admin.usuario": "User Name|usuário", "admin.atual": "Current Password|senha atual", "admin.nova": "New Password|nova senha", "admin.confirmar": "Re-enter New Password|repita a nova senha"
+    },
+    wanTipos: [{ valor: "dinamico", rotulo: "DHCP · Dynamic IP|IP automático" }, { valor: "pppoe", rotulo: "PPPoE" }, { valor: "estatico", rotulo: "Static IP|IP fixo" }],
+    seguranca: [{ valor: "wpa2wpa3", rotulo: "WPA2-PSK/WPA3-SAE (Mixed|misto)" }, { valor: "wpa2", rotulo: "WPA2-PSK (AES)" }, { valor: "wpa3", rotulo: "WPA3-SAE" },
+                { valor: "wep", rotulo: "WEP" }, { valor: "aberta", rotulo: "Open (None)|aberta" }]
+  };
+
+  /* =========================================================== Algar */
+  PERFIS.algar = {
+    id: "algar",
+    provedor: "Algar",
+    tema: "algar",
+    layout: "abas",
+    marca: "Algar Fibra",
+    modelo: "ONT GPON Wi-Fi 5 · EG8145 (simulado)",
+    url: "192.168.100.1",
+    etiqueta: { usuario: "admin", senha: "algar1111", ssid: "ALGAR_1E10", wifiSenha: "algarwifi11", mac: "48:7B:6B:51:1E:10", serie: "48575443A1B2C3D4" },
+    os: { tipo: "pppoe", usuario: "horizonte@fibra.net", senha: "uber2026",
+          texto: "Conexão PPPoE. Usuário e senha da ordem de serviço do técnico do provedor." },
+    chamado: {
+      titulo: "Chamado Algar · Wi-Fi lento e câmera sumindo",
+      texto: "O Escritório Horizonte trocou para a Algar e a ONT foi trocada por uma nova, que veio sem configuração. " +
+             "Antes já reclamavam que o Wi-Fi era lento e que a câmera da porta sumia do gravador porque mudava de IP. " +
+             "Configure a internet, faça um Wi-Fi novo num canal livre, deixe a câmera com IP fixo e troque a senha do painel."
+    },
+    lan: { ip: "192.168.100.1", mascara: "255.255.255.0" },
+    dhcp: { inicio: "192.168.100.2", fim: "192.168.100.254" },
+    wanFabrica: "dinamico",
+    canalFabrica: 1,
+    vizinhos: [1, 1, 1, 11, 11, 11],
+    statusExtra: [["Device Type|tipo", "EG8145 (simulado)"], ["Software Version|versão do programa", "V5R020C00S180"], ["ONT Registration Status|registro na fibra", "O5 (normal)"], ["Rx Optical Power|sinal da fibra", "-19.42 dBm"]],
+    menu: [
+      { titulo: "Status", itens: ["status", "clientes", "optico"] },
+      { titulo: "WAN", itens: ["wan"] },
+      { titulo: "LAN", itens: ["lanModo", "lan", "dhcp", "reservas"] },
+      { titulo: "IPv6", itens: ["ipv6"] },
+      { titulo: "WLAN", itens: ["wifi", "wifiAvancado", "wifi5"] },
+      { titulo: "Security", itens: ["firewall"] },
+      { titulo: "Forward Rules", itens: ["portas"] },
+      { titulo: "System Tools", itens: ["reiniciar", "fabrica", "admin"] }
+    ],
+    paginas: {
+      status: { titulo: "Device Information|informações do aparelho", blocos: ["statusCards"] },
+      clientes: { titulo: "User Device Information|aparelhos conectados", blocos: ["clientes"] },
+      optico: { titulo: "Optical Information|sinal da fibra", blocos: ["info:Rx Optical Power (sinal recebido da fibra): -19.42 dBm · Tx Optical Power: 2.10 dBm · Temperatura: 48 °C. Entre -8 e -27 dBm o sinal está bom."] },
+      wan: { titulo: "WAN Configuration|configuração da internet", blocos: ["wan"] },
+      lanModo: { titulo: "LAN Port Work Mode|modo das portas LAN", blocos: [NAO_USADO] },
+      lan: { titulo: "LAN Host Configuration|IP do roteador", blocos: ["lanIp"] },
+      dhcp: { titulo: "DHCP Server Configuration|servidor DHCP", blocos: ["dhcpPool"] },
+      reservas: { titulo: "DHCP Static IP Configuration|IP fixo pelo MAC", blocos: ["reservas"] },
+      ipv6: { titulo: "IPv6", blocos: [NAO_USADO] },
+      wifi: { titulo: "2.4G Basic Network Settings|Wi-Fi 2.4 GHz básico", blocos: ["wifiNome", "wifiSeg"] },
+      wifiAvancado: { titulo: "2.4G Advanced Network Settings|Wi-Fi 2.4 GHz avançado", blocos: ["wifiCanal"] },
+      wifi5: { titulo: "5G Basic Network Settings|Wi-Fi 5 GHz básico", blocos: ["wifi5"] },
+      firewall: { titulo: "Firewall Level|nível do firewall", blocos: [NAO_USADO] },
+      portas: { titulo: "Port Mapping|redirecionar portas", blocos: [NAO_USADO] },
+      reiniciar: { titulo: "Reboot|reiniciar", blocos: [NAO_USADO] },
+      fabrica: { titulo: "Restore Default|voltar ao padrão de fábrica", blocos: [NAO_USADO] },
+      admin: { titulo: "Modify Login Password|trocar senha de acesso", blocos: ["admin"] }
+    },
+    botaoSalvar: "Apply|aplicar",
+    botaoSair: "Logout|sair",
+    login: { titulo: "Login", usuario: "Account|usuário", senha: "Password|senha", botao: "Login|entrar",
+             dica: "Account e Password estão na etiqueta embaixo da ONT.", erro: "Incorrect account or password.|usuário ou senha incorretos" },
+    rotulos: {
+      "wan.tipo": "Connection Mode|modo de conexão", "wan.usuario": "User Name|usuário", "wan.senha": "Password|senha",
+      "wan.ip": "IP Address|endereço IP", "wan.mascara": "Subnet Mask|máscara", "wan.gateway": "Default Gateway|gateway", "wan.dns1": "Primary DNS Server|DNS",
+      "lan.ip": "Primary Address|IP do roteador", "lan.mascara": "Subnet Mask|máscara de sub-rede",
+      "dhcp.ativo": "Enable Primary DHCP Server|ligar servidor DHCP", "dhcp.inicio": "Start IP Address|IP inicial", "dhcp.fim": "End IP Address|IP final",
+      "dhcp.reservas": "Static IP List|lista de IPs fixos", "reserva.mac": "MAC Address|número da placa", "reserva.ip": "IP Address|IP reservado",
+      "wifi.ativo": "Enable WLAN|ligar Wi-Fi", "wifi.ssid": "SSID Name|nome da rede", "wifi.oculto": "Hide Broadcast|não anunciar o nome",
+      "wifi.seguranca": "Security Mode|modo de segurança", "wifi.senha": "WPA PreSharedKey|senha do Wi-Fi", "wifi.canal": "Channel|canal",
+      "wifi5.ativo": "Enable WLAN|ligar Wi-Fi", "wifi5.ssid": "SSID Name|nome da rede", "wifi5.seguranca": "Security Mode|modo de segurança",
+      "wifi5.senha": "WPA PreSharedKey|senha do Wi-Fi", "wifi5.canal": "Channel|canal",
+      "admin.usuario": "User Name|usuário", "admin.atual": "Old Password|senha antiga", "admin.nova": "New Password|senha nova", "admin.confirmar": "Confirm Password|confirme a senha"
+    },
+    wanTipos: [{ valor: "dinamico", rotulo: "IPoE · DHCP|IP automático" }, { valor: "pppoe", rotulo: "PPPoE" }, { valor: "estatico", rotulo: "IPoE · Static|IP fixo" }],
+    seguranca: [{ valor: "wpa2wpa3", rotulo: "WPA2 PSK/WPA3 SAE" }, { valor: "wpa2", rotulo: "WPA2 Pre-Shared Key" }, { valor: "wpa3", rotulo: "WPA3 SAE" },
+                { valor: "wep", rotulo: "WEP" }, { valor: "aberta", rotulo: "Open|aberta" }]
+  };
+
+  /* =========================================================== MZNet */
+  PERFIS.mznet = {
+    id: "mznet",
+    provedor: "MZNet",
+    tema: "mznet",
+    layout: "abas",
+    marca: "MZNet Fibra",
+    modelo: "ONT GPON F670 (simulado)",
+    url: "192.168.1.1",
+    etiqueta: { usuario: "user", senha: "user1234", ssid: "MZNET_4A30", wifiSenha: "mznetwifi1", mac: "E0:19:54:84:4A:30", serie: "ZTEGC84A4A30" },
+    os: { tipo: "pppoe", usuario: "horizonte.escritorio", senha: "mz@2026",
+          texto: "Conexão PPPoE. O usuário não tem @: digite exatamente como está aqui." },
+    chamado: {
+      titulo: "Chamado MZNet · Painel inseguro",
+      texto: "A MZNet instalou a fibra e deixou a ONT com tudo de fábrica: qualquer pessoa que olhar a etiqueta entra no painel. " +
+             "O dono quer a internet ligada, o Wi-Fi com o nome do escritório e senha forte num canal livre, " +
+             "a câmera da porta com IP fixo e a senha do painel trocada."
+    },
+    lan: { ip: "192.168.1.1", mascara: "255.255.255.0" },
+    dhcp: { inicio: "192.168.1.100", fim: "192.168.1.200" },
+    wanFabrica: "dinamico",
+    canalFabrica: 6,
+    vizinhos: [11, 11, 6, 6, 6, 3],
+    statusExtra: [["Model|modelo", "F670 (simulado)"], ["Software Version|versão do programa", "V9.0.10P1N8"], ["PON State|estado da fibra", "Registered|registrada"], ["Rx Power|sinal da fibra", "-20.1 dBm"]],
+    menu: [
+      { titulo: "Status", itens: ["status", "clientes"] },
+      { titulo: "Network|rede", itens: [
+        { sub: "WAN", itens: ["wan"] },
+        { sub: "WLAN", itens: ["wifiBasico", "wifi", "wifiSeg", "wifi5"] },
+        { sub: "LAN", itens: ["dhcp", "reservas"] }
+      ] },
+      { titulo: "Security|segurança", itens: ["firewall", "filtro"] },
+      { titulo: "Application|aplicações", itens: ["portas", "ddns"] },
+      { titulo: "Administration|administração", itens: ["admin", "reiniciar"] },
+      { titulo: "Help|ajuda", itens: ["ajuda"] }
+    ],
+    paginas: {
+      status: { titulo: "Device Information|informações do aparelho", blocos: ["statusCards"] },
+      clientes: { titulo: "LAN Information · Connected Devices|aparelhos conectados", blocos: ["clientes"] },
+      wan: { titulo: "WAN Connection|conexão com a internet", blocos: ["wan"] },
+      wifiBasico: { titulo: "Basic|básico (rádio)", blocos: ["wifiCanal"] },
+      wifi: { titulo: "SSID Settings|nome da rede", blocos: ["wifiNome"] },
+      wifiSeg: { titulo: "Security|segurança do Wi-Fi", blocos: ["wifiSeg"] },
+      wifi5: { titulo: "5G WLAN|Wi-Fi 5 GHz", blocos: ["wifi5"] },
+      dhcp: { titulo: "DHCP Server|servidor DHCP", blocos: ["lanIp", "dhcpPool"] },
+      reservas: { titulo: "DHCP Binding|IP amarrado ao MAC", blocos: ["reservas"] },
+      firewall: { titulo: "Firewall", blocos: [NAO_USADO] },
+      filtro: { titulo: "MAC Filter|filtro por MAC", blocos: [NAO_USADO] },
+      portas: { titulo: "Port Forwarding|redirecionar portas", blocos: [NAO_USADO] },
+      ddns: { titulo: "DDNS", blocos: [NAO_USADO] },
+      admin: { titulo: "User Management|gerenciar usuário", blocos: ["admin"] },
+      reiniciar: { titulo: "System Management|reiniciar e restaurar", blocos: [NAO_USADO] },
+      ajuda: { titulo: "Help|ajuda", blocos: ["info:Ajuda do aparelho. Para esta prática, use o roteiro do lado esquerdo da tela."] }
+    },
+    botaoSalvar: "Submit|enviar",
+    botaoSair: "Logout|sair",
+    login: { titulo: "Welcome to F670. Please login.|bem-vindo, faça login", usuario: "Username|usuário", senha: "Password|senha", botao: "Login|entrar",
+             dica: "Username e Password estão na etiqueta da ONT.", erro: "Username or password is wrong.|usuário ou senha errados" },
+    rotulos: {
+      "wan.tipo": "Connection Type|tipo de conexão", "wan.usuario": "Username|usuário", "wan.senha": "Password|senha",
+      "wan.ip": "IP Address|endereço IP", "wan.mascara": "Subnet Mask|máscara", "wan.gateway": "Gateway", "wan.dns1": "DNS Server 1|DNS",
+      "lan.ip": "LAN IP Address|IP do roteador", "lan.mascara": "Subnet Mask|máscara de sub-rede",
+      "dhcp.ativo": "DHCP Server|servidor DHCP", "dhcp.inicio": "DHCP Start IP Address|primeiro IP", "dhcp.fim": "DHCP End IP Address|último IP",
+      "dhcp.reservas": "DHCP Binding|IP amarrado ao MAC", "reserva.mac": "MAC Address|número da placa", "reserva.ip": "IP Address|IP reservado",
+      "wifi.ativo": "Wireless RF Mode · Enabled|Wi-Fi ligado", "wifi.ssid": "SSID Name|nome da rede", "wifi.oculto": "Hide SSID|esconder o nome",
+      "wifi.seguranca": "Authentication Type|tipo de autenticação", "wifi.senha": "WPA Passphrase|senha do Wi-Fi", "wifi.canal": "Channel|canal",
+      "wifi5.ativo": "Wireless RF Mode · Enabled|Wi-Fi ligado", "wifi5.ssid": "SSID Name|nome da rede", "wifi5.seguranca": "Authentication Type|tipo de autenticação",
+      "wifi5.senha": "WPA Passphrase|senha do Wi-Fi", "wifi5.canal": "Channel|canal",
+      "admin.usuario": "Username|usuário", "admin.atual": "Old Password|senha antiga", "admin.nova": "New Password|senha nova", "admin.confirmar": "Confirmed Password|confirme a senha"
+    },
+    wanTipos: [{ valor: "dinamico", rotulo: "IP (DHCP)|IP automático" }, { valor: "pppoe", rotulo: "PPPoE" }, { valor: "estatico", rotulo: "IP (Static)|IP fixo" }],
+    seguranca: [{ valor: "wpa2wpa3", rotulo: "WPA2-PSK/WPA3-SAE" }, { valor: "wpa2", rotulo: "WPA2-PSK" }, { valor: "wpa3", rotulo: "WPA3-SAE" },
+                { valor: "wep", rotulo: "WEP" }, { valor: "aberta", rotulo: "Open System|aberto" }]
+  };
+
+  if (typeof window !== "undefined") window.Perfis = PERFIS;
+  if (typeof module !== "undefined" && module.exports) module.exports = PERFIS;
+})();
+
+</script>
+  <script>
+/*
+ * Painel de roteador "no estilo" de um provedor (simulador educativo SENAI).
+ * Desenha as páginas a partir do perfil (perfis.js): layout, menus, blocos e termos.
+ *
+ * API (window.PainelProvedor):
+ *   montar(raiz, { perfil, config, hosts, onLogin(u,s)->bool, onSalvar(cfg),
+ *                  onTrocarSenha(atual,nova,conf)->{ok,msg}, onSair(), onPagina(id) })
+ *   atualizarStatus(resultado, hosts)
+ *   sair()
+ *   paginaAtual()  -> "login" | id da página
+ *
+ * ES5, sem módulos: abre com duplo clique (file://).
+ */
+(function () {
+  "use strict";
+
+  var est = { raiz: null, perfil: null, config: null, resultado: null, hosts: [],
+              logado: false, pagina: "status", aviso: null, cb: {}, inicio: Date.now() };
+
+  function clonar(o) { return JSON.parse(JSON.stringify(o)); }
+  function esc(v) {
+    return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  // "Termo|tradução" -> Termo (tradução)
+  function rot(txt) {
+    var p = String(txt || "").split("|");
+    return '<span class="pp-termo">' + esc(p[0]) + "</span>" + (p[1] ? ' <small class="pp-trad">(' + esc(p[1]) + ")</small>" : "");
+  }
+  function rotPlano(txt) { var p = String(txt || "").split("|"); return p[1] ? p[0] + " (" + p[1] + ")" : p[0]; }
+  function rotulo(chave) { return rot(est.perfil.rotulos[chave] || chave); }
+  function pag(id) { return est.perfil.paginas[id] || { titulo: id, blocos: [] }; }
+
+  /* ------------------------------------------------------------ campos */
+  function idc(chave) { return "pp-" + chave.replace(/\./g, "-"); }
+  function valor(chave) {
+    var k = chave.split(".");
+    return est.config[k[0]] ? est.config[k[0]][k[1]] : "";
+  }
+  function campoTexto(chave, extra) {
+    extra = extra || {};
+    return '<div class="pp-campo' + (extra.olho ? " pp-com-olho" : "") + '">' +
+      '<label for="' + idc(chave) + '">' + rotulo(chave) + "</label>" +
+      '<input id="' + idc(chave) + '" data-chave="' + chave + '" type="' + (extra.olho ? "password" : "text") +
+      '" value="' + esc(extra.vazio ? "" : valor(chave)) + '" autocomplete="off" spellcheck="false">' +
+      (extra.olho ? '<button type="button" class="pp-olho" data-olho="' + idc(chave) + '" title="Mostrar/ocultar">👁</button>' : "") +
+      "</div>";
+  }
+  function campoSelect(chave, opcoes) {
+    var v = valor(chave);
+    return '<div class="pp-campo"><label for="' + idc(chave) + '">' + rotulo(chave) + "</label>" +
+      '<select id="' + idc(chave) + '" data-chave="' + chave + '">' + opcoes.map(function (o) {
+        return '<option value="' + esc(o.valor) + '"' + (String(o.valor) === String(v) ? " selected" : "") + ">" + esc(rotPlano(o.rotulo)) + "</option>";
+      }).join("") + "</select></div>";
+  }
+  function campoCheck(chave) {
+    return '<div class="pp-campo pp-check"><label><input type="checkbox" data-chave="' + chave + '"' + (valor(chave) ? " checked" : "") + "> " + rotulo(chave) + "</label></div>";
+  }
+  function campoFixo(rot1, txt) {
+    return '<div class="pp-campo"><label>' + rot(rot1) + '</label><input value="' + esc(txt) + '" disabled></div>';
+  }
+  function canais(lista) {
+    return [{ valor: "auto", rotulo: "Auto|automático" }].concat(lista.map(function (c) { return { valor: c, rotulo: String(c) }; }));
+  }
+
+  /* ------------------------------------------------------------ blocos */
+  var NOMES_SEG = { wpa2wpa3: "WPA2/WPA3", wpa2: "WPA2", wpa3: "WPA3", wep: "WEP", aberta: "Aberta" };
+
+  function blocoStatusCards() {
+    var r = est.resultado, c = est.config, p = est.perfil;
+    if (!r) return "";
+    var wan = r.roteador.wan, wifi = r.roteador.wifi;
+    function linha(a, b, cls) { return "<tr><th>" + rot(a) + '</th><td class="' + (cls || "") + '">' + esc(b) + "</td></tr>"; }
+    var seg = Math.floor((Date.now() - est.inicio) / 1000);
+    var ligado = "0 dia(s) " + Math.floor(seg / 3600) + "h " + Math.floor(seg / 60) % 60 + "min " + seg % 60 + "s";
+    var h = '<div class="pp-cards">';
+    h += '<div class="pp-card"><h4>' + rot("Aparelho") + '</h4><table class="pp-kv">' +
+      (p.statusExtra || []).map(function (l) { return linha(l[0], l[1]); }).join("") +
+      linha("Tempo ligado|uptime", ligado) + linha("MAC", p.etiqueta.mac) + "</table></div>";
+    var tipo = (p.wanTipos.filter(function (t) { return t.valor === c.wan.tipo; })[0] || {}).rotulo || c.wan.tipo;
+    h += '<div class="pp-card"><h4>' + rot("Internet (WAN)|lado de fora") + '</h4><table class="pp-kv">' +
+      linha("Estado", wan.status === "conectado" ? "Conectado" : "Desconectado", wan.status === "conectado" ? "pp-ok" : "pp-falha") +
+      linha("Tipo", rotPlano(tipo)) + linha("IP público", wan.ip || "—") +
+      (wan.status !== "conectado" && wan.mensagem ? linha("Mensagem", wan.mensagem, "pp-falha") : "") + "</table></div>";
+    h += '<div class="pp-card"><h4>' + rot("LAN|rede local") + '</h4><table class="pp-kv">' +
+      linha("IP do roteador", c.lan.ip) + linha("Máscara", c.lan.mascara) +
+      linha("DHCP", c.dhcp.ativo ? "Ligado · " + c.dhcp.inicio + " a " + c.dhcp.fim : "Desligado", c.dhcp.ativo ? "" : "pp-falha") + "</table></div>";
+    h += '<div class="pp-card"><h4>' + rot("Wi-Fi 2.4 GHz|rede sem fio") + '</h4><table class="pp-kv">' +
+      linha("Estado", wifi.status === "desligado" ? "Desligado" : (wifi.status === "inseguro" ? "Ligado · INSEGURO" : "Ligado"), wifi.status === "ativo" ? "pp-ok" : "pp-falha") +
+      linha("SSID|nome", c.wifi.ssid) + linha("Segurança", NOMES_SEG[c.wifi.seguranca] || c.wifi.seguranca) +
+      linha("Canal", String(c.wifi.canal) === "auto" ? "Auto" : c.wifi.canal) +
+      linha("Interferência", { baixa: "Baixa", media: "Média", alta: "Alta" }[wifi.interferencia] || "—",
+        wifi.interferencia === "baixa" ? "pp-ok" : (wifi.interferencia === "alta" ? "pp-falha" : "pp-alerta")) + "</table></div>";
+    h += '<div class="pp-card"><h4>' + rot("Wi-Fi 5 GHz") + '</h4><table class="pp-kv">' +
+      linha("Estado", c.wifi5.ativo ? "Ligado" : "Desligado") + linha("SSID|nome", c.wifi5.ssid) + linha("Canal", c.wifi5.canal) + "</table></div>";
+    h += "</div>";
+    if (est.pagina === "status") h += '<p class="pp-nota">Os aparelhos conectados ficam na página ' + rot(pag("clientes").titulo) + ".</p>";
+    return h;
+  }
+
+  function blocoClientes() {
+    var r = est.resultado;
+    if (!r) return "";
+    var ORIG = { dhcp: "DHCP", reserva: "Reserva", fixo: "IP fixo", apipa: "APIPA (sem DHCP)", nenhum: "—" };
+    var h = '<table class="pp-tabela"><thead><tr><th>Dispositivo</th><th>Conexão</th><th>IP</th><th>' + rot("MAC|placa de rede") + "</th><th>Origem</th></tr></thead><tbody>";
+    est.hosts.forEach(function (host) {
+      var x = r.hosts[host.id] || {}, ok = x.enlace === "ok";
+      h += "<tr><td>" + esc(host.nome) + "</td><td>" + (host.conexao === "wifi" ? "Wi-Fi 2.4 GHz" : "Cabo (LAN)") +
+        (ok ? "" : ' <span class="pp-falha">(fora)</span>') + "</td><td>" + esc(ok ? x.ip : "—") +
+        "</td><td><code>" + esc(host.mac) + "</code></td><td>" + esc(ok ? (ORIG[x.origemIP] || x.origemIP) : "—") + "</td></tr>";
+    });
+    return h + "</tbody></table>";
+  }
+
+  function blocoWan() {
+    return campoSelect("wan.tipo", est.perfil.wanTipos) +
+      '<div class="pp-grupo" data-mostrar-se="pppoe">' + campoTexto("wan.usuario") + campoTexto("wan.senha", { olho: true }) + "</div>" +
+      '<div class="pp-grupo" data-mostrar-se="estatico">' + campoTexto("wan.ip") + campoTexto("wan.mascara") + campoTexto("wan.gateway") + campoTexto("wan.dns1") + "</div>" +
+      '<div class="pp-grupo pp-nota" data-mostrar-se="dinamico">O provedor entrega o IP sozinho. Nenhum campo para preencher.</div>' +
+      campoFixo("VLAN ID", est.perfil.id === "claro" ? "— (cabo)" : "10") + campoFixo("MTU", est.perfil.os.tipo === "pppoe" ? "1492" : "1500");
+  }
+
+  function blocoReservas() {
+    var h = '<table class="pp-tabela pp-reservas"><thead><tr><th>' + rotulo("reserva.mac") + "</th><th>" + rotulo("reserva.ip") + "</th><th></th></tr></thead><tbody>";
+    (est.config.dhcp.reservas || []).forEach(function (r, i) {
+      h += '<tr><td><input data-reserva="' + i + '" data-campo="mac" value="' + esc(r.mac) + '" spellcheck="false" placeholder="AA:BB:CC:00:00:00"></td>' +
+        '<td><input data-reserva="' + i + '" data-campo="ip" value="' + esc(r.ip) + '" spellcheck="false"></td>' +
+        '<td><button type="button" class="pp-btn pp-btn-mini" data-remover="' + i + '">Remover</button></td></tr>';
+    });
+    return '<h4 class="pp-sub">' + rotulo("dhcp.reservas") + "</h4>" + h + "</tbody></table>" +
+      '<button type="button" class="pp-btn pp-btn-mini" data-add-reserva>+ Adicionar</button>' +
+      '<p class="pp-nota">O MAC de cada aparelho aparece na lista de aparelhos conectados.</p>';
+  }
+
+  function blocoHtml(b) {
+    var p = est.perfil;
+    if (b.indexOf("info:") === 0) return '<div class="pp-info">' + esc(b.slice(5)) + "</div>";
+    switch (b) {
+      case "statusCards": return blocoStatusCards();
+      case "clientes": return blocoClientes();
+      case "wan": return blocoWan();
+      case "lanIp": return campoTexto("lan.ip") + campoTexto("lan.mascara");
+      case "dhcpPool": return campoCheck("dhcp.ativo") + campoTexto("dhcp.inicio") + campoTexto("dhcp.fim") +
+        campoFixo("Lease Time|tempo de empréstimo", "86400 s (1 dia)");
+      case "reservas": return blocoReservas();
+      case "wifiNome": return campoCheck("wifi.ativo") + campoTexto("wifi.ssid") + campoCheck("wifi.oculto");
+      case "wifiSeg": return campoSelect("wifi.seguranca", p.seguranca) + campoTexto("wifi.senha", { olho: true }) +
+        '<p class="pp-nota">A senha do Wi-Fi precisa ter de 8 a 63 caracteres.</p>';
+      case "wifiCanal": return campoFixo("Mode|padrão", "802.11 b/g/n") + campoSelect("wifi.canal", canais([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])) +
+        campoFixo("Channel Width|largura", "20 MHz");
+      case "wifi5": return campoCheck("wifi5.ativo") + campoTexto("wifi5.ssid") + campoSelect("wifi5.seguranca", p.seguranca) +
+        campoTexto("wifi5.senha", { olho: true }) + campoSelect("wifi5.canal", canais([36, 40, 44, 48, 149, 153, 157, 161])) +
+        '<p class="pp-nota">Desafio extra: deixe a rede 5 GHz com o mesmo cuidado da 2.4 GHz (o notebook e o celular do cenário usam a 2.4 GHz).</p>';
+      case "admin": return campoFixo(p.rotulos["admin.usuario"], p.etiqueta.usuario) + campoTexto("admin.atual", { olho: true, vazio: true }) +
+        campoTexto("admin.nova", { olho: true, vazio: true }) + campoTexto("admin.confirmar", { olho: true, vazio: true }) +
+        '<p class="pp-nota">A senha nova precisa ter pelo menos 8 caracteres e ser diferente da senha da etiqueta.</p>';
+    }
+    return "";
+  }
+
+  function paginaHtml(id) {
+    var blocos = pag(id).blocos || [];
+    var corpo = blocos.map(blocoHtml).join("");
+    var temForm = blocos.some(function (b) { return ["statusCards", "clientes"].indexOf(b) < 0 && b.indexOf("info:") !== 0; });
+    if (!temForm) return corpo;
+    return '<form class="pp-form" data-pagina="' + id + '" onsubmit="return false">' + corpo +
+      '<div class="pp-rodape"><button type="button" class="pp-btn pp-btn-primario" data-salvar>' + esc(rotPlano(est.perfil.botaoSalvar)) +
+      '</button><button type="button" class="pp-btn" data-cancelar>Cancelar</button></div></form>';
+  }
+
+  /* -------------------------------------------------------------- menu */
+  function itensDoGrupo(g) {
+    var l = [];
+    g.itens.forEach(function (it) { if (typeof it === "string") l.push(it); else l = l.concat(it.itens); });
+    return l;
+  }
+  function grupoDaPagina(id) {
+    var achou = null;
+    est.perfil.menu.forEach(function (g) { if (itensDoGrupo(g).indexOf(id) >= 0) achou = g; });
+    return achou;
+  }
+  function subDaPagina(g, id) {
+    var s = null;
+    (g ? g.itens : []).forEach(function (it) { if (typeof it !== "string" && it.itens.indexOf(id) >= 0) s = it.sub; });
+    return s;
+  }
+  function linkItem(id) {
+    return '<a href="#" class="pp-item' + (id === est.pagina ? " ativo" : "") + '" data-ir="' + id + '">' + rot(pag(id).titulo) + "</a>";
+  }
+  function listaItens(g) {
+    return g.itens.map(function (it) {
+      if (typeof it === "string") return linkItem(it);
+      return '<div class="pp-subgrupo"><div class="pp-subgrupo-titulo">▾ ' + esc(it.sub) + "</div>" + it.itens.map(linkItem).join("") + "</div>";
+    }).join("");
+  }
+  function htmlMenu() {
+    var p = est.perfil, atual = grupoDaPagina(est.pagina) || p.menu[0];
+    if (p.layout === "lateral") {
+      return '<nav class="pp-nav-lateral">' + p.menu.map(function (g) {
+        return '<div class="pp-grupo-menu"><div class="pp-grupo-titulo">' + rot(g.titulo) + "</div>" + listaItens(g) + "</div>";
+      }).join("") + "</nav>";
+    }
+    var abas = '<nav class="pp-nav-abas">' + p.menu.map(function (g) {
+      return '<a href="#" class="pp-aba' + (g === atual ? " ativo" : "") + '" data-ir="' + itensDoGrupo(g)[0] + '">' + rot(g.titulo) + "</a>";
+    }).join("") + "</nav>";
+    if (p.layout === "topo") {
+      return abas + (itensDoGrupo(atual).length > 1 ? '<nav class="pp-nav-subtopo">' + listaItens(atual) + "</nav>" : "");
+    }
+    return abas + '<nav class="pp-nav-sub">' + listaItens(atual) + "</nav>";
+  }
+
+  function cabecalho() {
+    var p = est.perfil;
+    return '<header class="pp-cab"><div class="pp-marca"><span class="pp-simbolo" aria-hidden="true"></span>' +
+      '<span class="pp-marca-nome">' + esc(p.marca) + '</span><span class="pp-modelo">' + esc(p.modelo) + "</span></div>" +
+      (est.logado ? '<div class="pp-cab-dir"><span class="pp-usuario">👤 ' + esc(p.etiqueta.usuario) + '</span><button type="button" class="pp-sair" data-sair>' + rot(p.botaoSair) + "</button></div>" : "") +
+      '</header><div class="pp-faixa-sim">Simulador educativo SENAI · imita o estilo do painel, não é a página oficial do provedor</div>';
+  }
+
+  function telaLogin() {
+    var l = est.perfil.login;
+    return cabecalho() + '<div class="pp-login"><form class="pp-login-caixa" id="pp-login-form" onsubmit="return false">' +
+      "<h2>" + rot(l.titulo) + "</h2>" +
+      '<div class="pp-campo"><label for="pp-login-u">' + rot(l.usuario) + '</label><input id="pp-login-u" autocomplete="off" spellcheck="false"></div>' +
+      '<div class="pp-campo pp-com-olho"><label for="pp-login-s">' + rot(l.senha) + '</label><input id="pp-login-s" type="password" autocomplete="off">' +
+      '<button type="button" class="pp-olho" data-olho="pp-login-s" title="Mostrar/ocultar">👁</button></div>' +
+      (est.erroLogin ? '<p class="pp-erro">' + rot(l.erro) + "</p>" : "") +
+      '<button type="submit" class="pp-btn pp-btn-primario pp-btn-largo">' + esc(rotPlano(l.botao)) + "</button>" +
+      '<p class="pp-nota">' + esc(l.dica) + "</p></form></div>";
+  }
+
+  function render() {
+    var r = est.raiz;
+    r.className = "pp-raiz pp-layout-" + est.perfil.layout;
+    r.setAttribute("data-tema", est.perfil.tema);
+    if (!est.logado) { r.innerHTML = telaLogin(); ligar(); return; }
+    var id = est.pagina, g = grupoDaPagina(id), sub = subDaPagina(g, id);
+    var trilha = (g ? rot(g.titulo) + ' <span class="pp-seta">›</span> ' : "") + (sub ? esc(sub) + ' <span class="pp-seta">›</span> ' : "") + rot(pag(id).titulo);
+    var aviso = est.aviso ? '<div class="pp-aviso pp-aviso-' + est.aviso.tipo + '">' + esc(est.aviso.texto) + "</div>" : "";
+    r.innerHTML = cabecalho() + '<div class="pp-corpo">' + htmlMenu() +
+      '<main class="pp-conteudo"><div class="pp-trilha">' + trilha + "</div>" + aviso + paginaHtml(id) + "</main></div>";
+    est.aviso = null;
+    atualizarVisibilidade();
+    ligar();
+  }
+
+  function atualizarVisibilidade() {
+    var sel = est.raiz.querySelector('[data-chave="wan.tipo"]');
+    if (!sel) return;
+    est.raiz.querySelectorAll("[data-mostrar-se]").forEach(function (g) {
+      g.style.display = g.getAttribute("data-mostrar-se") === sel.value ? "" : "none";
+    });
+  }
+
+  /* ----------------------------------------------------------- eventos */
+  function irPara(id) {
+    est.pagina = id;
+    render();
+    if (est.cb.onPagina) est.cb.onPagina(id);
+  }
+
+  function lerFormulario(form, manterVazias) {
+    var c = clonar(est.config);
+    form.querySelectorAll("[data-chave]").forEach(function (el) {
+      var k = el.getAttribute("data-chave").split(".");
+      if (k[0] === "admin") return;
+      var v = el.type === "checkbox" ? el.checked : (k[1] === "ssid" ? el.value : el.value.trim());
+      if (k[1] === "canal" && v !== "auto") v = parseInt(v, 10);
+      c[k[0]][k[1]] = v;
+    });
+    if (form.querySelector(".pp-reservas")) {
+      var res = [];
+      form.querySelectorAll("[data-reserva]").forEach(function (el) {
+        var i = +el.getAttribute("data-reserva");
+        res[i] = res[i] || { mac: "", ip: "" };
+        var v = el.value.trim();
+        res[i][el.getAttribute("data-campo")] = el.getAttribute("data-campo") === "mac" ? v.toUpperCase().replace(/-/g, ":") : v;
+      });
+      c.dhcp.reservas = res.filter(function (x) { return x && (manterVazias || x.mac || x.ip); });
+    }
+    return c;
+  }
+
+  function aplicando(depois) {
+    var o = document.createElement("div");
+    o.className = "pp-aplicando";
+    o.innerHTML = '<div><span class="pp-giro"></span>Aplicando configurações… aguarde.</div>';
+    est.raiz.appendChild(o);
+    setTimeout(function () { if (o.parentNode) o.parentNode.removeChild(o); depois(); }, 900);
+  }
+
+  function salvar(form) {
+    var id = form.getAttribute("data-pagina");
+    if (form.querySelector('[data-chave="admin.nova"]')) {
+      var v = function (k) { return form.querySelector('[data-chave="' + k + '"]').value; };
+      var resp = est.cb.onTrocarSenha(v("admin.atual"), v("admin.nova"), v("admin.confirmar"));
+      est.aviso = { tipo: resp.ok ? "ok" : "erro", texto: resp.msg };
+      return aplicando(render);
+    }
+    var nova = lerFormulario(form);
+    var erro = null;
+    ["wifi", "wifi5"].forEach(function (w) {
+      if (!form.querySelector('[data-chave="' + w + '.senha"]')) return;
+      var n = (nova[w].senha || "").length;
+      if (nova[w].seguranca !== "aberta" && (n < 8 || n > 63)) erro = "Senha do Wi-Fi inválida: use de 8 a 63 caracteres. Nada foi salvo.";
+    });
+    ["wifi", "wifi5"].forEach(function (w) {
+      if (form.querySelector('[data-chave="' + w + '.ssid"]') && !String(nova[w].ssid).trim()) erro = "O nome da rede (SSID) não pode ficar vazio. Nada foi salvo.";
+    });
+    if (erro) { est.aviso = { tipo: "erro", texto: erro }; render(); return; }
+    aplicando(function () {
+      est.config = nova;
+      est.aviso = { tipo: "ok", texto: "Configurações salvas e aplicadas." };
+      est.cb.onSalvar(clonar(nova));
+      render();
+      if (est.cb.onPagina) est.cb.onPagina(id);
+    });
+  }
+
+  function redesenharForm(form, c) {
+    var copia = est.config;
+    est.config = c;
+    form.outerHTML = paginaHtml(est.pagina);
+    est.config = copia;
+    atualizarVisibilidade();
+    ligar();
+  }
+
+  function ligar() {
+    var r = est.raiz;
+    var lf = r.querySelector("#pp-login-form");
+    if (lf) {
+      lf.addEventListener("submit", function () {
+        var ok = est.cb.onLogin(r.querySelector("#pp-login-u").value.trim(), r.querySelector("#pp-login-s").value);
+        if (ok) { est.logado = true; est.erroLogin = false; est.pagina = "status"; render(); if (est.cb.onPagina) est.cb.onPagina("status"); }
+        else { est.erroLogin = true; render(); }
+      });
+    }
+    r.querySelectorAll("[data-olho]").forEach(function (b) {
+      b.onclick = function () { var i = r.querySelector("#" + b.getAttribute("data-olho")); i.type = i.type === "password" ? "text" : "password"; };
+    });
+    r.querySelectorAll("[data-ir]").forEach(function (a) {
+      a.onclick = function (ev) { ev.preventDefault(); irPara(a.getAttribute("data-ir")); };
+    });
+    var sair = r.querySelector("[data-sair]");
+    if (sair) sair.onclick = function () { window.PainelProvedor.sair(); if (est.cb.onSair) est.cb.onSair(); };
+    var sel = r.querySelector('[data-chave="wan.tipo"]');
+    if (sel) sel.onchange = atualizarVisibilidade;
+    r.querySelectorAll("[data-salvar]").forEach(function (b) { b.onclick = function () { salvar(b.closest("form")); }; });
+    r.querySelectorAll("[data-cancelar]").forEach(function (b) { b.onclick = function () { render(); }; });
+    var add = r.querySelector("[data-add-reserva]");
+    if (add) add.onclick = function () {
+      var form = add.closest("form"), c = lerFormulario(form, true);
+      c.dhcp.reservas.push({ mac: "", ip: "" });
+      redesenharForm(form, c);
+    };
+    r.querySelectorAll("[data-remover]").forEach(function (b) {
+      b.onclick = function () {
+        var form = b.closest("form"), c = lerFormulario(form, true);
+        c.dhcp.reservas.splice(+b.getAttribute("data-remover"), 1);
+        redesenharForm(form, c);
+      };
+    });
+  }
+
+  /* -------------------------------------------------------------- API */
+  window.PainelProvedor = {
+    montar: function (raiz, op) {
+      est.raiz = raiz; est.perfil = op.perfil; est.config = clonar(op.config); est.hosts = op.hosts || [];
+      est.cb = op; est.logado = false; est.pagina = "status"; est.erroLogin = false; est.inicio = Date.now();
+      render();
+    },
+    atualizarStatus: function (resultado, hosts) {
+      est.resultado = resultado;
+      if (hosts) est.hosts = hosts;
+      var blocos = pag(est.pagina).blocos || [];
+      if (est.logado && (blocos.indexOf("statusCards") >= 0 || blocos.indexOf("clientes") >= 0)) render();
+    },
+    sair: function () { est.logado = false; est.erroLogin = false; render(); },
+    paginaAtual: function () { return est.logado ? est.pagina : "login"; }
+  };
+})();
+
+</script>
+  <script>
+/*
+ * Liga motor (../js/motor.js), mapa (../js/mapa.js) e o painel no estilo do
+ * provedor. O perfil vem de <body data-perfil="vivo|claro|algar|mznet">.
+ * O roteiro de 8 passos confere sozinho cada etapa.
+ */
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var clonar = function (o) { return JSON.parse(JSON.stringify(o)); };
+
+  var idPerfil = (location.hash || "").replace("#", "").toLowerCase() || document.body.getAttribute("data-perfil");
+  var perfil = window.Perfis[idPerfil];
+  window.addEventListener("hashchange", function () { location.reload(); });
+  if (!perfil) { document.body.classList.add("sem-perfil"); return; }   // mostra só a escolha do provedor
+  document.body.classList.add("com-perfil");
+  var base = perfil.lan.ip.split(".").slice(0, 3).join(".");   // ex.: 192.168.15
+  var IP_CAMERA = base + ".50";
+
+  function configFabrica() {
+    var c = Motor.configPadrao();
+    c.lan = clonar(perfil.lan);
+    c.dhcp.inicio = perfil.dhcp.inicio;
+    c.dhcp.fim = perfil.dhcp.fim;
+    c.wifi.ssid = perfil.etiqueta.ssid;
+    c.wifi.senha = perfil.etiqueta.wifiSenha;
+    c.wifi.seguranca = "wpa2";
+    c.wifi.canal = perfil.canalFabrica;
+    c.wan.tipo = perfil.wanFabrica;
+    c.wifi5 = { ativo: true, ssid: perfil.etiqueta.ssid + "_5G", seguranca: "wpa2", senha: perfil.etiqueta.wifiSenha, canal: 36 };
+    return c;
+  }
+  function hostsFabrica() {
+    return Motor.hostsPadrao().map(function (h) {
+      if (h.ipFixo) h.ipFixo = base + ".20";
+      if (h.wifiSalvo) h.wifiSalvo = { ssid: perfil.etiqueta.ssid, senha: perfil.etiqueta.wifiSenha };
+      return h;
+    });
+  }
+  function cenario() {
+    var c = Motor.cenarioPadrao();
+    c.provedorExige = perfil.os.tipo;
+    c.usuarioPPPoE = perfil.os.usuario;
+    c.senhaPPPoE = perfil.os.senha;
+    c.redesVizinhasCanais = perfil.vizinhos.slice();
+    return c;
+  }
+
+  var estado;
+  function estadoInicial() {
+    return {
+      config: configFabrica(), hosts: hostsFabrica(), cenario: cenario(), resultado: null,
+      admin: { usuario: perfil.etiqueta.usuario, senha: perfil.etiqueta.senha },
+      fez: { login: false, status: false, clientes: false, senhaTrocada: false, loginNovaSenha: false, ping: false },
+      hostAberto: null
+    };
+  }
+
+  /* ------------------------------------------------------------ roteiro */
+  function h(id) { return (estado.resultado && estado.resultado.hosts[id]) || {}; }
+  var PASSOS = [
+    {
+      titulo: "Entrar no painel",
+      texto: "Digite o usuário e a senha da etiqueta do roteador (ao lado) e clique em entrar.",
+      ok: function () { return estado.fez.login; }
+    },
+    {
+      titulo: "Ler o status",
+      texto: "Na página de status, veja se a internet (WAN) está conectada. Depois abra a lista de aparelhos conectados (procure Dispositivos, Connected Devices ou User Device).",
+      ok: function () { return estado.fez.status && estado.fez.clientes; }
+    },
+    {
+      titulo: "Ligar a internet (WAN)",
+      texto: "Abra a página da internet (pode se chamar Internet, WAN ou Gateway) e configure do jeito que a ordem de serviço manda. Salve.",
+      ok: function () { return estado.resultado.roteador.wan.status === "conectado"; }
+    },
+    {
+      titulo: "Configurar o Wi-Fi",
+      texto: "Nome da rede (SSID): Horizonte_Escritorio. Senha com 12 caracteres ou mais. Segurança WPA2/WPA3 (ou WPA2). Escolha um canal com interferência baixa (veja no status).",
+      ok: function () {
+        var w = estado.config.wifi, r = estado.resultado.roteador.wifi;
+        return w.ativo && w.ssid === "Horizonte_Escritorio" && (w.senha || "").length >= 12 &&
+          (w.seguranca === "wpa2wpa3" || w.seguranca === "wpa2") && r.interferencia === "baixa";
+      }
+    },
+    {
+      titulo: "Reconectar os aparelhos",
+      texto: "O notebook e o celular caíram, porque o Wi-Fi mudou. Clique no botão embaixo do mapa para digitar a rede nova neles.",
+      ok: function () { return PASSOS[3].ok() && h("notebook").enlace === "ok" && h("celular").enlace === "ok"; }
+    },
+    {
+      titulo: "Reservar o IP da câmera",
+      texto: "A câmera (MAC AA:BB:CC:00:00:05) precisa ter sempre o IP " + IP_CAMERA + ". Crie uma reserva no DHCP (pode se chamar Reserva, Binding ou IP fixo). Salve.",
+      ok: function () { return h("camera").ip === IP_CAMERA && h("camera").origemIP === "reserva"; }
+    },
+    {
+      titulo: "Trocar a senha do administrador",
+      texto: "Troque a senha de acesso ao painel (8 caracteres ou mais). Anote. Depois saia e entre de novo com a senha nova.",
+      ok: function () { return estado.fez.loginNovaSenha; }
+    },
+    {
+      titulo: "Teste final",
+      texto: "Clique no notebook no mapa e digite ping google.com. Precisa aparecer \"Resposta de...\".",
+      ok: function () { return estado.fez.ping; }
+    }
+  ];
+
+  function desenharRoteiro() {
+    var ol = $("passos"), feitos = 0, atualMarcado = false;
+    ol.innerHTML = "";
+    PASSOS.forEach(function (p, i) {
+      var ok = p.ok();
+      if (ok) feitos++;
+      var li = document.createElement("li");
+      li.className = ok ? "feito" : (!atualMarcado ? "atual" : "");
+      if (!ok && !atualMarcado) atualMarcado = true;
+      li.innerHTML = '<span class="num">' + (ok ? "✔" : i + 1) + '</span><div><strong></strong><p></p></div>';
+      li.querySelector("strong").textContent = p.titulo;
+      li.querySelector("p").textContent = p.texto;
+      ol.appendChild(li);
+    });
+    $("progresso").textContent = feitos + " de " + PASSOS.length + " passos";
+    $("barra-progresso").style.width = (100 * feitos / PASSOS.length) + "%";
+    $("parabens").hidden = feitos !== PASSOS.length;
+  }
+
+  /* --------------------------------------------------------- simulação */
+  function recalcular() {
+    estado.resultado = Motor.simular(estado.config, estado.hosts, estado.cenario);
+    Mapa.atualizar(estado.resultado, estado.hosts);
+    trocarNomeNoMapa();
+    PainelProvedor.atualizarStatus(estado.resultado, estado.hosts);
+    atualizarUrl();
+    desenharRoteiro();
+  }
+
+  function atualizarUrl() {
+    var pag = PainelProvedor.paginaAtual();
+    var caminho = pag === "login" ? "/login.html" : "/index.html#" + pag;
+    $("url-roteador").textContent = "http://" + estado.config.lan.ip + caminho;
+  }
+
+  function trocarNomeNoMapa() {
+    var m = document.querySelector("#mapa .mp-marca");
+    if (m) m.textContent = "Roteador " + perfil.provedor;
+    var g = document.querySelector("#mapa .mp-roteador");
+    if (g) g.setAttribute("aria-label", "Roteador entregue pelo provedor " + perfil.provedor);
+  }
+
+  function montarPainel() {
+    $("painel").innerHTML = "";
+    PainelProvedor.montar($("painel"), {
+      perfil: perfil, config: estado.config, hosts: estado.hosts,
+      onLogin: function (u, s) {
+        var ok = u === estado.admin.usuario && s === estado.admin.senha;
+        if (ok) {
+          estado.fez.login = true;
+          if (estado.fez.senhaTrocada) estado.fez.loginNovaSenha = true;
+        }
+        setTimeout(recalcular, 0);
+        return ok;
+      },
+      onSalvar: function (nova) { estado.config = clonar(nova); recalcular(); },
+      onTrocarSenha: function (atual, nova, conf) {
+        if (atual !== estado.admin.senha) return { ok: false, msg: "A senha atual está errada. Nada foi trocado." };
+        if (nova.length < 8) return { ok: false, msg: "A senha nova precisa ter pelo menos 8 caracteres." };
+        if (nova === perfil.etiqueta.senha) return { ok: false, msg: "A senha nova não pode ser igual à da etiqueta." };
+        if (nova !== conf) return { ok: false, msg: "A confirmação não bate com a senha nova." };
+        estado.admin.senha = nova;
+        estado.fez.senhaTrocada = true;
+        estado.fez.loginNovaSenha = false;
+        setTimeout(desenharRoteiro, 0);
+        return { ok: true, msg: "Senha trocada. Agora saia e entre de novo com a senha nova." };
+      },
+      onSair: function () { atualizarUrl(); },
+      onPagina: function (id) {
+        if (id === "status") estado.fez.status = true;
+        if (id === "clientes") estado.fez.clientes = true;
+        atualizarUrl();
+        desenharRoteiro();
+      }
+    });
+  }
+
+  /* -------------------------------------------------- terminal do host */
+  function escrever(linhas) {
+    var saida = $("term-saida");
+    [].concat(linhas).forEach(function (l) {
+      var p = document.createElement("div");
+      p.textContent = l || " ";
+      saida.appendChild(p);
+    });
+    saida.scrollTop = saida.scrollHeight;
+  }
+
+  function ipconfig(id) {
+    var r = estado.resultado.hosts[id];
+    var host = estado.hosts.filter(function (x) { return x.id === id; })[0];
+    var linhas = ["", "Configuração de IP do Windows", "", host.conexao === "wifi" ? "Adaptador de Rede sem Fio Wi-Fi:" : "Adaptador Ethernet Ethernet:", ""];
+    if (r.enlace !== "ok") {
+      linhas.push("   Estado da mídia. . . . . . . . . . : mídia desconectada");
+    } else {
+      linhas.push("   Endereço IPv4. . . . . . . . . . . : " + (r.ip || "") + (r.origemIP === "apipa" ? " (Autoconfiguração)" : ""));
+      linhas.push("   Máscara de Sub-rede. . . . . . . . : " + (r.mascara || ""));
+      linhas.push("   Gateway Padrão . . . . . . . . . . : " + (r.gateway || ""));
+      linhas.push("   Servidores DNS . . . . . . . . . . : " + (r.dns || ""));
+      linhas.push("   Endereço físico (MAC). . . . . . . : " + host.mac.replace(/:/g, "-"));
+    }
+    linhas.push("");
+    return linhas;
+  }
+
+  function executar(cmd) {
+    cmd = cmd.trim();
+    if (!cmd) return;
+    escrever("C:\\> " + cmd);
+    var partes = cmd.toLowerCase().split(/\s+/);
+    if (partes[0] === "ipconfig") {
+      escrever(ipconfig(estado.hostAberto));
+    } else if (partes[0] === "ping" && partes[1]) {
+      var alvo = partes[1];
+      var porNome = estado.hosts.filter(function (x) { return x.id === alvo; })[0];
+      var resp = Motor.ping(estado.resultado, estado.hostAberto, porNome ? porNome.id : alvo);
+      escrever(resp.linhas.concat([""]));
+      if (resp.ok) {
+        var internet = alvo === "8.8.8.8" || (alvo.indexOf(".") > 0 && isNaN(alvo.replace(/\./g, "")));
+        var caminho = [estado.hostAberto, "roteador"];
+        if (internet) caminho.push("internet");
+        Mapa.mostrarPacote(caminho);
+        if (alvo === "google.com" && estado.hostAberto === "notebook") { estado.fez.ping = true; desenharRoteiro(); }
+      }
+    } else if (partes[0] === "cls") {
+      $("term-saida").innerHTML = "";
+    } else {
+      escrever(["'" + partes[0] + "' não é reconhecido como um comando. Use ipconfig ou ping.", ""]);
+    }
+  }
+
+  function abrirHost(id) {
+    var host = estado.hosts.filter(function (x) { return x.id === id; })[0];
+    if (!host) return;
+    estado.hostAberto = id;
+    $("dlg-host-nome").textContent = "Prompt de Comando · " + host.nome;
+    $("term-saida").innerHTML = "";
+    var problemas = estado.resultado.hosts[id].problemas || [];
+    if (problemas.length) escrever(["Observação do técnico: " + problemas[0].texto, ""]);
+    $("dlg-host").showModal();
+    $("term-cmd").focus();
+  }
+
+  /* ------------------------------------------------- etiqueta e OS */
+  function preencherCartoes() {
+    var e = perfil.etiqueta, o = perfil.os;
+    document.title = "Roteador estilo " + perfil.provedor + " · Simulador SOHO";
+    $("nome-provedor").textContent = perfil.provedor;
+    document.querySelectorAll("[data-link-perfil]").forEach(function (a) {
+      if (a.getAttribute("data-link-perfil") === perfil.id) a.classList.add("ativo");
+    });
+    var et = [
+      ["Acesso|endereço do painel", "http://" + perfil.url], ["Usuário", e.usuario], ["Senha", e.senha],
+      ["SSID|nome do Wi-Fi", e.ssid], ["Senha do Wi-Fi", e.wifiSenha], ["MAC", e.mac], ["S/N|número de série", e.serie]
+    ];
+    $("etiqueta").innerHTML = '<div class="et-cab">' + perfil.modelo + "</div>" + et.map(function (l) {
+      var p = l[0].split("|");
+      return "<div><span>" + p[0] + (p[1] ? " <small>(" + p[1] + ")</small>" : "") + "</span><code>" + l[1] + "</code></div>";
+    }).join("");
+    var linhas = [["Cliente", "Escritório Horizonte"], ["Tipo de conexão", o.tipo === "pppoe" ? "PPPoE (usuário e senha)" : "Automática · DHCP (IP dinâmico)"]];
+    if (o.tipo === "pppoe") linhas.push(["Usuário PPPoE", o.usuario], ["Senha PPPoE", o.senha]);
+    $("ordem-servico").innerHTML = linhas.map(function (l) {
+      return "<div><span>" + l[0] + "</span><code>" + l[1] + "</code></div>";
+    }).join("") + '<p>' + o.texto + "</p>";
+    $("chamado-titulo").textContent = perfil.chamado.titulo;
+    $("chamado-texto").textContent = perfil.chamado.texto;
+  }
+
+  /* ------------------------------------------------------- iniciar */
+  function comecar() {
+    estado = estadoInicial();
+    montarPainel();
+    recalcular();
+  }
+
+  estado = estadoInicial();
+  preencherCartoes();
+  Mapa.montar($("mapa"), { hosts: estado.hosts, onHostClick: abrirHost, onTesteExterno: function () {} });
+  montarPainel();
+  recalcular();
+
+  $("term-form").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    executar($("term-cmd").value);
+    $("term-cmd").value = "";
+  });
+  document.querySelectorAll("[data-cmd]").forEach(function (b) {
+    b.addEventListener("click", function () { executar(b.getAttribute("data-cmd")); });
+  });
+  document.querySelectorAll("[data-fechar]").forEach(function (b) {
+    b.addEventListener("click", function () { b.closest("dialog").close(); });
+  });
+  $("btn-reconectar").addEventListener("click", function () {
+    estado.hosts.forEach(function (x) {
+      if (x.wifiSalvo) x.wifiSalvo = { ssid: estado.config.wifi.ssid, senha: estado.config.wifi.senha };
+    });
+    recalcular();
+  });
+  $("btn-reiniciar").addEventListener("click", function () {
+    if (confirm("Começar de novo? O roteador volta ao padrão de fábrica e o roteiro zera.")) comecar();
+  });
+})();
+
+</script>
+</body>
+</html>

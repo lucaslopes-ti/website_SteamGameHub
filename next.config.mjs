@@ -94,6 +94,15 @@ const nextConfig = {
       },
     ];
   },
+
+  // Simulador de roteador das aulas de Redes SOHO: arquivo único estático em
+  // public/simulador-roteador/ (gerado no repositório aulas-redes). Este atalho
+  // deixa o endereço curto: /simulador-roteador
+  async rewrites() {
+    return [
+      { source: '/simulador-roteador', destination: '/simulador-roteador/index.html' },
+    ];
+  },
 };
 
 export default nextConfig;
