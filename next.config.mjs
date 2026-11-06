@@ -94,6 +94,16 @@ const nextConfig = {
       },
     ];
   },
+
+  // Simuladores das aulas de Redes SOHO: arquivos únicos estáticos em public/
+  // (gerados no repositório aulas-redes). Estes atalhos deixam o endereço curto:
+  // /simulador-roteador e /montador-cabo
+  async rewrites() {
+    return [
+      { source: '/simulador-roteador', destination: '/simulador-roteador/index.html' },
+      { source: '/montador-cabo', destination: '/montador-cabo/index.html' },
+    ];
+  },
 };
 
 export default nextConfig;

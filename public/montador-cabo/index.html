@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Montador de cabo de rede</title>
+<style>
+:root{
+  --azul:#004990; --azul-esc:#0a2a4f; --dour:#e0b66e; --dour-esc:#b7791f;
+  --fundo:#f3f6fa; --card:#fff; --tinta:#263242; --cinza:#5b6677; --linha:#c9d6e6;
+  --verde:#147d48; --verm:#c0392b; --amar:#fff6e6;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fundo);color:var(--tinta);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+header{background:linear-gradient(120deg,var(--azul-esc),var(--azul));color:#fff;padding:14px 18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+header h1{margin:0;font-size:22px;font-weight:600}
+header h1 b{color:var(--dour);font-weight:600}
+header .sub{opacity:.85;font-size:14px}
+nav{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+nav button{border:2px solid rgba(255,255,255,.5);background:transparent;color:#fff;border-radius:10px;padding:8px 14px;font:inherit;font-weight:600;cursor:pointer}
+nav button.ativo{background:#fff;color:var(--azul);border-color:#fff}
+main{max-width:1180px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--linha);border-radius:14px;padding:16px;margin-bottom:14px}
+h2{margin:0 0 8px;font-size:19px;color:var(--azul)}
+h3{margin:0 0 6px;font-size:16px}
+p{margin:6px 0}
+.dica{background:var(--amar);border-left:5px solid var(--dour-esc);padding:10px 12px;border-radius:8px;margin:10px 0}
+.grade{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:820px){.grade{grid-template-columns:1fr}}
+.paleta{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.fio{width:56px;height:62px;border-radius:12px;border:3px solid transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:4px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.15);font-size:10px;text-align:center;line-height:1.1}
+.fio .cor{width:100%;flex:1;border-radius:7px;margin-bottom:3px}
+.fio.sel{border-color:var(--dour-esc);transform:translateY(-3px)}
+.fio.usado{opacity:.3}
+.conector{display:flex;gap:6px;align-items:flex-end;justify-content:center;background:#e9eef5;border-radius:12px;padding:12px 8px 8px;flex-wrap:wrap}
+.pino{width:56px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+.pino .slot{width:42px;height:96px;border:2px dashed #9fb0c6;border-radius:8px;background:#fff;overflow:hidden}
+.pino .slot.cheio{border-style:solid;border-color:#7d8ea6}
+.pino .slot .cor{width:100%;height:100%}
+.pino span{font-weight:700;font-size:14px}
+.pino:hover .slot{border-color:var(--azul)}
+.linha-botoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+button.b{border:0;border-radius:10px;padding:10px 16px;font:inherit;font-weight:600;cursor:pointer;background:var(--azul);color:#fff}
+button.b.sec{background:#e3eaf3;color:var(--azul)}
+button.b.dour{background:var(--dour-esc)}
+button.b:disabled{opacity:.5;cursor:default}
+.testador{background:#2b3440;border-radius:16px;padding:14px;color:#fff}
+.testador .lado{display:flex;align-items:center;gap:10px;margin:6px 0}
+.testador .lado b{width:92px;font-size:13px}
+.led{width:30px;height:30px;border-radius:50%;background:#4a5563;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#cfd6df}
+.led.on{background:#3ddc84;color:#08311b;box-shadow:0 0 12px #3ddc84}
+.led.errado{background:#ffb020;color:#3a2600;box-shadow:0 0 12px #ffb020}
+.resultado{margin-top:12px;padding:12px;border-radius:10px;font-weight:600}
+.resultado.ok{background:#e3f5ea;color:var(--verde)}
+.resultado.ruim{background:#fde8e6;color:var(--verm)}
+.resultado.aviso{background:var(--amar);color:#7a4b00}
+table{border-collapse:collapse;width:100%;font-size:14px}
+td,th{border:1px solid var(--linha);padding:6px 8px;text-align:left}
+th{background:#eef3f9}
+.cabos{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.cabos button{border:2px solid var(--linha);background:#fff;border-radius:10px;padding:8px 12px;font:inherit;cursor:pointer}
+.cabos button.ativo{border-color:var(--azul);background:#eaf1fa;font-weight:600}
+.cabos button.feito{border-color:var(--verde)}
+.opcoes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:8px}
+.opcoes button{border:2px solid var(--linha);background:#fff;border-radius:10px;padding:10px;font:inherit;text-align:left;cursor:pointer}
+.opcoes button:hover{border-color:var(--azul)}
+.oculto{display:none}
+.pontas{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:700px){.pontas{grid-template-columns:1fr}}
+.mini{display:flex;gap:3px}
+.mini div{width:20px;height:48px;border-radius:4px;border:1px solid #9fb0c6}
+.glossario td:first-child{font-weight:600;white-space:nowrap}
+footer{text-align:center;color:var(--cinza);font-size:13px;padding:10px 0 24px}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Montador de <b>cabo de rede</b></h1>
+    <div class="sub">Redes SOHO · Escritório Horizonte · Instrutor Lucas Lopes · funciona sem internet</div>
+  </div>
+  <nav>
+    <button data-aba="montar" class="ativo">1. Montar o cabo</button>
+    <button data-aba="gaveta">2. Cabos da gaveta</button>
+    <button data-aba="cores">Cola das cores</button>
+  </nav>
+</header>
+
+<main>
+<!-- ABA 1 -->
+<section id="aba-montar">
+  <div class="card">
+    <h2>Monte um cabo direto no padrão T568B</h2>
+    <p><b>Como fazer:</b> clique num fio da caixa e depois no número do pino. Monte a <b>Ponta A</b> e a <b>Ponta B</b>. Depois clique em <b>Testar o cabo</b>.</p>
+    <p>O pino 1 é o da esquerda, com a trava do conector virada para baixo e os contatos dourados virados para você.</p>
+    <div class="dica">Cola do T568B: <b>branco-laranja, laranja, branco-verde, azul, branco-azul, verde, branco-marrom, marrom</b>.</div>
+  </div>
+
+  <div class="pontas">
+    <div class="card">
+      <h3>Ponta A</h3>
+      <div class="paleta" id="paleta-A"></div>
+      <div class="conector" id="con-A"></div>
+      <div class="linha-botoes">
+        <button class="b sec" data-limpar="A">Limpar ponta A</button>
+        <button class="b sec" data-pronto="A" data-padrao="B">Mostrar T568B pronto</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Ponta B</h3>
+      <div class="paleta" id="paleta-B"></div>
+      <div class="conector" id="con-B"></div>
+      <div class="linha-botoes">
+        <button class="b sec" data-limpar="B">Limpar ponta B</button>
+        <button class="b sec" data-pronto="B" data-padrao="B">Mostrar T568B pronto</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Testador de cabo</h2>
+    <p>O testador manda sinal em um fio por vez, do 1 ao 8. Do outro lado, o LED do mesmo número tem que acender. Verde = chegou no lugar certo. Amarelo = chegou em outro pino.</p>
+    <div class="testador" id="testador-1"></div>
+    <div class="linha-botoes"><button class="b" id="testar">Testar o cabo</button></div>
+    <div id="resultado-1"></div>
+  </div>
+
+  <div class="card">
+    <h2>Desafio extra: cabo cruzado (crossover)</h2>
+    <p>Monte a <b>Ponta A em T568A</b> e a <b>Ponta B em T568B</b>. Teste e veja: o LED 1 acende o 3, o 2 acende o 6. Era o cabo para ligar dois PCs direto, antes do Auto-MDIX.</p>
+    <div class="dica">Cola do T568A: <b>branco-verde, verde, branco-laranja, azul, branco-azul, laranja, branco-marrom, marrom</b>.</div>
+    <div class="linha-botoes"><button class="b sec" data-pronto="A" data-padrao="A">Ponta A em T568A pronta</button></div>
+  </div>
+</section>
+
+<!-- ABA 2 -->
+<section id="aba-gaveta" class="oculto">
+  <div class="card">
+    <h2>Os cabos da gaveta do Escritório Horizonte</h2>
+    <p>Na gaveta da recepção há 5 cabos sem etiqueta. Teste cada um e diga se pode usar. Clique no cabo, depois em <b>Testar</b>, olhe os LEDs e escolha o que aconteceu.</p>
+    <div class="cabos" id="lista-cabos"></div>
+  </div>
+  <div class="grade">
+    <div class="card">
+      <h3 id="g-titulo">Cabo 1</h3>
+      <p id="g-desc"></p>
+      <p><b>Ponta A</b></p><div class="mini" id="g-A"></div>
+      <p><b>Ponta B</b></p><div class="mini" id="g-B"></div>
+    </div>
+    <div class="card">
+      <div class="testador" id="testador-2"></div>
+      <div class="linha-botoes"><button class="b" id="testar-2">Testar</button></div>
+      <div id="g-perg" class="oculto">
+        <p><b>O que você viu nos LEDs?</b></p>
+        <div class="opcoes" id="g-opcoes"></div>
+      </div>
+      <div id="resultado-2"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Placar</h3>
+    <p id="placar">Nenhum cabo diagnosticado ainda.</p>
+  </div>
+</section>
+
+<!-- ABA 3 -->
+<section id="aba-cores" class="oculto">
+  <div class="card">
+    <h2>Cola das cores</h2>
+    <table>
+      <tr><th>Pino</th><th>T568B (o mais usado)</th><th>T568A</th></tr>
+      <tbody id="tab-cores"></tbody>
+    </table>
+    <div class="dica">Para decorar o T568B: <b>"laranja, verde, azul, marrom"</b>, sempre o <b>branco primeiro</b>. Só o par verde "abraça" o azul: o verde fica nos pinos 3 e 6.</div>
+  </div>
+  <div class="card">
+    <h2>O que cada resultado quer dizer</h2>
+    <table class="glossario">
+      <tr><th>Resultado</th><th>O que é</th><th>O que fazer</th></tr>
+      <tr><td>Tudo verde, 1 a 8</td><td>Cabo direto (straight-through = direto): cada fio chega no mesmo pino.</td><td>Etiquetar e usar.</td></tr>
+      <tr><td>Um LED apagado</td><td>Fio aberto (open = aberto): o fio não encostou no contato.</td><td>Cortar a ponta e crimpar de novo.</td></tr>
+      <tr><td>Dois LEDs trocados</td><td>Fios invertidos: dois fios estão na ordem errada numa ponta.</td><td>Cortar a ponta e refazer na ordem.</td></tr>
+      <tr><td>1→3, 2→6, 3→1, 6→2</td><td>Cabo cruzado (crossover = cruzado): uma ponta T568A e a outra T568B.</td><td>Hoje quase não se usa: as placas têm Auto-MDIX (troca automática).</td></tr>
+      <tr><td>Tudo verde, mas pares errados</td><td>Par separado (split pair = par dividido): os fios de um par não ficaram juntos nos pinos certos.</td><td>O testador simples não percebe. O cabo fica lento ou falha. Refazer as duas pontas.</td></tr>
+    </table>
+    <p>Teste simples não é certificação: o testador só vê se o fio chega. O certificador mede o cabo inteiro e emite relatório.</p>
+  </div>
+</section>
+</main>
+<footer>SENAI · Técnico em Informática · Instalação e Manutenção de Redes SOHO</footer>
+
+<script>
+const FIOS = {
+  bl:{nome:"branco-laranja",cor:"repeating-linear-gradient(135deg,#fff 0 6px,#f28c28 6px 11px)"},
+  l:{nome:"laranja",cor:"#f28c28"},
+  bv:{nome:"branco-verde",cor:"repeating-linear-gradient(135deg,#fff 0 6px,#2e9d4c 6px 11px)"},
+  v:{nome:"verde",cor:"#2e9d4c"},
+  ba:{nome:"branco-azul",cor:"repeating-linear-gradient(135deg,#fff 0 6px,#2563c9 6px 11px)"},
+  a:{nome:"azul",cor:"#2563c9"},
+  bm:{nome:"branco-marrom",cor:"repeating-linear-gradient(135deg,#fff 0 6px,#7a4a26 6px 11px)"},
+  m:{nome:"marrom",cor:"#7a4a26"}
+};
+const T568B = ["bl","l","bv","a","ba","v","bm","m"];
+const T568A = ["bv","v","bl","a","ba","l","bm","m"];
+const PARES = {bl:"laranja",l:"laranja",bv:"verde",v:"verde",ba:"azul",a:"azul",bm:"marrom",m:"marrom"};
+const ORDEM_PALETA = ["bl","l","bv","v","ba","a","bm","m"];
+const igual = (x,y)=>x.every((c,i)=>c===y[i]);
+
+/* ---------- abas ---------- */
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("ativo",x===b));
+  ["montar","gaveta","cores"].forEach(a=>document.getElementById("aba-"+a).classList.toggle("oculto",a!==b.dataset.aba));
+});
+
+/* ---------- montar ---------- */
+const pontas = {A:Array(8).fill(null), B:Array(8).fill(null)};
+let selecionado = {A:null,B:null};
+
+function desenharPonta(p){
+  const pal = document.getElementById("paleta-"+p); pal.innerHTML="";
+  ORDEM_PALETA.forEach(k=>{
+    const d=document.createElement("div"); d.className="fio"+(selecionado[p]===k?" sel":"")+(pontas[p].includes(k)?" usado":"");
+    d.innerHTML=`<div class="cor" style="background:${FIOS[k].cor}"></div>${FIOS[k].nome}`;
+    d.title=FIOS[k].nome;
+    d.onclick=()=>{selecionado[p]=k;desenharPonta(p);};
+    pal.appendChild(d);
+  });
+  const con=document.getElementById("con-"+p); con.innerHTML="";
+  pontas[p].forEach((k,i)=>{
+    const d=document.createElement("div"); d.className="pino";
+    d.innerHTML=`<div class="slot${k?" cheio":""}">${k?`<div class="cor" style="background:${FIOS[k].cor}"></div>`:""}</div><span>${i+1}</span>`;
+    d.title=k?FIOS[k].nome+" (clique para tirar)":"vazio";
+    d.onclick=()=>{
+      if(selecionado[p]){ const j=pontas[p].indexOf(selecionado[p]); if(j>=0) pontas[p][j]=null; pontas[p][i]=selecionado[p]; selecionado[p]=null; }
+      else pontas[p][i]=null;
+      desenharPonta(p); limparTeste(1);
+    };
+    con.appendChild(d);
+  });
+}
+document.querySelectorAll("[data-limpar]").forEach(b=>b.onclick=()=>{pontas[b.dataset.limpar]=Array(8).fill(null);desenharPonta(b.dataset.limpar);limparTeste(1);});
+document.querySelectorAll("[data-pronto]").forEach(b=>b.onclick=()=>{const p=b.dataset.pronto;pontas[p]=[...(b.dataset.padrao==="A"?T568A:T568B)];desenharPonta(p);limparTeste(1);});
+
+/* ---------- testador ---------- */
+function montarTestador(id){
+  const t=document.getElementById(id);
+  t.innerHTML=["Principal","Remoto"].map((n,l)=>`<div class="lado"><b>${n}</b>${[1,2,3,4,5,6,7,8].map(i=>`<div class="led" id="${id}-${l}-${i}">${i}</div>`).join("")}</div>`).join("");
+}
+function limparTeste(n){
+  const id="testador-"+n;
+  document.querySelectorAll(`#${id} .led`).forEach(l=>l.className="led");
+  document.getElementById("resultado-"+n).innerHTML="";
+}
+/* para cada pino da ponta A: em que pino da ponta B o mesmo fio chega (ou null) */
+function mapear(A,B){ return A.map(k=> k? (B.indexOf(k)>=0? B.indexOf(k)+1 : null) : null); }
+
+function animar(n,A,B,fim){
+  limparTeste(n);
+  const id="testador-"+n, mapa=mapear(A,B); let i=0;
+  const passo=()=>{
+    document.querySelectorAll(`#${id} .led`).forEach(l=>l.classList.remove("on","errado"));
+    if(i>=8){ fim(mapa); return; }
+    document.getElementById(`${id}-0-${i+1}`).classList.add("on");
+    const j=mapa[i];
+    if(j) document.getElementById(`${id}-1-${j}`).classList.add(j===i+1?"on":"errado");
+    i++; setTimeout(passo,520);
+  };
+  passo();
+}
+
+function diagnostico(A,B){
+  const mapa=mapear(A,B);
+  const abertos=mapa.map((j,i)=>j?null:i+1).filter(Boolean);
+  const vazios=[...A.map((k,i)=>k?null:"A"+(i+1)),...B.map((k,i)=>k?null:"B"+(i+1))].filter(Boolean);
+  if(abertos.length) return {tipo:"aberto",classe:"ruim",txt:`Fio aberto no pino ${abertos.join(", ")}: o LED do outro lado não acendeu. `+(vazios.length?`Falta fio em: ${vazios.join(", ")}. `:"")+"Corte a ponta e crimpe de novo."};
+  const direto=mapa.every((j,i)=>j===i+1);
+  if(direto){
+    if(igual(A,T568B)) return {tipo:"ok",classe:"ok",txt:"Cabo direto (straight-through) no padrão T568B: os 8 LEDs acenderam na ordem. Pode etiquetar e usar."};
+    if(igual(A,T568A)) return {tipo:"ok",classe:"ok",txt:"Cabo direto no padrão T568A: funciona. No Escritório Horizonte o padrão é T568B, então siga sempre o mesmo padrão em todos os cabos."};
+    return {tipo:"split",classe:"aviso",txt:"Os 8 LEDs acenderam em ordem, mas as cores não seguem nenhum padrão: os fios de um mesmo par ficaram separados (split pair = par dividido). O testador simples não percebe, mas o cabo fica lento ou falha. Refaça as duas pontas em T568B."};
+  }
+  if(igual(A,T568A)&&igual(B,T568B) || igual(A,T568B)&&igual(B,T568A))
+    return {tipo:"cruzado",classe:"aviso",txt:"Cabo cruzado (crossover): uma ponta T568A e a outra T568B. O LED 1 acende o 3 e o 2 acende o 6. Funciona entre dois PCs, mas não é o cabo que o escritório pediu."};
+  const trocas=mapa.map((j,i)=>j!==i+1?`${i+1}→${j}`:null).filter(Boolean);
+  return {tipo:"invertido",classe:"ruim",txt:`Fios invertidos: ${trocas.join(", ")}. Dois fios estão fora de ordem numa ponta. Corte essa ponta e refaça na ordem do padrão.`};
+}
+
+document.getElementById("testar").onclick=function(){
+  const btn=this; btn.disabled=true;
+  if(pontas.A.every(x=>!x)&&pontas.B.every(x=>!x)){ document.getElementById("resultado-1").innerHTML=`<div class="resultado aviso">Monte as duas pontas antes de testar.</div>`; btn.disabled=false; return; }
+  animar(1,pontas.A,pontas.B,mapa=>{
+    for(let i=0;i<8;i++){ if(mapa[i]){ document.getElementById(`testador-1-0-${i+1}`).classList.add("on"); document.getElementById(`testador-1-1-${mapa[i]}`).classList.add(mapa[i]===i+1?"on":"errado"); } }
+    const d=diagnostico(pontas.A,pontas.B);
+    document.getElementById("resultado-1").innerHTML=`<div class="resultado ${d.classe}">${d.txt}</div>`;
+    btn.disabled=false;
+  });
+};
+
+/* ---------- gaveta ---------- */
+const B_inv=[...T568B]; [B_inv[0],B_inv[1]]=[B_inv[1],B_inv[0]];
+const A_aberto=[...T568B]; A_aberto[6]=null;
+const SPLIT=["bl","l","bv","v","ba","a","bm","m"];
+const GAVETA=[
+  {nome:"Cabo 1",desc:"Cabo azul de 2 m, parece novo.",A:T568B,B:T568B,certo:"ok"},
+  {nome:"Cabo 2",desc:"Cabo cinza de 5 m. Na ponta A um fio parece mais curto.",A:A_aberto,B:T568B,certo:"aberto"},
+  {nome:"Cabo 3",desc:"Cabo branco de 3 m, crimpado com pressa.",A:T568B,B:B_inv,certo:"invertido"},
+  {nome:"Cabo 4",desc:"Cabo amarelo antigo, de um computador que já foi embora.",A:T568A,B:T568B,certo:"cruzado"},
+  {nome:"Cabo 5",desc:"Cabo azul de 10 m. Alguém pôs as cores lado a lado, par com par.",A:SPLIT,B:SPLIT,certo:"split"}
+];
+const OPCOES=[
+  ["ok","Tudo certo: cabo direto, pode usar"],
+  ["aberto","Fio aberto: um LED não acendeu"],
+  ["invertido","Fios invertidos: LEDs trocados"],
+  ["cruzado","Cabo cruzado: 1→3 e 2→6"],
+  ["split","Todos acendem, mas as cores não seguem o padrão"]
+];
+let atual=0; const respostas={};
+function mini(el,arr){ el.innerHTML=arr.map((k,i)=>`<div title="pino ${i+1}: ${k?FIOS[k].nome:"vazio"}" style="background:${k?FIOS[k].cor:"#fff"}"></div>`).join(""); }
+function desenharGaveta(){
+  const l=document.getElementById("lista-cabos"); l.innerHTML="";
+  GAVETA.forEach((c,i)=>{ const b=document.createElement("button"); b.textContent=c.nome+(respostas[i]?(respostas[i]===c.certo?" ✓":" ✗"):""); b.className=(i===atual?"ativo ":"")+(respostas[i]===c.certo?"feito":""); b.onclick=()=>{atual=i;desenharGaveta();}; l.appendChild(b); });
+  const c=GAVETA[atual];
+  document.getElementById("g-titulo").textContent=c.nome;
+  document.getElementById("g-desc").textContent=c.desc;
+  mini(document.getElementById("g-A"),c.A); mini(document.getElementById("g-B"),c.B);
+  document.getElementById("g-perg").classList.add("oculto");
+  limparTeste(2);
+  const acertos=Object.entries(respostas).filter(([i,r])=>GAVETA[i].certo===r).length;
+  document.getElementById("placar").textContent=Object.keys(respostas).length?`Acertos: ${acertos} de ${GAVETA.length}. Anote no roteiro o resultado de cada cabo.`:"Nenhum cabo diagnosticado ainda.";
+}
+document.getElementById("testar-2").onclick=function(){
+  const btn=this; btn.disabled=true; const c=GAVETA[atual];
+  animar(2,c.A,c.B,mapa=>{
+    for(let i=0;i<8;i++){ if(mapa[i]){ document.getElementById(`testador-2-0-${i+1}`).classList.add("on"); document.getElementById(`testador-2-1-${mapa[i]}`).classList.add(mapa[i]===i+1?"on":"errado"); } }
+    const op=document.getElementById("g-opcoes"); op.innerHTML="";
+    OPCOES.forEach(([k,t])=>{ const b=document.createElement("button"); b.textContent=t; b.onclick=()=>{
+      respostas[atual]=k; const d=diagnostico(c.A,c.B);
+      document.getElementById("resultado-2").innerHTML = k===c.certo
+        ? `<div class="resultado ok">Isso mesmo! ${d.txt}</div>`
+        : `<div class="resultado ruim">Ainda não. Olhe de novo os LEDs de baixo (Remoto) e teste outra vez.</div>`;
+      const g=document.getElementById("g-perg"); desenharGaveta(); if(k!==c.certo) g.classList.remove("oculto");
+      document.getElementById("resultado-2").innerHTML = k===c.certo
+        ? `<div class="resultado ok">Isso mesmo! ${d.txt}</div>`
+        : `<div class="resultado ruim">Ainda não. Olhe de novo os LEDs de baixo (Remoto) e teste outra vez.</div>`;
+    }; op.appendChild(b); });
+    document.getElementById("g-perg").classList.remove("oculto");
+    btn.disabled=false;
+  });
+};
+
+/* ---------- cola ---------- */
+document.getElementById("tab-cores").innerHTML=T568B.map((k,i)=>`<tr><td><b>${i+1}</b></td><td><span style="display:inline-block;width:28px;height:14px;border-radius:3px;border:1px solid #999;vertical-align:middle;background:${FIOS[k].cor}"></span> ${FIOS[k].nome}</td><td><span style="display:inline-block;width:28px;height:14px;border-radius:3px;border:1px solid #999;vertical-align:middle;background:${FIOS[T568A[i]].cor}"></span> ${FIOS[T568A[i]].nome}</td></tr>`).join("");
+
+montarTestador("testador-1"); montarTestador("testador-2");
+desenharPonta("A"); desenharPonta("B"); desenharGaveta();
+</script>
+</body>
+</html>
