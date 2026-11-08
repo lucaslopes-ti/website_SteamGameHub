@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oficina do Técnico</title>
+<style>
+:root{
+  --fundo:#07142a; --painel:#0d2142; --painel2:#132c55; --borda:#24406e; --tinta:#e8f0ff; --apagado:#8ea3c7;
+  --azul:#2f7cf6; --dour:#e0b66e; --verde:#2ee59d; --verm:#ff5a5f; --amar:#ffc94a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:radial-gradient(1200px 700px at 70% -10%,#16346a 0,transparent 60%),var(--fundo);color:var(--tinta);
+  font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;overflow-x:hidden}
+button{font:inherit;cursor:pointer}
+.topo{display:flex;align-items:center;gap:14px;padding:10px 18px;background:rgba(5,14,30,.8);border-bottom:1px solid var(--borda);position:sticky;top:0;z-index:5;flex-wrap:wrap}
+.marca{font-weight:800}.marca b{color:var(--dour)}
+.hud{display:flex;gap:10px;margin-left:auto;flex-wrap:wrap}
+.chip{background:var(--painel);border:1px solid var(--borda);border-radius:999px;padding:5px 12px;font-weight:700;font-size:14px;white-space:nowrap}
+.chip.tempo.alerta{border-color:var(--verm);color:var(--verm);animation:pisca .6s infinite alternate}
+@keyframes pisca{to{opacity:.45}}
+.som{background:transparent;border:1px solid var(--borda);color:var(--tinta);border-radius:999px;padding:5px 10px}
+main{max-width:1200px;margin:0 auto;padding:16px}
+.tela{display:none;animation:entra .3s ease}.tela.ativa{display:block}
+@keyframes entra{from{opacity:0;transform:translateY(8px)}}
+.card{background:linear-gradient(180deg,var(--painel2),var(--painel));border:1px solid var(--borda);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+h1{font-size:34px;margin:0 0 6px;line-height:1.15}h1 b{color:var(--dour)}
+h2{font-size:22px;margin:0 0 8px}h3{font-size:17px;margin:4px 0 6px}
+.sub{color:var(--apagado)}.peq{font-size:13px;color:var(--apagado)}
+.botao{border:0;border-radius:14px;padding:12px 20px;font-weight:800;background:var(--azul);color:#fff;box-shadow:0 4px 0 #1b4fa8}
+.botao:active{transform:translateY(3px);box-shadow:0 1px 0 #1b4fa8}
+.botao.dour{background:var(--dour);color:#1d1400;box-shadow:0 4px 0 #9c7a3b}
+.botao.verde{background:#12b77a;box-shadow:0 4px 0 #0b7a51}
+.botao.cinza{background:#2a4371;box-shadow:0 4px 0 #1a2c4d}
+.botao.verm{background:#d9434a;box-shadow:0 4px 0 #8f2328}
+.botao:disabled{opacity:.45;cursor:default}
+.grade4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:980px){.grade4{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:620px){.grade4{grid-template-columns:1fr}}
+.fase{border:1px solid var(--borda);border-radius:16px;padding:14px;background:rgba(255,255,255,.03);display:flex;flex-direction:column;gap:6px}
+.fase .num{font-size:13px;color:var(--dour);font-weight:800;letter-spacing:.6px}.fase .botao{margin-top:auto}
+.estrelas{font-size:22px;letter-spacing:2px;color:#3a5482}.estrelas .on{color:var(--amar);text-shadow:0 0 10px rgba(255,201,74,.6)}
+input.nome{background:#081a36;border:1px solid var(--borda);color:var(--tinta);border-radius:12px;padding:12px 14px;width:min(360px,100%);font:inherit}
+.palco{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:14px;align-items:start}
+@media (max-width:1000px){.palco{grid-template-columns:1fr}}
+.manual{background:#f6f3ea;color:#1f2430;border-radius:12px;padding:12px 14px;font-size:14px;border:1px solid #cfc6ad}
+.manual h3{color:#7a5a12;margin:0 0 6px}
+.manual table{border-collapse:collapse;width:100%}
+.manual td{border-bottom:1px solid #d9d0b8;padding:4px 6px;vertical-align:top}
+.manual td:first-child{font-weight:700;width:38%}
+.peca{font-size:22px;font-weight:800;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:18px;border-radius:18px;background:#0a1a35;border:2px solid var(--borda);gap:6px}
+.peca .ico{font-size:44px}
+.duas{display:flex;gap:12px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.duas .botao{min-width:190px;font-size:19px}
+.feedback{min-height:26px;font-weight:800;margin-top:8px}
+.feedback.bom{color:var(--verde)}.feedback.medio{color:var(--amar)}.feedback.ruim{color:var(--verm)}
+.ordem{display:grid;gap:8px}
+.passo{border:2px solid var(--borda);background:#0a1a35;color:var(--tinta);border-radius:12px;padding:10px 12px;text-align:left;font-weight:700}
+.passo:hover{border-color:var(--azul)}.passo.usado{opacity:.3;pointer-events:none}
+.passo.certo{border-color:var(--verde);background:#0f3b2c}.passo.errado{border-color:var(--verm);background:#3b1116;animation:treme .3s}
+@keyframes treme{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.fila{display:grid;gap:6px;counter-reset:n}
+.fila div{background:#0f3b2c;border:1px solid #1d7a55;border-radius:10px;padding:8px 10px;font-weight:700}
+.fila div::before{counter-increment:n;content:counter(n)". ";color:var(--dour)}
+.monitor{background:#000;border:10px solid #2a3140;border-radius:12px;min-height:220px;padding:16px;font-family:ui-monospace,Consolas,monospace;color:#d6d6d6;white-space:pre-wrap;font-size:15px}
+.monitor.bios{background:#0000a8;color:#fff}
+.monitor .am{color:#ffd166}
+.opcoes{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+.opcao{border:2px solid var(--borda);background:#0a1a35;color:var(--tinta);border-radius:12px;padding:10px;text-align:left;font-weight:700}
+.opcao:hover{border-color:var(--azul)}.opcao.certa{border-color:var(--verde);background:#0f3b2c}.opcao.errada{border-color:var(--verm);background:#3b1116}
+.teclado{display:grid;gap:5px;user-select:none}
+.teclado .lin{display:flex;gap:5px}
+.tecla{flex:1 1 0;min-width:0;height:42px;border-radius:7px;background:#1b2a46;border:1px solid #31507f;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#9fb3d6;transition:background .15s}
+.tecla.ok{background:#12b77a;color:#032016;border-color:#2ee59d}
+.tecla.agora{box-shadow:0 0 0 3px var(--dour)}
+.checks{display:grid;gap:6px;margin-top:8px}
+.checks div{display:flex;justify-content:space-between;gap:8px;background:#0a1a35;border:1px solid var(--borda);border-radius:10px;padding:7px 10px;font-size:14px}
+.ok{color:var(--verde);font-weight:800}.nok{color:var(--verm);font-weight:800}
+.mouse{width:150px;height:220px;border-radius:70px 70px 60px 60px;background:#1b2a46;border:2px solid #31507f;position:relative;margin:0 auto}
+.mouse .b{position:absolute;top:0;height:90px;width:50%;border-bottom:2px solid #31507f}
+.mouse .b.e{left:0;border-right:1px solid #31507f;border-radius:70px 0 0 0}
+.mouse .b.d{right:0;border-left:1px solid #31507f;border-radius:0 70px 0 0}
+.mouse .r{position:absolute;left:50%;top:22px;width:16px;height:46px;margin-left:-8px;border-radius:8px;background:#31507f}
+.mouse .on{background:#12b77a}
+.area-mouse{border:2px dashed var(--borda);border-radius:14px;padding:16px;text-align:center}
+.cores{display:flex;gap:8px;flex-wrap:wrap}.cores button{width:56px;height:40px;border-radius:8px;border:2px solid #fff3}
+.lista-res{display:grid;gap:8px}
+.lista-res div{display:flex;justify-content:space-between;gap:10px;background:#0a1a35;border:1px solid var(--borda);border-radius:12px;padding:10px 14px}
+.codigo{font-family:ui-monospace,Consolas,monospace;font-size:30px;font-weight:900;color:var(--dour);letter-spacing:3px}
+.medalha{font-size:64px;line-height:1}
+.pop{position:fixed;left:50%;top:72px;transform:translateX(-50%);background:var(--painel2);border:1px solid var(--borda);border-radius:14px;padding:10px 18px;font-weight:800;z-index:9;box-shadow:0 10px 30px rgba(0,0,0,.4);animation:sobe 1.4s forwards;pointer-events:none}
+@keyframes sobe{0%{opacity:0;transform:translate(-50%,10px)}15%{opacity:1;transform:translate(-50%,0)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-14px)}}
+.cheia{position:fixed;inset:0;z-index:20;display:none;align-items:flex-end;justify-content:center;padding:20px}
+.cheia button{background:#000a;color:#fff;border:1px solid #fff6;border-radius:10px;padding:10px 16px}
+</style>
+</head>
+<body>
+<div class="topo">
+  <div class="marca">🛠️ Oficina do <b>Técnico</b> <span class="peq">· upgrade dos PCs do cliente</span></div>
+  <div class="hud">
+    <span class="chip" id="hud-nome">Técnico</span>
+    <span class="chip">⭐ <span id="hud-pontos">0</span> pts</span>
+    <span class="chip tempo" id="hud-tempo" style="display:none">⏱ <span id="hud-seg">0</span>s</span>
+    <button class="som" id="btn-som" title="Liga ou desliga o som">🔊</button>
+  </div>
+</div>
+
+<main>
+<section class="tela ativa" id="t-inicio">
+  <div class="card">
+    <h1>Oficina do <b>Técnico</b></h1>
+    <p class="sub">O cliente quer mais memória e um SSD nos computadores. Antes de abrir o gabinete, o técnico confere tudo no <b>manual da placa-mãe</b>, segue o POP (passo a passo) com o PC <b>sem energia</b>, lê o que a tela mostra e, no fim, testa os periféricos. Cada fase vale pontos e estrelas.</p>
+    <p><input class="nome" id="nome" maxlength="24" placeholder="Seu nome de técnico(a)"></p>
+    <div class="duas" style="justify-content:flex-start;margin-top:0">
+      <button class="botao dour" id="btn-comecar">Começar o plantão</button>
+      <button class="botao cinza" id="btn-teste">Só o teste de periféricos</button>
+    </div>
+  </div>
+  <div class="grade4" id="mapa-fases"></div>
+  <p class="peq" style="margin-top:10px">A placa-mãe "H610M-T" é uma ficha de treino, inspirada em placas reais do mesmo tipo. Na bancada, use o manual da placa de verdade.</p>
+</section>
+
+<!-- FASE 1 -->
+<section class="tela" id="t-cabe">
+  <div class="card">
+    <div class="duas" style="justify-content:space-between;margin:0">
+      <div><span class="peq">FASE 1 · COMPATIBILIDADE PELO MANUAL</span><h2>Cabe ou não cabe?</h2></div>
+      <div class="chip">Peça <span id="c-n">1</span> de <span id="c-total">10</span></div>
+    </div>
+    <div class="palco">
+      <div>
+        <div class="peca" id="c-peca"></div>
+        <div class="duas">
+          <button class="botao verde" id="c-sim">✔ CABE</button>
+          <button class="botao verm" id="c-nao">✖ NÃO CABE</button>
+        </div>
+        <div class="feedback" id="c-feedback" style="text-align:center"></div>
+      </div>
+      <div class="manual" id="manual"></div>
+    </div>
+  </div>
+</section>
+
+<!-- FASE 2 -->
+<section class="tela" id="t-pop">
+  <div class="card">
+    <div class="duas" style="justify-content:space-between;margin:0">
+      <div><span class="peq">FASE 2 · POP SEM ENERGIA</span><h2 id="p-titulo">Monte o passo a passo</h2></div>
+      <div class="chip">Tarefa <span id="p-n">1</span> de 3</div>
+    </div>
+    <p class="sub">Clique nos passos <b>na ordem certa</b>. Errou a ordem? Perde pontos e tenta de novo. Alguns passos são armadilha: <b>não fazem parte</b> do POP.</p>
+    <div class="palco" style="grid-template-columns:1fr 1fr">
+      <div><h3>Passos (fora de ordem)</h3><div class="ordem" id="p-opcoes"></div></div>
+      <div><h3>Seu POP</h3><div class="fila" id="p-fila"></div><div class="feedback" id="p-feedback"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FASE 3 -->
+<section class="tela" id="t-tela">
+  <div class="card">
+    <div class="duas" style="justify-content:space-between;margin:0">
+      <div><span class="peq">FASE 3 · O QUE A TELA ESTÁ DIZENDO?</span><h2>Ligou depois da intervenção</h2></div>
+      <div class="chip">Caso <span id="q-n">1</span> de <span id="q-total">8</span></div>
+    </div>
+    <div class="palco" style="grid-template-columns:1fr 1fr">
+      <div><div class="monitor" id="q-monitor"></div><p class="peq" id="q-contexto"></p></div>
+      <div><h3>O que o técnico faz?</h3><div class="opcoes" id="q-opcoes" style="grid-template-columns:1fr"></div><div class="feedback" id="q-feedback"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FASE 4 -->
+<section class="tela" id="t-perif">
+  <div class="card">
+    <div class="duas" style="justify-content:space-between;margin:0">
+      <div><span class="peq">FASE 4 · TESTE DE PERIFÉRICOS (DE VERDADE, NO SEU PC)</span><h2>Teclado, mouse, som e tela</h2></div>
+      <button class="botao verde" id="f-fim">Terminar o teste</button>
+    </div>
+    <div class="palco">
+      <div>
+        <h3>⌨️ Teclado: aperte cada tecla. Ela fica verde quando o PC recebe.</h3>
+        <div class="teclado" id="teclado"></div>
+        <p class="peq">Teclas que não ficam verdes podem estar com defeito (ou o layout do teclado está errado no Windows).</p>
+        <h3 style="margin-top:12px">🖥️ Tela: clique numa cor e procure pontos que não acendem (pixel morto). Clique de novo para sair.</h3>
+        <div class="cores" id="cores"></div>
+      </div>
+      <div>
+        <div class="area-mouse" id="area-mouse">
+          <h3>🖱️ Mouse: clique com os dois botões e gire a rodinha aqui</h3>
+          <div class="mouse"><div class="b e" id="m-e"></div><div class="b d" id="m-d"></div><div class="r" id="m-r"></div></div>
+        </div>
+        <div class="card" style="background:#0a1a35;margin-top:10px">
+          <h3>🔊 Som: toque e diga de onde saiu</h3>
+          <div class="duas" style="margin-top:4px"><button class="botao cinza" id="s-tocar">▶ Tocar</button></div>
+          <div class="duas" style="margin-top:8px"><button class="botao" id="s-esq">Esquerda</button><button class="botao" id="s-dir">Direita</button></div>
+          <div class="feedback" id="s-feedback" style="text-align:center"></div>
+        </div>
+        <div class="checks" id="f-checks"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tela" id="t-resultado">
+  <div class="card" style="text-align:center">
+    <div class="medalha" id="r-medalha">🏅</div>
+    <h1 id="r-titulo">Fase concluída</h1>
+    <p class="sub" id="r-sub"></p>
+    <div class="estrelas" id="r-estrelas" style="font-size:34px"></div>
+  </div>
+  <div class="card"><div class="lista-res" id="r-lista"></div></div>
+  <div class="card" style="text-align:center">
+    <p class="peq">Código de conclusão: mostre ao instrutor e anote no registro individual</p>
+    <div class="codigo" id="r-codigo"></div>
+  </div>
+  <div style="text-align:center"><button class="botao dour" id="r-voltar">Voltar ao mapa das fases</button></div>
+</section>
+</main>
+<div class="cheia" id="cheia"><button id="cheia-sair">Clique em qualquer lugar para sair</button></div>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+/* ================= ficha do manual ================= */
+const MANUAL=[
+  ["Modelo","H610M-T (placa de treino, Micro-ATX)"],
+  ["Soquete (socket)","LGA1700: Intel Core de 12ª, 13ª e 14ª geração"],
+  ["Memória","2 slots DIMM <b>DDR4</b>, até 3200 MHz<br>Máximo <b>64 GB</b> (32 GB por slot)<br>Não aceita DDR3, DDR5 nem SO-DIMM (pente de notebook)"],
+  ["Armazenamento","1× <b>M.2</b> (2242/2280), NVMe PCIe 3.0 ou SATA<br>4× <b>SATA</b> 6 Gb/s"],
+  ["Expansão","1× PCIe x16 (placa de vídeo) · 1× PCIe x1"],
+  ["Energia","ATX <b>24 pinos</b> + CPU <b>8 pinos</b> (ATX12V)"],
+  ["Ventoinhas","CPU_FAN (4 pinos) · SYS_FAN (4 pinos)"],
+  ["Painel frontal","F_PANEL: PWR_SW, RESET, PLED+/−, HDD_LED+/−"],
+  ["Rede e USB","1 Gigabit Ethernet · 2× USB 3.2 · 4× USB 2.0"]];
+function desenharManual(){$("manual").innerHTML="<h3>📘 Manual da placa-mãe · Especificações</h3><table>"+MANUAL.map(([a,b])=>`<tr><td>${a}</td><td>${b}</td></tr>`).join("")+"</table>";}
+/* ================= estado, som, utilidades ================= */
+const E={nome:"",pontos:0,progresso:{}};const SALVO="oficina-tecnico-v1";
+function carregar(){try{const s=JSON.parse(localStorage.getItem(SALVO)||"{}");E.progresso=s.progresso||{};E.nome=s.nome||"";}catch(e){}}
+function salvar(){try{localStorage.setItem(SALVO,JSON.stringify({progresso:E.progresso,nome:E.nome}));}catch(e){}}
+let somLigado=true,ctx=null;
+function audio(){ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();return ctx;}
+function bip(f=660,d=.08,tipo="sine",vol=.06,pan=0){if(!somLigado&&pan===0)return;try{const c=audio(),o=c.createOscillator(),g=c.createGain();o.type=tipo;o.frequency.value=f;g.gain.value=vol;
+  if(pan&&c.createStereoPanner){const p=c.createStereoPanner();p.pan.value=pan;o.connect(g);g.connect(p);p.connect(c.destination);}else{o.connect(g);g.connect(c.destination);}
+  o.start();g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+d);o.stop(c.currentTime+d+.02);}catch(e){}}
+const somBom=()=>{bip(660,.08);setTimeout(()=>bip(990,.12),90);};const somRuim=()=>bip(220,.18,"square",.04);const somClique=()=>bip(880,.03,"triangle",.04);
+$("btn-som").onclick=()=>{somLigado=!somLigado;$("btn-som").textContent=somLigado?"🔊":"🔇";};
+function telas(id){document.querySelectorAll(".tela").forEach(t=>t.classList.toggle("ativa",t.id===id));window.scrollTo(0,0);}
+function pontos(n,motivo){E.pontos=Math.max(0,E.pontos+n);$("hud-pontos").textContent=E.pontos;
+  if(motivo){const d=document.createElement("div");d.className="pop";d.innerHTML=(n>=0?`<span style="color:var(--verde)">+${n}</span>`:`<span style="color:var(--verm)">${n}</span>`)+" · "+motivo;document.body.appendChild(d);setTimeout(()=>d.remove(),1500);}}
+function fb(id,txt,cl){const e=$(id);e.className="feedback "+(cl||"");e.textContent=txt;}
+let relogio=null;
+function iniciarRelogio(seg,aoAcabar){pararRelogio();let s=seg;$("hud-tempo").style.display="";$("hud-seg").textContent=s;
+  relogio=setInterval(()=>{s--;$("hud-seg").textContent=Math.max(0,s);if(s<=5)$("hud-tempo").classList.add("alerta");if(s<=0){pararRelogio();aoAcabar&&aoAcabar();}},1000);}
+function pararRelogio(){if(relogio)clearInterval(relogio);relogio=null;$("hud-tempo").classList.remove("alerta");}
+function esconderRelogio(){pararRelogio();$("hud-tempo").style.display="none";}
+const embaralhar=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+
+/* ================= mapa de fases ================= */
+const FASES=[
+  {id:"cabe",n:"FASE 1",t:"Cabe ou não cabe?",d:"10 peças chegam na bancada. Confira no manual da placa-mãe antes do tempo acabar."},
+  {id:"pop",n:"FASE 2",t:"POP sem energia",d:"Monte o passo a passo de 3 tarefas: memória, SSD SATA e painel frontal. Cuidado com as armadilhas."},
+  {id:"tela",n:"FASE 3",t:"O que a tela diz?",d:"8 casos depois da intervenção: POST, firmware e Gerenciador de Dispositivos."},
+  {id:"perif",n:"FASE 4",t:"Teste de periféricos",d:"De verdade, no seu PC: teclado, mouse, som e tela. Vira o registro do teste."}];
+function desenharMapa(){
+  $("mapa-fases").innerHTML=FASES.map(f=>{const p=E.progresso[f.id]||0;return `<div class="fase"><div class="num">${f.n}</div><h2>${f.t}</h2><p class="sub">${f.d}</p><div class="estrelas">${[1,2,3].map(i=>`<span class="${i<=p?"on":""}">★</span>`).join("")}</div><button class="botao" data-fase="${f.id}">Jogar</button></div>`;}).join("");
+  document.querySelectorAll("[data-fase]").forEach(b=>b.onclick=()=>{if(!garantirNome())return;somClique();INICIO[b.dataset.fase]();});}
+function garantirNome(){const n=$("nome").value.trim();if(!n){$("nome").focus();$("nome").style.borderColor="var(--verm)";return false;}E.nome=n;$("hud-nome").textContent="👷 "+n;salvar();return true;}
+$("btn-comecar").onclick=()=>{if(!garantirNome())return;somClique();iniciarCabe();};
+$("btn-teste").onclick=()=>{if(!garantirNome())return;somClique();iniciarPerif();};
+
+/* ================= FASE 1 ================= */
+const PECAS=[
+  ["🧩","Pente DDR4 8 GB 3200 MHz (desktop)",true,"DDR4 DIMM até 3200 MHz: é exatamente o que o manual aceita."],
+  ["🧩","Pente DDR5 16 GB 5600 MHz",false,"DDR5 tem o chanfro em outro lugar e a placa só aceita DDR4."],
+  ["🧩","Pente DDR3 4 GB (de um PC antigo)",false,"DDR3 não entra no slot DDR4: o chanfro não bate."],
+  ["💻","Pente DDR4 SO-DIMM 8 GB (de notebook)",false,"SO-DIMM é o pente curto de notebook. A placa usa DIMM (desktop)."],
+  ["🧩","2 pentes DDR4 de 32 GB (64 GB no total)",true,"2 slots × 32 GB = 64 GB, o máximo do manual."],
+  ["🧩","4 pentes DDR4 de 8 GB",false,"A placa tem só 2 slots de memória."],
+  ["💾","SSD M.2 NVMe 2280 de 500 GB",true,"O slot M.2 aceita 2280 e NVMe PCIe 3.0."],
+  ["💾","SSD SATA 2,5\" de 480 GB",true,"Vai num dos 4 conectores SATA, com cabo de dados e de energia."],
+  ["⚙️","Processador AMD Ryzen 5 5600 (soquete AM4)",false,"A placa é LGA1700 (Intel). AM4 é de outro fabricante e outro soquete."],
+  ["⚙️","Processador Intel Core i5-12400 (LGA1700)",true,"Intel de 12ª geração, soquete LGA1700: compatível."],
+  ["🎮","Placa de vídeo PCIe x16",true,"Tem 1 slot PCIe x16 para placa de vídeo."],
+  ["🔌","Fonte sem o conector de 8 pinos da CPU",false,"A placa pede ATX 24 pinos + 8 pinos da CPU. Sem ele, não liga."]];
+let C=null;
+function iniciarCabe(){C={lista:embaralhar(PECAS).slice(0,10),i:0,acertos:0,trava:false};$("c-total").textContent=10;desenharManual();telas("t-cabe");rodadaCabe();}
+function rodadaCabe(){const p=C.lista[C.i];$("c-n").textContent=C.i+1;$("c-peca").innerHTML=`<div class="ico">${p[0]}</div><div>${p[1]}</div>`;fb("c-feedback","");C.trava=false;iniciarRelogio(15,()=>responderCabe(null));}
+function responderCabe(r){if(C.trava)return;C.trava=true;const resto=+$("hud-seg").textContent||0;pararRelogio();const p=C.lista[C.i];
+  if(r===p[2]){C.acertos++;pontos(60+resto*4,"certo!");somBom();fb("c-feedback","✔ "+p[3],"bom");}
+  else{somRuim();fb("c-feedback",(r===null?"⏱ Tempo! ":"✖ ")+p[3],"ruim");}
+  C.i++;setTimeout(()=>{if(C.i<C.lista.length)rodadaCabe();else{const est=C.acertos>=9?3:C.acertos>=7?2:1;E.progresso.cabe=Math.max(E.progresso.cabe||0,est);salvar();
+    mostrarResultado("Fase 1 concluída","Técnico confere no manual antes de comprar ou instalar.",est,[["Acertos",`${C.acertos} de 10`]]);}},r===p[2]?1700:2900);}
+$("c-sim").onclick=()=>responderCabe(true);$("c-nao").onclick=()=>responderCabe(false);
+
+/* ================= FASE 2 ================= */
+const POPS=[
+  {t:"Trocar o pente de memória",passos:["Desligar pelo Windows e tirar o cabo da tomada","Segurar o botão liga por 5 segundos (descarrega)","Colocar a pulseira antiestática presa no gabinete","Abrir as travas do slot e tirar o pente antigo pelas bordas","Alinhar o chanfro do pente novo com o slot","Pressionar com os dois polegares até as travas fecharem","Fechar o gabinete e pedir autorização para ligar","Conferir a memória no POST e no Gerenciador de Tarefas"],
+   armadilhas:["Encostar nos contatos dourados para ver se estão limpos","Trocar o pente com o PC ligado para ganhar tempo"]},
+  {t:"Instalar o SSD SATA",passos:["Desligar pelo Windows e tirar o cabo da tomada","Colocar a pulseira antiestática presa no gabinete","Prender o SSD na baia com os parafusos","Ligar o cabo de dados SATA no SSD e na placa-mãe","Ligar o cabo de energia SATA da fonte no SSD","Organizar os cabos longe da ventoinha","Fechar o gabinete e pedir autorização para ligar","Conferir o SSD no firmware e no Gerenciamento de Disco"],
+   armadilhas:["Forçar o conector SATA de cabeça para baixo","Usar o cabo de energia de 4 pinos antigo (Molex) com adaptador derretido"]},
+  {t:"Religar o painel frontal",passos:["Desligar pelo Windows e tirar o cabo da tomada","Colocar a pulseira antiestática presa no gabinete","Abrir o manual no desenho do F_PANEL","Ligar o PWR_SW (botão liga) nos 2 pinos indicados","Ligar o PLED (+ e −) e o HDD_LED (+ e −)","Conferir cada fio com o desenho do manual","Fechar o gabinete e pedir autorização para ligar","Apertar o botão liga e ver se o LED acende"],
+   armadilhas:["Ligar os fios em qualquer pino e testar até funcionar","Apertar o botão liga com o gabinete aberto e a mão na placa"]}];
+let P=null;
+function iniciarPop(){esconderRelogio();P={i:0,erros:0,errosTot:0};telas("t-pop");rodadaPop();}
+function rodadaPop(){const pop=POPS[P.i];P.prox=0;P.erros=0;$("p-n").textContent=P.i+1;$("p-titulo").textContent=pop.t;$("p-fila").innerHTML="";fb("p-feedback","");
+  const op=embaralhar([...pop.passos.map((t,k)=>({t,k})),...pop.armadilhas.map(t=>({t,k:-1}))]);
+  $("p-opcoes").innerHTML=op.map(o=>`<button class="passo" data-k="${o.k}">${o.t}</button>`).join("");
+  document.querySelectorAll("#p-opcoes .passo").forEach(b=>b.onclick=()=>escolherPasso(b));}
+function escolherPasso(b){const pop=POPS[P.i];const k=+b.dataset.k;
+  if(k===P.prox){b.classList.add("usado");const d=document.createElement("div");d.textContent=b.textContent;$("p-fila").appendChild(d);P.prox++;pontos(20,"");somClique();fb("p-feedback","");
+    if(P.prox===pop.passos.length){somBom();pontos(100,"POP completo");fb("p-feedback","✔ POP completo e seguro. Os itens que sobraram são as armadilhas.","bom");P.errosTot+=P.erros;P.i++;
+      setTimeout(()=>{if(P.i<POPS.length)rodadaPop();else{const est=P.errosTot<=2?3:P.errosTot<=5?2:1;E.progresso.pop=Math.max(E.progresso.pop||0,est);salvar();
+        mostrarResultado("POPs prontos","Sem energia, com pulseira, pelo manual e com autorização para ligar.",est,[["Erros de ordem",P.errosTot]]);}},2200);}}
+  else{P.erros++;pontos(-15,"ordem errada");somRuim();b.classList.add("errado");setTimeout(()=>b.classList.remove("errado"),400);
+    fb("p-feedback",k===-1?"✖ Isso não faz parte do POP: é arriscado para a peça ou para você.":"✖ Ainda não. O que vem antes?","ruim");}}
+
+/* ================= FASE 3 ================= */
+const CASOS=[
+  {bios:false,tela:"Reboot and Select proper Boot device\nor Insert Boot Media in selected Boot device\nand press a key_",ctx:"Depois de instalar o SSD SATA novo.",
+   op:[["O cabo de dados SATA do disco do sistema ficou solto: desligar, conferir e religar",true],["Trocar o pente de memória",false],["Instalar o driver de vídeo",false]],exp:"Sem disco de boot = cabo SATA solto ou disco errado na ordem de boot."},
+  {bios:false,tela:"(tela preta, sem imagem)\n\nLED DRAM aceso na placa-mãe\nVentoinhas giram",ctx:"Depois de trocar o pente de memória.",
+   op:[["O pente não travou: desligar, tirar e encaixar de novo até as travas fecharem",true],["O monitor queimou",false],["Formatar o SSD",false]],exp:"LED DRAM = problema de memória. O mais comum é o pente mal encaixado."},
+  {bios:true,tela:"CPU Fan Error!\nPress F1 to Run SETUP\n\nCPU Fan Speed ........ N/A",ctx:"Depois de mexer nos cabos da placa.",
+   op:[["A ventoinha do cooler está no SYS_FAN: passar para o CPU_FAN",true],["Apertar F1 e continuar usando",false],["Trocar a fonte",false]],exp:"CPU_FAN sem rotação. Usar o PC assim pode superaquecer o processador."},
+  {bios:true,tela:"Main\n  Total Memory ......... 8192 MB (DDR4 3200)\n  Memory Slot 1 ........ 8 GB\n  Memory Slot 2 ........ <span class='am'>Empty</span>",ctx:"O técnico instalou 2 pentes de 8 GB.",
+   op:[["O 2º pente não foi reconhecido: reencaixar e conferir de novo",true],["Está certo, 8 GB é o total",false],["Atualizar o Windows",false]],exp:"Dois pentes de 8 GB deveriam somar 16 GB. Slot 2 vazio = pente mal encaixado ou com defeito."},
+  {bios:false,tela:"Gerenciador de Dispositivos\n\n▸ Adaptadores de rede\n    <span class='am'>⚠ Controlador Ethernet</span>\n▸ Teclados\n▸ Mouse e outros dispositivos apontadores",ctx:"O PC ligou, mas está sem rede.",
+   op:[["Falta o driver da placa de rede: instalar o driver do site do fabricante da placa-mãe (autorizado)",true],["Trocar o cabo de energia",false],["Tirar a memória",false]],exp:"Triângulo amarelo ⚠ = driver faltando ou com problema."},
+  {bios:false,tela:"Gerenciador de Dispositivos\n\n▸ Outros dispositivos\n    <span class='am'>? Dispositivo desconhecido</span>",ctx:"Depois de formatar e reinstalar o Windows.",
+   op:[["O Windows não sabe que aparelho é: procurar o driver certo pelo modelo da placa",true],["É vírus: formatar de novo",false],["O processador está errado",false]],exp:"Dispositivo desconhecido = o Windows não achou driver. O modelo da placa (msinfo32) ajuda a achar."},
+  {bios:false,tela:"Gerenciador de Tarefas › Desempenho › Memória\n\n  16,0 GB DDR4\n  Velocidade: 3200 MHz\n  Slots usados: <span class='am'>2 de 2</span>\n  Fator forma: DIMM",ctx:"O cliente pergunta se dá para pôr mais um pente.",
+   op:[["Não tem slot livre: para aumentar, trocar os 2 pentes por maiores (até 64 GB)",true],["Sim, é só encaixar o terceiro",false],["Sim, num slot M.2",false]],exp:"Slots usados 2 de 2 = os dois ocupados. O manual diz máximo de 64 GB (32 por slot)."},
+  {bios:false,tela:"(nada acontece ao apertar o botão liga)\n\nLED da placa-mãe aceso\nFonte ligada na tomada",ctx:"Depois de religar o painel frontal.",
+   op:[["O fio PWR_SW está no pino errado: conferir com o desenho do F_PANEL no manual",true],["A placa-mãe queimou",false],["Faltam drivers",false]],exp:"Placa com energia e botão sem efeito = PWR_SW fora do lugar."}];
+let Q=null;
+function iniciarTela(){esconderRelogio();Q={lista:embaralhar(CASOS),i:0,acertos:0};$("q-total").textContent=CASOS.length;telas("t-tela");rodadaTela();}
+function rodadaTela(){const c=Q.lista[Q.i];$("q-n").textContent=Q.i+1;$("q-monitor").className="monitor"+(c.bios?" bios":"");$("q-monitor").innerHTML=c.tela;$("q-contexto").textContent=c.ctx;fb("q-feedback","");
+  $("q-opcoes").innerHTML=embaralhar(c.op).map(([t,ok])=>`<button class="opcao" data-ok="${ok}">${t}</button>`).join("");
+  document.querySelectorAll("#q-opcoes .opcao").forEach(b=>b.onclick=()=>{document.querySelectorAll("#q-opcoes .opcao").forEach(o=>{o.disabled=true;if(o.dataset.ok==="true")o.classList.add("certa");});
+    const ok=b.dataset.ok==="true";if(ok){Q.acertos++;pontos(90,"diagnóstico certo");somBom();fb("q-feedback","✔ "+c.exp,"bom");}else{b.classList.add("errada");somRuim();fb("q-feedback","✖ "+c.exp,"ruim");}
+    Q.i++;setTimeout(()=>{if(Q.i<Q.lista.length)rodadaTela();else{const est=Q.acertos>=7?3:Q.acertos>=5?2:1;E.progresso.tela=Math.max(E.progresso.tela||0,est);salvar();
+      mostrarResultado("Fase 3 concluída","Ler a tela antes de sair trocando peça é o que separa o técnico do chutador.",est,[["Acertos",`${Q.acertos} de ${CASOS.length}`]]);}},ok?2000:3200);});}
+
+/* ================= FASE 4: TESTE DE PERIFÉRICOS ================= */
+const LINHAS=[
+  ["Digit1","Digit2","Digit3","Digit4","Digit5","Digit6","Digit7","Digit8","Digit9","Digit0","Backspace"],
+  ["KeyQ","KeyW","KeyE","KeyR","KeyT","KeyY","KeyU","KeyI","KeyO","KeyP"],
+  ["KeyA","KeyS","KeyD","KeyF","KeyG","KeyH","KeyJ","KeyK","KeyL","Semicolon","Enter"],
+  ["ShiftLeft","KeyZ","KeyX","KeyC","KeyV","KeyB","KeyN","KeyM","Comma","Period","ShiftRight"],
+  ["ControlLeft","AltLeft","Space","ArrowLeft","ArrowUp","ArrowDown","ArrowRight"]];
+const ROT={Backspace:"⌫",Enter:"Enter",ShiftLeft:"Shift",ShiftRight:"Shift",ControlLeft:"Ctrl",AltLeft:"Alt",Space:"Espaço",Semicolon:"Ç",Comma:",",Period:".",ArrowLeft:"←",ArrowUp:"↑",ArrowDown:"↓",ArrowRight:"→"};
+let T=null;
+function iniciarPerif(){esconderRelogio();T={teclas:new Set(),me:false,md:false,roda:false,esq:false,dir:false,tela:false,lado:null};telas("t-perif");
+  $("teclado").innerHTML=LINHAS.map(l=>`<div class="lin">${l.map(k=>`<div class="tecla" data-k="${k}" style="${k==="Space"?"flex:5 1 0":""}">${ROT[k]||k.replace("Key","").replace("Digit","")}</div>`).join("")}</div>`).join("");
+  $("cores").innerHTML=["#ffffff","#000000","#ff0000","#00ff00","#0000ff"].map(c=>`<button style="background:${c}" data-c="${c}"></button>`).join("");
+  document.querySelectorAll("#cores button").forEach(b=>b.onclick=()=>{const ch=$("cheia");ch.style.background=b.dataset.c;ch.style.display="flex";T.tela=true;atualizarPerif();});
+  atualizarPerif();}
+$("cheia").onclick=()=>{$("cheia").style.display="none";};
+const TODAS=LINHAS.flat();
+window.addEventListener("keydown",ev=>{if(!T||!$("t-perif").classList.contains("ativa"))return;if(TODAS.includes(ev.code)){ev.preventDefault();T.teclas.add(ev.code);const el=document.querySelector(`.tecla[data-k="${ev.code}"]`);if(el){el.classList.add("ok");}bip(700,.03,"triangle",.03);atualizarPerif();}});
+$("area-mouse").addEventListener("mousedown",ev=>{if(!T)return;if(ev.button===0){T.me=true;$("m-e").classList.add("on");}if(ev.button===2){T.md=true;$("m-d").classList.add("on");}if(ev.button===1){T.roda=true;$("m-r").classList.add("on");}atualizarPerif();});
+$("area-mouse").addEventListener("contextmenu",ev=>ev.preventDefault());
+$("area-mouse").addEventListener("wheel",ev=>{if(!T)return;ev.preventDefault();T.roda=true;$("m-r").classList.add("on");atualizarPerif();},{passive:false});
+$("s-tocar").onclick=()=>{if(!T)return;T.lado=Math.random()<.5?"esq":"dir";[0,180,360].forEach(t=>setTimeout(()=>bip(520,.22,"sine",.12,T.lado==="esq"?-1:1),t));fb("s-feedback","De onde saiu o som?","");};
+function respSom(l){if(!T||!T.lado)return fb("s-feedback","Clique em Tocar primeiro.","medio");if(l===T.lado){T[l]=true;fb("s-feedback","✔ Certo: a caixa "+(l==="esq"?"esquerda":"direita")+" funciona. Toque de novo para testar a outra.","bom");}else fb("s-feedback","✖ Saiu do outro lado. Confira os fones/caixas (L = esquerda, R = direita) e toque de novo.","ruim");T.lado=null;atualizarPerif();}
+$("s-esq").onclick=()=>respSom("esq");$("s-dir").onclick=()=>respSom("dir");
+function atualizarPerif(){const n=T.teclas.size,tot=TODAS.length;
+  const itens=[["Teclado",`${n} de ${tot} teclas`,n>=tot-2],["Mouse: botão esquerdo","",T.me],["Mouse: botão direito","",T.md],["Mouse: rodinha","",T.roda],["Som: esquerda","",T.esq],["Som: direita","",T.dir],["Tela: teste de cor","",T.tela]];
+  $("f-checks").innerHTML=itens.map(([a,b,ok])=>`<div><span>${a}${b?" · "+b:""}</span><span class="${ok?"ok":"nok"}">${ok?"OK":"falta"}</span></div>`).join("");T.itens=itens;}
+$("f-fim").onclick=()=>{if(!T)return;const ok=T.itens.filter(i=>i[2]).length;pontos(ok*40,"teste");const est=ok>=7?3:ok>=5?2:1;E.progresso.perif=Math.max(E.progresso.perif||0,est);salvar();
+  mostrarResultado("Teste de periféricos","Anote no registro individual o que funcionou e o que falhou.",est,T.itens.map(([a,b,o])=>[a,(o?"OK":"falhou / não testado")+(b?" ("+b+")":"")]));};
+
+/* ================= resultado ================= */
+function codigo(){let h=13;const s=E.nome+"|"+E.pontos+"|"+JSON.stringify(E.progresso);for(const ch of s)h=(h*31+ch.charCodeAt(0))%1679616;return "MC-"+h.toString(36).toUpperCase().padStart(4,"0");}
+function mostrarResultado(tit,sub,est,linhas){esconderRelogio();$("r-titulo").textContent=tit;$("r-sub").textContent=sub;$("r-medalha").textContent=est>=3?"🏆":est===2?"🥈":"🥉";
+  $("r-estrelas").innerHTML=[1,2,3].map(i=>`<span class="${i<=est?"on":""}">★</span>`).join("");
+  const total=FASES.reduce((s,f)=>s+(E.progresso[f.id]||0),0);const cargo=total>=11?"Técnico(a) sênior":total>=8?"Técnico(a) pleno":total>=4?"Técnico(a) júnior":"Estagiário(a) de bancada";
+  $("r-lista").innerHTML=linhas.map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join("")+`<div><span>Pontos no plantão</span><b>${E.pontos}</b></div><div><span>Estrelas nas 4 fases</span><b>${total} de 12 · ${cargo}</b></div>`;
+  $("r-codigo").textContent=codigo();telas("t-resultado");if(est>=2){somBom();setTimeout(somBom,250);}}
+$("r-voltar").onclick=()=>{desenharMapa();telas("t-inicio");};
+const INICIO={cabe:iniciarCabe,pop:iniciarPop,tela:iniciarTela,perif:iniciarPerif};
+carregar();if(E.nome){$("nome").value=E.nome;$("hud-nome").textContent="👷 "+E.nome;}
+desenharMapa();
+</script>
+</body>
+</html>

@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caça ao Sinal</title>
+<style>
+:root{
+  --fundo:#07142a; --painel:#0d2142; --painel2:#132c55; --borda:#24406e; --tinta:#e8f0ff; --apagado:#8ea3c7;
+  --azul:#2f7cf6; --dour:#e0b66e; --verde:#2ee59d; --verm:#ff5a5f; --amar:#ffc94a; --lar:#ff9f43; --roxo:#a78bfa;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:radial-gradient(1200px 700px at 70% -10%,#16346a 0,transparent 60%),var(--fundo);color:var(--tinta);
+  font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;overflow-x:hidden}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.topo{display:flex;align-items:center;gap:14px;padding:10px 18px;background:rgba(5,14,30,.8);border-bottom:1px solid var(--borda);position:sticky;top:0;z-index:5;flex-wrap:wrap}
+.marca{font-weight:800;letter-spacing:.3px}.marca b{color:var(--dour)}
+.hud{display:flex;gap:10px;margin-left:auto;flex-wrap:wrap}
+.chip{background:var(--painel);border:1px solid var(--borda);border-radius:999px;padding:5px 12px;font-weight:700;font-size:14px;white-space:nowrap}
+.chip.tempo.alerta{border-color:var(--verm);color:var(--verm);animation:pisca .6s infinite alternate}
+@keyframes pisca{to{opacity:.45}}
+.som{background:transparent;border:1px solid var(--borda);color:var(--tinta);border-radius:999px;padding:5px 10px}
+main{max-width:1240px;margin:0 auto;padding:16px}
+.tela{display:none;animation:entra .3s ease}
+.tela.ativa{display:block}
+@keyframes entra{from{opacity:0;transform:translateY(8px)}}
+.card{background:linear-gradient(180deg,var(--painel2),var(--painel));border:1px solid var(--borda);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+h1{font-size:34px;margin:0 0 6px;line-height:1.15}h1 b{color:var(--dour)}
+h2{font-size:22px;margin:0 0 8px}
+h3{font-size:17px;margin:4px 0 6px}
+.sub{color:var(--apagado)}
+.peq{font-size:13px;color:var(--apagado)}
+.botao{border:0;border-radius:14px;padding:12px 20px;font-weight:800;background:var(--azul);color:#fff;box-shadow:0 4px 0 #1b4fa8;transition:transform .08s}
+.botao:active{transform:translateY(3px);box-shadow:0 1px 0 #1b4fa8}
+.botao.dour{background:var(--dour);color:#1d1400;box-shadow:0 4px 0 #9c7a3b}
+.botao.verde{background:#12b77a;box-shadow:0 4px 0 #0b7a51}
+.botao.cinza{background:#2a4371;box-shadow:0 4px 0 #1a2c4d}
+.botao.peq2{padding:7px 12px;font-size:14px;border-radius:10px}
+.botao:disabled{opacity:.45;cursor:default}
+.grade4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:980px){.grade4{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:620px){.grade4{grid-template-columns:1fr}}
+.fase{border:1px solid var(--borda);border-radius:16px;padding:14px;background:rgba(255,255,255,.03);display:flex;flex-direction:column;gap:6px}
+.fase .num{font-size:13px;color:var(--dour);font-weight:800;letter-spacing:.6px}
+.fase .botao{margin-top:auto}
+.estrelas{font-size:22px;letter-spacing:2px;color:#3a5482}.estrelas .on{color:var(--amar);text-shadow:0 0 10px rgba(255,201,74,.6)}
+input.campo,select.campo{background:#081a36;border:1px solid var(--borda);color:var(--tinta);border-radius:10px;padding:9px 12px;width:100%}
+input.nome{background:#081a36;border:1px solid var(--borda);color:var(--tinta);border-radius:12px;padding:12px 14px;width:min(360px,100%)}
+.palco{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px;align-items:start}
+@media (max-width:1000px){.palco{grid-template-columns:1fr}}
+.planta{position:relative;width:100%;aspect-ratio:1000/600;border-radius:14px;overflow:hidden;border:1px solid var(--borda);background:#0a1a35}
+.planta canvas{position:absolute;inset:0;width:100%;height:100%}
+.planta svg{position:absolute;inset:0;width:100%;height:100%}
+.leitura{position:absolute;pointer-events:none;background:rgba(5,14,30,.9);border:1px solid var(--borda);border-radius:10px;padding:4px 9px;font-weight:800;font-size:14px;display:none;white-space:nowrap}
+.legenda{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;font-size:13px;color:var(--apagado)}
+.legenda span{display:inline-flex;align-items:center;gap:5px}
+.legenda i{display:inline-block;width:16px;height:12px;border-radius:3px}
+.celular{background:#0b0f17;border:3px solid #2c3a52;border-radius:28px;padding:14px 14px 18px;box-shadow:inset 0 0 0 2px #121a28}
+.celular .notch{width:90px;height:8px;border-radius:6px;background:#1d2738;margin:0 auto 10px}
+.celular .tit{font-size:13px;color:#9fb0cc;font-weight:700;margin-bottom:6px}
+.rede{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:8px 10px;border-radius:12px;background:#121a28;margin-bottom:6px;font-size:14px}
+.rede.minha{background:#14284a;border:1px solid #2f7cf6}
+.rede b{font-size:14px}
+.barras{display:inline-flex;gap:2px;align-items:flex-end;height:16px}
+.barras i{display:block;width:4px;background:#34425a;border-radius:1px}
+.barras i.on{background:#e8f0ff}
+.dbm{font-family:ui-monospace,Consolas,monospace;font-weight:800}
+.opcoes{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+.opcao{border:2px solid var(--borda);background:#0a1a35;color:var(--tinta);border-radius:12px;padding:10px;text-align:left;font-weight:700}
+.opcao:hover{border-color:var(--azul)}
+.opcao.certa{border-color:var(--verde);background:#0f3b2c}
+.opcao.errada{border-color:var(--verm);background:#3b1116}
+.opcao.sel{border-color:var(--dour)}
+.feedback{min-height:26px;font-weight:800;margin-top:8px}
+.feedback.bom{color:var(--verde)}.feedback.medio{color:var(--amar)}.feedback.ruim{color:var(--verm)}
+.cand{display:grid;gap:8px}
+.cand button{border:2px solid var(--borda);background:#0a1a35;color:var(--tinta);border-radius:12px;padding:9px 11px;text-align:left}
+.cand button b{color:var(--dour)}
+.cand button.sel{border-color:var(--dour);background:#1c2d4f}
+.checks{display:grid;gap:6px;margin-top:8px}
+.checks div{display:flex;justify-content:space-between;gap:8px;background:#0a1a35;border:1px solid var(--borda);border-radius:10px;padding:7px 10px;font-size:14px}
+.ok{color:var(--verde);font-weight:800}.nok{color:var(--verm);font-weight:800}.meio{color:var(--amar);font-weight:800}
+.painel-ap{background:#f4f6f9;color:#1f2a37;border-radius:12px;overflow:hidden;border:1px solid #c7d0dc}
+.painel-ap .cab{background:#24476b;color:#fff;padding:8px 12px;font-weight:800;font-size:15px}
+.painel-ap .corpo{padding:12px;display:grid;gap:10px}
+.painel-ap label{font-size:13px;font-weight:700;color:#3e4c5e;display:block;margin-bottom:3px}
+.painel-ap input,.painel-ap select{width:100%;padding:8px 10px;border:1px solid #aab6c5;border-radius:6px;background:#fff;color:#111}
+.painel-ap .dica{font-size:12px;color:#5d6b7d}
+table.viz{border-collapse:collapse;width:100%;font-size:14px}
+table.viz td,table.viz th{border:1px solid var(--borda);padding:5px 8px;text-align:left}
+.terminal{background:#0c0c0c;color:#d6d6d6;font-family:ui-monospace,Consolas,monospace;font-size:13.5px;border-radius:10px;padding:10px 12px;white-space:pre;overflow-x:auto;border:1px solid #333}
+.terminal .am{color:#ffd166}
+.aparelhos{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.aparelho{background:#0a1a35;border:1px solid var(--borda);border-radius:12px;padding:8px 10px;font-size:14px}
+.aparelho .st{font-weight:800}
+.cartao{font-size:22px;font-weight:800;min-height:120px;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;border-radius:18px;background:#0a1a35;border:2px solid var(--borda)}
+.duas{display:flex;gap:12px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.duas .botao{min-width:200px;font-size:20px}
+.lista-res{display:grid;gap:8px}
+.lista-res div{display:flex;justify-content:space-between;gap:10px;background:#0a1a35;border:1px solid var(--borda);border-radius:12px;padding:10px 14px}
+.codigo{font-family:ui-monospace,Consolas,monospace;font-size:30px;font-weight:900;color:var(--dour);letter-spacing:3px}
+.medalha{font-size:64px;line-height:1}
+.pop{position:fixed;left:50%;top:72px;transform:translateX(-50%);background:var(--painel2);border:1px solid var(--borda);border-radius:14px;padding:10px 18px;font-weight:800;z-index:9;box-shadow:0 10px 30px rgba(0,0,0,.4);animation:sobe 1.4s forwards;pointer-events:none}
+@keyframes sobe{0%{opacity:0;transform:translate(-50%,10px)}15%{opacity:1;transform:translate(-50%,0)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-14px)}}
+.linha{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--borda);border-radius:10px;overflow:hidden}
+.seg button{background:#0a1a35;color:var(--tinta);border:0;padding:7px 12px;font-weight:700}
+.seg button.on{background:var(--azul)}
+.tabela-niveis td{padding:4px 8px}
+</style>
+</head>
+<body>
+<div class="topo">
+  <div class="marca">📶 Caça ao <b>Sinal</b> <span class="peq">· Escritório Horizonte</span></div>
+  <div class="hud">
+    <span class="chip" id="hud-nome">Técnico</span>
+    <span class="chip">⭐ <span id="hud-pontos">0</span> pts</span>
+    <span class="chip tempo" id="hud-tempo" style="display:none">⏱ <span id="hud-seg">0</span>s</span>
+    <button class="som" id="btn-som" title="Liga ou desliga o som">🔊</button>
+  </div>
+</div>
+
+<main>
+<!-- INÍCIO -->
+<section class="tela ativa" id="t-inicio">
+  <div class="card">
+    <h1>Caça ao <b>Sinal</b></h1>
+    <p class="sub">O Wi-Fi da sala de reunião do Escritório Horizonte cai no meio das chamadas de vídeo. Você é o técnico: meça o sinal pelo escritório (o <i>survey</i>, levantamento de rádio), escolha onde instalar o access point (AP, ponto de acesso), configure com segurança e prove que os aparelhos conectaram.</p>
+    <p><input class="nome" id="nome" maxlength="24" placeholder="Seu nome de técnico(a)"></p>
+    <div class="linha">
+      <button class="botao dour" id="btn-comecar">Começar o chamado</button>
+      <button class="botao cinza" id="btn-livre">Modo livre (mapa de calor)</button>
+      <button class="botao cinza" id="btn-cola">Cola do sinal</button>
+    </div>
+  </div>
+  <div class="grade4" id="mapa-fases"></div>
+  <p class="peq" style="margin-top:10px">Simulação educativa: as paredes, as distâncias e os números são de um escritório inventado. No mundo real, só a medição no local (com o celular ou o notebook) mostra a cobertura de verdade.</p>
+</section>
+
+<!-- FASE 1: SURVEY -->
+<section class="tela" id="t-survey">
+  <div class="card">
+    <div class="linha" style="justify-content:space-between">
+      <div><span class="peq">FASE 1 · SURVEY (LEVANTAMENTO DE RÁDIO)</span><h2>Ande pelo escritório com o celular</h2></div>
+      <div class="chip">Ponto <span id="s-feitos">0</span> de 6</div>
+    </div>
+    <p class="sub">Clique em cada ponto 📍 do mapa. O celular mostra o sinal da rede <b>Horizonte_Escritorio</b> (do roteador da recepção) e as redes dos vizinhos. Classifique o sinal antes do tempo acabar.</p>
+    <div class="palco">
+      <div>
+        <div class="planta" id="s-planta"><canvas id="s-canvas" width="1000" height="600"></canvas><svg id="s-svg" viewBox="0 0 1000 600"></svg></div>
+        <div class="legenda" id="s-legenda"></div>
+      </div>
+      <div>
+        <div class="celular"><div class="notch"></div><div class="tit" id="s-local">Escolha um ponto no mapa</div><div id="s-redes"><p class="peq">Clique num 📍</p></div></div>
+        <div id="s-perg" style="display:none">
+          <h3 style="margin-top:10px">Como está o sinal aqui?</h3>
+          <div class="opcoes" id="s-opcoes"></div>
+        </div>
+        <div class="feedback" id="s-feedback"></div>
+      </div>
+    </div>
+  </div>
+  <div class="card" id="s-final" style="display:none">
+    <h2>Conclusão do survey</h2>
+    <p class="sub">Olhando as medições, onde o escritório precisa de um access point?</p>
+    <div class="opcoes" id="s-final-op"></div>
+    <div class="feedback" id="s-final-fb"></div>
+  </div>
+</section>
+
+<!-- FASE 2: ONDE INSTALAR -->
+<section class="tela" id="t-local">
+  <div class="card">
+    <div class="linha" style="justify-content:space-between">
+      <div><span class="peq">FASE 2 · ONDE INSTALAR O AP</span><h2>Escolha o lugar do access point</h2></div>
+      <div class="chip">Tentativa <span id="l-tent">1</span></div>
+    </div>
+    <p class="sub">O AP vai ligado por cabo ao switch (o cabo EH-04 da aula de cabos). Ele precisa dar sinal <b>bom (−67 dBm ou mais)</b> na mesa da reunião e na diretoria, sem estragar o resto. Escolha um lugar e veja o mapa de calor.</p>
+    <div class="palco">
+      <div>
+        <div class="planta"><canvas id="l-canvas" width="1000" height="600"></canvas><svg id="l-svg" viewBox="0 0 1000 600"></svg><div class="leitura" id="l-leitura"></div></div>
+        <div class="legenda" id="l-legenda"></div>
+        <div class="linha" style="margin-top:8px"><span class="peq">Faixa:</span><div class="seg" id="l-banda"><button data-b="24" class="on">2,4 GHz</button><button data-b="5">5 GHz</button></div></div>
+      </div>
+      <div>
+        <div class="cand" id="l-cand"></div>
+        <div class="checks" id="l-checks"></div>
+        <div class="feedback" id="l-feedback"></div>
+        <button class="botao verde" id="l-confirmar" style="margin-top:8px;display:none">Instalar aqui</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FASE 3: CONFIGURAR -->
+<section class="tela" id="t-config">
+  <div class="card">
+    <div class="linha" style="justify-content:space-between">
+      <div><span class="peq">FASE 3 · CONFIGURAR O AP</span><h2>SSID, segurança, senha e canal</h2></div>
+      <div class="chip">Tentativa <span id="c-tent">1</span></div>
+    </div>
+    <div class="palco" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+      <div>
+        <div class="card" style="background:#0a1a35">
+          <h3>O pedido do cliente</h3>
+          <ul style="margin:0;padding-left:20px">
+            <li>Nome da rede (SSID): <b>Horizonte_Reuniao</b></li>
+            <li>Segurança atual e senha forte (12 caracteres ou mais, letras e números)</li>
+            <li>A TV da sala e o celular antigo da recepcionista também precisam entrar</li>
+            <li>Canal com pouca interferência (o roteador da recepção usa o canal 11)</li>
+          </ul>
+          <h3 style="margin-top:12px">Redes que o survey achou na sala de reunião</h3>
+          <table class="viz" id="c-viz"></table>
+        </div>
+      </div>
+      <div>
+        <div class="painel-ap">
+          <div class="cab">AP-Horizonte · Wireless (sem fio) › Basic Settings (configurações básicas)</div>
+          <div class="corpo">
+            <div><label>SSID (nome da rede)</label><input id="c-ssid" value="AP-Default"></div>
+            <div><label>Security Mode (modo de segurança)</label>
+              <select id="c-seg">
+                <option value="aberta">Open (aberta, sem senha)</option>
+                <option value="wep">WEP (antigo)</option>
+                <option value="wpa2">WPA2-PSK (AES)</option>
+                <option value="misto">WPA2/WPA3 (modo misto)</option>
+                <option value="wpa3">WPA3-SAE (só WPA3)</option>
+              </select></div>
+            <div><label>Passphrase (senha do Wi-Fi)</label><input id="c-senha" value="12345678"><div class="dica">12 caracteres ou mais, com letras e números</div></div>
+            <div><label>Channel (canal) · 2,4 GHz</label><select id="c-canal"></select></div>
+            <button class="botao" id="c-aplicar">Apply (aplicar)</button>
+          </div>
+        </div>
+        <div class="feedback" id="c-feedback"></div>
+      </div>
+    </div>
+  </div>
+  <div class="card" id="c-teste" style="display:none">
+    <h2>Teste com os aparelhos</h2>
+    <div class="aparelhos" id="c-aparelhos"></div>
+    <div id="c-ipconfig" style="margin-top:10px"></div>
+    <div id="c-pergunta" style="display:none">
+      <h3 style="margin-top:10px">Pergunta final: quem entregou o IP para o notebook?</h3>
+      <div class="opcoes" id="c-op"></div>
+      <div class="feedback" id="c-fb2"></div>
+    </div>
+  </div>
+</section>
+
+<!-- FASE 4: PODE OU NÃO PODE -->
+<section class="tela" id="t-cartoes">
+  <div class="card">
+    <div class="linha" style="justify-content:space-between">
+      <div><span class="peq">FASE 4 · ÉTICA E LIMITES DO TÉCNICO</span><h2>Pode ou não pode?</h2></div>
+      <div class="chip">Cartão <span id="f-n">1</span> de <span id="f-total">10</span></div>
+    </div>
+    <div class="cartao" id="f-cartao"></div>
+    <div class="duas">
+      <button class="botao verde" id="f-pode">✔ PODE</button>
+      <button class="botao" style="background:#d9434a;box-shadow:0 4px 0 #8f2328" id="f-nao">✖ NÃO PODE</button>
+    </div>
+    <div class="feedback" id="f-feedback" style="text-align:center"></div>
+  </div>
+</section>
+
+<!-- MODO LIVRE -->
+<section class="tela" id="t-livre">
+  <div class="card">
+    <div class="linha" style="justify-content:space-between">
+      <div><span class="peq">MODO LIVRE · PARA MOSTRAR NO PROJETOR</span><h2>Mapa de calor do Wi-Fi</h2></div>
+      <button class="botao cinza peq2" id="v-voltar">Voltar</button>
+    </div>
+    <p class="sub">Comece só com o roteador (R): veja os fundos vermelhos. Depois ligue o access point (AP) e arraste os dois. Passe o mouse no mapa para ler o sinal em dBm. Troque a faixa e ligue o micro-ondas para ver a diferença.</p>
+    <div class="palco">
+      <div>
+        <div class="planta" id="v-planta"><canvas id="v-canvas" width="1000" height="600"></canvas><svg id="v-svg" viewBox="0 0 1000 600"></svg><div class="leitura" id="v-leitura"></div></div>
+        <div class="legenda" id="v-legenda"></div>
+      </div>
+      <div>
+        <div class="card" style="background:#0a1a35">
+          <h3>Controles</h3>
+          <div class="linha"><span class="peq">Faixa:</span><div class="seg" id="v-banda"><button data-b="24" class="on">2,4 GHz</button><button data-b="5">5 GHz</button></div></div>
+          <div class="linha" style="margin-top:8px"><label><input type="checkbox" id="v-ap"> Access point ligado</label></div>
+          <div class="linha"><label><input type="checkbox" id="v-micro"> Micro-ondas ligado</label></div>
+          <div class="linha"><label><input type="checkbox" id="v-paredes" checked> Mostrar nomes das paredes</label></div>
+          <div class="linha"><label><input type="checkbox" id="v-sem-paredes"> Ignorar as paredes (como o Packet Tracer)</label></div>
+          <h3 style="margin-top:12px">Quanto cada barreira tira (2,4 GHz)</h3>
+          <table class="viz" id="v-perdas"></table>
+          <p class="peq" style="margin-top:8px">Pontos do survey:</p>
+          <div class="checks" id="v-checks"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTADO -->
+<section class="tela" id="t-resultado">
+  <div class="card" style="text-align:center">
+    <div class="medalha" id="r-medalha">🏅</div>
+    <h1 id="r-titulo">Fase concluída</h1>
+    <p class="sub" id="r-sub"></p>
+    <div class="estrelas" id="r-estrelas" style="font-size:34px"></div>
+  </div>
+  <div class="card"><div class="lista-res" id="r-lista"></div></div>
+  <div class="card" style="text-align:center">
+    <p class="peq">Código de conclusão: mostre ao instrutor e anote no roteiro</p>
+    <div class="codigo" id="r-codigo"></div>
+  </div>
+  <div style="text-align:center"><button class="botao dour" id="r-voltar">Voltar ao mapa das fases</button></div>
+</section>
+
+<!-- COLA -->
+<section class="tela" id="t-cola">
+  <div class="card">
+    <h2>Cola do sinal</h2>
+    <p class="sub">dBm (decibel-miliwatt) mede a força do sinal. É sempre negativo: <b>quanto mais perto de zero, mais forte</b>. −50 é mais forte que −70.</p>
+    <table class="viz tabela-niveis">
+      <tr><th>Sinal</th><th>Nível</th><th>O que dá para fazer</th></tr>
+      <tr><td class="dbm">−60 ou mais</td><td class="ok">Ótimo</td><td>Tudo: vídeo, chamada, arquivos grandes</td></tr>
+      <tr><td class="dbm">−61 a −67</td><td class="ok">Bom</td><td>Chamada de vídeo sem travar (o mínimo do escritório)</td></tr>
+      <tr><td class="dbm">−68 a −75</td><td class="meio">Fraco</td><td>Navega, mas a chamada de vídeo trava</td></tr>
+      <tr><td class="dbm">abaixo de −75</td><td class="nok">Ruim</td><td>Cai toda hora ou nem conecta</td></tr>
+    </table>
+    <p>Canais de 2,4 GHz que não se sobrepõem: <b>1, 6 e 11</b>. 5 GHz: mais rápido, alcance menor, atravessa menos parede.</p>
+    <button class="botao" id="cola-voltar">Voltar</button>
+  </div>
+</section>
+</main>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+/* ================= o escritório (metros; 50 px por metro) ================= */
+const PX=50, W=20, H=12;
+const PERDA24={concreto:12,alvenaria:7,vidro:2,drywall:3,porta:3,metal:10};
+const NOME_MAT={concreto:"Concreto (parede externa e estrutural)",alvenaria:"Alvenaria (tijolo)",vidro:"Vidro (divisória)",drywall:"Drywall (gesso)",porta:"Porta de madeira",metal:"Metal (armário, micro-ondas)"};
+const PAREDES=[];
+function p(x1,y1,x2,y2,m){PAREDES.push({a:[x1,y1],b:[x2,y2],m});}
+// externas
+p(0,0,20,0,"concreto");p(20,0,20,12,"concreto");p(20,12,0,12,"concreto");p(0,12,0,0,"concreto");
+// recepção/financeiro x corredor (x=7)
+p(7,0,7,3,"alvenaria");p(7,3,7,4,"porta");p(7,4,7,9,"alvenaria");p(7,9,7,10,"porta");p(7,10,7,12,"alvenaria");
+p(0,7,7,7,"vidro");
+// corredor x copa/hall/depósito (x=9)
+p(9,0,9,2,"alvenaria");p(9,2,9,3,"porta");p(9,3,9,6,"alvenaria");p(9,6,9,7,"porta");p(9,7,9,10,"alvenaria");p(9,10,9,11,"porta");p(9,11,9,12,"alvenaria");
+p(9,5,13,5,"alvenaria");p(9,8,13,8,"alvenaria");
+// parede estrutural (x=13)
+p(13,0,13,5.5,"concreto");p(13,5.5,13,6.5,"porta");p(13,6.5,13,7.5,"concreto");p(13,7.5,13,8.5,"porta");p(13,8.5,13,12,"concreto");
+// sala de reunião x diretoria
+p(13,7,20,7,"drywall");
+// armário de metal (depósito) e micro-ondas (copa)
+p(10.2,9.2,12.6,9.2,"metal");p(12.6,9.2,12.6,9.8,"metal");p(12.6,9.8,10.2,9.8,"metal");p(10.2,9.8,10.2,9.2,"metal");
+p(12.0,0.35,12.7,0.35,"metal");p(12.7,0.35,12.7,0.9,"metal");p(12.7,0.9,12.0,0.9,"metal");p(12.0,0.9,12.0,0.35,"metal");
+const SALAS=[["Recepção",3.5,3.4],["Financeiro",3.5,8.3],["Corredor",8,0.6],["Copa",11,3.2],["Hall",11,6.5],["Depósito",11,11],["Sala de reunião",16.5,1.2],["Diretoria",16.5,11.2]];
+const ROTEADOR={x:1.0,y:6.4,nome:"Roteador (Horizonte_Escritorio · canal 11)"};
+const PONTOS=[
+  {id:"P1",nome:"Sofá da recepção",x:3,y:2,obrig:true},
+  {id:"P2",nome:"Mesa do financeiro",x:3,y:10,obrig:true},
+  {id:"P3",nome:"Copa",x:11,y:2.6,obrig:false},
+  {id:"P4",nome:"Corredor",x:8,y:6,obrig:false},
+  {id:"P5",nome:"Mesa da reunião",x:16.5,y:3.5,obrig:true},
+  {id:"P6",nome:"Notebook da diretoria",x:17,y:10,obrig:true}];
+const VIZINHOS=[
+  {ssid:"Clinica_Sorriso",x:22.5,y:2.5,canal:6},
+  {ssid:"Apto_202",x:11,y:-3.5,canal:11},
+  {ssid:"Padaria_PaoQuente",x:-3,y:3,canal:6}];
+const CANDIDATOS=[
+  {id:"A",x:11.4,y:9.5,t:"Dentro do armário de metal do depósito",d:"O cabo chega fácil e o AP fica escondido."},
+  {id:"B",x:19.6,y:0.45,t:"No canto da sala de reunião, em cima do armário",d:"Longe de tudo, ninguém mexe."},
+  {id:"C",x:16.5,y:6.6,t:"No alto da parede, no meio do escritório dos fundos",d:"Entre a sala de reunião e a diretoria, perto da divisória de gesso."},
+  {id:"D",x:12.35,y:1.15,t:"Na copa, em cima do micro-ondas",d:"Tem tomada e prateleira livre."},
+  {id:"E",x:8,y:6,t:"No teto do corredor",d:"No meio do escritório inteiro."}];
+
+/* ================= modelo de sinal ================= */
+function cruza(a,b,c,d){ // segmentos ab e cd se cruzam?
+  const den=(b[0]-a[0])*(d[1]-c[1])-(b[1]-a[1])*(d[0]-c[0]); if(Math.abs(den)<1e-9)return false;
+  const t=((c[0]-a[0])*(d[1]-c[1])-(c[1]-a[1])*(d[0]-c[0]))/den, u=((c[0]-a[0])*(b[1]-a[1])-(c[1]-a[1])*(b[0]-a[0]))/den;
+  return t>0&&t<1&&u>=0&&u<=1;}
+function perdaParedes(o,q,banda){let s=0;for(const w of PAREDES){if(cruza([o.x,o.y],[q.x,q.y],w.a,w.b))s+=PERDA24[w.m]*(banda==="5"?1.6:1);}return s;}
+function sinal(o,q,banda,semParedes){
+  const d=Math.max(0.5,Math.hypot(o.x-q.x,o.y-q.y));
+  const p1=banda==="5"?-36:-31, n=banda==="5"?3.0:2.7;
+  return p1-10*n*Math.log10(d)-(semParedes?0:perdaParedes(o,q,banda));}
+function nivel(dbm){return dbm>=-60?["Ótimo","ok"]:dbm>=-67?["Bom","ok"]:dbm>=-75?["Fraco","meio"]:["Ruim","nok"];}
+function barras(dbm){const n=dbm>=-60?4:dbm>=-67?3:dbm>=-75?2:dbm>=-85?1:0;return `<span class="barras">${[6,9,12,16].map((h,i)=>`<i style="height:${h}px" class="${i<n?"on":""}"></i>`).join("")}</span>`;}
+function cor(dbm,alfa){const c=dbm>=-60?[20,170,95]:dbm>=-67?[90,215,120]:dbm>=-75?[255,201,74]:dbm>=-82?[255,140,60]:[220,60,70];return `rgba(${c[0]},${c[1]},${c[2]},${alfa})`;}
+const r1=x=>Math.round(x);
+
+/* ================= desenho da planta ================= */
+function desenharPlanta(svgId,{mostrarNomes=false,pontos=true,cands=false,ap=null,rot=true,micro=false}={}){
+  let s="";
+  for(const [n,x,y] of SALAS)s+=`<text x="${x*PX}" y="${y*PX}" text-anchor="middle" font-size="17" font-weight="700" fill="#e8f0ff" opacity=".85" style="paint-order:stroke" stroke="#07142a" stroke-width="4">${n}</text>`;
+  for(const w of PAREDES){const est={concreto:["#e8f0ff",9],alvenaria:["#b8c6de",6],vidro:["#7fd3ff",4],drywall:["#d7c7a8",4],porta:["#a8743c",4],metal:["#9aa4b5",4]}[w.m];
+    s+=`<line x1="${w.a[0]*PX}" y1="${w.a[1]*PX}" x2="${w.b[0]*PX}" y2="${w.b[1]*PX}" stroke="${est[0]}" stroke-width="${est[1]}" stroke-linecap="round" ${w.m==="porta"?'stroke-dasharray="6 5"':""}/>`;}
+  if(mostrarNomes){[["concreto",13.25,9.8,90],["alvenaria",7.25,6.2,90],["vidro",4.5,7.35,0],["drywall",18.5,7.35,0],["metal",11.4,9.05,0]].forEach(([m,x,y,r])=>{
+    s+=`<text x="${x*PX}" y="${y*PX}" font-size="12" fill="#ffd166" text-anchor="middle" transform="rotate(${r} ${x*PX} ${y*PX})">${m} −${PERDA24[m]} dB</text>`;});}
+  s+=`<text x="${12.35*PX}" y="${1.4*PX}" font-size="12" text-anchor="middle" fill="#ffd166">${micro?"🔥 micro-ondas LIGADO":"micro-ondas"}</text>`;
+  if(rot)s+=icone(ROTEADOR.x,ROTEADOR.y,"R","#e0b66e","rot");
+  if(ap)s+=icone(ap.x,ap.y,"AP","#2ee59d","ap");
+  if(cands)for(const c of CANDIDATOS)s+=`<g class="cand-pt" data-c="${c.id}" style="cursor:pointer"><circle cx="${c.x*PX}" cy="${c.y*PX}" r="17" fill="#132c55" stroke="#e0b66e" stroke-width="3"/><text x="${c.x*PX}" y="${c.y*PX+6}" font-size="17" font-weight="900" text-anchor="middle" fill="#e0b66e">${c.id}</text></g>`;
+  if(pontos)for(const q of PONTOS)s+=`<g class="pt" data-p="${q.id}" style="cursor:pointer"><text x="${q.x*PX}" y="${q.y*PX}" font-size="26" text-anchor="middle">📍</text><text x="${q.x*PX}" y="${q.y*PX+16}" font-size="12" font-weight="800" text-anchor="middle" fill="#fff" style="paint-order:stroke" stroke="#07142a" stroke-width="3">${q.id}</text></g>`;
+  $(svgId).innerHTML=s;}
+function icone(x,y,t,c,cl){return `<g class="${cl}" style="cursor:grab"><circle cx="${x*PX}" cy="${y*PX}" r="20" fill="${c}" stroke="#07142a" stroke-width="3"/><text x="${x*PX}" y="${y*PX+6}" font-size="${t.length>1?14:17}" font-weight="900" text-anchor="middle" fill="#07142a">${t}</text></g>`;}
+function calor(canvasId,fontes,banda,semParedes,micro){
+  const c=$(canvasId),g=c.getContext("2d");g.clearRect(0,0,1000,600);const passo=10;
+  for(let x=0;x<1000;x+=passo)for(let y=0;y<600;y+=passo){
+    const q={x:(x+passo/2)/PX,y:(y+passo/2)/PX};let best=-120;
+    for(const f of fontes){let v=sinal(f,q,banda,semParedes);if(micro&&banda!=="5")v-=ruidoMicro(q);best=Math.max(best,v);}
+    g.fillStyle=cor(best,.55);g.fillRect(x,y,passo,passo);}
+}
+function ruidoMicro(q){const d=Math.hypot(q.x-12.35,q.y-0.6);return d<5?Math.round(12*(1-d/5)):0;}
+function legenda(id){$(id).innerHTML=[["−60 ou mais · ótimo",-55],["−61 a −67 · bom",-64],["−68 a −75 · fraco",-70],["−76 a −82 · ruim",-80],["abaixo de −82 · sem sinal",-90]].map(([t,v])=>`<span><i style="background:${cor(v,1)}"></i>${t}</span>`).join("");}
+function pontoNoMapa(ev,el){const r=el.getBoundingClientRect();return {x:(ev.clientX-r.left)/r.width*W,y:(ev.clientY-r.top)/r.height*H};}
+
+/* ================= estado, som e utilidades ================= */
+const E={nome:"",pontos:0,progresso:{},ap:null};
+const SALVO="caca-ao-sinal-v1";
+function carregar(){try{const s=JSON.parse(localStorage.getItem(SALVO)||"{}");E.progresso=s.progresso||{};E.nome=s.nome||"";E.ap=s.ap||null;}catch(e){}}
+function salvar(){try{localStorage.setItem(SALVO,JSON.stringify({progresso:E.progresso,nome:E.nome,ap:E.ap}));}catch(e){}}
+let somLigado=true,ctx=null;
+function bip(f=660,d=.08,tipo="sine",vol=.06){if(!somLigado)return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const o=ctx.createOscillator(),g=ctx.createGain();o.type=tipo;o.frequency.value=f;g.gain.value=vol;o.connect(g);g.connect(ctx.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+d);o.stop(ctx.currentTime+d+.02);}catch(e){}}
+const somBom=()=>{bip(660,.08);setTimeout(()=>bip(990,.12),90);};
+const somRuim=()=>bip(220,.18,"square",.04);
+const somClique=()=>bip(880,.03,"triangle",.04);
+$("btn-som").onclick=()=>{somLigado=!somLigado;$("btn-som").textContent=somLigado?"🔊":"🔇";};
+function telas(id){document.querySelectorAll(".tela").forEach(t=>t.classList.toggle("ativa",t.id===id));window.scrollTo(0,0);}
+function pontos(n,motivo){E.pontos=Math.max(0,E.pontos+n);$("hud-pontos").textContent=E.pontos;
+  if(motivo){const d=document.createElement("div");d.className="pop";d.innerHTML=(n>=0?`<span style="color:var(--verde)">+${n}</span>`:`<span style="color:var(--verm)">${n}</span>`)+" · "+motivo;document.body.appendChild(d);setTimeout(()=>d.remove(),1500);}}
+function fb(id,txt,cl){const e=$(id);e.className="feedback "+(cl||"");e.textContent=txt;}
+let relogio=null;
+function iniciarRelogio(seg,aoAcabar){pararRelogio();let s=seg;$("hud-tempo").style.display="";$("hud-seg").textContent=s;
+  relogio=setInterval(()=>{s--;$("hud-seg").textContent=Math.max(0,s);if(s<=10)$("hud-tempo").classList.add("alerta");if(s<=0){pararRelogio();aoAcabar&&aoAcabar();}},1000);}
+function pararRelogio(){if(relogio)clearInterval(relogio);relogio=null;$("hud-tempo").classList.remove("alerta");}
+function esconderRelogio(){pararRelogio();$("hud-tempo").style.display="none";}
+const embaralhar=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+
+/* ================= mapa de fases ================= */
+const FASES=[
+  {id:"survey",n:"FASE 1",t:"Survey com o celular",d:"Meça o sinal em 6 pontos do escritório e diga se está ótimo, bom, fraco ou ruim."},
+  {id:"local",n:"FASE 2",t:"Onde instalar o AP?",d:"Escolha entre 5 lugares e veja o mapa de calor. Paredes, metal e micro-ondas atrapalham."},
+  {id:"config",n:"FASE 3",t:"Configurar o AP",d:"SSID, segurança WPA2/WPA3, senha e canal. Depois teste com 4 aparelhos e leia o ipconfig."},
+  {id:"cartoes",n:"FASE 4",t:"Pode ou não pode?",d:"10 situações do dia a dia do técnico de Wi-Fi: ética, segurança e limites."}];
+function desenharMapa(){
+  $("mapa-fases").innerHTML=FASES.map(f=>{const p=E.progresso[f.id]||0;return `<div class="fase"><div class="num">${f.n}</div><h2>${f.t}</h2><p class="sub">${f.d}</p><div class="estrelas">${[1,2,3].map(i=>`<span class="${i<=p?"on":""}">★</span>`).join("")}</div><button class="botao" data-fase="${f.id}">Jogar</button></div>`;}).join("");
+  document.querySelectorAll("[data-fase]").forEach(b=>b.onclick=()=>{if(!garantirNome())return;somClique();INICIO[b.dataset.fase]();});}
+function garantirNome(){const n=$("nome").value.trim();if(!n){$("nome").focus();$("nome").style.borderColor="var(--verm)";return false;}E.nome=n;$("hud-nome").textContent="👷 "+n;salvar();return true;}
+$("btn-comecar").onclick=()=>{if(!garantirNome())return;somClique();iniciarSurvey();};
+$("btn-cola").onclick=()=>telas("t-cola");$("cola-voltar").onclick=()=>telas("t-inicio");
+
+/* ================= FASE 1: SURVEY ================= */
+let S=null;
+const NIVEIS=[["Ótimo","−60 ou mais"],["Bom","−61 a −67"],["Fraco","−68 a −75"],["Ruim","abaixo de −75"]];
+function leituraEm(q){return Math.round(sinal(ROTEADOR,q,"24"));}
+function iniciarSurvey(){
+  S={feitos:{},atual:null,acertos:0,fim:false};$("s-feitos").textContent=0;$("s-final").style.display="none";$("s-perg").style.display="none";
+  $("s-redes").innerHTML='<p class="peq">Clique num 📍</p>';$("s-local").textContent="Escolha um ponto no mapa";fb("s-feedback","");
+  calor("s-canvas",[],"24");$("s-canvas").getContext("2d").clearRect(0,0,1000,600);
+  desenharPlanta("s-svg",{});legenda("s-legenda");ligarPontos();telas("t-survey");iniciarRelogio(120,()=>fimSurvey(true));}
+function ligarPontos(){document.querySelectorAll("#s-svg .pt").forEach(g=>g.onclick=()=>medir(PONTOS.find(q=>q.id===g.dataset.p)));}
+function medir(q){
+  if(S.fim||S.feitos[q.id]!==undefined)return;somClique();S.atual=q;
+  const v=leituraEm(q);const viz=VIZINHOS.map(n=>({...n,v:Math.round(sinal(n,q,"24"))})).filter(n=>n.v>-90).sort((a,b)=>b.v-a.v);
+  $("s-local").textContent=`📍 ${q.id} · ${q.nome}`;
+  $("s-redes").innerHTML=`<div class="rede minha"><div><b>Horizonte_Escritorio</b><div class="peq">Conectado · canal 11 · WPA2</div></div><div style="text-align:right">${barras(v)}<div class="dbm">${v} dBm</div></div></div>`+
+    viz.map(n=>`<div class="rede"><div><b>${n.ssid}</b><div class="peq">vizinho · canal ${n.canal} · 🔒</div></div><div style="text-align:right">${barras(n.v)}<div class="dbm">${n.v} dBm</div></div></div>`).join("")+
+    (q.id==="P3"?`<p class="peq">⚠️ Alguém está esquentando o almoço: o micro-ondas também usa 2,4 GHz.</p>`:"");
+  $("s-perg").style.display="";fb("s-feedback","");
+  $("s-opcoes").innerHTML=NIVEIS.map(([n,f])=>`<button class="opcao" data-n="${n}">${n}<div class="peq">${f}</div></button>`).join("");
+  document.querySelectorAll("#s-opcoes .opcao").forEach(b=>b.onclick=()=>classificar(b.dataset.n,b));}
+function classificar(n,b){
+  const q=S.atual;if(!q||S.feitos[q.id]!==undefined)return;const v=leituraEm(q);const certo=nivel(v)[0];
+  const ok=n===certo;S.feitos[q.id]=v;
+  document.querySelectorAll("#s-opcoes .opcao").forEach(o=>{o.disabled=true;if(o.dataset.n===certo)o.classList.add("certa");});
+  if(ok){S.acertos++;pontos(80,"leitura certa");somBom();fb("s-feedback",`✔ ${v} dBm é ${certo.toLowerCase()}.`,"bom");}
+  else{b.classList.add("errada");somRuim();fb("s-feedback",`✖ ${v} dBm é ${certo.toLowerCase()}. Lembre: quanto mais perto de zero, mais forte.`,"ruim");}
+  // marca o ponto no mapa com a cor
+  const g=$("s-canvas").getContext("2d");g.fillStyle=cor(v,.85);g.beginPath();g.arc(q.x*PX,q.y*PX,30,0,7);g.fill();
+  const feitos=Object.keys(S.feitos).length;$("s-feitos").textContent=feitos;
+  if(feitos===6)setTimeout(()=>fimSurvey(false),900);}
+function fimSurvey(tempo){
+  if(S.fim)return;S.fim=true;pararRelogio();
+  $("s-final").style.display="";fb("s-final-fb","");
+  const ops=[["reuniao","Na sala de reunião e na diretoria (os fundos)"],["recepcao","Na recepção, perto do roteador"],["financeiro","No financeiro"],["nenhum","Em lugar nenhum: o sinal está bom em tudo"]];
+  $("s-final-op").innerHTML=ops.map(([k,t])=>`<button class="opcao" data-k="${k}">${t}</button>`).join("");
+  document.querySelectorAll("#s-final-op .opcao").forEach(b=>b.onclick=()=>{
+    document.querySelectorAll("#s-final-op .opcao").forEach(o=>o.disabled=true);
+    const ok=b.dataset.k==="reuniao";b.classList.add(ok?"certa":"errada");
+    if(ok){pontos(150,"diagnóstico certo");somBom();fb("s-final-fb","✔ Os fundos estão ruins: a parede de concreto e a distância derrubam o Wi-Fi do roteador. A copa está fraca, mas não é prioridade do cliente.","bom");}
+    else{somRuim();fb("s-final-fb","✖ Olhe as medições: P5 e P6 (os fundos) estão ruins, abaixo de −85 dBm. O AP vai para lá.","ruim");document.querySelector('#s-final-op [data-k="reuniao"]').classList.add("certa");}
+    setTimeout(()=>{const tot=S.acertos+(ok?1:0);const est=tot>=7?3:tot>=5?2:1;E.progresso.survey=Math.max(E.progresso.survey||0,est);salvar();
+      mostrarResultado(tempo?"O tempo acabou!":"Survey concluído","Você mediu antes de instalar: é assim que o técnico decide onde vai o AP.",est,
+        [["Leituras certas",`${S.acertos} de 6`],["Pontos medidos",`${Object.keys(S.feitos).length} de 6`],["Diagnóstico",ok?"certo":"errado"]]);},1800);});
+  $("s-final").scrollIntoView({behavior:"smooth"});}
+
+/* ================= FASE 2: ONDE INSTALAR ================= */
+let L=null;
+function avaliar(ap,banda="24"){
+  return PONTOS.map(q=>{let r=sinal(ROTEADOR,q,banda),a=ap?sinal(ap,q,banda):-120;if(ap&&ap.id==="D"&&banda!=="5")a-=8;return {...q,v:Math.round(Math.max(r,a)),veio:a>r?"AP":"roteador"};});}
+function iniciarLocal(){esconderRelogio();L={tent:1,sel:null,banda:"24",fim:false};$("l-tent").textContent=1;$("l-checks").innerHTML="";fb("l-feedback","");$("l-confirmar").style.display="none";
+  $("l-cand").innerHTML=CANDIDATOS.map(c=>`<button data-c="${c.id}"><b>${c.id}</b> · ${c.t}<div class="peq">${c.d}</div></button>`).join("");
+  document.querySelectorAll("#l-cand button").forEach(b=>b.onclick=()=>escolher(b.dataset.c));
+  legenda("l-legenda");desenharLocal();telas("t-local");}
+function desenharLocal(){
+  const ap=L.sel?CANDIDATOS.find(c=>c.id===L.sel):null;
+  calor("l-canvas",ap?[ROTEADOR,ap]:[ROTEADOR],L.banda,false,ap&&ap.id==="D");
+  desenharPlanta("l-svg",{cands:true,mostrarNomes:true});
+  document.querySelectorAll("#l-svg .cand-pt").forEach(g=>g.onclick=()=>escolher(g.dataset.c));
+  document.querySelectorAll("#l-cand button").forEach(b=>b.classList.toggle("sel",b.dataset.c===L.sel));
+  if(ap){const res=avaliar(ap,L.banda);
+    $("l-checks").innerHTML=res.map(r=>{const n=nivel(r.v);return `<div><span>${r.id} · ${r.nome}${r.obrig?" *":""}</span><span class="${n[1]}">${r.v} dBm · ${n[0]}</span></div>`;}).join("")+`<p class="peq">* obrigatório: −67 dBm ou mais</p>`;}}
+document.querySelectorAll("#l-banda button").forEach(b=>b.onclick=()=>{L.banda=b.dataset.b;document.querySelectorAll("#l-banda button").forEach(x=>x.classList.toggle("on",x===b));desenharLocal();
+  if(L.banda==="5")fb("l-feedback","5 GHz: veja como o alcance encolhe e as paredes pesam mais. Por isso o AP de 2,4 GHz cobre mais longe.","medio");});
+const EXPLICA={
+  A:"Metal bloqueia o rádio: dentro do armário o AP perde força para todo lado. AP nunca vai dentro de armário ou rack fechado.",
+  B:"No canto, metade do sinal vai para fora do prédio e a diretoria fica no limite. Funciona, mas não é o melhor lugar.",
+  C:"No alto e no meio da área que precisa de sinal: cobre a reunião e a diretoria, atravessando só a divisória de gesso.",
+  D:"O micro-ondas também usa 2,4 GHz e é uma caixa de metal: quando liga, derruba o Wi-Fi perto dele. E a parede de concreto ainda fica no caminho.",
+  E:"Do corredor o sinal ainda atravessa a parede de concreto da sala de reunião. Melhora pouco onde mais precisa."};
+function escolher(id){if(L.fim)return;somClique();L.sel=id;L.banda="24";document.querySelectorAll("#l-banda button").forEach(x=>x.classList.toggle("on",x.dataset.b==="24"));desenharLocal();$("l-confirmar").style.display="";fb("l-feedback","Confira os pontos e clique em Instalar aqui.","");}
+$("l-confirmar").onclick=()=>{
+  if(!L.sel||L.fim)return;const ap=CANDIDATOS.find(c=>c.id===L.sel);const res=avaliar(ap,"24");
+  const obrigOk=res.filter(r=>r.obrig).every(r=>r.v>=-67);const pior=Math.min(...res.filter(r=>r.obrig).map(r=>r.v));
+  if(obrigOk&&L.sel==="C"){const n=[300,180,100][Math.min(2,L.tent-1)];pontos(n,"lugar certo");somBom();fb("l-feedback","✔ "+EXPLICA.C,"bom");L.fim=true;
+    E.ap={x:ap.x,y:ap.y};const est=L.tent===1?3:L.tent===2?2:1;E.progresso.local=Math.max(E.progresso.local||0,est);salvar();
+    setTimeout(()=>mostrarResultado("AP no lugar certo","Alto, perto do centro da área que precisa de sinal e longe de metal e micro-ondas.",est,
+      [["Tentativas",L.tent],["Pior ponto obrigatório",pior+" dBm"]]),2400);}
+  else{somRuim();pontos(-30,"lugar ruim");fb("l-feedback",(obrigOk?"Quase! ":"✖ ")+EXPLICA[L.sel]+(obrigOk?" Tente achar um lugar com mais folga.":""),obrigOk?"medio":"ruim");L.tent++;$("l-tent").textContent=L.tent;}};
+
+/* ================= FASE 3: CONFIGURAR ================= */
+let C=null;
+const SALA={x:16.5,y:3.5};
+function interferencia(canal){
+  const fontes=[...VIZINHOS.map(n=>({...n,v:sinal(n,SALA,"24")})),{ssid:"Horizonte_Escritorio (roteador)",canal:11,v:sinal(ROTEADOR,SALA,"24")}];
+  let pior=-120,quem=[];for(const f of fontes){if(Math.abs(f.canal-canal)<5&&f.v>-85){pior=Math.max(pior,f.v);quem.push(f.ssid);}}
+  return {nivel:pior>-70?"Alta":pior>-85&&quem.length?"Média":"Baixa",quem};}
+function iniciarConfig(){
+  esconderRelogio();C={tent:1,fim:false,perguntou:false};$("c-tent").textContent=1;$("c-teste").style.display="none";fb("c-feedback","");
+  $("c-ssid").value="AP-Default";$("c-seg").value="aberta";$("c-senha").value="12345678";
+  $("c-canal").innerHTML=Array.from({length:11},(_,i)=>`<option value="${i+1}" ${i===5?"selected":""}>${i+1}</option>`).join("");
+  const viz=[...VIZINHOS.map(n=>({ssid:n.ssid,canal:n.canal,v:Math.round(sinal(n,SALA,"24"))})),{ssid:"Horizonte_Escritorio",canal:11,v:Math.round(sinal(ROTEADOR,SALA,"24"))}].sort((a,b)=>b.v-a.v);
+  $("c-viz").innerHTML="<tr><th>Rede</th><th>Canal</th><th>Sinal</th></tr>"+viz.map(n=>`<tr><td>${n.ssid}</td><td>${n.canal}</td><td class="dbm">${n.v} dBm</td></tr>`).join("");
+  telas("t-config");}
+function senhaForte(s){return s.length>=12&&/[a-zA-Z]/.test(s)&&/[0-9]/.test(s)&&!/^(.)\1+$/.test(s)&&!/12345678|senha|password/i.test(s);}
+$("c-aplicar").onclick=()=>{
+  if(C.fim)return;somClique();
+  const ssid=$("c-ssid").value.trim(),seg=$("c-seg").value,senha=$("c-senha").value,canal=+$("c-canal").value;
+  const erros=[];
+  if(ssid!=="Horizonte_Reuniao")erros.push(ssid.toLowerCase()==="horizonte_reuniao"?"SSID quase certo: confira maiúsculas e minúsculas (Horizonte_Reuniao).":"O SSID (nome da rede) precisa ser Horizonte_Reuniao.");
+  if(seg==="aberta")erros.push("Rede aberta: qualquer pessoa na rua entra e vê o que passa na rede.");
+  if(seg==="wep")erros.push("WEP é de 1999 e se quebra em minutos. Use WPA2 ou WPA2/WPA3.");
+  if((seg==="wpa2"||seg==="misto"||seg==="wpa3")&&!senhaForte(senha))erros.push("Senha fraca: 12 caracteres ou mais, com letras e números (e nada de 12345678).");
+  const itf=interferencia(canal);if(itf.nivel!=="Baixa")erros.push(`Canal ${canal}: interferência ${itf.nivel.toLowerCase()} com ${itf.quem.join(" e ")}. Os canais 1, 6 e 11 não se sobrepõem.`);
+  const aps=[
+    {n:"💻 Notebook da diretoria",wpa3:true},{n:"📱 Celular antigo da recepcionista",wpa3:false},
+    {n:"📺 TV da sala de reunião",wpa3:false},{n:"💻 Notebook de visitante",wpa3:true}];
+  const lig=aps.map(a=>{if(ssid!=="Horizonte_Reuniao")return [a.n,"nok","Não acha a rede Horizonte_Reuniao"];
+    if(seg==="wpa3"&&!a.wpa3)return [a.n,"nok","Não conecta: aparelho antigo não tem WPA3"];
+    if(seg==="aberta"||seg==="wep")return [a.n,"meio","Conecta, mas sem proteção"];
+    return [a.n,"ok","Conectado ✔ · IP por DHCP"];});
+  if(seg==="wpa3")erros.push("Só WPA3 deixou a TV e o celular antigo de fora. O modo misto WPA2/WPA3 atende os dois.");
+  $("c-teste").style.display="";
+  $("c-aparelhos").innerHTML=lig.map(([n,c,t])=>`<div class="aparelho"><div>${n}</div><div class="st ${c}">${t}</div></div>`).join("");
+  if(!erros.length){
+    $("c-ipconfig").innerHTML=`<p class="peq">No notebook da diretoria, prompt de comando:</p><div class="terminal">C:\\&gt; ipconfig
+
+Adaptador de Rede sem Fio Wi-Fi:
+
+   Sufixo DNS específico de conexão. :
+   Endereço IPv4. . . . . . . . . . . : <span class="am">192.168.0.104</span>
+   Máscara de Sub-rede . . . . . . . . : 255.255.255.0
+   Gateway Padrão. . . . . . . . . . . : <span class="am">192.168.0.1</span>
+
+C:\\&gt; ping 192.168.0.20     (impressora)
+Resposta de 192.168.0.20: bytes=32 tempo=4ms TTL=128</div>`;
+    const n=[250,150,80][Math.min(2,C.tent-1)];pontos(n,"AP configurado");somBom();fb("c-feedback","✔ Tudo certo: rede com nome do cliente, WPA2/WPA3 ou WPA2, senha forte e canal 1 (livre).","bom");C.fim=true;perguntaIP();}
+  else{$("c-ipconfig").innerHTML="";somRuim();pontos(-20,"ajuste");fb("c-feedback","✖ "+erros.join(" "),"ruim");C.tent++;$("c-tent").textContent=C.tent;}
+  $("c-teste").scrollIntoView({behavior:"smooth",block:"nearest"});};
+function perguntaIP(){
+  $("c-pergunta").style.display="";fb("c-fb2","");
+  const ops=[["rot","O roteador da recepção (servidor DHCP)"],["ap","O access point"],["sw","O switch"],["prov","O provedor de internet"]];
+  $("c-op").innerHTML=embaralhar(ops).map(([k,t])=>`<button class="opcao" data-k="${k}">${t}</button>`).join("");
+  document.querySelectorAll("#c-op .opcao").forEach(b=>b.onclick=()=>{
+    document.querySelectorAll("#c-op .opcao").forEach(o=>o.disabled=true);const ok=b.dataset.k==="rot";b.classList.add(ok?"certa":"errada");
+    if(ok){pontos(100,"certo!");somBom();fb("c-fb2","✔ O AP só faz a ponte entre o rádio e o cabo. Quem entrega IP continua sendo o DHCP do roteador: por isso o gateway é 192.168.0.1.","bom");}
+    else{somRuim();document.querySelector('#c-op [data-k="rot"]').classList.add("certa");fb("c-fb2","✖ O AP não entrega IP: ele só liga o Wi-Fi ao cabo. O DHCP é do roteador (gateway 192.168.0.1).","ruim");}
+    setTimeout(()=>{const est=C.tent===1&&ok?3:C.tent<=2?2:1;E.progresso.config=Math.max(E.progresso.config||0,est);salvar();
+      mostrarResultado("AP configurado","Rede da sala de reunião no ar, segura e sem brigar com os vizinhos.",est,[["Tentativas",C.tent],["Pergunta do DHCP",ok?"certa":"errada"]]);},2600);});}
+
+/* ================= FASE 4: PODE OU NÃO PODE ================= */
+const CARTOES=[
+  ["Medir o sinal das redes dos vizinhos com o celular para escolher o canal.",true,"Ver nome, canal e força das redes é o survey. Só não pode tentar entrar nelas."],
+  ["Tentar senhas na rede da clínica vizinha para \"testar se é segura\".",false,"Entrar em rede alheia sem autorização é invasão, mesmo como teste."],
+  ["Fazer o survey no escritório do cliente com a autorização dele.",true,"Survey autorizado: o dono sabe e concorda. É o jeito certo."],
+  ["Instalar o AP dentro do rack de metal fechado para ficar bonito.",false,"Metal bloqueia o rádio. O AP vai no alto e em lugar aberto."],
+  ["Dizer ao cliente que o Packet Tracer provou que o Wi-Fi cobre a sala inteira.",false,"O Packet Tracer não mede parede nem interferência. Cobertura só se comprova medindo no local."],
+  ["Deixar a rede da sala de reunião aberta, sem senha, para facilitar para os visitantes.",false,"Rede aberta deixa qualquer um entrar. Visitante recebe a senha (ou uma rede de visitantes)."],
+  ["Escolher WPA2/WPA3 porque a TV antiga não tem WPA3.",true,"O modo misto protege e deixa os aparelhos antigos entrarem."],
+  ["Usar o canal 6 porque a clínica vizinha usa o 6 e \"assim fica igual\".",false,"Mesmo canal do vizinho = um atrapalha o outro. Escolha um canal livre (1, 6 ou 11)."],
+  ["Anotar no relatório o sinal medido em cada ponto, com o lugar e o horário.",true,"Documentar as medições é parte da entrega: prova o antes e o depois."],
+  ["Mudar a senha do Wi-Fi do roteador da escola para testar a aula.",false,"Rede da escola não é o seu cliente: não mexa sem autorização."],
+  ["Explicar ao cliente que o micro-ondas ligado pode derrubar o Wi-Fi da copa.",true,"Micro-ondas usa 2,4 GHz. Avisar o cliente é bom atendimento."],
+  ["Entregar a senha do Wi-Fi e a do painel do AP escritas no mesmo post-it colado no AP.",false,"Senha do painel fica com o responsável, em envelope. Nunca colada no aparelho."]];
+let Fz=null;
+function iniciarCartoes(){Fz={lista:embaralhar(CARTOES).slice(0,10),i:0,acertos:0,trava:false};$("f-total").textContent=10;telas("t-cartoes");rodadaCartao();}
+function rodadaCartao(){const c=Fz.lista[Fz.i];$("f-n").textContent=Fz.i+1;$("f-cartao").textContent=c[0];fb("f-feedback","");Fz.trava=false;iniciarRelogio(12,()=>responderCartao(null));}
+function responderCartao(r){
+  if(Fz.trava)return;Fz.trava=true;const resto=+$("hud-seg").textContent||0;pararRelogio();const c=Fz.lista[Fz.i];
+  if(r===c[1]){Fz.acertos++;pontos(60+resto*5,"certo!");somBom();fb("f-feedback","✔ "+c[2],"bom");}
+  else{somRuim();fb("f-feedback",(r===null?"⏱ Tempo! ":"✖ ")+c[2],"ruim");}
+  Fz.i++;setTimeout(()=>{if(Fz.i<Fz.lista.length)rodadaCartao();else{esconderRelogio();const est=Fz.acertos>=9?3:Fz.acertos>=7?2:1;E.progresso.cartoes=Math.max(E.progresso.cartoes||0,est);salvar();
+    mostrarResultado("Fase 4 concluída","Técnico bom mede, documenta e só mexe no que tem autorização.",est,[["Acertos",`${Fz.acertos} de 10`]]);}},r===c[1]?1600:2800);}
+$("f-pode").onclick=()=>responderCartao(true);$("f-nao").onclick=()=>responderCartao(false);
+
+/* ================= MODO LIVRE ================= */
+let V={banda:"24",rot:{...ROTEADOR},ap:{x:16.5,y:6.6},arrasta:null};
+function iniciarLivre(){esconderRelogio();telas("t-livre");legenda("v-legenda");
+  $("v-perdas").innerHTML="<tr><th>Barreira</th><th>Perda</th></tr>"+Object.entries(PERDA24).map(([k,v])=>`<tr><td>${NOME_MAT[k]}</td><td class="dbm">−${v} dB</td></tr>`).join("")+`<tr><td>Micro-ondas ligado (perto dele)</td><td class="dbm">até −12 dB</td></tr>`;
+  desenharLivre();}
+function desenharLivre(){
+  const fontes=[V.rot];if($("v-ap").checked)fontes.push(V.ap);const micro=$("v-micro").checked,sem=$("v-sem-paredes").checked;
+  calor("v-canvas",fontes,V.banda,sem,micro);
+  desenharPlanta("v-svg",{mostrarNomes:$("v-paredes").checked,ap:$("v-ap").checked?V.ap:null,micro,rot:true});
+  // reposiciona o roteador arrastado
+  const rg=document.querySelector("#v-svg .rot");if(rg){rg.querySelector("circle").setAttribute("cx",V.rot.x*PX);rg.querySelector("circle").setAttribute("cy",V.rot.y*PX);rg.querySelector("text").setAttribute("x",V.rot.x*PX);rg.querySelector("text").setAttribute("y",V.rot.y*PX+6);}
+  $("v-checks").innerHTML=PONTOS.map(q=>{let best=-120;for(const f of fontes){let v=sinal(f,q,V.banda,sem);if(micro&&V.banda!=="5")v-=ruidoMicro(q);best=Math.max(best,v);}best=Math.round(best);const n=nivel(best);return `<div><span>${q.id} · ${q.nome}</span><span class="${n[1]}">${best} dBm · ${n[0]}</span></div>`;}).join("");
+  document.querySelectorAll("#v-svg .rot,#v-svg .ap").forEach(g=>g.onpointerdown=ev=>{V.arrasta=g.classList.contains("ap")?"ap":"rot";ev.preventDefault();});}
+const vPlanta=$("v-planta");
+vPlanta.addEventListener("pointermove",ev=>{const q=pontoNoMapa(ev,vPlanta);
+  if(V.arrasta){const alvo=V.arrasta==="ap"?V.ap:V.rot;alvo.x=Math.min(19.6,Math.max(0.4,q.x));alvo.y=Math.min(11.6,Math.max(0.4,q.y));desenharLivre();return;}
+  const fontes=[V.rot];if($("v-ap").checked)fontes.push(V.ap);let best=-120;for(const f of fontes){let v=sinal(f,q,V.banda,$("v-sem-paredes").checked);if($("v-micro").checked&&V.banda!=="5")v-=ruidoMicro(q);best=Math.max(best,v);}
+  const l=$("v-leitura");const r=vPlanta.getBoundingClientRect();l.style.display="block";l.style.left=(ev.clientX-r.left+14)+"px";l.style.top=(ev.clientY-r.top-10)+"px";l.innerHTML=`${Math.round(best)} dBm · ${nivel(best)[0]}`;});
+vPlanta.addEventListener("pointerleave",()=>{$("v-leitura").style.display="none";});
+window.addEventListener("pointerup",()=>{V.arrasta=null;});
+document.querySelectorAll("#v-banda button").forEach(b=>b.onclick=()=>{V.banda=b.dataset.b;document.querySelectorAll("#v-banda button").forEach(x=>x.classList.toggle("on",x===b));desenharLivre();});
+["v-ap","v-micro","v-paredes","v-sem-paredes"].forEach(id=>$(id).onchange=desenharLivre);
+$("btn-livre").onclick=()=>{somClique();iniciarLivre();};$("v-voltar").onclick=()=>{desenharMapa();telas("t-inicio");};
+const lPlanta=$("l-canvas").parentElement;
+lPlanta.addEventListener("pointermove",ev=>{if(!L||!L.sel)return;const q=pontoNoMapa(ev,lPlanta);const ap=CANDIDATOS.find(c=>c.id===L.sel);
+  let a=sinal(ap,q,L.banda);if(ap.id==="D"&&L.banda!=="5")a-=ruidoMicro(q);const best=Math.max(sinal(ROTEADOR,q,L.banda),a);
+  const l=$("l-leitura"),r=lPlanta.getBoundingClientRect();l.style.display="block";l.style.left=(ev.clientX-r.left+14)+"px";l.style.top=(ev.clientY-r.top-10)+"px";l.innerHTML=`${Math.round(best)} dBm · ${nivel(best)[0]}`;});
+lPlanta.addEventListener("pointerleave",()=>{$("l-leitura").style.display="none";});
+
+/* ================= resultado ================= */
+function codigo(){let h=11;const s=E.nome+"|"+E.pontos+"|"+JSON.stringify(E.progresso);for(const ch of s)h=(h*31+ch.charCodeAt(0))%1679616;return "WF-"+h.toString(36).toUpperCase().padStart(4,"0");}
+function mostrarResultado(tit,sub,est,linhas){
+  esconderRelogio();$("r-titulo").textContent=tit;$("r-sub").textContent=sub;
+  $("r-medalha").textContent=est>=3?"🏆":est===2?"🥈":"🥉";
+  $("r-estrelas").innerHTML=[1,2,3].map(i=>`<span class="${i<=est?"on":""}">★</span>`).join("");
+  const total=FASES.reduce((s,f)=>s+(E.progresso[f.id]||0),0);
+  const cargo=total>=11?"Especialista em Wi-Fi":total>=8?"Técnico(a) pleno":total>=4?"Técnico(a) júnior":"Estagiário(a) de rádio";
+  $("r-lista").innerHTML=linhas.map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join("")+`<div><span>Pontos no chamado</span><b>${E.pontos}</b></div><div><span>Estrelas nas 4 fases</span><b>${total} de 12 · ${cargo}</b></div>`;
+  $("r-codigo").textContent=codigo();telas("t-resultado");if(est>=2){somBom();setTimeout(somBom,250);}}
+$("r-voltar").onclick=()=>{desenharMapa();telas("t-inicio");};
+const INICIO={survey:iniciarSurvey,local:iniciarLocal,config:iniciarConfig,cartoes:iniciarCartoes};
+
+/* ================= início ================= */
+carregar();if(E.nome){$("nome").value=E.nome;$("hud-nome").textContent="👷 "+E.nome;}
+desenharMapa();
+// atalho para abrir direto numa tela (usado nas fotos de tela dos slides): caca-ao-sinal.html#livre
+if(location.hash==="#livre")iniciarLivre();
+window.__modelo={sinal,PONTOS,CANDIDATOS,ROTEADOR,VIZINHOS,avaliar,interferencia,nivel};
+</script>
+</body>
+</html>
