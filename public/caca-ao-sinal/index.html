@@ -109,6 +109,40 @@ table.viz td,table.viz th{border:1px solid var(--borda);padding:5px 8px;text-ali
 .seg button{background:#0a1a35;color:var(--tinta);border:0;padding:7px 12px;font-weight:700}
 .seg button.on{background:var(--azul)}
 .tabela-niveis td{padding:4px 8px}
+
+/* ===== mapa de fases estilo jogo ===== */
+.mundo{position:relative;border:1px solid var(--borda);border-radius:20px;overflow:hidden;margin-bottom:14px;
+  background:radial-gradient(600px 300px at 15% 20%,rgba(47,124,246,.18),transparent 70%),radial-gradient(500px 300px at 85% 80%,rgba(33,199,168,.15),transparent 70%),linear-gradient(180deg,#0e2549,#081a36)}
+.mundo-palco{position:relative;width:100%;aspect-ratio:16/7}
+.mundo-palco svg.estrada{position:absolute;inset:0;width:100%;height:100%}
+.estrada path{vector-effect:non-scaling-stroke}
+.estrada .base{fill:none;stroke:#28497f;stroke-width:22;stroke-linecap:round}
+.estrada .tracejado{fill:none;stroke:#e0b66e;stroke-width:3;stroke-dasharray:10 12;stroke-linecap:round;opacity:.55}
+.estrada .feito{fill:none;stroke:#2ee59d;stroke-width:7;stroke-linecap:round;opacity:.85}
+.estrada .deco{fill:#ffffff10}
+.no{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;color:#e8f0ff;padding:0;cursor:pointer;font:inherit}
+.no .bola{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;font-size:38px;background:linear-gradient(145deg,var(--g1),var(--g2));
+  border:4px solid #0b1e3d;box-shadow:0 0 0 4px #3b62a3,0 10px 22px rgba(0,0,0,.45);transition:transform .15s}
+.no:hover .bola{transform:scale(1.08)}
+.no.sel .bola{box-shadow:0 0 0 5px #e0b66e,0 0 28px rgba(224,182,110,.6)}
+.no.feita .bola{box-shadow:0 0 0 4px #2ee59d,0 10px 22px rgba(0,0,0,.45)}
+.no.atual .bola{animation:pulsa 1.2s ease-in-out infinite alternate}
+@keyframes pulsa{to{transform:scale(1.1)}}
+.no.bloq{cursor:not-allowed}.no.bloq .bola{filter:grayscale(1) brightness(.55)}
+.no .rotulo{background:#07142acc;border:1px solid var(--borda);border-radius:999px;padding:2px 10px;font-weight:800;font-size:13px;white-space:nowrap}
+.no .est{font-size:15px;letter-spacing:1px;color:#33507e}.no .est .on{color:#ffc94a}
+.no .bandeira{position:absolute;top:-32px;font-size:24px;animation:pulsa .8s ease-in-out infinite alternate}
+.mundo-info{display:flex;gap:16px;align-items:center;padding:16px 18px;border-top:1px solid var(--borda);background:#07142a99;flex-wrap:wrap}
+.mundo-info .ic{flex:none;width:54px;height:54px;border-radius:14px;display:grid;place-items:center;font-size:28px;background:linear-gradient(145deg,var(--g1),var(--g2))}
+.mundo-info .txt{flex:1;min-width:220px}.mundo-info h2{margin:0}.mundo-info p{margin:4px 0 0;opacity:.8}
+.mundo-info .num{color:#e0b66e;font-weight:800;font-size:13px}
+.mundo-info .estrelas{font-size:22px}
+.aviso-nome[hidden],#toast-nome[hidden]{display:none}
+.aviso-nome{margin:6px 0 0;color:#fff;background:#ff5a5f;border-radius:10px;padding:8px 12px;font-weight:800;display:inline-block}
+input.nome.erro{border:2px solid #ff5a5f;box-shadow:0 0 0 4px rgba(255,90,95,.25);animation:treme .35s}
+@keyframes treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+#toast-nome{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:50;background:#ff5a5f;color:#fff;font-weight:800;padding:12px 18px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+@media (max-width:700px){.mundo-palco{aspect-ratio:3/4}.no .bola{width:64px;height:64px;font-size:28px}.no .rotulo{font-size:11px}}
 </style>
 </head>
 <body>
@@ -129,13 +163,14 @@ table.viz td,table.viz th{border:1px solid var(--borda);padding:5px 8px;text-ali
     <h1>Caça ao <b>Sinal</b></h1>
     <p class="sub">O Wi-Fi da sala de reunião do Escritório Horizonte cai no meio das chamadas de vídeo. Você é o técnico: meça o sinal pelo escritório (o <i>survey</i>, levantamento de rádio), escolha onde instalar o access point (AP, ponto de acesso), configure com segurança e prove que os aparelhos conectaram.</p>
     <p><input class="nome" id="nome" maxlength="24" placeholder="Seu nome de técnico(a)"></p>
+    <p class="aviso-nome" id="aviso-nome" role="alert" hidden>Escreva o seu nome aqui antes de jogar.</p>
     <div class="linha">
       <button class="botao dour" id="btn-comecar">Começar o chamado</button>
       <button class="botao cinza" id="btn-livre">Modo livre (mapa de calor)</button>
       <button class="botao cinza" id="btn-cola">Cola do sinal</button>
     </div>
   </div>
-  <div class="grade4" id="mapa-fases"></div>
+  <div class="mundo" id="mapa-fases"></div>
   <p class="peq" style="margin-top:10px">Simulação educativa: as paredes, as distâncias e os números são de um escritório inventado. No mundo real, só a medição no local (com o celular ou o notebook) mostra a cobertura de verdade.</p>
 </section>
 
@@ -439,14 +474,41 @@ const embaralhar=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(M
 
 /* ================= mapa de fases ================= */
 const FASES=[
-  {id:"survey",n:"FASE 1",t:"Survey com o celular",d:"Meça o sinal em 6 pontos do escritório e diga se está ótimo, bom, fraco ou ruim."},
-  {id:"local",n:"FASE 2",t:"Onde instalar o AP?",d:"Escolha entre 5 lugares e veja o mapa de calor. Paredes, metal e micro-ondas atrapalham."},
-  {id:"config",n:"FASE 3",t:"Configurar o AP",d:"SSID, segurança WPA2/WPA3, senha e canal. Depois teste com 4 aparelhos e leia o ipconfig."},
-  {id:"cartoes",n:"FASE 4",t:"Pode ou não pode?",d:"10 situações do dia a dia do técnico de Wi-Fi: ética, segurança e limites."}];
+  {ic:"📶",g1:"#2f7cf6",g2:"#5b4ff0",id:"survey",n:"FASE 1",t:"Survey com o celular",d:"Meça o sinal em 6 pontos do escritório e diga se está ótimo, bom, fraco ou ruim."},
+  {ic:"📍",g1:"#f5b942",g2:"#e0662b",id:"local",n:"FASE 2",t:"Onde instalar o AP?",d:"Escolha entre 5 lugares e veja o mapa de calor. Paredes, metal e micro-ondas atrapalham."},
+  {ic:"⚙️",g1:"#21c7a8",g2:"#1a7fd1",id:"config",n:"FASE 3",t:"Configurar o AP",d:"SSID, segurança WPA2/WPA3, senha e canal. Depois teste com 4 aparelhos e leia o ipconfig."},
+  {ic:"🃏",g1:"#a78bfa",g2:"#e0559b",id:"cartoes",n:"FASE 4",t:"Pode ou não pode?",d:"10 situações do dia a dia do técnico de Wi-Fi: ética, segurança e limites."}];
+let FASE_SEL=null;
 function desenharMapa(){
-  $("mapa-fases").innerHTML=FASES.map(f=>{const p=E.progresso[f.id]||0;return `<div class="fase"><div class="num">${f.n}</div><h2>${f.t}</h2><p class="sub">${f.d}</p><div class="estrelas">${[1,2,3].map(i=>`<span class="${i<=p?"on":""}">★</span>`).join("")}</div><button class="botao" data-fase="${f.id}">Jogar</button></div>`;}).join("");
+  const estreito=window.innerWidth<=700;
+  const pos=estreito?[[30,84],[70,62],[30,40],[70,17]]:[[11,66],[36,30],[63,68],[89,32]];
+  const todas=location.hash.includes("todas");
+  const aberta=i=>todas||i===0||(E.progresso[FASES[i-1].id]||0)>0;
+  const atual=FASES.findIndex((f,i)=>aberta(i)&&!(E.progresso[f.id]||0));
+  if(FASE_SEL===null||!aberta(FASE_SEL))FASE_SEL=atual>=0?atual:0;
+  const W=1000,H=estreito?1333:437,P=pos.map(([x,y])=>[x*W/100,y*H/100]);
+  const curva=pts=>pts.map((p,i)=>{if(!i)return `M${p[0]},${p[1]}`;const q=pts[i-1],mx=(q[0]+p[0])/2,my=(q[1]+p[1])/2;
+    return estreito?`C${q[0]},${my} ${p[0]},${my} ${p[0]},${p[1]}`:`C${mx},${q[1]} ${mx},${p[1]} ${p[0]},${p[1]}`;}).join(" ");
+  const feitas=FASES.reduce((n,f,i)=>(E.progresso[f.id]||0)>0&&n===i?i+1:n,0);
+  const caminho=curva(P),caminhoFeito=feitas>0?curva(P.slice(0,Math.min(feitas+1,P.length))):"";
+  let deco="";for(let i=0;i<14;i++){deco+=`<circle class="deco" cx="${(i*137)%W}" cy="${(i*251)%H}" r="${18+(i*7)%30}"/>`;}
+  const est=p=>[1,2,3].map(k=>`<span class="${k<=p?"on":""}">★</span>`).join("");
+  let html=`<div class="mundo-palco"><svg class="estrada" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${deco}<path class="base" d="${caminho}"/>${caminhoFeito?`<path class="feito" d="${caminhoFeito}"/>`:""}<path class="tracejado" d="${caminho}"/></svg>`;
+  FASES.forEach((f,i)=>{const p=E.progresso[f.id]||0,ab=aberta(i);
+    html+=`<button class="no ${p?"feita":""} ${ab?"":"bloq"} ${i===FASE_SEL?"sel":""} ${i===atual?"atual":""}" data-no="${i}" style="left:${pos[i][0]}%;top:${pos[i][1]}%;--g1:${f.g1};--g2:${f.g2}" title="${ab?f.t:"Termine a fase anterior para abrir"}">${i===atual?`<span class="bandeira">🚩</span>`:""}<span class="bola">${ab?f.ic:"🔒"}</span><span class="rotulo">${f.n}</span><span class="est">${est(p)}</span></button>`;});
+  html+=`</div>`;
+  const f=FASES[FASE_SEL],p=E.progresso[f.id]||0;
+  html+=`<div class="mundo-info"><span class="ic" style="--g1:${f.g1};--g2:${f.g2}">${f.ic}</span><div class="txt"><span class="num">${f.n}</span><h2>${f.t}</h2><p>${f.d}</p></div><div class="estrelas">${est(p)}</div><button class="botao dour" data-fase="${f.id}">${p?"Jogar de novo":"Jogar"} ▸</button></div>`;
+  $("mapa-fases").innerHTML=html;
+  document.querySelectorAll("[data-no]").forEach(b=>b.onclick=()=>{const i=+b.dataset.no;if(!aberta(i)){b.animate([{transform:"translate(-50%,-50%) translateX(-6px)"},{transform:"translate(-50%,-50%) translateX(6px)"},{transform:"translate(-50%,-50%)"}],{duration:250});return;}FASE_SEL=i;somClique();desenharMapa();});
   document.querySelectorAll("[data-fase]").forEach(b=>b.onclick=()=>{if(!garantirNome())return;somClique();INICIO[b.dataset.fase]();});}
-function garantirNome(){const n=$("nome").value.trim();if(!n){$("nome").focus();$("nome").style.borderColor="var(--verm)";return false;}E.nome=n;$("hud-nome").textContent="👷 "+n;salvar();return true;}
+let _rz=null;window.addEventListener("resize",()=>{clearTimeout(_rz);_rz=setTimeout(()=>{if(document.getElementById("t-inicio").classList.contains("ativa"))desenharMapa();},200);});
+window.addEventListener("hashchange",()=>desenharMapa());
+function garantirNome(){const c=$("nome"),n=c.value.trim();if(!n){c.classList.remove("erro");void c.offsetWidth;c.classList.add("erro");$("aviso-nome").hidden=false;
+  c.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>c.focus({preventScroll:true}),350);
+  let t=document.getElementById("toast-nome");if(!t){t=document.createElement("div");t.id="toast-nome";t.setAttribute("role","alert");document.body.appendChild(t);}
+  t.textContent="Antes de jogar, escreva o seu nome no começo da página.";t.hidden=false;clearTimeout(t._t);t._t=setTimeout(()=>t.hidden=true,3500);return false;}
+  $("aviso-nome").hidden=true;c.classList.remove("erro");E.nome=n;$("hud-nome").textContent="👷 "+n;salvar();return true;}
 $("btn-comecar").onclick=()=>{if(!garantirNome())return;somClique();iniciarSurvey();};
 $("btn-cola").onclick=()=>telas("t-cola");$("cola-voltar").onclick=()=>telas("t-inicio");
 
@@ -662,6 +724,7 @@ desenharMapa();
 // atalho para abrir direto numa tela (usado nas fotos de tela dos slides): caca-ao-sinal.html#livre
 if(location.hash==="#livre")iniciarLivre();
 window.__modelo={sinal,PONTOS,CANDIDATOS,ROTEADOR,VIZINHOS,avaliar,interferencia,nivel};
+$("nome").addEventListener("input",()=>{if($("nome").value.trim()){$("aviso-nome").hidden=true;$("nome").classList.remove("erro");}});
 </script>
 </body>
 </html>
