@@ -109,7 +109,7 @@ table.cola td,table.cola th{border:1px solid var(--borda);padding:6px 8px;text-a
 </head>
 <body>
 <div class="topo">
-  <div class="marca">⚡ Bancada do <b>Técnico</b> <span class="peq">· Escritório Horizonte</span></div>
+  <div class="marca">⚡ Bancada do <b>Técnico</b> <span class="peq">· cabo de rede RJ45</span></div>
   <div class="hud">
     <span class="chip" id="hud-nome">Técnico</span>
     <span class="chip">⭐ <span id="hud-pontos">0</span> pts</span>
@@ -123,7 +123,7 @@ table.cola td,table.cola th{border:1px solid var(--borda);padding:6px 8px;text-a
 <section class="tela ativa" id="t-inicio">
   <div class="card">
     <h1>Bancada do <b>Técnico</b></h1>
-    <p class="sub">A dona do Escritório Horizonte comprou cabo e conectores. Faça os cabos seguindo o POP (o passo a passo do serviço), teste cada um e descubra quais cabos da gaveta prestam. Cada fase vale pontos e estrelas.</p>
+    <p class="sub">Você está na bancada com cabo e conectores RJ45. Faça os cabos seguindo o POP (o passo a passo do serviço), teste cada um e descubra quais cabos da gaveta prestam. Cada fase vale pontos e estrelas.</p>
     <p><input class="nome" id="nome" maxlength="24" placeholder="Seu nome de técnico(a)"></p>
     <button class="botao dour" id="btn-comecar">Começar o plantão</button>
     <button class="botao cinza" id="btn-cola">Cola das cores</button>
@@ -191,7 +191,7 @@ table.cola td,table.cola th{border:1px solid var(--borda);padding:6px 8px;text-a
   </div>
   <div class="card"><div class="lista-res" id="r-lista"></div></div>
   <div class="card" style="text-align:center" id="r-codigo-card">
-    <p class="peq">Código de conclusão: mostre ao instrutor e anote no roteiro</p>
+    <p class="peq">Código de conclusão: anote no roteiro</p>
     <div class="codigo" id="r-codigo"></div>
   </div>
   <div style="text-align:center"><button class="botao dour" id="r-voltar">Voltar ao mapa</button></div>
@@ -202,7 +202,7 @@ table.cola td,table.cola th{border:1px solid var(--borda);padding:6px 8px;text-a
   <div class="card">
     <h2>Cola das cores</h2>
     <p class="sub">Pino 1 = à esquerda, com a trava do conector para baixo e os contatos dourados virados para você.</p>
-    <table class="cola"><tr><th>Pino</th><th>T568B (o do escritório)</th><th>T568A</th></tr><tbody id="cola-corpo"></tbody></table>
+    <table class="cola"><tr><th>Pino</th><th>T568B (o que usamos)</th><th>T568A</th></tr><tbody id="cola-corpo"></tbody></table>
     <p>Para decorar o T568B: <b>laranja, verde, azul, marrom</b>, sempre o <b>branco primeiro</b>. O verde "abraça" o azul: fica no 3 e no 6.</p>
     <button class="botao" id="cola-voltar">Voltar</button>
   </div>
@@ -229,12 +229,12 @@ const embaralhar=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(M
 const $=id=>document.getElementById(id);
 
 const CABOS=[
-  {id:1,chamado:"CHAMADO 1 · FÁCIL",titulo:"Cabo do PC do Financeiro até o switch",pA:"B",pB:"B",tempo:75,cola:true,
-   etiqueta:"EH-03 · SW porta 3 ↔ PC Financeiro",erradas:["EH-03 · Roteador LAN 1 ↔ Câmera","EH-01 · PC Financeiro"]},
-  {id:2,chamado:"CHAMADO 2 · MÉDIO",titulo:"Cabo da câmera da porta até o roteador",pA:"B",pB:"B",tempo:55,cola:false,
-   etiqueta:"EH-02 · Roteador LAN 2 ↔ Câmera da porta",erradas:["EH-02 · Câmera","EH-04 · SW porta 4 ↔ Access point"]},
-  {id:3,chamado:"CHAMADO 3 · DIFÍCIL",titulo:"Cabo cruzado para dois PCs antigos (sem Auto-MDIX)",pA:"B",pB:"A",tempo:45,cola:false,
-   etiqueta:"EH-09 · Cruzado · PC antigo 1 ↔ PC antigo 2",erradas:["EH-09 · Direto · PC antigo 1 ↔ PC antigo 2","EH-09 · PC antigo"]}
+  {id:1,chamado:"CABO 1 · FÁCIL",titulo:"Cabo direto: do PC até o switch",pA:"B",pB:"B",tempo:75,cola:true,
+   etiqueta:"C-03 · Switch porta 3 ↔ PC 03",erradas:["C-03 · Roteador LAN 1 ↔ PC 01","C-01 · PC 03"]},
+  {id:2,chamado:"CABO 2 · MÉDIO",titulo:"Cabo direto: do switch até o roteador",pA:"B",pB:"B",tempo:55,cola:false,
+   etiqueta:"C-02 · Switch porta 8 ↔ Roteador LAN 1",erradas:["C-02 · Roteador","C-04 · Switch porta 4 ↔ PC 04"]},
+  {id:3,chamado:"CABO 3 · DIFÍCIL",titulo:"Cabo cruzado: ligar dois PCs antigos (sem Auto-MDIX)",pA:"B",pB:"A",tempo:45,cola:false,
+   etiqueta:"C-09 · Cruzado · PC 1 ↔ PC 2",erradas:["C-09 · Direto · PC 1 ↔ PC 2","C-09 · PC antigo"]}
 ];
 const PASSOS=["Cortar","Decapar","Ordenar","Cortar reto","Inserir","Crimpar","Ponta B","Testar","Etiquetar"];
 
@@ -290,7 +290,7 @@ function svgCabo({decapado=0,fios=null,conector=false,cortado=false,ferido=false
 /* ================= mapa de fases ================= */
 function desenharMapa(){
   const fases=[
-    {n:"FASE 1",t:"Bancada: 3 cabos",d:"Faça o cabo inteiro pelo POP: cortar, decapar, ordenar, inserir, crimpar, testar e etiquetar. Cada chamado é mais difícil.",id:"bancada"},
+    {n:"FASE 1",t:"Bancada: 3 cabos",d:"Faça o cabo inteiro pelo POP: cortar, decapar, ordenar, inserir, crimpar, testar e etiquetar. Cada cabo é mais difícil.",id:"bancada"},
     {n:"FASE 2",t:"Caça-defeitos",d:"8 cabos chegam no testador. Leia os LEDs e diga o defeito antes do tempo acabar.",id:"gaveta"},
     {n:"FASE 3",t:"Fibra: pode ou não pode?",d:"10 situações de fibra óptica e segurança. Responda rápido e sem errar.",id:"fibra"}];
   $("mapa-fases").innerHTML=fases.map(f=>{const p=E.progresso[f.id]||0;return `<div class="fase"><div class="num">${f.n}</div><h2>${f.t}</h2><p class="sub">${f.d}</p><div class="estrelas">${[1,2,3].map(i=>`<span class="${i<=p?"on":""}">★</span>`).join("")}</div><button class="botao" data-fase="${f.id}">Jogar</button></div>`;}).join("");
@@ -309,7 +309,7 @@ function novoCabo(){
   const c=CABOS[E.cabo];
   B={c,passo:0,ponta:"A",A:Array(8).fill(null),Bp:Array(8).fill(null),falhas:{A:{},B:{}},refeitos:0,pontosCabo:0,dicas:0};
   $("b-chamado").textContent=c.chamado;$("b-titulo").textContent=c.titulo;
-  iniciarRelogio(c.tempo*3,()=>{fb("b-feedback","O tempo do chamado acabou! Termine o cabo, mas sem bônus de tempo.","medio");});
+  iniciarRelogio(c.tempo*3,()=>{fb("b-feedback","O tempo deste cabo acabou! Termine o cabo, mas sem bônus de tempo.","medio");});
   telas("t-bancada");irPasso(0);
 }
 function marcarPassos(){
@@ -489,7 +489,7 @@ function passoTestar(){
       const errouCruzado=B.c.id===3&&real==="ok";
       setTimeout(()=>{
         if(passou){fb("b-feedback",(certo?"Leitura certa! ":"")+"O cabo passou no teste.","bom");proximo(8,1400);}
-        else{fb("b-feedback",(certo?"Leitura certa. ":"")+(errouCruzado?"Mas o chamado pedia cabo CRUZADO: a ponta B devia ser T568A.":DIAG[real][1])+" Refaça a ponta B.","ruim");
+        else{fb("b-feedback",(certo?"Leitura certa. ":"")+(errouCruzado?"Mas este cabo tinha de ser CRUZADO: a ponta B devia ser T568A.":DIAG[real][1])+" Refaça a ponta B.","ruim");
           $("b-controle").innerHTML+=`<p><button class="botao" id="refazer">✂ Cortar a ponta B e refazer (−30)</button></p>`;
           $("refazer").onclick=()=>{pontos(-30,"refez a ponta");B.refeitos++;
             const fa=B.falhas.A;const aRuim=!igual(B.A,B.c.pA==="A"?T568A:T568B)||fa.aberto||fa.curto||fa.frouxo||fa.torto||fa.ferido;
@@ -520,9 +520,9 @@ function fecharCabo(){
   let est=3;if(B.refeitos>0)est--;if(B.dicas>0)est--;if(restante<=0)est--;est=Math.max(1,est);
   E.resultado.bancada.push({titulo:B.c.titulo,pontos:B.pontosCabo,est});
   E.cabo++;
-  if(E.cabo<CABOS.length){fb("b-feedback",`Cabo entregue! ${"★".repeat(est)} Próximo chamado...`,"bom");setTimeout(novoCabo,1700);}
+  if(E.cabo<CABOS.length){fb("b-feedback",`Cabo entregue! ${"★".repeat(est)} Próximo cabo...`,"bom");setTimeout(novoCabo,1700);}
   else{const media=Math.round(E.resultado.bancada.reduce((s,r)=>s+r.est,0)/CABOS.length);E.progresso.bancada=Math.max(E.progresso.bancada||0,media);salvar();
-    mostrarResultado("Fase 1 concluída","Os 3 cabos do Escritório Horizonte estão prontos, testados e etiquetados.",media,
+    mostrarResultado("Fase 1 concluída","Os 3 cabos estão prontos, testados e etiquetados.",media,
       E.resultado.bancada.map(r=>[r.titulo,`${"★".repeat(r.est)} · ${r.pontos} pts`]));}
 }
 
@@ -587,7 +587,7 @@ const CARTOES=[
   ["Escrever \"cabo certificado\" depois de passar no testador simples.",false,"Testador simples só vê continuidade. Certificação é com o certificador."],
   ["Usar o power meter para medir quanta luz chega na ponta da fibra.",true,"É para isso que serve o medidor de potência óptica."],
   ["Apontar a caneta laser (VFL) para o rosto de um colega.",false,"Laser nunca vai na direção dos olhos de ninguém."],
-  ["Anotar \"execução não oportunizada\" quando faltou ferramenta.",true,"É o registro honesto: faltou recurso, não é nota baixa."]
+  ["Guardar o alicate fechado e as sobras de fio no copo de descarte ao terminar.",true,"Bancada organizada evita corte e perda de material."]
 ];
 let Fz=null;
 function iniciarFibra(){Fz={lista:embaralhar(CARTOES).slice(0,10),i:0,acertos:0,trava:false};$("f-total").textContent=10;telas("t-fibra");rodadaFibra();}
@@ -605,7 +605,7 @@ function responderFibra(r){
 $("f-pode").onclick=()=>responderFibra(true);$("f-nao").onclick=()=>responderFibra(false);
 
 /* ================= resultado ================= */
-function codigo(){let h=7;const s=E.nome+"|"+E.pontos+"|"+JSON.stringify(E.progresso);for(const ch of s)h=(h*31+ch.charCodeAt(0))%1679616;return "EH-"+h.toString(36).toUpperCase().padStart(4,"0");}
+function codigo(){let h=7;const s=E.nome+"|"+E.pontos+"|"+JSON.stringify(E.progresso);for(const ch of s)h=(h*31+ch.charCodeAt(0))%1679616;return "RJ-"+h.toString(36).toUpperCase().padStart(4,"0");}
 function mostrarResultado(tit,sub,est,linhas){
   esconderRelogio();
   $("r-titulo").textContent=tit;$("r-sub").textContent=sub;
