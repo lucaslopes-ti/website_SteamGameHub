@@ -188,6 +188,132 @@ body {
   }
 }
 
+/* Navegação do header em "pílulas" (padrão segmented/pill nav):
+   cada destino é um botão com ícone, contorno e área de toque de 36px,
+   em vez de texto solto, para ficar evidente o que é clicável. */
+.hd-nav-track {
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+.hd-nav-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 2.25rem;
+  padding: 0 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: var(--on-surface);
+  transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.hd-nav-icon {
+  color: var(--secondary);
+  transition: color 0.15s ease;
+}
+
+.hd-nav-item:hover,
+.hd-nav-item[data-open="true"] {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.hd-nav-item:active {
+  transform: scale(0.97);
+}
+
+.hd-nav-item:focus-visible {
+  outline: 2px solid var(--secondary-container);
+  outline-offset: 2px;
+}
+
+.hd-nav-item[data-active="true"] {
+  background-color: var(--secondary-container);
+  color: var(--on-secondary-container);
+  box-shadow: 0 4px 14px rgba(243, 112, 33, 0.35);
+}
+
+.hd-nav-item[data-active="true"] .hd-nav-icon {
+  color: currentColor;
+}
+
+/* Destaque para página nova: contorno ciano e selo "Novo" */
+.hd-nav-item[data-new="true"] {
+  color: #e0f7ff;
+  background-color: rgba(56, 189, 248, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.55), 0 0 16px rgba(56, 189, 248, 0.18);
+}
+
+.hd-nav-item[data-new="true"] .hd-nav-icon {
+  color: #38bdf8;
+}
+
+.hd-nav-item[data-new="true"]:hover {
+  background-color: rgba(56, 189, 248, 0.24);
+}
+
+.hd-new-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 1.05rem;
+  padding: 0 0.35rem;
+  border-radius: 9999px;
+  background-color: #38bdf8;
+  color: #04121f;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* Abaixo de 1280px os ícones saem da barra desktop para caber tudo */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .hd-nav-track .hd-nav-icon {
+    display: none;
+  }
+  .hd-nav-track .hd-nav-item {
+    padding: 0 0.6rem;
+  }
+}
+
+/* Celular/tablet: atalhos em chips com rolagem horizontal */
+.hd-chips {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.hd-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.hd-chip {
+  flex-shrink: 0;
+  height: 2.25rem;
+  background-color: rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+
+/* Item novo no menu mobile */
+.hd-mobile-new {
+  color: #e0f7ff;
+  background-color: rgba(56, 189, 248, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.45);
+}
+
 /* Menus flutuantes do header: entram a partir do trigger, 160ms ease-out */
 .hd-menu {
   opacity: 0;

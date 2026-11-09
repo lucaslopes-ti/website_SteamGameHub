@@ -22,6 +22,7 @@ import {
   ShieldCheck,
   ChevronDown,
   Upload,
+  Cable,
 } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useAuth } from "./AuthProvider";
@@ -42,6 +43,9 @@ export default function Header() {
   const [moreOpen, setMoreOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  // Entre 1024px e 1535px a busca vira um botão que abre uma linha extra,
+  // para a navegação em pílulas caber sem espremer o campo.
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const searchRef = useRef<HTMLInputElement>(null);
   const moreRef = useRef<HTMLDivElement>(null);
@@ -56,11 +60,28 @@ export default function Header() {
     { icon: GraduationCap, text: "Todos os cursos, todos os projetos" },
   ];
 
-  const mainItems: { href: string; label: string; icon: IconType }[] = [
+  type NavItem = {
+    href: string;
+    label: string;
+    icon: IconType;
+    /** Destaque "Novo" para chamar atenção para páginas recém-lançadas. */
+    isNew?: boolean;
+    /** Página HTML estática em /public (servida por rewrite): usa <a>, não <Link>. */
+    isStatic?: boolean;
+  };
+
+  const mainItems: NavItem[] = [
     { href: "/games", label: t("header.games"), icon: Gamepad2 },
     { href: "/materiais", label: "Materiais", icon: BookOpen },
     { href: "/simulado-saep", label: "Simulado SAEP", icon: Trophy },
     { href: "/sql-quest", label: "SENAI Quest", icon: Database },
+    {
+      href: "/montador-cabo",
+      label: "Montador de Cabo",
+      icon: Cable,
+      isNew: true,
+      isStatic: true,
+    },
   ];
 
   const isActive = useCallback(
@@ -72,6 +93,7 @@ export default function Header() {
     setMobileOpen(false);
     setMoreOpen(false);
     setUserMenuOpen(false);
+    setSearchOpen(false);
   }, []);
 
   // Fecha tudo ao trocar de página.
@@ -115,6 +137,11 @@ export default function Header() {
         return;
       }
       e.preventDefault();
+      // Campo inline escondido (desktop médio): abre a linha de busca.
+      if (searchRef.current && searchRef.current.offsetParent === null) {
+        setSearchOpen(true);
+        return;
+      }
       searchRef.current?.focus();
     };
     window.addEventListener("keydown", onKeyDown);
@@ -144,6 +171,7 @@ export default function Header() {
     if (searchQuery.trim()) {
       router.push(`/games?search=${encodeURIComponent(searchQuery)}`);
       setSearchQuery("");
+      setSearchOpen(false);
     }
   };
 
@@ -159,19 +187,39 @@ export default function Header() {
       : []),
   ];
 
-  const navLinkClass = (href: string) =>
-    `relative flex h-16 items-center px-2.5 xl:px-3 text-sm font-semibold tracking-[-0.01em] transition-colors duration-150 ease-out rounded-md ${
-      isActive(href)
-        ? "text-[var(--on-surface)]"
-        : "text-[var(--on-surface-variant)] hover:text-[var(--on-surface)]"
-    }`;
+  const NewBadge = () => (
+    <span aria-hidden="true" className="hd-new-badge">
+      Novo
+    </span>
+  );
 
-  const navUnderlineClass = (href: string) =>
-    `absolute inset-x-2.5 xl:inset-x-3 bottom-0 h-0.5 rounded-full origin-left transition-transform duration-200 ease-out ${
-      isActive(href)
-        ? "bg-[var(--secondary-container)] scale-x-100"
-        : "bg-[var(--outline-variant)] scale-x-0 group-hover:scale-x-100"
-    }`;
+  // Link de navegação: páginas estáticas (/public) usam <a> para recarregar
+  // fora do app Next; as demais usam <Link> com navegação client-side.
+  const renderNavLink = (
+    item: NavItem,
+    className: string,
+    children: React.ReactNode,
+    onClick?: () => void
+  ) => {
+    const active = !item.isStatic && isActive(item.href);
+    const common = {
+      className,
+      onClick,
+      "data-active": active,
+      "data-new": item.isNew ? true : undefined,
+      "aria-current": active ? ("page" as const) : undefined,
+      "aria-label": item.isNew ? `${item.label} (novo)` : undefined,
+    };
+    return item.isStatic ? (
+      <a key={item.href} href={item.href} {...common}>
+        {children}
+      </a>
+    ) : (
+      <Link key={item.href} href={item.href} {...common}>
+        {children}
+      </Link>
+    );
+  };
 
   const dropdownItemClass = (href: string) =>
     `flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-150 ease-out ${
@@ -279,19 +327,19 @@ export default function Header() {
             <nav
               id="navigation"
               aria-label="Navegação principal"
-              className="ml-1 hidden shrink-0 items-stretch gap-0.5 lg:flex"
+              className="hd-nav-track ml-1 hidden shrink-0 lg:flex"
             >
-              {mainItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  aria-current={isActive(item.href) ? "page" : undefined}
-                  className={`group ${navLinkClass(item.href)}`}
-                >
-                  {item.label}
-                  <span aria-hidden="true" className={navUnderlineClass(item.href)} />
-                </Link>
-              ))}
+              {mainItems.map((item) =>
+                renderNavLink(
+                  item,
+                  "hd-nav-item",
+                  <>
+                    <item.icon aria-hidden="true" className="hd-nav-icon h-4 w-4 shrink-0" />
+                    {item.label}
+                    {item.isNew && <NewBadge />}
+                  </>
+                )
+              )}
 
               {/* Mais: páginas secundárias */}
               <div ref={moreRef} className="relative">
@@ -303,11 +351,9 @@ export default function Header() {
                     setMoreOpen((v) => !v);
                     setUserMenuOpen(false);
                   }}
-                  className={`group flex h-16 items-center gap-1 px-2.5 text-sm font-semibold tracking-[-0.01em] transition-colors duration-150 ease-out xl:px-3 rounded-md ${
-                    moreOpen
-                      ? "text-[var(--on-surface)]"
-                      : "text-[var(--on-surface-variant)] hover:text-[var(--on-surface)]"
-                  }`}
+                  data-active={exploreItems.some((i) => isActive(i.href))}
+                  data-open={moreOpen}
+                  className="hd-nav-item"
                 >
                   Mais
                   <ChevronDown
@@ -341,7 +387,7 @@ export default function Header() {
             </nav>
 
             {/* Busca */}
-            <div className="hidden min-w-0 flex-1 justify-center px-1 md:flex lg:px-3">
+            <div className="hidden min-w-0 flex-1 justify-center px-1 md:flex lg:hidden 2xl:flex 2xl:px-3">
               <form
                 role="search"
                 onSubmit={handleSearch}
@@ -353,6 +399,24 @@ export default function Header() {
 
             {/* Ações */}
             <div className="ml-auto flex shrink-0 items-center gap-2">
+              <button
+                type="button"
+                aria-expanded={searchOpen}
+                aria-controls="desktop-search"
+                aria-label={searchOpen ? "Fechar busca" : t("header.searchPlaceholder")}
+                onClick={() => {
+                  setSearchOpen((v) => !v);
+                  setMoreOpen(false);
+                  setUserMenuOpen(false);
+                }}
+                className="hidden h-10 w-10 items-center justify-center rounded-full border border-[var(--outline-10)] bg-[var(--surface-container-lowest)] text-[var(--on-surface)] transition-[background-color,transform] duration-150 ease-out hover:bg-white/10 active:scale-95 lg:flex 2xl:hidden"
+              >
+                {searchOpen ? (
+                  <X aria-hidden="true" className="h-4 w-4" />
+                ) : (
+                  <Search aria-hidden="true" className="h-4 w-4" />
+                )}
+              </button>
               <Link
                 href="/upload"
                 className="hidden h-10 items-center gap-2 rounded-lg border border-[var(--secondary-20)] bg-[var(--secondary-10)] px-4 text-sm font-semibold text-[var(--secondary)] transition-[background-color,transform] duration-150 ease-out hover:bg-[var(--secondary-20)] active:scale-[0.97] sm:inline-flex"
@@ -458,6 +522,42 @@ export default function Header() {
               </button>
             </div>
           </div>
+
+          {searchOpen && (
+            <div
+              id="desktop-search"
+              className="hd-panel-in container relative z-10 mx-auto hidden px-6 pb-3 lg:block 2xl:hidden"
+            >
+              <form
+                role="search"
+                onSubmit={handleSearch}
+                className="hd-search relative mx-auto w-full max-w-xl"
+              >
+                {buildSearchField((el: HTMLInputElement | null) => el?.focus())}
+              </form>
+            </div>
+          )}
+
+          {/* Atalhos visíveis no celular/tablet: chips com rolagem horizontal */}
+          <nav
+            aria-label="Atalhos"
+            className="hd-chips container relative z-10 mx-auto px-4 pb-2.5 lg:hidden"
+          >
+            {/* Itens novos primeiro, para aparecerem sem precisar rolar */}
+            {[...mainItems]
+              .sort((x, y) => Number(!!y.isNew) - Number(!!x.isNew))
+              .map((item) =>
+              renderNavLink(
+                item,
+                "hd-nav-item hd-chip",
+                <>
+                  <item.icon aria-hidden="true" className="hd-nav-icon h-4 w-4 shrink-0" />
+                  {item.label}
+                  {item.isNew && <NewBadge />}
+                </>
+              )
+            )}
+          </nav>
         </div>
 
         {/* Faixa de novidades */}
@@ -484,31 +584,31 @@ export default function Header() {
             ref={panelRef}
             className="hd-panel-in max-h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain border-b border-[var(--outline-10)] bg-[var(--surface)] lg:hidden"
           >
-            <form
-              role="search"
-              onSubmit={handleSearch}
-              className="hd-search border-b border-[var(--outline-10)] p-4"
-            >
-              {buildSearchField()}
-            </form>
+            <div className="border-b border-[var(--outline-10)] p-4">
+              <form role="search" onSubmit={handleSearch} className="hd-search relative">
+                {buildSearchField()}
+              </form>
+            </div>
 
             <nav aria-label="Navegação" className="p-3">
               <p className="px-3 pb-1.5 pt-1 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--outline)]">
                 Navegação
               </p>
               <div className="flex flex-col gap-0.5">
-                {mainItems.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setMobileOpen(false)}
-                    aria-current={isActive(item.href) ? "page" : undefined}
-                    className={mobileItemClass(item.href)}
-                  >
-                    <item.icon aria-hidden="true" className="h-5 w-5 shrink-0" />
-                    {item.label}
-                  </Link>
-                ))}
+                {mainItems.map((item) =>
+                  renderNavLink(
+                    item,
+                    item.isNew
+                      ? "hd-mobile-new flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-semibold"
+                      : mobileItemClass(item.href),
+                    <>
+                      <item.icon aria-hidden="true" className="h-5 w-5 shrink-0" />
+                      {item.label}
+                      {item.isNew && <NewBadge />}
+                    </>,
+                    () => setMobileOpen(false)
+                  )
+                )}
               </div>
 
               <p className="px-3 pb-1.5 pt-4 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--outline)]">
