@@ -254,6 +254,30 @@ main,.topo{zoom:var(--z,1)}
   .codigo-p{font-size:19px}
   .hud .chip-btn{font-size:12px}
 }
+
+/* ===== fase 4: keystone ===== */
+.grade3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.k-mesa{flex-direction:column}
+.ks{display:flex;flex-direction:column;align-items:center;gap:8px;margin:6px auto 12px}
+.ks-corpo{position:relative;background:linear-gradient(180deg,#f07a2e,#d65f17);border:2px solid #ffb27a;border-radius:14px;padding:12px 14px 14px;box-shadow:0 8px 20px rgba(0,0,0,.35)}
+.ks.tampa .ks-corpo{background:linear-gradient(180deg,#3d7be0,#2559b8);border-color:#9cc0ff}
+.ks-boca{font-size:11px;font-weight:800;color:#fff;text-align:center;letter-spacing:.5px;margin-bottom:8px;opacity:.9}
+.ks-fendas{display:grid;grid-template-columns:repeat(4,58px);gap:10px 12px;background:#fff;border-radius:8px;padding:10px}
+.ks-fenda{display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:6px;padding:3px}
+.ks-fenda.clicavel{cursor:pointer;outline:2px dashed #9db8e6;outline-offset:1px}
+.ks-fenda.clicavel:hover{background:#eef4ff}
+.ks-etq{display:flex;gap:3px;align-items:flex-end}
+.ks-etq .b{width:30px;height:16px;border-radius:3px;border:1px solid #6b7a90}
+.ks-etq .a{width:12px;height:9px;border-radius:2px;border:1px solid #6b7a90;opacity:.85}
+.ks-v{width:34px;height:46px;background:linear-gradient(90deg,#c9cfd8,#eef1f5,#c9cfd8);clip-path:polygon(0 0,40% 0,50% 100%,60% 0,100% 0,100% 100%,0 100%);display:flex;align-items:flex-end;justify-content:center;border-radius:0 0 4px 4px}
+.ks-v i{display:block;width:12px;height:40px;border-radius:3px;border:1px solid #1d2533}
+.ks-fenda.aberta .ks-v i{height:20px}
+.ks-tampa{position:absolute;inset:auto 10px -12px 10px;height:22px;border-radius:6px;background:rgba(255,255,255,.85);color:#1d2533;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.ks-leg{display:flex;flex-wrap:wrap;justify-content:center;margin-top:14px;gap:14px;font-size:12px;color:var(--apagado)}
+.ks-leg b{display:inline-block;vertical-align:middle;margin-right:4px;border:1px solid #6b7a90;background:#fff}
+.ks-leg .lb{width:20px;height:11px}.ks-leg .la{width:9px;height:7px}
+#k-mesa .fios{margin-top:6px}
+@media (max-width:640px){.ks-fendas{grid-template-columns:repeat(4,52px);gap:8px 8px;padding:8px}.ks-etq .b{width:24px}}
 </style>
 </head>
 <body>
@@ -327,6 +351,25 @@ main,.topo{zoom:var(--z,1)}
       </div>
     </div>
     <div class="caixas" id="g-caixas"></div>
+  </div>
+</section>
+
+<!-- TOMADA -->
+<section class="tela" id="t-tomada">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">
+      <div><span class="peq" id="k-chamado">FASE 4 · TOMADA DE REDE</span><h2 id="k-titulo">Tomada</h2></div>
+      <div class="chip" id="k-tipo">Keystone</div>
+    </div>
+    <div class="passos" id="k-passos"></div>
+    <div class="palco">
+      <div class="mesa k-mesa" id="k-mesa"></div>
+      <div>
+        <div class="instr" id="k-instr"></div>
+        <div id="k-controle"></div>
+        <div class="feedback" id="k-feedback"></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -511,9 +554,10 @@ function desenharMapa(){
   const fases=[
     {n:"FASE 1",ic:"🛠️",t:"Bancada: 3 cabos",d:"Faça o cabo inteiro pelo POP: cortar, decapar, ordenar, inserir, crimpar, testar e etiquetar. Cada cabo é mais difícil.",id:"bancada"},
     {n:"FASE 2",ic:"🔍",t:"Caça-defeitos",d:"8 cabos da gaveta: teste, ache onde está o defeito e separe cada um na caixa certa.",id:"gaveta"},
-    {n:"FASE 3",ic:"💡",t:"Fibra: pode ou não pode?",d:"10 situações de fibra óptica e segurança. Responda rápido e sem errar.",id:"fibra"}];
+    {n:"FASE 3",ic:"💡",t:"Fibra: pode ou não pode?",d:"10 situações de fibra óptica e segurança. Responda rápido e sem errar.",id:"fibra"},
+    {n:"FASE 4",ic:"🔌",t:"Tomada de rede",d:"3 conectores fêmea (keystone): fios pela etiqueta B, ferramenta de inserção, tampa e teste.",id:"tomada"}];
   $("mapa-fases").innerHTML=fases.map(f=>{const p=E.progresso[f.id]||0;return `<div class="fase ${p?"feita":""}"><div class="fase-topo"><span class="icone">${f.ic}</span><span class="num">${f.n}</span></div><h2>${f.t}</h2><p class="sub">${f.d}</p>${E.codigos[f.id]?`<div class="cod-fase" title="Concluída em ${E.codigos[f.id].quando}">Código: <b>${E.codigos[f.id].codigo}</b></div>`:""}<div class="fase-pe"><div class="estrelas" title="${p} de 3 estrelas">${[1,2,3].map(i=>`<span class="${i<=p?"on":""}">★</span>`).join("")}</div><button class="botao" data-fase="${f.id}">${p?"Jogar de novo":"Jogar"} ▸</button></div></div>`;}).join("");
-  document.querySelectorAll("[data-fase]").forEach(b=>b.onclick=()=>{if(!garantirNome())return;somClique();({bancada:iniciarBancada,gaveta:iniciarGaveta,fibra:iniciarFibra})[b.dataset.fase]();});
+  document.querySelectorAll("[data-fase]").forEach(b=>b.onclick=()=>{if(!garantirNome())return;somClique();({bancada:iniciarBancada,gaveta:iniciarGaveta,fibra:iniciarFibra,tomada:iniciarTomada})[b.dataset.fase]();});
 }
 function garantirNome(){const n=$("nome").value.trim();if(!n){$("nome").focus();$("nome").style.borderColor="var(--verm)";return false;}E.nome=n;$("hud-nome").textContent="👷 "+n;salvar();return true;}
 $("btn-comecar").onclick=()=>{if(!garantirNome())return;somClique();iniciarBancada();};
@@ -874,6 +918,146 @@ function fimGaveta(tempoAcabou){
     [["Cabos sem nenhum erro",`${limpos} de ${G.lista.length}`],["Etapas certas",`${G.acertos} de ${total}`],["Maior combo","x"+G.maxCombo],["Pontos da fase",G.pontos]]);
 }
 
+/* ================= FASE 4: TOMADA DE REDE (conector fêmea / keystone) ================= */
+/* Cada keystone tem a etiqueta num lugar diferente (cada fabricante desenha a sua): o aluno segue a fileira B. */
+const TOMADAS=[
+  {titulo:"Tomada da recepção",chamado:"TOMADA 1 · FÁCIL",tipo:"punch",layout:[1,2,3,6,4,5,7,8]},
+  {titulo:"Tomada da sala dos computadores",chamado:"TOMADA 2 · MÉDIO",tipo:"punch",layout:[6,3,2,1,7,8,5,4]},
+  {titulo:"Patch panel do rack, porta 3",chamado:"TOMADA 3 · DIFÍCIL",tipo:"tampa",layout:[2,1,6,3,8,7,4,5]}
+];
+const K_PASSOS=["Decapar","Destrançar","Posicionar","Inserir","Testar"];
+let K=null;
+function iniciarTomada(){E.faseAtual="tomada";K={n:0,acertos:0,tarefas:0,pontos:0,res:[]};iniciarRelogio(300,()=>fimTomada(true));novaTomada();}
+function novaTomada(){
+  const t=TOMADAS[K.n];K.t=t;K.passo=0;K.slots=Array(8).fill(null);K.sel=null;K.abertos=[];K.erros=0;K.refeitos=0;
+  $("k-chamado").textContent="FASE 4 · "+t.chamado;$("k-titulo").textContent=t.titulo;
+  $("k-tipo").textContent=t.tipo==="tampa"?"Keystone sem ferramenta (tampa)":"Keystone com ferramenta de inserção";
+  telas("t-tomada");kDecapar();
+}
+function kPassos(){$("k-passos").innerHTML=K_PASSOS.map((p,i)=>`<span class="${i<K.passo?"feito":i===K.passo?"atual":""}">${i+1}. ${p}</span>`).join("");}
+function kOk(n,motivo){K.acertos++;K.tarefas++;K.pontos+=n;pontos(n,motivo);somBom();}
+function kErro(motivo){K.erros++;K.tarefas++;pontos(-20,motivo);somRuim();}
+function kPergunta(instr,ops,certa,txtOk,txtErro,depois){
+  $("k-instr").innerHTML=instr;fb("k-feedback","");
+  const emb=embaralhar(ops);
+  $("k-controle").innerHTML=`<div class="opcoes">${emb.map(([k,t])=>`<button class="opcao" data-k="${k}">${t}</button>`).join("")}</div>`;
+  document.querySelectorAll("#k-controle .opcao").forEach(o=>o.onclick=()=>{
+    document.querySelectorAll("#k-controle .opcao").forEach(x=>x.disabled=true);
+    const ok=o.dataset.k===certa;o.classList.add(ok?"certa":"errada");
+    if(!ok)document.querySelector(`#k-controle .opcao[data-k="${certa}"]`).classList.add("certa");
+    if(ok){kOk(50,"certo");fb("k-feedback",txtOk,"bom");}else{kErro("errou");fb("k-feedback",txtErro[o.dataset.k]||txtErro._,"ruim");}
+    setTimeout(()=>depois(ok,o.dataset.k),ok?1200:2600);
+  });
+}
+function svgKeystone(estado){
+  /* keystone visto de trás: 8 fendas em 2 fileiras; cada fenda mostra a cor B (grande) e a A (pequena) */
+  const t=K.t;
+  return `<div class="ks ${t.tipo}"><div class="ks-corpo"><div class="ks-boca">RJ45 fêmea</div>
+    <div class="ks-fendas">${t.layout.map((pino,i)=>{const b=T568B[pino-1],a=T568A[pino-1],fio=K.slots[i];
+      return `<div class="ks-fenda ${estado==="pos"?"clicavel":""} ${fio?"cheia":""} ${K.abertos.includes(i)?"aberta":""}" data-i="${i}">
+        <div class="ks-etq"><span class="b" style="background:${FIOS[b].cor}" title="B: ${FIOS[b].nome}"></span><span class="a" style="background:${FIOS[a].cor}" title="A: ${FIOS[a].nome}"></span></div>
+        <div class="ks-v">${fio?`<i style="background:${FIOS[fio].cor}"></i>`:""}</div></div>`;}).join("")}</div>
+    ${estado==="fim"?`<div class="ks-tampa">${t.tipo==="tampa"?"tampa fechada":"tampa traseira"}</div>`:""}</div>
+    <div class="ks-leg"><span><b class="lb"></b> fileira B (grande)</span><span><b class="la"></b> fileira A (pequena)</span></div></div>`;
+}
+function kDecapar(){
+  K.passo=0;kPassos();$("k-mesa").innerHTML=svgKeystone("");
+  kPergunta(`<b>Passo 1 · Decapar.</b> Quanto da capa do cabo você tira para ligar no keystone?`,
+    [["c","2 a 3 cm de capa"],["a","1 cm, só a pontinha"],["b","10 cm, para sobrar bastante fio"]],"c",
+    "Isso: 2 a 3 cm. A capa vai encostar no keystone.",{a:"Pouco: os fios não alcançam as fendas.",b:"Demais: os fios ficam soltos e destrançados fora da capa.",_:""},
+    ()=>kDestrancar());
+}
+function kDestrancar(){
+  K.passo=1;kPassos();
+  kPergunta(`<b>Passo 2 · Abrir os pares.</b> Quanto você destrança cada par?`,
+    [["c","Só o necessário: no máximo 1,3 cm"],["a","Destranço tudo até a capa"],["b","Não destranço nada"]],"c",
+    "Certo: o trançado protege contra interferência. Destrance o mínimo.",{a:"Destrançar demais faz o cabo perder velocidade (interferência entre os pares).",b:"Sem abrir os pares, os fios não entram nas fendas.",_:""},
+    ()=>kPosicionar());
+}
+function kPosicionar(){
+  K.passo=2;kPassos();fb("k-feedback","");
+  const caixa=embaralhar(T568B);
+  const desenhar=()=>{
+    $("k-mesa").innerHTML=`<div style="width:100%">${svgKeystone("pos")}<div class="fios">${caixa.map(k=>`<div class="fio ${K.sel===k?"sel":""} ${K.slots.includes(k)?"usado":""}" data-k="${k}"><div class="cor" style="background:${FIOS[k].cor}"></div>${FIOS[k].nome}</div>`).join("")}</div></div>`;
+    document.querySelectorAll("#k-mesa .fio").forEach(e=>e.onclick=()=>{K.sel=e.dataset.k;somClique();desenhar();});
+    document.querySelectorAll("#k-mesa .ks-fenda").forEach(e=>e.onclick=()=>{const i=+e.dataset.i;
+      if(K.slots[i]){K.slots[i]=null;}else if(K.sel){K.slots[i]=K.sel;K.sel=null;bip(700,.04);}desenhar();$("k-ok").disabled=K.slots.some(x=>!x);});
+  };
+  $("k-instr").innerHTML=`<b>Passo 3 · Posicionar pela etiqueta B.</b> Clique num fio e depois na fenda. Cada fenda mostra a cor <b>B</b> (a grande) e a <b>A</b> (a pequena). Esta etiqueta é deste fabricante: a ordem muda de um keystone para outro.`;
+  $("k-controle").innerHTML=`<button class="botao verde" id="k-ok" disabled>Conferi, pode inserir</button>`;
+  desenhar();
+  $("k-ok").onclick=()=>{
+    const errados=K.slots.map((k,i)=>k!==T568B[K.t.layout[i]-1]?i:-1).filter(i=>i>=0);
+    if(!errados.length){kOk(120,"fios na fileira B");fb("k-feedback","Todos os fios na cor da fileira B.","bom");}
+    else{K.erros++;K.tarefas++;fb("k-feedback",`${errados.length} fio(s) fora da cor B. Vamos ver o que o testador diz...`,"medio");}
+    setTimeout(kInserir,1300);
+  };
+}
+function kInserir(){
+  K.passo=3;kPassos();$("k-mesa").innerHTML=svgKeystone("");
+  if(K.t.tipo==="tampa"){
+    kPergunta(`<b>Passo 4 · Fechar a tampa.</b> Este keystone é <b>sem ferramenta</b>: os fios passam pela tampa. Como fechar?`,
+      [["c","Apertar firme com a mão até travar (clique)"],["a","Fechar só até a metade"],["b","Bater com o alicate para fechar"]],"c",
+      "Travou: a tampa empurrou os 8 fios até o fundo das fendas.",{a:"Meia tampa: alguns fios não descem até o fundo e ficam abertos.",b:"O alicate pode trincar a tampa e soltar fios.",_:""},
+      ok=>{if(!ok)K.abertos=embaralhar([0,1,2,3,4,5,6,7]).slice(0,2);kTestar();});
+  }else{
+    kPergunta(`<b>Passo 4 · Inserir com a ferramenta.</b> Como segurar a ferramenta de inserção (punch down)?`,
+      [["c","Reta, com a lâmina de corte virada para FORA (lado da sobra)"],["a","Com a lâmina virada para DENTRO (lado do keystone)"],["b","Inclinada, de lado"]],"c",
+      "Um golpe por fio: o fio desce no V e a sobra é cortada para fora.",{a:"A lâmina cortou o fio do lado de dentro: esse fio fica aberto.",b:"Inclinada, o fio não desce até o fundo do V: mau contato.",_:""},
+      ok=>{if(!ok)K.abertos=[Math.floor(Math.random()*8)];kTestar();});
+  }
+}
+function kMapa(){
+  /* fenda i liga no pino layout[i]; o pino p da tomada recebe o fio slots[i]; o remoto (patch cord em B) acende onde esse fio está no B */
+  const mapa=Array(8).fill(null);
+  K.t.layout.forEach((p,i)=>{const fio=K.slots[i];if(!fio||K.abertos.includes(i))return;mapa[p-1]=T568B.indexOf(fio)+1;});
+  return mapa;
+}
+function kDiag(m){
+  if(m.some(x=>x===null))return "aberto";
+  if(m.every((x,i)=>x===i+1))return "ok";
+  const cruz=[3,6,1,4,5,2,7,8];if(m.every((x,i)=>x===cruz[i]))return "cruzado";
+  return "invertido";
+}
+function kTestar(){
+  K.passo=4;kPassos();fb("k-feedback","");
+  const m=kMapa(),real=kDiag(m);
+  $("k-mesa").innerHTML=`<div style="width:100%">${svgKeystone("fim")}<div class="testador" id="kt"></div><p class="peq" style="margin-top:8px">Patch cord na tomada e no principal; a outra ponta do cabo no remoto.</p></div>`;
+  testador("kt");
+  $("k-instr").innerHTML=`<b>Passo 5 · Testar.</b> Ligue o testador e diga o que ele mostra.`;
+  $("k-controle").innerHTML=`<button class="botao dour" id="k-testar">🔌 Ligar o testador</button>`;
+  $("k-testar").onclick=()=>{$("k-testar").disabled=true;
+    animarTeste("kt",m,-1,()=>{
+      const ops=embaralhar(["ok","aberto","invertido","cruzado"]);
+      $("k-controle").innerHTML=`<div class="opcoes">${ops.map(k=>`<button class="opcao" data-k="${k}">${DIAG[k][0]}</button>`).join("")}</div>`;
+      document.querySelectorAll("#k-controle .opcao").forEach(o=>o.onclick=()=>{
+        document.querySelectorAll("#k-controle .opcao").forEach(x=>x.disabled=true);
+        const ok=o.dataset.k===real;o.classList.add(ok?"certa":"errada");
+        if(!ok)document.querySelector(`#k-controle .opcao[data-k="${real}"]`).classList.add("certa");
+        if(ok)kOk(80,"leu o testador");else kErro("leitura errada");
+        if(real==="ok"){fb("k-feedback","Tomada pronta: 1 a 8 em ordem.","bom");setTimeout(fecharTomada,1500);}
+        else{fb("k-feedback",DIAG[real][1].replace("corte a ponta e refaça","refaça a tomada").replace("corte essa ponta e refaça na ordem","refaça na ordem da fileira B"),"ruim");
+          $("k-controle").innerHTML+=`<p><button class="botao" id="k-refazer">🔧 Refazer a tomada (−30)</button></p>`;
+          $("k-refazer").onclick=()=>{pontos(-30,"refez");K.refeitos++;K.slots=Array(8).fill(null);K.abertos=[];kPosicionar();};}
+      });
+    });
+  };
+}
+function fecharTomada(){
+  const est=Math.max(1,3-Math.min(2,K.erros)-(K.refeitos>1?1:0));
+  K.res.push({titulo:K.t.titulo,est});K.n++;
+  if(K.n<TOMADAS.length){fb("k-feedback",`Tomada entregue! ${"★".repeat(est)} Próxima...`,"bom");setTimeout(novaTomada,1500);}
+  else fimTomada(false);
+}
+function fimTomada(tempoAcabou){
+  if(!K||K.fim)return;K.fim=true;const resto=+$("hud-seg").textContent||0;esconderRelogio();
+  if(!tempoAcabou&&resto>0)pontos(Math.min(200,resto),"bônus de tempo");
+  const media=K.res.length?Math.round(K.res.reduce((a,r)=>a+r.est,0)/TOMADAS.length):1;const est=Math.max(1,media);
+  E.progresso.tomada=Math.max(E.progresso.tomada||0,est);salvar();
+  mostrarResultado(tempoAcabou?"O tempo acabou!":"Fase 4 concluída","Fios pela etiqueta B, inseridos e testados: tomadas prontas.",est,
+    K.res.map(r=>[r.titulo,"★".repeat(r.est)]).concat([["Etapas certas",`${K.acertos} de ${K.tarefas}`]]));
+}
+
 /* ================= FASE 3: FIBRA ================= */
 const CARTOES=[
   ["Olhar a ponta de um conector de fibra desligado, de perto, para ver se está sujo.",false,"Nunca olhe a ponta, nem desligada: o laser é invisível e pode ferir o olho."],
@@ -911,18 +1095,18 @@ function mostrarResultado(tit,sub,est,linhas){
   $("r-titulo").textContent=tit;$("r-sub").textContent=sub;
   $("r-medalha").textContent=est>=3?"🏆":est===2?"🥈":"🥉";
   $("r-estrelas").innerHTML=[1,2,3].map(i=>`<span class="${i<=est?"on":""}">★</span>`).join("");
-  const total=["bancada","gaveta","fibra"].reduce((s,k)=>s+(E.progresso[k]||0),0);
-  const cargo=total>=8?"Técnico(a) sênior":total>=6?"Técnico(a) pleno":total>=3?"Técnico(a) júnior":"Estagiário(a) de bancada";
-  $("r-lista").innerHTML=linhas.map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join("")+`<div><span>Pontos no plantão</span><b>${E.pontos}</b></div><div><span>Estrelas nas 3 fases</span><b>${total} de 9 · ${cargo}</b></div>`;
+  const total=["bancada","gaveta","fibra","tomada"].reduce((s,k)=>s+(E.progresso[k]||0),0);
+  const cargo=total>=11?"Técnico(a) sênior":total>=8?"Técnico(a) pleno":total>=4?"Técnico(a) júnior":"Estagiário(a) de bancada";
+  $("r-lista").innerHTML=linhas.map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join("")+`<div><span>Pontos no plantão</span><b>${E.pontos}</b></div><div><span>Estrelas nas 4 fases</span><b>${total} de 12 · ${cargo}</b></div>`;
   const cod=codigo();$("r-codigo").textContent=cod;
   if(E.faseAtual){E.codigos[E.faseAtual]={codigo:cod,estrelas:est,quando:new Date().toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})};salvar();}
   telas("t-resultado");if(est>=2){somBom();setTimeout(somBom,250);}
 }
 $("r-voltar").onclick=()=>{desenharMapa();telas("t-inicio");};
-function mostrarCodigos(){const nomes={bancada:"Fase 1 · Bancada: 3 cabos",gaveta:"Fase 2 · Caça-defeitos",fibra:"Fase 3 · Fibra: pode ou não pode?"};
+function mostrarCodigos(){const nomes={bancada:"Fase 1 · Bancada: 3 cabos",gaveta:"Fase 2 · Caça-defeitos",fibra:"Fase 3 · Fibra: pode ou não pode?",tomada:"Fase 4 · Tomada de rede"};
   $("c-lista").innerHTML=Object.entries(nomes).map(([k,t])=>{const c=E.codigos[k];return `<div class="${c?"tem":""}"><span>${t}${c?`<small>${"★".repeat(c.estrelas)} · ${c.quando}</small>`:"<small>ainda não concluída</small>"}</span><b class="codigo-p">${c?c.codigo:"—"}</b></div>`;}).join("")+(E.nome?`<p class="peq">Técnico(a): <b>${E.nome}</b></p>`:"");
   telas("t-codigos");}
-$("btn-codigos").onclick=()=>{const ativa=document.querySelector(".tela.ativa").id;if(["t-bancada","t-gaveta","t-fibra"].includes(ativa)&&relogio){if(!confirm("Sair da fase agora? O progresso desta fase será perdido."))return;pararRelogio();esconderRelogio();if(G)G.fim=true;}mostrarCodigos();};
+$("btn-codigos").onclick=()=>{const ativa=document.querySelector(".tela.ativa").id;if(["t-bancada","t-gaveta","t-fibra","t-tomada"].includes(ativa)&&relogio){if(!confirm("Sair da fase agora? O progresso desta fase será perdido."))return;pararRelogio();esconderRelogio();if(G)G.fim=true;}mostrarCodigos();};
 $("c-voltar").onclick=()=>{desenharMapa();telas("t-inicio");};
 
 /* ================= início ================= */
