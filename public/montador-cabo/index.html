@@ -94,7 +94,7 @@ input.nome{background:#081a36;border:1px solid var(--borda);color:var(--tinta);b
 .opcao.certa{border-color:var(--verde);background:#0f3b2c}
 .opcao.errada{border-color:var(--verm);background:#3b1116}
 .etiqueta{background:#fff;color:#111;border-radius:6px;padding:8px 12px;font-weight:800;font-family:ui-monospace,Consolas,monospace}
-.pop{position:fixed;left:50%;top:72px;transform:translateX(-50%);background:var(--painel2);border:1px solid var(--borda);border-radius:14px;padding:10px 18px;font-weight:800;z-index:9;box-shadow:0 10px 30px rgba(0,0,0,.4);animation:sobe 1.4s forwards;pointer-events:none}
+.pop{position:fixed;left:50%;bottom:28px;zoom:var(--z,1);transform:translateX(-50%);background:var(--painel2);border:1px solid var(--borda);border-radius:14px;padding:10px 18px;font-weight:800;z-index:9;box-shadow:0 10px 30px rgba(0,0,0,.4);animation:sobe 1.4s forwards;pointer-events:none}
 @keyframes sobe{0%{opacity:0;transform:translate(-50%,10px)}15%{opacity:1;transform:translate(-50%,0)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-14px)}}
 .cartao{font-size:22px;font-weight:800;min-height:120px;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;border-radius:18px;background:#0a1a35;border:2px solid var(--borda)}
 .duas{display:flex;gap:12px;justify-content:center;margin-top:14px;flex-wrap:wrap}
@@ -110,6 +110,57 @@ table.cola td,table.cola th{border:1px solid var(--borda);padding:6px 8px;text-a
 .relogio{font-size:42px;font-weight:900;text-align:center}
 .combo{color:var(--roxo);font-weight:900}
 .peq{font-size:13px;color:var(--apagado)}
+
+/* ===== telas de todos os tamanhos ===== */
+main,.topo{zoom:var(--z,1)}
+.marca{min-width:0}
+.mesa .ordem{width:100%}
+/* fios alinhados com os pinos */
+.contatos,.slots,.fios{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px}
+.contatos{padding:0 12px;margin-bottom:-6px}
+.contatos i{width:78%;max-width:36px;margin:0 auto}
+.slots{padding:12px 10px 8px}
+.slot{width:auto;min-width:0}
+.slot .buraco{width:78%;max-width:36px}
+.fios{padding:0 12px;justify-items:center}
+.fio{width:100%;max-width:58px}
+.palco>*{min-width:0}
+.testador .lado{gap:6px}.testador .lado b{flex:none}
+.led{flex:1 1 0;max-width:30px;height:auto;aspect-ratio:1}
+@media (max-width:900px){
+  #t-bancada .palco>div:last-child{display:contents}
+  #t-bancada #b-instr{order:-1}
+  .mesa{min-height:0}
+}
+@media (max-width:640px){
+  main{padding:10px}
+  .card{padding:13px;border-radius:14px}
+  .topo{padding:7px 10px;gap:6px 8px}
+  .logo{padding:2px 6px;border-radius:8px}.logo img{height:22px}.logo.grande img{height:34px}
+  .marca{font-size:15px;gap:8px}.marca .peq{display:none}
+  .hud{margin-left:0;width:100%;justify-content:space-between;gap:6px;flex-wrap:nowrap}
+  .chip{font-size:13px;padding:4px 9px}
+  h1{font-size:27px}h2{font-size:19px}
+  .instr{font-size:16px}
+  .passos{position:relative;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:4px -13px 10px;padding:0 13px}
+  .passos::-webkit-scrollbar{display:none}
+  .passos span{flex:none}
+  .botao{padding:12px 16px}
+  .linha .botao{flex:1 1 100%}
+  .fios{grid-template-columns:repeat(4,minmax(0,1fr));row-gap:8px}
+  .fio{height:72px;font-size:9px}
+  .slots{padding:10px 6px 6px;gap:4px}.contatos{gap:4px;padding:0 8px}
+  .slot .buraco{height:76px}
+  .testador{padding:10px}
+  .testador .lado b{width:54px;font-size:11px}
+  .led{font-size:10px}
+  .opcoes{grid-template-columns:1fr}
+  .duas .botao{min-width:0;flex:1}
+  .cartao{font-size:18px;min-height:100px;padding:14px}
+  .codigo{font-size:24px;letter-spacing:2px}
+  .lista-res div{padding:8px 10px;font-size:14px}
+}
+@media (max-width:380px){.marca>span:last-child{font-size:14px}.chip{font-size:12px;padding:4px 7px}}
 </style>
 </head>
 <body>
@@ -363,6 +414,7 @@ function novoCabo(){
 }
 function marcarPassos(){
   $("b-passos").innerHTML=PASSOS.map((p,i)=>`<span class="${i<B.passo?"feito":i===B.passo?"atual":""}">${i+1}. ${p}</span>`).join("");
+  {const a=$("b-passos").querySelector(".atual");const p=$("b-passos");if(a&&p.scrollWidth>p.clientWidth)p.scrollTo({left:a.offsetLeft-p.clientWidth/2+a.offsetWidth/2,behavior:"smooth"});}
   $("b-ponta").textContent=B.passo===6?"Ponta B":B.passo>=7?"Cabo inteiro":"Ponta "+B.ponta;
 }
 function ganhar(n,motivo){B.pontosCabo+=n;pontos(n,motivo);}
@@ -671,6 +723,10 @@ function mostrarResultado(tit,sub,est,linhas){
 $("r-voltar").onclick=()=>{desenharMapa();telas("t-inicio");};
 
 /* ================= início ================= */
+function ajustarTela(){const w=innerWidth,h=innerHeight;let z=1;
+  if(w>=1200&&h>=700)z=Math.min(w/1180,h/740,1.9);
+  document.documentElement.style.setProperty("--z",Math.max(1,z).toFixed(3));}
+addEventListener("resize",ajustarTela);ajustarTela();
 carregar();if(E.nome){$("nome").value=E.nome;$("hud-nome").textContent="👷 "+E.nome;}
 desenharMapa();
 </script>
