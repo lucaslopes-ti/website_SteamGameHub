@@ -202,6 +202,58 @@ main,.topo{zoom:var(--z,1)}
 .rodape b{color:var(--tinta)}
 @media (max-width:820px){.hero{grid-template-columns:1fr}.hero-arte{order:-1;max-height:150px}.hero-arte svg{max-height:134px}}
 @media (max-width:640px){.hero{padding:16px}.hero-txt>.botao{width:100%;margin:0 0 8px}.hero .campo input{width:100%}.rodape{padding:14px 12px 20px}}
+
+/* ===== fase 2 ===== */
+.chip-btn{color:var(--tinta);cursor:pointer}.chip-btn:hover{border-color:var(--dour)}
+.gaveta-fila{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}
+.g-token{display:flex;align-items:center;gap:6px;padding:5px 10px 5px 6px;border-radius:999px;background:#0a1a35;border:1px solid var(--borda);font-weight:800;font-size:13px;color:var(--apagado)}
+.g-token span{width:22px;height:8px;border-radius:4px;box-shadow:inset 0 -2px 0 rgba(0,0,0,.25)}
+.g-token.atual{border-color:var(--dour);color:var(--tinta);box-shadow:0 0 0 2px rgba(224,182,110,.25)}
+.g-token.bom{border-color:#1f8a5d;color:var(--verde)}.g-token.ruim{border-color:#8f2328;color:#ff9a9d}
+.g-mesa{background:repeating-linear-gradient(45deg,#0b1c38 0 18px,#0d2040 18px 36px);border:1px solid var(--borda);border-radius:18px;padding:14px}
+.g-cabo{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:14px}
+.g-ponta{display:flex;flex-direction:column;align-items:center;gap:4px}
+.g-rj{background:linear-gradient(180deg,rgba(230,242,255,.5),rgba(170,200,235,.2));border:2px solid #d8e9ff;border-radius:8px;padding:5px 6px 4px;width:132px}
+.g-contatos,.g-fios,.g-num{display:grid;grid-template-columns:repeat(8,1fr);gap:3px}
+.g-contatos i{height:6px;background:linear-gradient(90deg,#b8862b,#ffd47a,#b8862b);border-radius:1px}
+.g-fios span{height:46px;border-radius:0 0 3px 3px;border:1px solid #1d2533;margin-top:2px}
+.g-fios span.curto{height:30px;margin-top:18px}
+.g-num b{font-size:9px;text-align:center;color:#cfe0ff}
+.g-rot{font-size:12px;font-weight:800;color:var(--apagado)}
+.g-fio-meio{flex:1;max-width:220px;min-width:40px;height:16px;background:var(--cor);border-radius:8px;position:relative;box-shadow:inset 0 -4px 0 rgba(0,0,0,.25);margin:0 -2px;align-self:center;margin-bottom:18px}
+.amassado{position:absolute;left:42%;top:-6px;width:26px;height:28px;background:repeating-linear-gradient(90deg,#e05454 0 3px,transparent 3px 6px);border:2px dashed #ff5a5f;border-radius:6px}
+.amassado::after{content:"amassado";position:absolute;top:30px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:800;color:#ff9a9d;white-space:nowrap}
+.etapas{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.etapas span{font-size:12px;font-weight:800;padding:5px 10px;border-radius:999px;background:#0a1a35;border:1px solid var(--borda);color:var(--apagado)}
+.etapas span.feito{background:#0f3b2c;border-color:#1f8a5d;color:var(--verde)}
+.etapas span.atual{background:var(--dour);border-color:var(--dour);color:#1d1400}
+.etapas span.pula{text-decoration:line-through;opacity:.5}
+#g-opcoes>.botao{margin-top:10px}
+.led.alvo{cursor:pointer;outline:2px dashed #9db8e6;outline-offset:2px}
+.led.alvo:hover{transform:scale(1.12)}
+.led.acertou{outline:3px solid var(--verde);outline-offset:2px}
+.led.errou{outline:3px solid var(--verm);outline-offset:2px}
+.destinos .opcao{display:flex;align-items:center;gap:8px}.destinos .ic,.g-caixa .ic{font-size:20px}
+.caixas{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.g-caixa{display:flex;align-items:center;gap:8px;background:#0a1a35;border:1px solid var(--borda);border-radius:12px;padding:8px 12px;font-size:13px;font-weight:700;color:var(--apagado)}
+.g-caixa b{margin-left:auto;font-size:18px;color:var(--tinta)}
+.g-caixa.pulo{animation:pulo .6s}
+@keyframes pulo{40%{transform:scale(1.08);border-color:var(--dour)}}
+.cod-fase{font-size:13px;color:var(--apagado);background:#0a1a35;border:1px dashed var(--dour);border-radius:10px;padding:6px 10px}
+.cod-fase b{font-family:ui-monospace,Consolas,monospace;color:var(--dour);letter-spacing:1px;font-size:15px}
+.lista-codigos{display:grid;gap:10px;margin:14px 0}
+.lista-codigos>div{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#0a1a35;border:1px solid var(--borda);border-radius:12px;padding:12px 16px;font-weight:700}
+.lista-codigos>div.tem{border-color:#1f8a5d}
+.lista-codigos small{display:block;font-weight:600;color:var(--apagado);font-size:12px;margin-top:2px}
+.codigo-p{white-space:nowrap;font-family:ui-monospace,Consolas,monospace;font-size:24px;color:var(--dour);letter-spacing:2px}
+@media (max-width:640px){
+  .caixas{grid-template-columns:repeat(2,1fr)}
+  .g-rj{width:104px;padding:4px}.g-fios span{height:36px}.g-fios span.curto{height:22px;margin-top:16px}
+  .g-fio-meio{min-width:24px}
+  .gaveta-fila{gap:5px}.g-token{padding:4px 8px 4px 5px;font-size:12px}.g-token span{width:14px}
+  .codigo-p{font-size:19px}
+  .hud .chip-btn{font-size:12px}
+}
 </style>
 </head>
 <body>
@@ -211,6 +263,7 @@ main,.topo{zoom:var(--z,1)}
     <span class="chip" id="hud-nome">Técnico</span>
     <span class="chip">⭐ <span id="hud-pontos">0</span> pts</span>
     <span class="chip tempo" id="hud-tempo" style="display:none">⏱ <span id="hud-seg">0</span>s</span>
+    <button class="chip chip-btn" id="btn-codigos" title="Ver os códigos das fases">📋 Códigos</button>
     <button class="som" id="btn-som" title="Liga ou desliga o som">🔊</button>
   </div>
 </div>
@@ -259,11 +312,21 @@ main,.topo{zoom:var(--z,1)}
       <div><span class="peq">FASE 2 · CAÇA-DEFEITOS</span><h2>A gaveta da recepção</h2></div>
       <div class="chip">Cabo <span id="g-n">1</span> de <span id="g-total">8</span> · combo <span class="combo" id="g-combo">x1</span></div>
     </div>
-    <p class="sub" id="g-desc">Os cabos vão chegando no testador. Olhe os LEDs do remoto e diga o que aconteceu, rápido: acerto seguido vale combo.</p>
+    <div class="gaveta-fila" id="g-fila"></div>
     <div class="palco">
-      <div><div class="testador" id="g-testador"></div><p class="peq" style="margin-top:8px" id="g-cabo"></p></div>
-      <div><div class="opcoes" id="g-opcoes"></div><div class="feedback" id="g-feedback"></div></div>
+      <div class="g-mesa">
+        <div class="g-cabo" id="g-cabo"></div>
+        <div class="testador" id="g-testador"></div>
+        <p class="peq" id="g-desc" style="margin:8px 0 0"></p>
+      </div>
+      <div>
+        <div class="etapas" id="g-etapas"></div>
+        <div class="instr" id="g-instr"></div>
+        <div id="g-opcoes"></div>
+        <div class="feedback" id="g-feedback"></div>
+      </div>
     </div>
+    <div class="caixas" id="g-caixas"></div>
   </div>
 </section>
 
@@ -293,10 +356,20 @@ main,.topo{zoom:var(--z,1)}
   </div>
   <div class="card"><div class="lista-res" id="r-lista"></div></div>
   <div class="card" style="text-align:center" id="r-codigo-card">
-    <p class="peq">Código de conclusão: anote no roteiro</p>
+    <p class="peq">Código de conclusão: anote no roteiro. Ele também fica guardado em <b>📋 Códigos</b>, no topo da tela.</p>
     <div class="codigo" id="r-codigo"></div>
   </div>
   <div style="text-align:center"><button class="botao dour" id="r-voltar">Voltar ao mapa</button></div>
+</section>
+
+<!-- CÓDIGOS -->
+<section class="tela" id="t-codigos">
+  <div class="card">
+    <h2>📋 Meus códigos</h2>
+    <p class="sub">Cada fase concluída gera um código. Eles ficam guardados neste computador: se esqueceu de anotar, é só abrir aqui. Copie os códigos para o roteiro.</p>
+    <div class="lista-codigos" id="c-lista"></div>
+    <button class="botao" id="c-voltar">Voltar ao mapa</button>
+  </div>
 </section>
 
 <!-- COLA -->
@@ -342,10 +415,10 @@ const CABOS=[
 const PASSOS=["Cortar","Decapar","Ordenar","Cortar reto","Inserir","Crimpar","Ponta B","Testar","Etiquetar"];
 
 /* ================= estado ================= */
-const E={nome:"",pontos:0,cabo:0,progresso:{},resultado:{},faseAtual:null};
+const E={nome:"",pontos:0,cabo:0,progresso:{},resultado:{},faseAtual:null,codigos:{}};
 const SALVO="bancada-tecnico-v2";
-function carregar(){try{const s=JSON.parse(localStorage.getItem(SALVO)||"{}");E.progresso=s.progresso||{};E.nome=s.nome||"";}catch(e){}}
-function salvar(){try{localStorage.setItem(SALVO,JSON.stringify({progresso:E.progresso,nome:E.nome}));}catch(e){}}
+function carregar(){try{const s=JSON.parse(localStorage.getItem(SALVO)||"{}");E.progresso=s.progresso||{};E.nome=s.nome||"";E.codigos=s.codigos||{};}catch(e){}}
+function salvar(){try{localStorage.setItem(SALVO,JSON.stringify({progresso:E.progresso,nome:E.nome,codigos:E.codigos}));}catch(e){}}
 
 /* ================= som ================= */
 let somLigado=true,ctx=null;
@@ -437,9 +510,9 @@ function svgCabo({decapado=0,fios=null,conector=false,cortado=false,ferido=false
 function desenharMapa(){
   const fases=[
     {n:"FASE 1",ic:"🛠️",t:"Bancada: 3 cabos",d:"Faça o cabo inteiro pelo POP: cortar, decapar, ordenar, inserir, crimpar, testar e etiquetar. Cada cabo é mais difícil.",id:"bancada"},
-    {n:"FASE 2",ic:"🔍",t:"Caça-defeitos",d:"8 cabos chegam no testador. Leia os LEDs e diga o defeito antes do tempo acabar.",id:"gaveta"},
+    {n:"FASE 2",ic:"🔍",t:"Caça-defeitos",d:"8 cabos da gaveta: teste, ache onde está o defeito e separe cada um na caixa certa.",id:"gaveta"},
     {n:"FASE 3",ic:"💡",t:"Fibra: pode ou não pode?",d:"10 situações de fibra óptica e segurança. Responda rápido e sem errar.",id:"fibra"}];
-  $("mapa-fases").innerHTML=fases.map(f=>{const p=E.progresso[f.id]||0;return `<div class="fase ${p?"feita":""}"><div class="fase-topo"><span class="icone">${f.ic}</span><span class="num">${f.n}</span></div><h2>${f.t}</h2><p class="sub">${f.d}</p><div class="fase-pe"><div class="estrelas" title="${p} de 3 estrelas">${[1,2,3].map(i=>`<span class="${i<=p?"on":""}">★</span>`).join("")}</div><button class="botao" data-fase="${f.id}">${p?"Jogar de novo":"Jogar"} ▸</button></div></div>`;}).join("");
+  $("mapa-fases").innerHTML=fases.map(f=>{const p=E.progresso[f.id]||0;return `<div class="fase ${p?"feita":""}"><div class="fase-topo"><span class="icone">${f.ic}</span><span class="num">${f.n}</span></div><h2>${f.t}</h2><p class="sub">${f.d}</p>${E.codigos[f.id]?`<div class="cod-fase" title="Concluída em ${E.codigos[f.id].quando}">Código: <b>${E.codigos[f.id].codigo}</b></div>`:""}<div class="fase-pe"><div class="estrelas" title="${p} de 3 estrelas">${[1,2,3].map(i=>`<span class="${i<=p?"on":""}">★</span>`).join("")}</div><button class="botao" data-fase="${f.id}">${p?"Jogar de novo":"Jogar"} ▸</button></div></div>`;}).join("");
   document.querySelectorAll("[data-fase]").forEach(b=>b.onclick=()=>{if(!garantirNome())return;somClique();({bancada:iniciarBancada,gaveta:iniciarGaveta,fibra:iniciarFibra})[b.dataset.fase]();});
 }
 function garantirNome(){const n=$("nome").value.trim();if(!n){$("nome").focus();$("nome").style.borderColor="var(--verm)";return false;}E.nome=n;$("hud-nome").textContent="👷 "+n;salvar();return true;}
@@ -450,7 +523,7 @@ $("cola-corpo").innerHTML=T568B.map((k,i)=>`<tr><td><b>${i+1}</b></td><td><span 
 
 /* ================= FASE 1: BANCADA ================= */
 let B=null; /* estado do cabo atual */
-function iniciarBancada(){E.cabo=0;E.resultado.bancada=[];E.pontosInicioFase=E.pontos;novoCabo();}
+function iniciarBancada(){E.faseAtual="bancada";E.cabo=0;E.resultado.bancada=[];E.pontosInicioFase=E.pontos;novoCabo();}
 function novoCabo(){
   const c=CABOS[E.cabo];
   B={c,passo:0,ponta:"A",A:Array(8).fill(null),Bp:Array(8).fill(null),falhas:{A:{},B:{}},refeitos:0,pontosCabo:0,dicas:0};
@@ -676,51 +749,129 @@ function fecharCabo(){
 }
 
 /* ================= FASE 2: CAÇA-DEFEITOS ================= */
-function gerarCaboGaveta(tipo){
-  let A=[...T568B],Bb=[...T568B],mapa,ferido=-1;
-  if(tipo==="ok"){}
-  if(tipo==="cruzado"){A=[...T568A];}
-  if(tipo==="split"){A=["bl","l","bv","v","ba","a","bm","m"];Bb=[...A];}
-  mapa=A.map(k=>{const j=Bb.indexOf(k);return j>=0?j+1:null;});
-  if(tipo==="aberto"){const p=1+Math.floor(Math.random()*8);mapa[p-1]=null;}
-  if(tipo==="invertido"){const p=Math.floor(Math.random()*7);[mapa[p],mapa[p+1]]=[mapa[p+1],mapa[p]];}
-  if(tipo==="intermitente"){ferido=Math.floor(Math.random()*8);}
-  return {tipo,A,Bb,mapa,ferido};
-}
+/* Cada cabo da gaveta passa por 3 etapas: 1) ler o testador, 2) achar onde está o defeito, 3) decidir para onde o cabo vai. */
+const DESTINOS={
+  usar:["✔","Pode usar","Cabo direto bom: vai para o rack."],
+  cruzado:["🏷️","Etiquetar: CRUZADO","Funciona, mas só para PC com PC antigo. Etiqueta para ninguém confundir."],
+  refazer:["🔧","Refazer a ponta","O cabo está inteiro: corta a ponta com defeito e crimpa de novo."],
+  descarte:["🗑️","Descarte","Cabo amassado ou cortado no meio não tem conserto: vai para o descarte."]
+};
 const DESC_GAVETA=["Cabo azul de 2 m, parece novo.","Cabo cinza de 5 m, com a capa riscada.","Cabo branco antigo, da época do computador velho.",
-  "Cabo amarelo enrolado com fita.","Cabo azul de 10 m, crimpado por um curioso.","Cabo vermelho sem etiqueta.","Cabo verde de 1 m.","Cabo preto pisado pela cadeira."];
+  "Cabo amarelo enrolado com fita.","Cabo azul de 10 m, crimpado por um curioso.","Cabo vermelho sem etiqueta.","Cabo verde de 1 m.","Cabo preto que ficou embaixo da cadeira."];
+function gerarCaboGaveta(tipo){
+  let A=[...T568B],Bb=[...T568B],mapa,ferido=-1,pino=0,pontaRuim="",destino="refazer";
+  if(tipo==="ok")destino="usar";
+  if(tipo==="cruzado"){A=[...T568A];destino="cruzado";}
+  if(tipo==="split"){A=["bl","l","bv","v","ba","a","bm","m"];Bb=[...A];}
+  if(tipo==="invertido"){const p=Math.floor(Math.random()*7);[Bb[p],Bb[p+1]]=[Bb[p+1],Bb[p]];pino=p+1;pontaRuim="B";}
+  mapa=A.map(k=>{const j=Bb.indexOf(k);return j>=0?j+1:null;});
+  if(tipo==="aberto"){pino=1+Math.floor(Math.random()*8);mapa[pino-1]=null;pontaRuim=Math.random()<.5?"A":"B";}
+  if(tipo==="intermitente"){ferido=Math.floor(Math.random()*8);pino=ferido+1;}
+  if(tipo==="rompido"){const ps=embaralhar([1,2,3,4,5,6,7,8]).slice(0,3);ps.forEach(p=>mapa[p-1]=null);destino="descarte";}
+  const diag=tipo==="rompido"?"aberto":tipo;
+  return {tipo,diag,A,Bb,mapa,ferido,pino,pontaRuim,destino};
+}
+function htmlPonta(fios,nome,curto){
+  return `<div class="g-ponta" data-ponta="${nome}"><div class="g-rj"><div class="g-contatos">${fios.map(()=>"<i></i>").join("")}</div><div class="g-fios">${fios.map((k,i)=>`<span class="${curto===i+1?"curto":""}" style="background:${FIOS[k].cor}" title="pino ${i+1}: ${FIOS[k].nome}"></span>`).join("")}</div><div class="g-num">${fios.map((_,i)=>`<b>${i+1}</b>`).join("")}</div></div><div class="g-rot">Ponta ${nome}</div></div>`;
+}
+function desenharCaboGaveta(c,cor){
+  const curtoA=c.tipo==="aberto"&&c.pontaRuim==="A"?c.pino:0,curtoB=c.tipo==="aberto"&&c.pontaRuim==="B"?c.pino:0;
+  return `${htmlPonta(c.A,"A",curtoA)}<div class="g-fio-meio" style="--cor:${cor}">${c.tipo==="rompido"?'<span class="amassado" title="capa amassada"></span>':""}</div>${htmlPonta(c.Bb,"B",curtoB)}`;
+}
+const CORES_CABO=["#2f7cf6","#9aa7bb","#e9edf3","#f2c94c","#2f7cf6","#e05454","#2ea86b","#30353f"];
 let G=null;
 function iniciarGaveta(){
-  const tipos=embaralhar(["ok","aberto","invertido","cruzado","split","intermitente","ok","aberto"]);
-  G={lista:tipos.map(gerarCaboGaveta),i:0,acertos:0,combo:1,pontos:0,maxCombo:1};
+  E.faseAtual="gaveta";
+  const tipos=embaralhar(["ok","aberto","invertido","cruzado","split","intermitente","rompido","ok"]);
+  G={lista:tipos.map(gerarCaboGaveta),i:0,acertos:0,tarefas:0,combo:1,pontos:0,maxCombo:1,caixas:{usar:0,cruzado:0,refazer:0,descarte:0},hist:[]};
   $("g-total").textContent=G.lista.length;telas("t-gaveta");
-  iniciarRelogio(100,()=>fimGaveta(true));
+  iniciarRelogio(200,()=>fimGaveta(true));
   rodadaGaveta();
 }
+function filaGaveta(){
+  $("g-fila").innerHTML=G.lista.map((c,i)=>{const h=G.hist[i];return `<div class="g-token ${i===G.i?"atual":""} ${h?(h.ok?"bom":"ruim"):""}" title="Cabo ${i+1}"><span style="background:${CORES_CABO[i]}"></span>${h?DESTINOS[h.destino][0]:i+1}</div>`;}).join("");
+  $("g-caixas").innerHTML=Object.entries(DESTINOS).map(([k,d])=>`<div class="g-caixa" data-k="${k}"><span class="ic">${d[0]}</span><span>${d[1]}</span><b>${G.caixas[k]}</b></div>`).join("");
+}
+function etapasGaveta(n,temPino){
+  const nomes=["1 · Testar","2 · Onde está?","3 · Para onde vai?"];
+  $("g-etapas").innerHTML=nomes.map((t,i)=>`<span class="${i<n?"feito":i===n?"atual":""} ${i===1&&!temPino?"pula":""}">${t}</span>`).join("");
+}
+function acerto(base,motivo){const n=base*G.combo;G.pontos+=n;pontos(n,motivo);G.acertos++;G.tarefas++;G.combo=Math.min(3,G.combo+1);G.maxCombo=Math.max(G.maxCombo,G.combo);$("g-combo").textContent="x"+G.combo;somBom();}
+function erro(motivo){G.tarefas++;pontos(-30,motivo);G.combo=1;$("g-combo").textContent="x1";somRuim();}
+function temEtapaPino(c){return ["aberto","invertido","intermitente","cruzado","rompido"].includes(c.tipo);}
 function rodadaGaveta(){
-  if(G.fim)return;const c=G.lista[G.i];$("g-n").textContent=G.i+1;$("g-combo").textContent="x"+G.combo;$("g-cabo").textContent=DESC_GAVETA[G.i%DESC_GAVETA.length];
-  fb("g-feedback","");$("g-opcoes").innerHTML="";
-  animarTeste("g-testador",c.mapa,c.ferido,()=>{
-    const ops=embaralhar(Object.keys(DIAG));
-    $("g-opcoes").innerHTML=ops.map(k=>`<button class="opcao" data-k="${k}">${DIAG[k][0]}</button>`).join("");
-    const t0=Date.now();
-    document.querySelectorAll("#g-opcoes .opcao").forEach(o=>o.onclick=()=>{
-      document.querySelectorAll("#g-opcoes .opcao").forEach(x=>x.disabled=true);
-      const certo=o.dataset.k===c.tipo;o.classList.add(certo?"certa":"errada");
-      if(!certo)document.querySelector(`#g-opcoes .opcao[data-k="${c.tipo}"]`).classList.add("certa");
-      if(certo){const rapido=Date.now()-t0<6000?30:0;const n=(100+rapido)*G.combo;G.pontos+=n;pontos(n,rapido?"rápido!":"acertou");G.acertos++;G.combo=Math.min(4,G.combo+1);G.maxCombo=Math.max(G.maxCombo,G.combo);somBom();fb("g-feedback",DIAG[c.tipo][1],"bom");}
-      else{pontos(-40,"diagnóstico errado");G.combo=1;somRuim();fb("g-feedback","Era: "+DIAG[c.tipo][0]+". "+DIAG[c.tipo][1],"ruim");}
-      G.i++;setTimeout(()=>{if(G.i<G.lista.length)rodadaGaveta();else fimGaveta(false);},certo?1300:2600);
+  if(G.fim)return;const c=G.lista[G.i];c.ok=true;
+  $("g-n").textContent=G.i+1;$("g-combo").textContent="x"+G.combo;$("g-desc").textContent=DESC_GAVETA[G.i%DESC_GAVETA.length];
+  filaGaveta();etapasGaveta(0,temEtapaPino(c));fb("g-feedback","");
+  $("g-cabo").innerHTML=desenharCaboGaveta(c,CORES_CABO[G.i]);testador("g-testador");
+  $("g-instr").innerHTML=`<b>Etapa 1 · Testar.</b> Olhe as duas pontas, ligue o testador e diga o que ele mostra.`;
+  $("g-opcoes").innerHTML=`<button class="botao dour" id="g-testar">🔌 Ligar o testador</button>`;
+  $("g-testar").onclick=()=>{$("g-testar").disabled=true;
+    animarTeste("g-testador",c.mapa,c.ferido,()=>{
+      const ops=embaralhar(Object.keys(DIAG));const t0=Date.now();
+      $("g-opcoes").innerHTML=`<div class="opcoes">${ops.map(k=>`<button class="opcao" data-k="${k}">${DIAG[k][0]}</button>`).join("")}</div>`;
+      document.querySelectorAll("#g-opcoes .opcao").forEach(o=>o.onclick=()=>{
+        document.querySelectorAll("#g-opcoes .opcao").forEach(x=>x.disabled=true);
+        const certo=o.dataset.k===c.diag;o.classList.add(certo?"certa":"errada");
+        if(!certo){document.querySelector(`#g-opcoes .opcao[data-k="${c.diag}"]`).classList.add("certa");c.ok=false;}
+        if(certo){acerto(Date.now()-t0<6000?100:80,Date.now()-t0<6000?"leitura rápida!":"leitura certa");fb("g-feedback",DIAG[c.diag][1],"bom");}
+        else{erro("leitura errada");fb("g-feedback","Era: "+DIAG[c.diag][0]+". "+DIAG[c.diag][1],"ruim");}
+        setTimeout(()=>temEtapaPino(c)?etapaOnde(c):etapaDestino(c),certo?1200:2600);
+      });
     });
+  };
+}
+function etapaOnde(c){
+  if(G.fim)return;etapasGaveta(1,true);fb("g-feedback","");
+  const fim=(certo,txt)=>{if(certo){acerto(40,"achou o defeito");fb("g-feedback",txt,"bom");}else{c.ok=false;erro("lugar errado");fb("g-feedback",txt,"ruim");}setTimeout(()=>etapaDestino(c),certo?1200:2600);};
+  if(c.tipo==="cruzado"||c.tipo==="rompido"){
+    const pergunta=c.tipo==="cruzado"?"Compare as cores com a cola: <b>qual ponta está no padrão T568A</b>?":"Vários fios abertos ao mesmo tempo. <b>Onde está o problema?</b> Olhe o cabo inteiro.";
+    const ops=c.tipo==="cruzado"?[["A","Ponta A"],["B","Ponta B"]]:[["A","Na ponta A"],["B","Na ponta B"],["meio","No meio do cabo"]];
+    const certa=c.tipo==="cruzado"?"A":"meio";
+    $("g-instr").innerHTML=`<b>Etapa 2 · Onde está?</b> ${pergunta}`;
+    $("g-opcoes").innerHTML=`<div class="opcoes">${ops.map(([k,t])=>`<button class="opcao" data-k="${k}">${t}</button>`).join("")}</div>`;
+    document.querySelectorAll("#g-opcoes .opcao").forEach(o=>o.onclick=()=>{
+      document.querySelectorAll("#g-opcoes .opcao").forEach(x=>x.disabled=true);const ok=o.dataset.k===certa;o.classList.add(ok?"certa":"errada");
+      if(!ok)document.querySelector(`#g-opcoes .opcao[data-k="${certa}"]`).classList.add("certa");
+      fim(ok,c.tipo==="cruzado"?"A ponta A começa com branco-verde, verde: é T568A. A ponta B é T568B.":"A capa está amassada no meio: os fios partiram dentro do cabo.");
+    });
+    return;
+  }
+  const pista={aberto:"o LED que <b>não acendeu</b>",invertido:"um dos LEDs <b>amarelos</b> (fora de ordem)",intermitente:"o LED que está <b>piscando fraco</b>"}[c.tipo];
+  $("g-instr").innerHTML=`<b>Etapa 2 · Onde está?</b> Clique no testador, na linha do remoto, em ${pista}.`;
+  $("g-opcoes").innerHTML="";
+  const certos=c.tipo==="invertido"?[c.pino,c.pino+1]:[c.pino];
+  document.querySelectorAll("#g-testador .led").forEach(l=>{l.classList.add("alvo");l.onclick=()=>{
+    document.querySelectorAll("#g-testador .led").forEach(x=>{x.classList.remove("alvo");x.onclick=null;});
+    const n=+l.textContent;const ok=certos.includes(n);l.classList.add(ok?"acertou":"errou");
+    const onde=c.tipo==="aberto"?`O pino ${c.pino} não fecha o circuito: o fio não encostou no contato da ponta ${c.pontaRuim} (veja o fio mais curto).`:
+      c.tipo==="invertido"?`Os fios dos pinos ${c.pino} e ${c.pino+1} estão trocados na ponta B: compare as cores das duas pontas.`:`O pino ${c.pino} tem mau contato: fio ferido ou mal crimpado.`;
+    fim(ok,onde);
+  };});
+}
+function etapaDestino(c){
+  if(G.fim)return;etapasGaveta(2,temEtapaPino(c));fb("g-feedback","");
+  $("g-instr").innerHTML=`<b>Etapa 3 · Para onde vai?</b> Escolha a caixa certa para este cabo.`;
+  $("g-opcoes").innerHTML=`<div class="opcoes destinos">${Object.entries(DESTINOS).map(([k,d])=>`<button class="opcao" data-k="${k}"><span class="ic">${d[0]}</span> ${d[1]}</button>`).join("")}</div>`;
+  document.querySelectorAll("#g-opcoes .opcao").forEach(o=>o.onclick=()=>{
+    document.querySelectorAll("#g-opcoes .opcao").forEach(x=>x.disabled=true);
+    const ok=o.dataset.k===c.destino;o.classList.add(ok?"certa":"errada");
+    if(!ok){document.querySelector(`#g-opcoes .opcao[data-k="${c.destino}"]`).classList.add("certa");c.ok=false;}
+    if(ok){acerto(40,"caixa certa");fb("g-feedback",DESTINOS[c.destino][2],"bom");}else{erro("caixa errada");fb("g-feedback","O certo era: "+DESTINOS[c.destino][1]+". "+DESTINOS[c.destino][2],"ruim");}
+    G.caixas[c.destino]++;G.hist[G.i]={ok:c.ok,destino:c.destino};
+    G.i++;filaGaveta();const cx2=document.querySelector(`.g-caixa[data-k="${c.destino}"]`);if(cx2){cx2.classList.add("pulo");}
+    setTimeout(()=>{if(G.i<G.lista.length)rodadaGaveta();else fimGaveta(false);},ok?1400:2800);
   });
 }
 function fimGaveta(tempoAcabou){
   if(!G||G.fim)return;G.fim=true;
   const resto=+$("hud-seg").textContent||0;esconderRelogio();
-  if(!tempoAcabou&&resto>0)pontos(resto*3,"bônus de tempo");
-  const est=G.acertos>=7?3:G.acertos>=5?2:1;E.progresso.gaveta=Math.max(E.progresso.gaveta||0,est);salvar();
-  mostrarResultado(tempoAcabou?"O tempo acabou!":"Gaveta zerada!","Você leu o testador como técnico de verdade.",est,
-    [["Acertos",`${G.acertos} de ${G.lista.length}`],["Maior combo","x"+G.maxCombo],["Pontos da fase",G.pontos]]);
+  if(!tempoAcabou&&resto>0)pontos(resto*2,"bônus de tempo");
+  const total=G.lista.length*2+G.lista.filter(temEtapaPino).length;
+  const perc=G.acertos/total;const est=perc>=.85?3:perc>=.6?2:1;E.progresso.gaveta=Math.max(E.progresso.gaveta||0,est);salvar();
+  const limpos=G.hist.filter(h=>h&&h.ok).length;
+  mostrarResultado(tempoAcabou?"O tempo acabou!":"Gaveta zerada!","Você testou, achou o defeito e separou cada cabo como técnico de verdade.",est,
+    [["Cabos sem nenhum erro",`${limpos} de ${G.lista.length}`],["Etapas certas",`${G.acertos} de ${total}`],["Maior combo","x"+G.maxCombo],["Pontos da fase",G.pontos]]);
 }
 
 /* ================= FASE 3: FIBRA ================= */
@@ -739,7 +890,7 @@ const CARTOES=[
   ["Guardar o alicate fechado e as sobras de fio no copo de descarte ao terminar.",true,"Bancada organizada evita corte e perda de material."]
 ];
 let Fz=null;
-function iniciarFibra(){Fz={lista:embaralhar(CARTOES).slice(0,10),i:0,acertos:0,trava:false};$("f-total").textContent=10;telas("t-fibra");rodadaFibra();}
+function iniciarFibra(){E.faseAtual="fibra";Fz={lista:embaralhar(CARTOES).slice(0,10),i:0,acertos:0,trava:false};$("f-total").textContent=10;telas("t-fibra");rodadaFibra();}
 function rodadaFibra(){
   const c=Fz.lista[Fz.i];$("f-n").textContent=Fz.i+1;$("f-cartao").textContent=c[0];fb("f-feedback","");Fz.trava=false;
   iniciarRelogio(10,()=>responderFibra(null));
@@ -754,7 +905,7 @@ function responderFibra(r){
 $("f-pode").onclick=()=>responderFibra(true);$("f-nao").onclick=()=>responderFibra(false);
 
 /* ================= resultado ================= */
-function codigo(){let h=7;const s=E.nome+"|"+E.pontos+"|"+JSON.stringify(E.progresso);for(const ch of s)h=(h*31+ch.charCodeAt(0))%1679616;return "RJ-"+h.toString(36).toUpperCase().padStart(4,"0");}
+function codigo(){let h=7;const s=E.nome+"|"+E.faseAtual+"|"+E.pontos+"|"+JSON.stringify(E.progresso);for(const ch of s)h=(h*31+ch.charCodeAt(0))%1679616;return "RJ-"+h.toString(36).toUpperCase().padStart(4,"0");}
 function mostrarResultado(tit,sub,est,linhas){
   esconderRelogio();
   $("r-titulo").textContent=tit;$("r-sub").textContent=sub;
@@ -763,10 +914,16 @@ function mostrarResultado(tit,sub,est,linhas){
   const total=["bancada","gaveta","fibra"].reduce((s,k)=>s+(E.progresso[k]||0),0);
   const cargo=total>=8?"Técnico(a) sênior":total>=6?"Técnico(a) pleno":total>=3?"Técnico(a) júnior":"Estagiário(a) de bancada";
   $("r-lista").innerHTML=linhas.map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join("")+`<div><span>Pontos no plantão</span><b>${E.pontos}</b></div><div><span>Estrelas nas 3 fases</span><b>${total} de 9 · ${cargo}</b></div>`;
-  $("r-codigo").textContent=codigo();
+  const cod=codigo();$("r-codigo").textContent=cod;
+  if(E.faseAtual){E.codigos[E.faseAtual]={codigo:cod,estrelas:est,quando:new Date().toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})};salvar();}
   telas("t-resultado");if(est>=2){somBom();setTimeout(somBom,250);}
 }
 $("r-voltar").onclick=()=>{desenharMapa();telas("t-inicio");};
+function mostrarCodigos(){const nomes={bancada:"Fase 1 · Bancada: 3 cabos",gaveta:"Fase 2 · Caça-defeitos",fibra:"Fase 3 · Fibra: pode ou não pode?"};
+  $("c-lista").innerHTML=Object.entries(nomes).map(([k,t])=>{const c=E.codigos[k];return `<div class="${c?"tem":""}"><span>${t}${c?`<small>${"★".repeat(c.estrelas)} · ${c.quando}</small>`:"<small>ainda não concluída</small>"}</span><b class="codigo-p">${c?c.codigo:"—"}</b></div>`;}).join("")+(E.nome?`<p class="peq">Técnico(a): <b>${E.nome}</b></p>`:"");
+  telas("t-codigos");}
+$("btn-codigos").onclick=()=>{const ativa=document.querySelector(".tela.ativa").id;if(["t-bancada","t-gaveta","t-fibra"].includes(ativa)&&relogio){if(!confirm("Sair da fase agora? O progresso desta fase será perdido."))return;pararRelogio();esconderRelogio();if(G)G.fim=true;}mostrarCodigos();};
+$("c-voltar").onclick=()=>{desenharMapa();telas("t-inicio");};
 
 /* ================= início ================= */
 function ajustarTela(){const w=innerWidth,h=innerHeight;let z=1;
