@@ -46,6 +46,11 @@ h2{font-size:22px;margin:0 0 8px}
 .fase .num{font-size:13px;color:var(--dour);font-weight:800;letter-spacing:.6px}
 .fase.bloq{opacity:.45}
 .estrelas{font-size:22px;letter-spacing:2px;color:#3a5482}.estrelas .on{color:var(--amar);text-shadow:0 0 10px rgba(255,201,74,.6)}
+.aviso-nome[hidden],#toast-nome[hidden]{display:none}
+.aviso-nome{margin:6px 0 0;color:#fff;background:var(--verm);border-radius:10px;padding:8px 12px;font-weight:800;display:inline-block}
+input.nome.erro{border:2px solid var(--verm);box-shadow:0 0 0 4px rgba(255,90,95,.25);animation:treme .35s}
+@keyframes treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+#toast-nome{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:50;background:var(--verm);color:#fff;font-weight:800;padding:12px 18px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
 input.nome{background:#081a36;border:1px solid var(--borda);color:var(--tinta);border-radius:12px;padding:12px 14px;font:inherit;width:min(360px,100%)}
 .passos{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 14px}
 .passos span{font-size:12px;font-weight:800;padding:5px 9px;border-radius:999px;background:#0a1a35;border:1px solid var(--borda);color:var(--apagado)}
@@ -346,6 +351,7 @@ main,.topo{zoom:var(--z,1)}
     <h1>Bancada do <b>Técnico</b></h1>
     <p class="sub">Você está na bancada com cabo e conectores RJ45. Faça os cabos seguindo o POP (o passo a passo do serviço), teste cada um e descubra quais cabos da gaveta prestam. Cada fase vale pontos e estrelas.</p>
     <p class="campo"><input class="nome" id="nome" maxlength="24" placeholder="Seu nome de técnico(a)"></p>
+    <p class="aviso-nome" id="aviso-nome" role="alert" hidden>Escreva o seu nome aqui antes de jogar.</p>
     <button class="botao dour" id="btn-comecar">Começar o plantão</button>
     <button class="botao cinza" id="btn-cola">Cola das cores</button>
    </div>
@@ -665,12 +671,13 @@ function desenharMapa(){
 }
 let _rz=null;window.addEventListener("resize",()=>{clearTimeout(_rz);_rz=setTimeout(()=>{if(document.getElementById("t-inicio").classList.contains("ativa"))desenharMapa();},200);});
 window.addEventListener("hashchange",desenharMapa);
-function garantirNome(){const n=$("nome").value.trim();if(!n){$("nome").focus();$("nome").style.borderColor="var(--verm)";return false;}E.nome=n;$("hud-nome").innerHTML=ic("capacete")+" "+escapar(n);salvar();return true;}
+function garantirNome(){const n=$("nome").value.trim();if(!n){const c=$("nome");c.classList.remove("erro");void c.offsetWidth;c.classList.add("erro");$("aviso-nome").hidden=false;c.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>c.focus({preventScroll:true}),350);let t=document.getElementById("toast-nome");if(!t){t=document.createElement("div");t.id="toast-nome";t.setAttribute("role","alert");document.body.appendChild(t);}t.textContent="Antes de jogar, escreva o seu nome no começo da página.";t.hidden=false;clearTimeout(t._t);t._t=setTimeout(()=>t.hidden=true,3500);return false;}$("aviso-nome").hidden=true;$("nome").classList.remove("erro");E.nome=n;$("hud-nome").innerHTML=ic("capacete")+" "+escapar(n);salvar();return true;}
 $("btn-comecar").onclick=()=>{if(!garantirNome())return;somClique();iniciarBancada();};
 $("btn-cola").onclick=()=>{telas("t-cola");};
 $("cola-voltar").onclick=()=>{telas(E.voltarPara||"t-inicio");};
 $("cola-corpo").innerHTML=T568B.map((k,i)=>`<tr><td><b>${i+1}</b></td><td><span class="amostra" style="background:${FIOS[k].cor}"></span>${FIOS[k].nome}</td><td><span class="amostra" style="background:${FIOS[T568A[i]].cor}"></span>${FIOS[T568A[i]].nome}</td></tr>`).join("");
 
+$("nome").addEventListener("input",()=>{if($("nome").value.trim()){$("aviso-nome").hidden=true;$("nome").classList.remove("erro");}});
 /* ================= FASE 1: BANCADA ================= */
 let B=null; /* estado do cabo atual */
 function iniciarBancada(){E.faseAtual="bancada";E.cabo=0;E.resultado.bancada=[];E.pontosInicioFase=E.pontos;novoCabo();}
