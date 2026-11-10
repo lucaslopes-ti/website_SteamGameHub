@@ -69,6 +69,13 @@ interface RemoteProgressResponse {
   uid?: unknown;
   completedLessonIds?: unknown;
   completedLessons?: unknown;
+  /** XP dos jogos das aulas (ex.: Montador de Cabo), somado ao XP das lições. */
+  gameXp?: unknown;
+}
+
+function gameXpFromRemote(remote: RemoteProgressResponse): number {
+  const v = remote.gameXp;
+  return typeof v === "number" && Number.isFinite(v) && v > 0 ? v : 0;
 }
 
 /**
@@ -97,6 +104,8 @@ export function useSqlProgress() {
   // Mantém o estado mais recente disponível de forma síncrona para callbacks
   // assíncronos (evita leituras obsoletas em `complete`).
   const stateRef = useRef(state);
+  /** XP dos jogos das aulas vindo do servidor (somado ao XP das lições). */
+  const gameXpRef = useRef(0);
   const applyState = useCallback((next: ProgressState) => {
     stateRef.current = next;
     setState(next);
@@ -106,6 +115,7 @@ export function useSqlProgress() {
   // autenticado. Visitante anônimo: estado vazio, sem qualquer persistência.
   useEffect(() => {
     if (!uid) {
+      gameXpRef.current = 0;
       applyState(EMPTY_STATE);
       setLoaded(true);
       return;
@@ -130,7 +140,8 @@ export function useSqlProgress() {
           return;
         }
         const ids = resolveLessonIdsFromRemote(remote);
-        applyState({ completedLessonIds: ids, totalXP: computeTotalXp(ids) });
+        gameXpRef.current = gameXpFromRemote(remote);
+        applyState({ completedLessonIds: ids, totalXP: computeTotalXp(ids) + gameXpRef.current });
         setLoaded(true);
       })
       .catch(() => {
@@ -212,7 +223,10 @@ export function useSqlProgress() {
           if (authoritative.uid && authoritative.uid !== uid) return;
           const authoritativeIds = resolveLessonIdsFromRemote(authoritative);
           const ids = authoritativeIds.length ? authoritativeIds : nextIds;
-          applyState({ completedLessonIds: ids, totalXP: computeTotalXp(ids) });
+          if (authoritative.gameXp !== undefined) {
+            gameXpRef.current = gameXpFromRemote(authoritative);
+          }
+          applyState({ completedLessonIds: ids, totalXP: computeTotalXp(ids) + gameXpRef.current });
         }
       } catch {
         // Falha silenciosa; a próxima navegação/sincronização tenta de novo.
