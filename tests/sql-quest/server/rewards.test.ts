@@ -225,6 +225,21 @@ const BLACK_KEYCHAIN_IDS = [
   "keychain-black-gamepad",
 ];
 
+/** v6: instrumentos musicais e itens de tecnologia (Bambu Lab A1). */
+const V6_IDS = [
+  "music-picks",
+  "music-whistle",
+  "music-kazoo",
+  "music-ocarina-mini",
+  "music-pan-flute",
+  "music-ocarina-12",
+  "tech-cable-clips",
+  "tech-sd-holder",
+  "tech-phone-stand",
+  "tech-desk-organizer",
+  "tech-headphone-stand",
+];
+
 beforeEach(() => {
   process.env.FIREBASE_SERVICE_ACCOUNT_KEY = "test-key";
   mockGetAuthUser.mockReset();
@@ -257,7 +272,7 @@ describe("GET /api/sql-quest/rewards", () => {
     expect(body.spentXp).toBe(345);
     expect(body.xpBalance).toBe(xpFor(LESSONS_WITH_CHARACTER_PIECE) - 345);
 
-    expect(body.items).toHaveLength(14);
+    expect(body.items).toHaveLength(25);
     const keychain = body.items.find((i: { id: string }) => i.id === "keychain");
     expect(keychain).toMatchObject({
       id: "keychain",
@@ -296,7 +311,7 @@ describe("GET /api/sql-quest/rewards", () => {
 
     await getRewards(new NextRequest("http://localhost/api/sql-quest/rewards"));
     expect(store["sql_quest_reward_inventory"]["current"]).toMatchObject({
-      version: 5,
+      version: 6,
       itemIds: [
         "keychain",
         ...NEW_KEYCHAIN_IDS,
@@ -306,6 +321,7 @@ describe("GET /api/sql-quest/rewards", () => {
         "object-15cm",
         "object-20cm",
         ...BLACK_KEYCHAIN_IDS,
+        ...V6_IDS,
       ],
     });
     expect(store["sql_quest_reward_stock"]["keychain"]).toMatchObject({
@@ -356,7 +372,7 @@ describe("GET /api/sql-quest/rewards", () => {
 
     // Marca sobe para a versão corrente com todos os ids.
     expect(store["sql_quest_reward_inventory"]["current"]).toMatchObject({
-      version: 5,
+      version: 6,
       itemIds: [
         "keychain",
         ...NEW_KEYCHAIN_IDS,
@@ -366,6 +382,7 @@ describe("GET /api/sql-quest/rewards", () => {
         "object-15cm",
         "object-20cm",
         ...BLACK_KEYCHAIN_IDS,
+        ...V6_IDS,
       ],
     });
     // Estoque existente é preservado (nunca restaurado).
@@ -424,8 +441,8 @@ describe("GET /api/sql-quest/rewards", () => {
 
     // A marca sobe para a versão corrente com todos os ids, incluindo os novos produtos.
     expect(store["sql_quest_reward_inventory"]["current"]).toMatchObject({
-      version: 5,
-      itemIds: [...v3ItemIds, "object-20cm", ...BLACK_KEYCHAIN_IDS],
+      version: 6,
+      itemIds: [...v3ItemIds, "object-20cm", ...BLACK_KEYCHAIN_IDS, ...V6_IDS],
     });
     // Apenas o novo produto é inicializado, com 1 unidade.
     expect(store["sql_quest_reward_stock"]["object-20cm"]).toMatchObject({
@@ -472,8 +489,8 @@ describe("GET /api/sql-quest/rewards", () => {
     await getRewards(new NextRequest("http://localhost/api/sql-quest/rewards"));
 
     expect(store["sql_quest_reward_inventory"]["current"]).toMatchObject({
-      version: 5,
-      itemIds: [...v4ItemIds, ...BLACK_KEYCHAIN_IDS],
+      version: 6,
+      itemIds: [...v4ItemIds, ...BLACK_KEYCHAIN_IDS, ...V6_IDS],
     });
     for (const id of BLACK_KEYCHAIN_IDS) {
       expect(store["sql_quest_reward_stock"][id]).toMatchObject({

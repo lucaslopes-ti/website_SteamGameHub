@@ -9,6 +9,7 @@ import {
   ProgressValidationError,
 } from "@/lib/sql-quest/server/progress";
 import { levelInfo } from "@/lib/sql-quest/domain/levels";
+import { computeGameXp } from "@/lib/jogos/catalog";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -77,11 +78,13 @@ export async function GET(request: NextRequest) {
   try {
     const ref = db!.collection(PROGRESS_COLLECTION).doc(user!.uid);
     const snap = await ref.get();
-    const progress = parseProgressDoc(
-      user!.uid,
-      snap.exists ? (snap.data() ?? {}) : {}
+    const data = snap.exists ? (snap.data() ?? {}) : {};
+    const progress = parseProgressDoc(user!.uid, data);
+    return NextResponse.json(
+      serializeProgress(user!.uid, progress, {
+        gameXp: computeGameXp(data.gameMissionIds),
+      })
     );
-    return NextResponse.json(serializeProgress(user!.uid, progress));
   } catch (error) {
     console.error("[sql-quest] Erro ao ler progresso:", error);
     return NextResponse.json({ error: "Erro ao ler o progresso." }, { status: 500 });
@@ -132,6 +135,7 @@ export async function PUT(request: NextRequest) {
         isNewCompletion: result.isNewCompletion,
         xpEarned: result.xpEarned,
         newAchievements: result.newAchievements,
+        gameXp: result.gameXp,
       })
     );
   } catch (error) {

@@ -34,8 +34,7 @@
  */
 import type { Firestore } from "firebase-admin/firestore";
 import type { AuthUser } from "@/lib/server-auth";
-import { computeTotalXp } from "../progress";
-import { PROGRESS_COLLECTION, sanitizeLessonIds } from "./progress";
+import { PROGRESS_COLLECTION, computeEarnedXpFromDoc } from "./progress";
 import { CLASSES_COLLECTION, getClassById } from "./classes";
 import {
   canTransition,
@@ -50,7 +49,7 @@ import {
 export const REWARD_REQUESTS_COLLECTION = "sql_quest_reward_requests";
 export const REWARD_STOCK_COLLECTION = "sql_quest_reward_stock";
 export const REWARD_INVENTORY_COLLECTION = "sql_quest_reward_inventory";
-export const REWARD_INVENTORY_VERSION = 5;
+export const REWARD_INVENTORY_VERSION = 6;
 export const REWARD_INVENTORY_DOC_ID = "current";
 
 /** Produto físico da loja de recompensas (constante server-side). */
@@ -62,7 +61,12 @@ export interface RewardProduct {
   initialStock: number;
 }
 
-/** Catálogo fixo e versionado no servidor (v5: +3 chaveiros pretos [3 unid cada, 4000 XP]). */
+/**
+ * Catálogo fixo e versionado no servidor.
+ * v5: +3 chaveiros pretos [3 unid cada, 4000 XP].
+ * v6: +6 instrumentos musicais e +5 itens de tecnologia, todos dentro da área
+ *     de impressão da Bambu Lab A1 (256 × 256 × 256 mm), em PLA, sem AMS.
+ */
 export const REWARD_PRODUCTS: readonly RewardProduct[] = [
   {
     id: "keychain",
@@ -165,6 +169,85 @@ export const REWARD_PRODUCTS: readonly RewardProduct[] = [
     description: "Chaveiro em 3D na cor preta no formato de um controle de videogame.",
     costXp: 4000,
     initialStock: 3,
+  },
+  // ---- v6: instrumentos musicais (impressão 3D na Bambu Lab A1) ----
+  {
+    id: "music-picks",
+    name: "Kit 3 palhetas de violão",
+    description: "Três palhetas de violão/guitarra impressas em 3D, na cor que você escolher no pedido.",
+    costXp: 300,
+    initialStock: 10,
+  },
+  {
+    id: "music-whistle",
+    name: "Apito de verdade",
+    description: "Apito de mão impresso em 3D, que apita forte. Vem com furo para cordão ou chaveiro.",
+    costXp: 350,
+    initialStock: 6,
+  },
+  {
+    id: "music-kazoo",
+    name: "Kazoo",
+    description: "Kazoo impresso em 3D: você cantarola dentro e ele vibra. Vem montado, com a membrana.",
+    costXp: 500,
+    initialStock: 5,
+  },
+  {
+    id: "music-ocarina-mini",
+    name: "Ocarina mini (6 furos)",
+    description: "Ocarina pequena de 6 furos, afinada, que cabe no bolso. Dá para tocar músicas simples.",
+    costXp: 800,
+    initialStock: 3,
+  },
+  {
+    id: "music-pan-flute",
+    name: "Flauta de pã (8 notas)",
+    description: "Flauta de pã de 8 canos com a escala de dó maior. Impressão longa, em duas mesas.",
+    costXp: 1200,
+    initialStock: 2,
+  },
+  {
+    id: "music-ocarina-12",
+    name: "Ocarina de 12 furos (dó maior)",
+    description: "Ocarina completa de 12 furos em dó, tocável de verdade, com acabamento caprichado.",
+    costXp: 1800,
+    initialStock: 2,
+  },
+  // ---- v6: itens de tecnologia (impressão 3D na Bambu Lab A1) ----
+  {
+    id: "tech-cable-clips",
+    name: "Kit 5 presilhas para cabos",
+    description: "Cinco presilhas para organizar cabos de carregador e fone na mesa ou na parede.",
+    costXp: 300,
+    initialStock: 10,
+  },
+  {
+    id: "tech-sd-holder",
+    name: "Porta-cartões SD e pendrives",
+    description: "Estojo pequeno com encaixes para cartões SD, microSD e pendrives.",
+    costXp: 400,
+    initialStock: 6,
+  },
+  {
+    id: "tech-phone-stand",
+    name: "Suporte de celular com passagem de cabo",
+    description: "Suporte de mesa para celular, com ângulo de vídeo e furo para o carregador passar por trás.",
+    costXp: 700,
+    initialStock: 4,
+  },
+  {
+    id: "tech-desk-organizer",
+    name: "Organizador de mesa modular",
+    description: "Organizador de mesa com espaço para canetas, celular e cabos. As peças se encaixam.",
+    costXp: 1300,
+    initialStock: 2,
+  },
+  {
+    id: "tech-headphone-stand",
+    name: "Suporte de headset",
+    description: "Suporte de mesa para fone/headset gamer, com gancho para enrolar o cabo.",
+    costXp: 1500,
+    initialStock: 2,
   },
 ];
 
@@ -308,7 +391,7 @@ export async function readStudentRewardContext(
 ): Promise<StudentRewardContext> {
   const snap = await db.collection(PROGRESS_COLLECTION).doc(uid).get();
   const data = snap.exists ? (snap.data() ?? {}) : {};
-  const earnedXp = computeTotalXp(sanitizeLessonIds(data.completedLessonIds));
+  const earnedXp = computeEarnedXpFromDoc(data);
   const spentXp = toNonNegativeNumber(data.spentXp);
   const classId =
     typeof data.classId === "string" && data.classId ? data.classId : null;
@@ -556,9 +639,7 @@ export async function createRewardRequest(
       }
 
       const progressData = progressSnap.exists ? (progressSnap.data() ?? {}) : {};
-      const earnedXp = computeTotalXp(
-        sanitizeLessonIds(progressData.completedLessonIds)
-      );
+      const earnedXp = computeEarnedXpFromDoc(progressData);
       const balance = computeXpBalance(
         earnedXp,
         toNonNegativeNumber(progressData.spentXp)
@@ -727,9 +808,7 @@ export async function decideRewardRequest(
 
       // XP ganho SEMPRE derivado das conclusões reais (nunca do totalXp).
       const progressData = progressSnap.exists ? (progressSnap.data() ?? {}) : {};
-      const earnedXp = computeTotalXp(
-        sanitizeLessonIds(progressData.completedLessonIds)
-      );
+      const earnedXp = computeEarnedXpFromDoc(progressData);
       // Progresso legado sem o campo `spentXp` é tratado como 0; um campo
       // PRESENTE e inválido (string/NaN/negativo) bloqueia a aprovação.
       const spentXpRaw = progressData.spentXp;

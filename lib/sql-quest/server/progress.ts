@@ -12,6 +12,7 @@ import { computeTotalXp, validateCompletions } from "../progress";
 import { migrateLessonIds } from "../content/migrate";
 import { computeStreak, dateKeyInSaoPaulo } from "../domain/streak";
 import { evaluateAchievements, newlyEarned } from "../domain/achievements";
+import { computeGameXp } from "@/lib/jogos/catalog";
 
 export const PROGRESS_COLLECTION = "sql_quest_progress";
 
@@ -44,6 +45,19 @@ export interface ProgressDoc {
 }
 
 /** Estado padrão de um aluno sem documento de progresso. */
+/**
+ * XP ganho de um documento de progresso, derivado SEMPRE dos catálogos:
+ * lições concluídas da SQL Quest + missões dos jogos das aulas
+ * (`gameMissionIds`, ver lib/jogos/catalog.ts). O `totalXp` persistido nunca
+ * é a fonte.
+ */
+export function computeEarnedXpFromDoc(data: Record<string, unknown>): number {
+  return (
+    computeTotalXp(sanitizeLessonIds(data.completedLessonIds)) +
+    computeGameXp(data.gameMissionIds)
+  );
+}
+
 export function emptyProgressDoc(uid: string): ProgressDoc {
   return {
     uid,
@@ -75,7 +89,7 @@ export function parseProgressDoc(uid: string, data: Record<string, unknown>): Pr
     totalXp:
       typeof data.totalXp === "number" && Number.isFinite(data.totalXp)
         ? data.totalXp
-        : computeTotalXp(completedLessonIds),
+        : computeTotalXp(completedLessonIds) + computeGameXp(data.gameMissionIds),
     spentXp:
       typeof data.spentXp === "number" &&
       Number.isFinite(data.spentXp) &&
@@ -147,6 +161,8 @@ export interface CompletionResult {
   newAchievements: string[];
   isNewCompletion: boolean;
   xpEarned: number;
+  /** XP vindo dos jogos das aulas (já incluído em totalXp). */
+  gameXp: number;
 }
 
 /**
@@ -180,7 +196,8 @@ export async function applyCompletion(
     (acc, id) => acc + (getLessonById(id)?.xpReward ?? 0),
     0
   );
-  const totalXp = computeTotalXp(merged);
+  // Soma também o XP dos jogos das aulas (missões guardadas em gameMissionIds).
+  const totalXp = computeTotalXp(merged) + computeGameXp(existing.gameMissionIds);
   const updatedAt = now.toISOString();
 
   const today = dateKeyInSaoPaulo(now);
@@ -242,5 +259,6 @@ export async function applyCompletion(
     newAchievements,
     isNewCompletion,
     xpEarned,
+    gameXp: computeGameXp(existing.gameMissionIds),
   };
 }
