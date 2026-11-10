@@ -1348,8 +1348,6 @@ const CARTOES=[
   ["Limpar a ponta do conector com álcool isopropílico e lenço próprio.",true,"É a limpeza certa, feita pelo técnico, com o material do kit."],
   ["Ligar o cabo de treino da bancada na tomada para testar.",false,"Na bancada tudo é sem energia; o teste é com o testador de pilha."],
   ["Escrever \"cabo certificado\" depois de passar no testador simples.",false,"Testador simples só vê continuidade. Certificação é com o certificador."],
-  ["Usar o power meter para medir quanta luz chega na ponta da fibra.",true,"É para isso que serve o medidor de potência óptica."],
-  ["Apontar a caneta laser (VFL) para o rosto de um colega.",false,"Laser nunca vai na direção dos olhos de ninguém."],
   ["Guardar o alicate fechado e as sobras de fio no copo de descarte ao terminar.",true,"Bancada organizada evita corte e perda de material."]
 ];
 let Fz=null;
@@ -1395,9 +1393,7 @@ const FERRAMENTAS={
   testador:["testador","Testador de cabo"],
   punch:["tomada","Punch down (ferramenta de inserção)"],
   etiquetadora:["etiqueta","Etiquetadora"],
-  powermeter:["medidor","Power meter (medidor de potência óptica)"],
   certificador:["escudo","Certificador de cabos"],
-  vfl:["lampada","VFL (caneta de luz vermelha)"],
   limpeza:["gota","Lenço com álcool isopropílico"]
 };
 const TAREFAS=[
@@ -1409,9 +1405,7 @@ const TAREFAS=[
   ["Descobrir qual fio está aberto (sem ligação) num cabo pronto.","testador","No testador, o LED do fio aberto fica apagado."],
   ["Encaixar os fios no conector fêmea da tomada de rede.","punch","O punch down empurra cada fio na lâmina do conector fêmea."],
   ["Marcar as duas pontas do cabo para ninguém confundir.","etiquetadora","Etiqueta nas duas pontas, a uns 5 cm do conector."],
-  ["Medir quanta luz chega na ponta da fibra.","powermeter","O power meter mede a potência da luz que chega (em dBm)."],
   ["Provar com um relatório que o cabo atende a categoria Cat6.","certificador","Só o certificador gera o relatório que comprova a categoria."],
-  ["Achar onde a fibra quebrou, vendo a luz vermelha escapar.","vfl","A VFL joga luz vermelha: onde a fibra quebrou, a luz vaza."],
   ["Limpar a ponta do conector de fibra antes de ligar.","limpeza","Lenço próprio com álcool isopropílico, sem encostar o dedo na ponta."]
 ];
 const REGRAS=[
