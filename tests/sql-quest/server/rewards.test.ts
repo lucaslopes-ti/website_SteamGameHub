@@ -29,12 +29,17 @@ jest.mock("@/lib/firebase/admin", () => ({
   getAdminDb: () => mockDbHolder.db,
 }));
 
-// O catálogo real soma 3356 XP — menos que o custo de 5500 do novo produto.
-// Este mock delega para o cálculo real por padrão e permite sobrescrever o XP
-// somente nos testes que precisam de saldo >= 5500.
+// Os preços da loja (a partir de 3000 XP) passam do XP das lições usadas
+// nestes testes. O mock multiplica por 10 o XP REAL das conclusões (ainda
+// derivado do catálogo, nunca do totalXp persistido): 276 → 2760 (abaixo do
+// chaveiro de 3000), 372 → 3720 (chaveiro), 715 → 7150 (peça de personagem,
+// 4500). Os testes que precisam de saldo >= 8000 sobrescrevem o valor.
 jest.mock("@/lib/sql-quest/progress", () => {
   const actual = jest.requireActual("@/lib/sql-quest/progress");
-  return { ...actual, computeTotalXp: jest.fn(actual.computeTotalXp) };
+  return {
+    ...actual,
+    computeTotalXp: jest.fn((ids: string[]) => actual.computeTotalXp(ids) * 10),
+  };
 });
 
 import { GET as getRewards } from "@/app/api/sql-quest/rewards/route";
@@ -92,19 +97,19 @@ const admin = {
 const LESSONS_BELOW_KEYCHAIN = [
   "select-01", "select-02", "select-03", "select-04", "select-05",
   "select-06", "select-07", "tabelas-01", "tabelas-02",
-]; // 276 XP (< custo 345 do chaveiro)
+];  // 276 XP real → 2760 com a escala ×10 (< custo 3000 do chaveiro)
 const LESSONS_WITH_KEYCHAIN = [
   "select-01", "select-02", "select-03", "select-04", "select-05",
   "select-06", "select-07", "tabelas-01", "tabelas-02", "tabelas-03",
   "tabelas-04", "tabelas-05",
-]; // 372 XP (>= custo 345 do chaveiro)
+];  // 372 XP real → 3720 com a escala ×10 (>= custo 3000 do chaveiro)
 const LESSONS_WITH_CHARACTER_PIECE = [
   "select-01", "select-02", "select-03", "select-04", "select-05",
   "select-06", "select-07", "tabelas-01", "tabelas-02", "tabelas-03",
   "tabelas-04", "tabelas-05", "tabelas-06", "tabelas-07", "tabelas-08",
   "tabelas-09", "tabelas-10", "restricoes-01", "restricoes-02",
   "restricoes-03", "restricoes-04", "restricoes-05", "restricoes-06",
-]; // 715 XP (>= custo 691 da peça de personagem)
+];  // 715 XP real → 7150 com a escala ×10 (>= custo 4500 da peça)
 
 const xpFor = (ids: string[]) => computeTotalXp(ids);
 
@@ -158,7 +163,7 @@ function seedRequest(
     classId: null,
     itemId: "keychain",
     itemName: "Chaveiro simples",
-    costXp: 345,
+    costXp: 3000,
     requestDetails: "Quero um chaveiro do logo.",
     status: "requested",
     createdAt: "2026-09-10T10:00:00.000Z",
@@ -258,7 +263,7 @@ describe("GET /api/sql-quest/rewards", () => {
 
   it("devolve catálogo fixo com estoque 1/5 e saldo derivado das conclusões", async () => {
     mockGetAuthUser.mockResolvedValue(student);
-    const { store } = seedProgress("u-student", LESSONS_WITH_CHARACTER_PIECE, 345);
+    const { store } = seedProgress("u-student", LESSONS_WITH_CHARACTER_PIECE, 3000);
     store["sql_quest_reward_stock"] = {
       keychain: { itemId: "keychain", initialStock: 5, remainingStock: 3, updatedAt: "2026-09-10T00:00:00.000Z" },
     };
@@ -269,32 +274,32 @@ describe("GET /api/sql-quest/rewards", () => {
 
     // XP derivado das conclusões reais (totalXp persistido = 999999 é ignorado).
     expect(body.earnedXp).toBe(xpFor(LESSONS_WITH_CHARACTER_PIECE));
-    expect(body.spentXp).toBe(345);
-    expect(body.xpBalance).toBe(xpFor(LESSONS_WITH_CHARACTER_PIECE) - 345);
+    expect(body.spentXp).toBe(3000);
+    expect(body.xpBalance).toBe(xpFor(LESSONS_WITH_CHARACTER_PIECE) - 3000);
 
     expect(body.items).toHaveLength(25);
     const keychain = body.items.find((i: { id: string }) => i.id === "keychain");
     expect(keychain).toMatchObject({
       id: "keychain",
       name: "Chaveiro simples",
-      costXp: 345,
+      costXp: 3000,
       initialStock: 5,
       remainingStock: 3,
       requestStatus: null,
     });
     const piece = body.items.find((i: { id: string }) => i.id === "character-piece");
-    expect(piece).toMatchObject({ costXp: 691, initialStock: 1, remainingStock: 1 });
+    expect(piece).toMatchObject({ costXp: 4500, initialStock: 1, remainingStock: 1 });
     const object = body.items.find((i: { id: string }) => i.id === "object-12cm");
-    expect(object).toMatchObject({ costXp: 2072, initialStock: 1, remainingStock: 1 });
+    expect(object).toMatchObject({ costXp: 5000, initialStock: 1, remainingStock: 1 });
     const duck = body.items.find((i: { id: string }) => i.id === "keychain-duck");
-    expect(duck).toMatchObject({ costXp: 550, initialStock: 3, remainingStock: 3 });
+    expect(duck).toMatchObject({ costXp: 4000, initialStock: 3, remainingStock: 3 });
     const item15 = body.items.find((i: { id: string }) => i.id === "object-15cm");
-    expect(item15).toMatchObject({ costXp: 3300, initialStock: 1, remainingStock: 1 });
+    expect(item15).toMatchObject({ costXp: 6000, initialStock: 1, remainingStock: 1 });
     const item20 = body.items.find((i: { id: string }) => i.id === "object-20cm");
     expect(item20).toMatchObject({
       id: "object-20cm",
       name: "Item personalizado de até 20 cm",
-      costXp: 5500,
+      costXp: 8000,
       initialStock: 1,
       remainingStock: 1,
     });
@@ -680,7 +685,7 @@ describe("POST /api/sql-quest/rewards/requests", () => {
 
   it("bloqueia criação com saldo insuficiente (409)", async () => {
     mockGetAuthUser.mockResolvedValue(student);
-    const { store } = seedProgress("u-student", LESSONS_BELOW_KEYCHAIN); // 276 XP < 345
+    const { store } = seedProgress("u-student", LESSONS_BELOW_KEYCHAIN); // 276 XP < 3000
 
     const res = await createRequest(
       makeJsonRequest("http://localhost/api/sql-quest/rewards/requests", "POST", {
@@ -864,7 +869,7 @@ describe("estoque global limitado (POST)", () => {
       uid: "u-other",
       itemId: "character-piece",
       itemName: "Peça de personagem",
-      costXp: 691,
+      costXp: 4500,
       status: "fulfilled",
     });
 
@@ -904,7 +909,7 @@ describe("estoque global limitado (POST)", () => {
       uid: "u-student2",
       itemId: "character-piece",
       itemName: "Peça de personagem",
-      costXp: 691,
+      costXp: 4500,
       status: "requested",
     });
 
@@ -1008,10 +1013,10 @@ describe("estoque global limitado (POST)", () => {
     expect(store["sql_quest_reward_inventory"]).toBeUndefined();
   });
 
-  it("novo item personalizado 20 cm (5500 XP) aceita apenas 1 pedido global", async () => {
+  it("novo item personalizado 20 cm (8000 XP) aceita apenas 1 pedido global", async () => {
     const actual = jest.requireActual("@/lib/sql-quest/progress");
     const mockedComputeTotalXp = jest.mocked(computeTotalXp);
-    mockedComputeTotalXp.mockReturnValue(5500);
+    mockedComputeTotalXp.mockReturnValue(8000);
     try {
       const { db, store } = createFakeDb();
       mockDbHolder.db = db;
@@ -1043,7 +1048,7 @@ describe("estoque global limitado (POST)", () => {
       const firstBody = await first.json();
       expect(firstBody.itemId).toBe("object-20cm");
       expect(firstBody.itemName).toBe("Item personalizado de até 20 cm");
-      expect(firstBody.costXp).toBe(5500);
+      expect(firstBody.costXp).toBe(8000);
 
       // O produto tem estoque global 1: o segundo aluno é bloqueado.
       mockGetAuthUser.mockResolvedValueOnce(student2);
@@ -1064,7 +1069,9 @@ describe("estoque global limitado (POST)", () => {
       expect(store["sql_quest_reward_stock"]).toBeUndefined();
       expect(store["sql_quest_reward_inventory"]).toBeUndefined();
     } finally {
-      mockedComputeTotalXp.mockImplementation(actual.computeTotalXp);
+      mockedComputeTotalXp.mockImplementation(
+        (ids: string[]) => actual.computeTotalXp(ids) * 10
+      );
     }
   });
 });
@@ -1110,14 +1117,14 @@ describe("GET /api/sql-quest/rewards/requests", () => {
       classId: "class-2",
       itemId: "character-piece",
       itemName: "Peça de personagem",
-      costXp: 691,
+      costXp: 4500,
     });
     seedRequest(store, "u-student_object-12cm", {
       uid: "u-student",
       classId: null,
       itemId: "object-12cm",
       itemName: "Objeto personalizado de até 12 cm",
-      costXp: 2072,
+      costXp: 5000,
     });
 
     const res = await listRequests(
@@ -1243,7 +1250,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
     expect(body.request.approvedAt).toBeTruthy();
     expect(body.idempotent).toBe(false);
 
-    expect(store["sql_quest_progress"]["u-student"].spentXp).toBe(345);
+    expect(store["sql_quest_progress"]["u-student"].spentXp).toBe(3000);
     expect(store["sql_quest_reward_stock"]["keychain"]).toMatchObject({
       initialStock: 5,
       remainingStock: 4,
@@ -1271,7 +1278,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
     const body = await second.json();
     expect(body.idempotent).toBe(true);
 
-    expect(store["sql_quest_progress"]["u-student"].spentXp).toBe(345);
+    expect(store["sql_quest_progress"]["u-student"].spentXp).toBe(3000);
     expect(store["sql_quest_reward_stock"]["keychain"].remainingStock).toBe(4);
   });
 
@@ -1325,7 +1332,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
 
   it("saldo insuficiente bloqueia a aprovação sem mutar nada", async () => {
     mockGetAuthUser.mockResolvedValue(admin);
-    const { store } = seedProgress("u-student", LESSONS_BELOW_KEYCHAIN); // 276 XP < 345
+    const { store } = seedProgress("u-student", LESSONS_BELOW_KEYCHAIN); // 276 XP < 3000
     seedRequest(store, "u-student_keychain");
 
     const res = await decideRequest(
@@ -1407,7 +1414,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
     );
     expect(res.status).toBe(200);
     // Débito normal a partir de spentXp = 0.
-    expect(store["sql_quest_progress"]["u-student"].spentXp).toBe(345);
+    expect(store["sql_quest_progress"]["u-student"].spentXp).toBe(3000);
     expect(store["sql_quest_reward_stock"]["keychain"]).toMatchObject({
       initialStock: 5,
       remainingStock: 4,
@@ -1420,7 +1427,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
     seedRequest(store, "u-student_character-piece", {
       itemId: "character-piece",
       itemName: "Peça de personagem",
-      costXp: 691,
+      costXp: 4500,
     });
     store["sql_quest_reward_stock"] = {
       "character-piece": { itemId: "character-piece", initialStock: 1, remainingStock: 0, updatedAt: "2026-09-10T00:00:00.000Z" },
@@ -1444,13 +1451,13 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
       uid: "u-student",
       itemId: "character-piece",
       itemName: "Peça de personagem",
-      costXp: 691,
+      costXp: 4500,
     });
     seedRequest(store, "u-student2_character-piece", {
       uid: "u-student2",
       itemId: "character-piece",
       itemName: "Peça de personagem",
-      costXp: 691,
+      costXp: 4500,
     });
     store["sql_quest_progress"]["u-student2"] = {
       uid: "u-student2",
@@ -1477,7 +1484,7 @@ describe("PATCH /api/sql-quest/rewards/requests/[id]", () => {
   it("pedido corrompido (custo divergente do catálogo) falha fechado sem mutar", async () => {
     mockGetAuthUser.mockResolvedValue(admin);
     const { store } = seedProgress("u-student", LESSONS_WITH_KEYCHAIN);
-    seedRequest(store, "u-student_keychain", { costXp: 100 }); // catálogo = 345
+    seedRequest(store, "u-student_keychain", { costXp: 100 }); // catálogo = 3000
 
     const res = await decideRequest(
       makeJsonRequest("http://localhost/api/sql-quest/rewards/requests/u-student_keychain", "PATCH", { action: "approve" }),
