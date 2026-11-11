@@ -525,58 +525,211 @@ button, select, input { font: inherit; }
 
 </style>
   <style>
-/* Página do simulador por provedor: roteiro + janela do navegador + mapa. */
-.sim-provedores { display: flex; flex-wrap: wrap; gap: 6px; }
+/* Página do simulador por provedor: painel do roteador (à esquerda, grande) e, ao lado,
+   o passo atual + abas Rede / Etiqueta / Ordem de serviço / Chamado.
+   Do notebook ao projetor fica tudo lado a lado, sem rolar a página; no celular, empilha. */
+:root {
+  --ap-fonte: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --ap-tinta: #16212e; --ap-suave: #566476; --ap-linha: #dbe1e8; --ap-fundo: #eef1f5;
+  --ap-azul: #0b5cad; --ap-azul-escuro: #083f78; --ap-ok: #1f8a4c; --ap-amarelo: #f0b400;
+  --ap-raio: 10px; --ap-sombra: 0 1px 2px rgba(16, 33, 54, .06), 0 4px 14px rgba(16, 33, 54, .06);
+  --ap-topo-h: 56px; --ap-lado: clamp(320px, 30vw, 600px);
+}
+body { font-family: var(--ap-fonte); background: var(--ap-fundo); color: var(--ap-tinta); font-size: 15px; line-height: 1.45;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+:focus-visible { outline: 3px solid #f0b400; outline-offset: 2px; }
+[hidden] { display: none !important; }
+
+/* ---------------------------------------------------------------- topo */
+.ap-topo {
+  position: sticky; top: 0; z-index: 20; height: var(--ap-topo-h);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 0 16px; background: #102236; color: #fff; box-shadow: 0 1px 0 rgba(255,255,255,.06), 0 2px 8px rgba(0,0,0,.18);
+}
+.ap-marca { display: flex; align-items: center; gap: 10px; color: inherit; text-decoration: none; min-width: 0; }
+.ap-logo { flex: 0 0 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg, #1e7be0, #0b5cad);
+  display: flex; align-items: flex-end; justify-content: center; gap: 3px; padding-bottom: 8px; }
+.ap-logo i { width: 4px; border-radius: 2px; background: #fff; }
+.ap-logo i:nth-child(1) { height: 7px; opacity: .7; } .ap-logo i:nth-child(2) { height: 12px; opacity: .85; } .ap-logo i:nth-child(3) { height: 17px; }
+.ap-marca-txt { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+.ap-marca-txt strong { font-size: 16px; font-weight: 650; letter-spacing: .1px; }
+.ap-marca-txt small { font-size: 12px; color: #a9b8c9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.sim-provedores { display: flex; gap: 4px; background: rgba(255,255,255,.08); padding: 4px; border-radius: 10px; }
 .sim-provedores a {
-  color: #fff; text-decoration: none; padding: 5px 12px; border-radius: 4px;
-  border: 1px solid #5d7189; font-size: 14px;
+  color: #dfe7f0; text-decoration: none; padding: 6px 14px; border-radius: 7px; font-size: 14px; font-weight: 600;
+  display: flex; align-items: center; gap: 7px; transition: background .15s;
 }
-.sim-provedores a.ativo, .sim-provedores a:hover { background: #fff; color: #13263d; }
+.sim-provedores a::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--p-cor); box-shadow: 0 0 0 2px rgba(255,255,255,.25); }
+.sim-provedores a:hover { background: rgba(255,255,255,.12); color: #fff; }
+.sim-provedores a.ativo { background: #fff; color: #102236; }
+.p-vivo { --p-cor: #8a2bb8; } .p-claro { --p-cor: #e3342a; } .p-algar { --p-cor: #00a19a; } .p-mznet { --p-cor: #2f86d6; }
 
-.sim-area {
-  display: grid; gap: 12px; padding: 12px 16px 16px;
-  grid-template-columns: 280px minmax(0, 1.3fr) minmax(330px, 1fr);
-  align-items: start;
+/* --------------------------------------------------------------- área */
+.ap-area {
+  display: grid; grid-template-columns: minmax(0, 1fr) var(--ap-lado); gap: 14px;
+  padding: 14px 16px; height: calc(100vh - var(--ap-topo-h)); height: calc(100dvh - var(--ap-topo-h));
 }
-@media (max-width: 1280px) { .sim-area { grid-template-columns: 280px minmax(0, 1fr); } .mapa-area { grid-column: 1 / -1; max-width: 560px; } }
-@media (max-width: 760px) { .sim-area { grid-template-columns: 1fr; padding: 12px 16px; } }
+.janela {
+  display: flex; flex-direction: column; min-width: 0; min-height: 0;
+  background: #fff; border: 1px solid #cdd5df; border-radius: var(--ap-raio); overflow: hidden; box-shadow: var(--ap-sombra);
+}
+.janela-barra { flex: 0 0 auto; display: flex; align-items: center; gap: 10px; padding: 7px 12px; background: #e8ecf1; border-bottom: 1px solid #d3dae2; }
+.bolinhas i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 5px; }
+.bolinhas i:nth-child(1) { background: #ff5f57; } .bolinhas i:nth-child(2) { background: #febc2e; } .bolinhas i:nth-child(3) { background: #28c840; }
+.janela-url { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; background: #fff; border-radius: 16px; padding: 4px 12px;
+  font-size: 13px; color: #3c4857; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border: 1px solid #d3dae2; }
+.janela-cadeado { color: #8692a0; }
+.janela-zoom { display: flex; align-items: center; gap: 2px; font-size: 12px; color: #5d6b7b; }
+.janela-zoom button { border: 1px solid #c6cfd9; background: #fff; border-radius: 6px; padding: 2px 8px; font-weight: 700; font-size: 13px; cursor: pointer; color: #2c3a4a; }
+.janela-zoom button:hover { background: #f0f3f6; }
+.janela-zoom span { min-width: 40px; text-align: center; }
+.janela-corpo { flex: 1 1 auto; min-height: 0; overflow: auto; container: painel / inline-size; display: flex; flex-direction: column; }
+.janela-corpo > .pp-raiz { flex: 1 0 auto; min-height: 0; }
+/* menus em cima (Claro): blocos empilhados; abas + submenu (Algar, MZNet): grade 2 colunas */
+.pp-layout-topo .pp-corpo { display: block; flex: 1 0 auto; }
+.pp-layout-abas .pp-corpo { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto 1fr; flex: 1 0 auto; }
+.pp-layout-abas .pp-nav-abas { grid-column: 1 / -1; }
+.pp-layout-abas .pp-nav-sub { width: 190px; }
 
-.sim-lado { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-.sim-caixa { background: var(--superficie); border: 1px solid var(--borda); border-radius: 6px; padding: 10px 12px; }
-.sim-roteiro-cab { display: flex; justify-content: space-between; align-items: baseline; }
-.sim-roteiro-cab span { font-size: 13px; color: var(--texto-suave); }
-.sim-barra { height: 6px; background: #e3e7ec; border-radius: 3px; margin: 6px 0 8px; overflow: hidden; }
-.sim-barra i { display: block; height: 100%; width: 0; background: var(--ok); transition: width .4s; }
-.sim-passos { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.sim-passos li { display: flex; gap: 8px; padding: 6px; border-radius: 5px; opacity: .7; }
+.ap-lado { min-width: 0; min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 2px; scrollbar-gutter: stable; }
+
+/* -------------------------------------------------------- passo atual */
+.ap-passo { background: #fff; border: 1px solid var(--ap-linha); border-radius: var(--ap-raio); padding: 14px 16px; box-shadow: var(--ap-sombra);
+  border-top: 4px solid var(--ap-amarelo); }
+.ap-passo-topo { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.ap-passo-num { font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: #8a6400; }
+.ap-link { background: none; border: 0; padding: 2px 0; color: var(--ap-azul); font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.sim-barra { height: 7px; background: #e6eaef; border-radius: 4px; margin: 8px 0 10px; overflow: hidden; }
+.sim-barra i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #26a35b, #1f8a4c); border-radius: 4px; transition: width .5s cubic-bezier(.2,.8,.2,1); }
+.ap-passo h2 { margin: 0 0 4px; font-size: 19px; line-height: 1.25; font-weight: 700; letter-spacing: -.1px; }
+.ap-passo p { margin: 0; font-size: 14.5px; line-height: 1.5; color: #2c3a4a; }
+.ap-btn-dica { margin-top: 10px; padding: 6px 12px; border-radius: 8px; border: 1px solid #ecd27a; background: #fff8dc; color: #6b4f00;
+  font-weight: 600; font-size: 13.5px; cursor: pointer; }
+.ap-btn-dica:hover { background: #fff1bf; }
+.ap-btn-dica[aria-expanded="true"] { background: #f0b400; border-color: #d9a200; color: #2b2000; }
+.ap-dica { margin-top: 8px; padding: 10px 12px; background: #fffbea; border: 1px dashed #e0c35a; border-radius: 8px; font-size: 13.5px; line-height: 1.5; color: #3a3220; }
+.ap-dica ul { margin: 4px 0 6px; padding-left: 20px; }
+.ap-dica code { background: #f1ead0; padding: 1px 5px; border-radius: 4px; font-family: Consolas, monospace; }
+
+.sim-passos { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.sim-passos li { display: flex; gap: 10px; padding: 7px 8px; border-radius: 8px; color: #5d6b7b; }
 .sim-passos li .num {
-  flex: 0 0 24px; height: 24px; border-radius: 50%; background: #e3e7ec; color: var(--texto);
+  flex: 0 0 26px; height: 26px; border-radius: 50%; background: #e6eaef; color: #3c4857;
   display: grid; place-items: center; font-size: 13px; font-weight: 700;
 }
-.sim-passos li strong { font-size: 14px; }
-.sim-passos li p { margin: 2px 0 0; font-size: 13px; line-height: 1.4; display: none; }
-.sim-passos li.atual { opacity: 1; background: #fff7d6; border: 1px solid #f0d97a; }
+.sim-passos li strong { font-size: 14px; font-weight: 600; }
+.sim-passos li p { margin: 2px 0 0; font-size: 13px; line-height: 1.45; display: none; }
+.sim-passos li.atual { background: #fff8dc; color: var(--ap-tinta); box-shadow: inset 0 0 0 1px #ecd27a; }
 .sim-passos li.atual p { display: block; }
-.sim-passos li.atual .num { background: #f0b400; color: #fff; }
-.sim-passos li.feito { opacity: 1; }
-.sim-passos li.feito .num { background: var(--ok); color: #fff; }
-.sim-parabens { margin: 8px 0 0; padding: 8px; background: #e3f5ea; color: var(--ok); font-weight: 600; border-radius: 5px; }
+.sim-passos li.atual .num { background: var(--ap-amarelo); color: #fff; }
+.sim-passos li.feito { color: var(--ap-tinta); }
+.sim-passos li.feito .num { background: var(--ap-ok); color: #fff; }
 
-.sim-etiqueta {
-  margin-top: 6px; border: 2px dashed #9aa5b1; border-radius: 6px; padding: 8px 10px;
-  background: repeating-linear-gradient(135deg, #fbfbf7, #fbfbf7 8px, #f4f4ee 8px, #f4f4ee 16px);
-  font-size: 13px;
+/* --------------------------------------------------------------- abas */
+.ap-abas { display: flex; gap: 2px; background: #dfe4ea; padding: 3px; border-radius: 10px; flex: 0 0 auto; }
+.ap-abas button {
+  flex: 1 1 auto; position: relative; padding: 7px 6px; border: 0; border-radius: 8px; background: transparent;
+  font-size: 13.5px; font-weight: 600; color: #3c4857; cursor: pointer; white-space: nowrap;
 }
-.sim-etiqueta .et-cab { font-weight: 700; border-bottom: 1px solid #c9ced6; margin-bottom: 4px; padding-bottom: 3px; }
-.sim-etiqueta div, .sim-os div { display: flex; justify-content: space-between; gap: 8px; padding: 2px 0; }
-.sim-etiqueta small { color: var(--texto-suave); }
-.sim-etiqueta code, .sim-os code { font-family: Consolas, monospace; font-weight: 700; user-select: all; }
-.sim-os { margin-top: 6px; font-size: 13px; }
-.sim-os p { margin: 6px 0 0; color: var(--texto-suave); line-height: 1.4; }
-
-.sim-btn { padding: 7px 12px; border: 1px solid var(--borda); background: #f7f9fb; border-radius: 5px; cursor: pointer; }
-.sim-btn-destaque { width: 100%; margin-top: 6px; background: #0b5cad; color: #fff; border-color: #0b5cad; font-weight: 600; }
+.ap-abas button:hover { background: rgba(255,255,255,.6); }
+.ap-abas button[aria-selected="true"] { background: #fff; color: var(--ap-tinta); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.ap-abas button.sugerida::after { content: ""; position: absolute; top: 5px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--ap-amarelo); box-shadow: 0 0 0 2px #fff; }
+.ap-pn { background: #fff; border: 1px solid var(--ap-linha); border-radius: var(--ap-raio); padding: 12px; box-shadow: var(--ap-sombra); }
+.ap-pn[hidden] { display: none; }
+.ap-pn-intro { margin: 0 0 10px; font-size: 13.5px; color: var(--ap-suave); line-height: 1.45; }
+.mapa-area { background: none; border: 0; padding: 0; }
+.mapa-area .mp-mapa { border-radius: 8px; }
+/* o desenho encolhe pela altura para caber ao lado do painel sem rolar */
+@media (min-width: 861px) { .mapa-area .mp-svg { max-height: max(300px, calc(100vh - var(--ap-topo-h) - 420px)); width: auto; max-width: 100%; margin: 0 auto; } }
 .mapa-area .mp-btn { display: none; } /* teste de NAT não faz parte deste roteiro */
+.ap-mapa-topo { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin: 8px 0; }
+.mapa-dica { margin: 0; font-size: 13px; color: var(--ap-suave); }
+.ap-mapa-topo .ap-link { white-space: nowrap; }
+#pn-rede .sim-btn-destaque { margin-top: 0; }
+#btn-reconectar.chama { animation: ap-pulsa 1.4s ease-in-out infinite; }
+@keyframes ap-pulsa { 0%, 100% { box-shadow: 0 0 0 0 rgba(240, 180, 0, .0); } 50% { box-shadow: 0 0 0 5px rgba(240, 180, 0, .55); } }
+.ap-abas .curto { display: none; }
+@media (max-width: 1100px) and (min-width: 861px), (max-width: 400px) { .ap-abas .longo { display: none; } .ap-abas .curto { display: inline; } }
+/* desenho maior: a lateral ocupa metade da tela */
+body.mapa-grande { --ap-lado: minmax(0, 1fr); }
+body.mapa-grande .mapa-area .mp-svg { max-height: none; width: 100%; }
+
+.sim-btn { padding: 8px 14px; border: 1px solid #c6cfd9; background: #f6f8fa; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; color: var(--ap-tinta); text-decoration: none; display: inline-block; text-align: center; }
+.sim-btn:hover { background: #eaeef3; }
+.sim-btn-destaque { width: 100%; margin-top: 10px; background: var(--ap-azul); color: #fff; border-color: var(--ap-azul); padding: 10px 14px; font-size: 14.5px; }
+.sim-btn-destaque:hover { background: var(--ap-azul-escuro); }
+
+/* etiqueta com cara de adesivo (código de barras desenhado com CSS) */
+.sim-etiqueta {
+  border: 1px solid #c9ced6; border-radius: 6px; padding: 12px 14px; background: #fdfdfb; font-size: 13.5px;
+  box-shadow: 0 1px 0 #fff inset, 0 2px 6px rgba(0,0,0,.08);
+}
+.sim-etiqueta .et-cab { font-weight: 700; font-size: 14px; border-bottom: 1.5px solid #222; margin-bottom: 6px; padding-bottom: 5px; display: flex; justify-content: space-between; gap: 8px; }
+.sim-etiqueta .et-cab::after { content: "CE  ⚠"; font-weight: 400; color: #666; letter-spacing: 2px; }
+.sim-etiqueta div, .sim-os div { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 4px 0; border-bottom: 1px dotted #d9dde2; }
+.sim-etiqueta small { color: var(--ap-suave); }
+.sim-etiqueta code, .sim-os code { font-family: Consolas, "Cascadia Mono", monospace; font-weight: 700; font-size: 14px; user-select: all; text-align: right; overflow-wrap: anywhere; }
+.sim-etiqueta::after { content: ""; display: block; height: 34px; margin-top: 10px;
+  background: repeating-linear-gradient(90deg, #222 0 2px, transparent 2px 4px, #222 4px 5px, transparent 5px 8px, #222 8px 11px, transparent 11px 12px); }
+.sim-os { font-size: 13.5px; }
+.sim-os p { margin: 10px 0 0; color: #3c4857; line-height: 1.5; background: #f4f7fa; border-radius: 6px; padding: 8px 10px; }
+
+/* ------------------------------------------------------ aviso (toast) */
+.ap-toast {
+  position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 50; max-width: calc(100vw - 32px);
+  background: #12361f; color: #fff; padding: 11px 18px; border-radius: 10px; font-weight: 600; font-size: 14.5px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.25); animation: ap-sobe .25s ease-out; transition: opacity .3s;
+}
+.ap-toast.some { opacity: 0; }
+@keyframes ap-sobe { from { transform: translate(-50%, 12px); opacity: 0; } }
+
+/* ------------------------------------------------ chamado concluído */
+.ap-fim { width: min(520px, calc(100vw - 32px)); }
+.ap-fim-cab { display: flex; gap: 14px; align-items: center; padding: 18px 20px; background: linear-gradient(135deg, #1f8a4c, #26a35b); color: #fff; }
+.ap-fim-cab strong { display: block; font-size: 20px; }
+.ap-fim-cab small { font-size: 13.5px; opacity: .9; }
+.ap-fim-selo { flex: 0 0 44px; height: 44px; border-radius: 50%; background: #fff; color: #1f8a4c; display: grid; place-items: center; font-size: 24px; font-weight: 700; }
+.ap-fim-corpo { padding: 14px 20px 4px; }
+.ap-fim-corpo p { margin: 0 0 8px; color: var(--ap-suave); font-size: 14px; }
+.ap-fim-tabela { width: 100%; border-collapse: collapse; font-size: 14px; }
+.ap-fim-tabela th { text-align: left; font-weight: 600; color: var(--ap-suave); padding: 6px 10px 6px 0; width: 40%; vertical-align: top; }
+.ap-fim-tabela td { padding: 6px 0; font-weight: 600; overflow-wrap: anywhere; }
+.ap-fim-tabela tr + tr { border-top: 1px solid #edf0f3; }
+.ap-fim-acoes { display: flex; gap: 8px; padding: 14px 20px 18px; }
+.ap-fim-acoes .sim-btn-destaque { margin: 0; flex: 1; }
+.dlg { border-radius: 12px; overflow: hidden; }
+
+/* ------------------------------------------------- tamanhos de tela */
+/* notebook pequeno / janela estreita: lateral mais fina */
+@media (max-width: 1100px) { :root { --ap-lado: 320px; } .ap-area { gap: 10px; padding: 10px; } .ap-marca-txt small { display: none; } }
+/* tablet em pé e celular: uma coluna, na ordem passo → painel → abas */
+@media (max-width: 860px) {
+  :root { --ap-topo-h: auto; }
+  .ap-topo { height: auto; flex-wrap: wrap; padding: 8px 12px; position: static; }
+  .sim-provedores { width: 100%; }
+  .sim-provedores a { flex: 1; justify-content: center; padding: 7px 4px; }
+  .ap-area { display: flex; flex-direction: column; height: auto; padding: 10px; }
+  .ap-lado { display: contents; }
+  .ap-passo { order: 1; }
+  .janela { order: 2; }
+  .janela-corpo { overflow: visible; }
+  .janela-corpo > .pp-raiz { min-height: 0; }
+  .ap-abas { order: 3; }
+  .ap-pn { order: 4; }
+  .mapa-area { max-width: 560px; margin: 0 auto; }
+  .ap-passo p { font-size: 14px; }
+}
+@media (max-width: 480px) {
+  .ap-abas button { font-size: 12.5px; padding: 8px 2px; }
+  .ap-passo h2 { font-size: 17px; }
+  .ap-passo { padding: 10px 12px; }
+}
+/* tela baixa (notebook 1366×768 com barra do navegador): passo mais compacto */
+@media (min-width: 861px) and (max-height: 720px) {
+  .ap-passo { padding: 10px 14px; } .ap-passo h2 { font-size: 17px; } .ap-passo p { font-size: 13.5px; }
+  .sim-barra { margin: 6px 0 8px; }
+}
 
 /* ---------------------------------------------------------------- painel */
 .pp-raiz {
@@ -636,10 +789,6 @@ button, select, input { font: inherit; }
 .pp-nav-arvore .pp-item.ativo { background: var(--pp-cor); color: #fff; }
 .pp-nav-arvore .pp-item.ativo .pp-trad { color: #e8eefc; }
 
-@media (max-width: 620px) {
-  .pp-corpo { flex-direction: column; }
-  .pp-nav-lateral, .pp-nav-sub, .pp-nav-arvore { flex: none; border-right: 0; border-bottom: 1px solid #ddd; }
-}
 
 /* formulários */
 .pp-form { max-width: 560px; }
@@ -653,7 +802,6 @@ button, select, input { font: inherit; }
 .pp-olho { border: 1px solid #b9c1cb; background: #fff; border-radius: var(--pp-raio); cursor: pointer; padding: 5px 8px; }
 .pp-check { grid-template-columns: 1fr; }
 .pp-check label { font-weight: 600; display: flex; gap: 8px; align-items: center; }
-@media (max-width: 520px) { .pp-campo, .pp-com-olho { grid-template-columns: 1fr; } }
 .pp-secao { font-size: 15px; margin: 18px 0 10px; color: var(--pp-cor-escura); }
 .pp-sub { font-size: 14px; margin: 16px 0 8px; color: var(--pp-cor-escura); }
 .pp-nota { font-size: 12.5px; color: #66707b; margin: 4px 0 10px; }
@@ -689,25 +837,29 @@ button, select, input { font: inherit; }
 .pp-login-caixa .pp-com-olho { grid-template-columns: 1fr auto; }
 .pp-login-caixa .pp-com-olho label { grid-column: 1 / -1; }
 
-/* ------------------------------------------------- v2: escolha, chamado, extras */
+/* ------------------------------------------------- escolha do provedor */
 body.sem-perfil .so-com-perfil, body:not(.sem-perfil):not(.com-perfil) .so-com-perfil { display: none; }
 body.com-perfil .so-sem-perfil { display: none; }
-.escolha { max-width: 980px; margin: 20px auto; padding: 0 16px; }
-.escolha p { line-height: 1.5; }
-.cartoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 18px 0; }
-.cartao { display: block; text-decoration: none; color: inherit; background: #fff; border: 1px solid var(--borda); border-radius: 8px; overflow: hidden; }
-.cartao:hover { box-shadow: 0 4px 16px rgba(0,0,0,.12); }
-.cartao b { display: block; padding: 18px 14px; color: #fff; font-size: 20px; }
-.cartao span { display: block; padding: 10px 14px 14px; font-size: 14px; color: var(--texto-suave); line-height: 1.4; }
+.escolha { max-width: 1000px; margin: 28px auto; padding: 0 16px; }
+.escolha h1 { font-size: 26px; margin: 0 0 8px; letter-spacing: -.2px; }
+.escolha p { line-height: 1.55; color: #2c3a4a; }
+.cartoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin: 20px 0; }
+.cartao { position: relative; display: flex; flex-direction: column; text-decoration: none; color: inherit; background: #fff; border: 1px solid var(--ap-linha);
+  border-radius: 12px; overflow: hidden; box-shadow: var(--ap-sombra); transition: transform .15s, box-shadow .15s; }
+.cartao:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(16,33,54,.14); }
+.cartao b { display: block; padding: 22px 16px; color: #fff; font-size: 22px; letter-spacing: .2px; }
+.cartao span { display: block; padding: 12px 16px 6px; font-size: 14px; color: var(--ap-suave); line-height: 1.45; flex: 1; }
+.cartao em { display: block; padding: 0 16px 14px; font-style: normal; font-size: 13px; font-weight: 700; color: #8a6400; min-height: 1em; }
+.cartao em.ok { color: var(--ap-ok); }
 .c-vivo b { background: linear-gradient(90deg, #660099, #8a2bb8); }
-.c-claro b { background: #da291c; }
+.c-claro b { background: linear-gradient(90deg, #b51f14, #e3342a); }
 .c-algar b { background: linear-gradient(90deg, #00594f, #00a19a); }
-.c-mznet b { background: #0057b8; border-bottom: 4px solid #f39200; }
-.aviso { background: #fff3c4; border: 1px solid #ecd98a; border-radius: 6px; padding: 10px 14px; font-size: 14px; }
-.sim-provedores a[data-link-perfil=""] { border-style: dashed; }
+.c-mznet b { background: linear-gradient(90deg, #003a6b, #0068b7); box-shadow: inset 0 -4px 0 #f39200; }
+.aviso { background: #fff8dc; border: 1px solid #ecd27a; border-radius: 10px; padding: 12px 16px; font-size: 14px; }
 
-.sim-chamado { border-left: 5px solid #f0b400; }
-.sim-chamado p { margin: 6px 0 0; font-size: 13px; line-height: 1.45; }
+.sim-chamado { border-left: 4px solid #f0b400; background: #fffdf3; padding: 10px 12px; border-radius: 6px; margin-bottom: 12px; }
+.sim-chamado strong { font-size: 15px; }
+.sim-chamado p { margin: 6px 0 0; font-size: 14px; line-height: 1.5; }
 
 .pp-cab-dir { display: flex; align-items: center; gap: 10px; font-size: 13px; }
 .pp-info { background: #f1f4f8; border: 1px dashed #b9c1cb; border-radius: var(--pp-raio); padding: 14px; color: #4a5562; line-height: 1.5; max-width: 560px; }
@@ -738,6 +890,43 @@ body.com-perfil .so-sem-perfil { display: none; }
 .pp-pe-sim { color: #a07c00; }
 .pp-marca-nome b { font-weight: inherit; }
 .pp-usuario { opacity: .9; }
+
+/* ------------------------------------- painel em espaço estreito (container query) */
+.pp-raiz { min-height: 0; }
+.pp-card h4 .pp-trad, .pp-tabela th .pp-trad, .pp-secao .pp-trad, .pp-sub .pp-trad { color: inherit; opacity: .78; }
+@container painel (max-width: 760px) {
+  .pp-nav-lateral { flex-basis: 165px !important; }
+  .pp-nav-sub, .pp-nav-arvore { flex-basis: 160px !important; }
+  .pp-layout-abas .pp-nav-sub { width: 160px; }
+  .pp-campo, .pp-com-olho, .pp-raiz[data-tema="mznet"] .pp-campo { grid-template-columns: minmax(120px, 160px) minmax(0, 1fr); }
+  .pp-com-olho, .pp-raiz[data-tema="mznet"] .pp-com-olho { grid-template-columns: minmax(120px, 160px) minmax(0, 1fr) auto; }
+  .pp-raiz[data-tema="mznet"] .pp-check { padding-left: 172px; }
+  .pp-raiz[data-tema="vivo"] .pp-marca-nome { font-size: 24px; }
+  .pp-raiz[data-tema="vivo"] .pp-conteudo, .pp-raiz[data-tema="claro"] .pp-conteudo { margin: 8px; }
+}
+@container painel (max-width: 560px) {
+  .pp-corpo { flex-direction: column; }
+  .pp-layout-abas .pp-corpo { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto 1fr; }
+  .pp-layout-abas .pp-nav-sub { width: auto; }
+  .pp-nav-lateral, .pp-nav-sub, .pp-nav-arvore { flex: none !important; border-right: 0 !important; border-bottom: 1px solid #ddd; display: flex; flex-wrap: wrap; padding: 4px !important; }
+  .pp-nav-lateral .pp-grupo-menu { display: contents; }
+  .pp-nav-lateral .pp-grupo-titulo { display: none; }
+  .pp-nav-lateral .pp-item, .pp-nav-sub .pp-item { border-left: 0 !important; border-radius: 4px; padding: 6px 10px !important; }
+  .pp-nav-sub .pp-subgrupo { display: contents; }
+  .pp-nav-sub .pp-subgrupo-titulo { display: none; }
+  .pp-nav-sub .pp-item::before { display: none; }
+  .pp-campo, .pp-com-olho, .pp-raiz[data-tema="mznet"] .pp-campo { grid-template-columns: 1fr; }
+  .pp-com-olho, .pp-raiz[data-tema="mznet"] .pp-com-olho { grid-template-columns: minmax(0, 1fr) auto; }
+  .pp-com-olho label { grid-column: 1 / -1; }
+  .pp-raiz[data-tema="mznet"] .pp-check { padding-left: 0; }
+  .pp-raiz[data-tema="mznet"] .pp-campo label { text-align: left; }
+  .pp-raiz[data-tema="algar"] .pp-campo label { align-self: auto; }
+  .pp-modelo { display: none; }
+  .pp-cards { grid-template-columns: 1fr; }
+  .pp-tabela { display: block; overflow-x: auto; white-space: nowrap; }
+  .pp-conteudo { padding: 10px !important; }
+}
+@media (max-width: 860px) { #btn-mapa-grande { display: none; } }
 
 </style>
   <style>
@@ -898,7 +1087,6 @@ body.com-perfil .so-sem-perfil { display: none; }
 .pp-raiz[data-tema="mznet"] .pp-login { background: #eef3f8; }
 .pp-raiz[data-tema="mznet"] .pp-login-caixa { border-radius: 0; border-top: 4px solid #0068b7; }
 
-@media (max-width: 760px) { .pp-raiz[data-tema="mznet"] .pp-check { padding-left: 0; } }
 
 /* valores sem quebrar no meio da palavra */
 .pp-raiz .pp-kv td { word-break: normal; overflow-wrap: anywhere; }
@@ -906,81 +1094,126 @@ body.com-perfil .so-sem-perfil { display: none; }
 </style>
 </head>
 <body>
-  <header class="topo">
-    <div class="topo-titulo">
-      <strong>Simulador educativo · roteador no estilo <span id="nome-provedor">dos provedores</span></strong>
-      <span>Escritório Horizonte · Instrutor Lucas Lopes · SENAI · não é o site oficial do provedor</span>
-    </div>
+  <header class="ap-topo">
+    <a class="ap-marca" href="#" data-link-perfil="" title="Voltar para a escolha do provedor">
+      <span class="ap-logo" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="ap-marca-txt"><strong>Simulador de roteador</strong><small>Redes SOHO · SENAI · Instrutor Lucas Lopes</small></span>
+    </a>
     <nav class="sim-provedores" aria-label="Trocar de provedor">
-      <a href="#vivo" data-link-perfil="vivo">Vivo</a><a href="#claro" data-link-perfil="claro">Claro</a><a href="#algar" data-link-perfil="algar">Algar</a><a href="#mznet" data-link-perfil="mznet">MZNet</a><a href="#" data-link-perfil="">Início</a>
+      <a href="#vivo" data-link-perfil="vivo" class="p-vivo">Vivo</a><a href="#claro" data-link-perfil="claro" class="p-claro">Claro</a><a href="#algar" data-link-perfil="algar" class="p-algar">Algar</a><a href="#mznet" data-link-perfil="mznet" class="p-mznet">MZNet</a>
     </nav>
   </header>
 
   <!-- Escolha do provedor (aparece quando o endereço não tem #vivo, #claro…) -->
   <main class="escolha so-sem-perfil">
-    <p>Cada provedor entrega um roteador com um painel diferente: as cores, os menus e os nomes mudam, mas as configurações são as mesmas. Escolha o provedor que o instrutor indicou para a sua fileira e siga o <strong>roteiro de 8 passos</strong> do lado esquerdo. Quando terminar, faça de novo em outro provedor.</p>
+    <h1>Escolha o roteador do seu provedor</h1>
+    <p>Cada provedor entrega um roteador com um painel diferente: as cores, os menus e os nomes mudam, mas as configurações são as mesmas. Abra o provedor da sua fileira e siga os <strong>8 passos</strong>. Quando terminar, faça de novo em outro provedor.</p>
     <div class="cartoes">
-      <a class="cartao c-vivo" href="#vivo"><b>Vivo</b><span>Menu do lado, tudo em português. Internet por PPPoE.</span></a>
-      <a class="cartao c-claro" href="#claro"><b>Claro</b><span>Menu em cima, parte em inglês. Internet automática (DHCP).</span></a>
-      <a class="cartao c-algar" href="#algar"><b>Algar</b><span>ONT com abas em cima e submenu do lado, em inglês. PPPoE.</span></a>
-      <a class="cartao c-mznet" href="#mznet"><b>MZNet</b><span>ONT com abas e menu em árvore, em inglês. PPPoE.</span></a>
+      <a class="cartao c-vivo" href="#vivo"><b>Vivo</b><span>Menu do lado, tudo em português. Internet por PPPoE.</span><em data-progresso="vivo"></em></a>
+      <a class="cartao c-claro" href="#claro"><b>Claro</b><span>Menu em cima, parte em inglês. Internet automática (DHCP).</span><em data-progresso="claro"></em></a>
+      <a class="cartao c-algar" href="#algar"><b>Algar</b><span>Abas em cima e submenu do lado, em inglês. PPPoE.</span><em data-progresso="algar"></em></a>
+      <a class="cartao c-mznet" href="#mznet"><b>MZNet</b><span>Abas e menu em árvore, em inglês. PPPoE.</span><em data-progresso="mznet"></em></a>
     </div>
-    <p class="aviso"><strong>Simulador educativo.</strong> As telas imitam o estilo dos painéis que esses provedores costumam entregar, para treino em sala. Não são as páginas oficiais e não usam logotipos. Modelos, senhas e etiquetas são inventados. Funciona sem internet.</p>
+    <p class="aviso"><strong>Simulador educativo.</strong> As telas imitam o estilo dos painéis que esses provedores costumam entregar, para treino em sala. Não são as páginas oficiais e não usam logotipos. Modelos, senhas e etiquetas são inventados. Funciona sem internet, e o seu progresso fica guardado neste computador.</p>
   </main>
 
-  <main class="sim-area so-com-perfil">
-    <aside class="sim-lado" aria-label="Roteiro">
-      <section class="sim-caixa sim-chamado">
-        <strong id="chamado-titulo"></strong>
-        <p id="chamado-texto"></p>
-      </section>
-      <section class="sim-caixa">
-        <div class="sim-roteiro-cab"><strong>Roteiro</strong><span id="progresso"></span></div>
-        <div class="sim-barra"><i id="barra-progresso"></i></div>
-        <ol id="passos" class="sim-passos"></ol>
-        <p id="parabens" class="sim-parabens" hidden>Chamado concluído! Agora faça o mesmo roteiro em outro provedor.</p>
-      </section>
-      <section class="sim-caixa">
-        <strong>Etiqueta embaixo do roteador</strong>
-        <div id="etiqueta" class="sim-etiqueta"></div>
-      </section>
-      <section class="sim-caixa">
-        <strong>Ordem de serviço do provedor</strong>
-        <div id="ordem-servico" class="sim-os"></div>
-      </section>
-      <button id="btn-reiniciar" type="button" class="sim-btn">Começar de novo</button>
-    </aside>
-
+  <main class="ap-area so-com-perfil">
     <section class="janela" aria-label="Painel do roteador">
       <div class="janela-barra">
-        <span class="bolinhas"><i></i><i></i><i></i></span>
-        <span class="janela-url" id="url-roteador">http://</span>
+        <span class="bolinhas" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="janela-url"><span class="janela-cadeado" aria-hidden="true">ⓘ</span><span id="url-roteador">http://</span></span>
+        <span class="janela-zoom" role="group" aria-label="Tamanho da letra do painel">
+          <button type="button" data-zoom="-1" title="Diminuir a letra do painel" aria-label="Diminuir a letra">A−</button><span id="zoom-valor">100%</span><button type="button" data-zoom="1" title="Aumentar a letra do painel (bom para o projetor)" aria-label="Aumentar a letra">A+</button>
+        </span>
       </div>
-      <div id="painel" class="janela-corpo"></div>
+      <div class="janela-corpo"><div id="painel"></div></div>
     </section>
 
-    <section class="mapa-area" aria-label="Mapa da rede">
-      <div id="mapa"></div>
-      <button id="btn-reconectar" type="button" class="sim-btn sim-btn-destaque">📶 Digitar o Wi-Fi novo no notebook e no celular</button>
-      <p class="mapa-dica">Clique em um dispositivo para ver o <code>ipconfig</code> e testar <code>ping</code>.</p>
-    </section>
+    <aside class="ap-lado" aria-label="Roteiro e informações">
+      <section class="ap-passo" aria-live="polite">
+        <div class="ap-passo-topo">
+          <span class="ap-passo-num" id="passo-num">Passo 1 de 8</span>
+          <button type="button" class="ap-link" id="btn-lista" aria-expanded="false">Ver os 8 passos</button>
+        </div>
+        <div class="sim-barra" aria-hidden="true"><i id="barra-progresso"></i></div>
+        <div id="passo-atual">
+          <h2 id="passo-titulo"></h2>
+          <p id="passo-texto"></p>
+          <button type="button" class="ap-btn-dica" id="btn-dica" aria-expanded="false">💡 Dica: onde fica?</button>
+          <div id="passo-dica" class="ap-dica" hidden></div>
+        </div>
+        <ol id="passos" class="sim-passos" hidden></ol>
+      </section>
+
+      <div class="ap-abas" role="tablist" aria-label="Informações do chamado">
+        <button type="button" role="tab" id="aba-rede" data-aba="rede" aria-controls="pn-rede">Rede</button>
+        <button type="button" role="tab" id="aba-etiqueta" data-aba="etiqueta" aria-controls="pn-etiqueta">Etiqueta</button>
+        <button type="button" role="tab" id="aba-os" data-aba="os" aria-controls="pn-os"><span class="longo">Ordem de serviço</span><span class="curto">O.S.</span></button>
+        <button type="button" role="tab" id="aba-chamado" data-aba="chamado" aria-controls="pn-chamado">Chamado</button>
+      </div>
+
+      <section class="ap-pn" role="tabpanel" id="pn-rede" aria-labelledby="aba-rede" data-painel="rede">
+        <button id="btn-reconectar" type="button" class="sim-btn sim-btn-destaque">📶 Digitar o Wi-Fi novo no notebook e no celular</button>
+        <div class="ap-mapa-topo">
+          <p class="mapa-dica">Clique num aparelho para usar <code>ipconfig</code> e <code>ping</code>.</p>
+          <button type="button" class="ap-link" id="btn-mapa-grande" aria-pressed="false">⤢ Desenho maior</button>
+        </div>
+        <div class="mapa-area"><div id="mapa"></div></div>
+      </section>
+
+      <section class="ap-pn" role="tabpanel" id="pn-etiqueta" aria-labelledby="aba-etiqueta" data-painel="etiqueta" hidden>
+        <p class="ap-pn-intro">Etiqueta colada embaixo do roteador. Os dados de fábrica para entrar no painel estão aqui.</p>
+        <div id="etiqueta" class="sim-etiqueta"></div>
+      </section>
+
+      <section class="ap-pn" role="tabpanel" id="pn-os" aria-labelledby="aba-os" data-painel="os" hidden>
+        <p class="ap-pn-intro">Ordem de serviço do provedor: diz como a internet (WAN) deste cliente deve ser configurada.</p>
+        <div id="ordem-servico" class="sim-os"></div>
+      </section>
+
+      <section class="ap-pn" role="tabpanel" id="pn-chamado" aria-labelledby="aba-chamado" data-painel="chamado" hidden>
+        <div class="sim-chamado">
+          <strong id="chamado-titulo"></strong>
+          <p id="chamado-texto"></p>
+        </div>
+        <button id="btn-reiniciar" type="button" class="sim-btn">↺ Começar de novo (roteador de fábrica)</button>
+      </section>
+    </aside>
   </main>
+
+  <div id="toast" class="ap-toast" role="status" aria-live="polite" hidden></div>
+
+  <dialog id="dlg-fim" class="dlg ap-fim" aria-labelledby="fim-titulo">
+    <div class="ap-fim-cab">
+      <span class="ap-fim-selo" aria-hidden="true">✔</span>
+      <div><strong id="fim-titulo">Chamado concluído!</strong><small id="fim-sub"></small></div>
+    </div>
+    <div class="ap-fim-corpo">
+      <p>Relatório do técnico (é isto que se entrega ao cliente):</p>
+      <table class="ap-fim-tabela" id="fim-tabela"></table>
+    </div>
+    <div class="ap-fim-acoes">
+      <a class="sim-btn sim-btn-destaque" id="fim-proximo" href="#">Fazer em outro provedor</a>
+      <button type="button" class="sim-btn" data-fechar>Fechar</button>
+    </div>
+  </dialog>
 
   <dialog id="dlg-host" class="dlg">
     <div class="dlg-cab">
       <strong id="dlg-host-nome"></strong>
-      <button type="button" class="dlg-fechar" data-fechar>✕</button>
+      <button type="button" class="dlg-fechar" data-fechar aria-label="Fechar">✕</button>
     </div>
     <div class="term" id="term-saida" aria-live="polite"></div>
     <form class="term-entrada" id="term-form">
       <span>C:\&gt;</span>
-      <input id="term-cmd" autocomplete="off" spellcheck="false" placeholder="ipconfig   ·   ping roteador   ·   ping google.com">
+      <input id="term-cmd" autocomplete="off" spellcheck="false" placeholder="ipconfig   ·   ping roteador   ·   ping google.com" aria-label="Comando">
     </form>
     <div class="term-atalhos">
       <button type="button" data-cmd="ipconfig">ipconfig</button>
       <button type="button" data-cmd="ping roteador">ping roteador</button>
       <button type="button" data-cmd="ping 8.8.8.8">ping 8.8.8.8</button>
       <button type="button" data-cmd="ping google.com">ping google.com</button>
+      <button type="button" data-cmd="cls">cls (limpar)</button>
     </div>
   </dialog>
 
@@ -3244,7 +3477,7 @@ body.com-perfil .so-sem-perfil { display: none; }
     var r = est.resultado, c = est.config, p = est.perfil;
     if (!r) return "";
     var wan = r.roteador.wan, wifi = r.roteador.wifi;
-    function linha(a, b, cls) { return "<tr><th>" + rot(a) + '</th><td class="' + (cls || "") + '">' + esc(b) + "</td></tr>"; }
+    function linha(a, b, cls) { return "<tr><th>" + rot(a) + '</th><td class="' + (cls || "") + '">' + (String(b).indexOf("|") >= 0 ? rot(b) : esc(b)) + "</td></tr>"; }
     var seg = Math.floor((Date.now() - est.inicio) / 1000);
     var ligado = "0 dia(s) " + Math.floor(seg / 3600) + "h " + Math.floor(seg / 60) % 60 + "min " + seg % 60 + "s";
     var h = '<div class="pp-cards">';
@@ -3558,6 +3791,21 @@ body.com-perfil .so-sem-perfil { display: none; }
       if (est.logado && (blocos.indexOf("statusCards") >= 0 || blocos.indexOf("clientes") >= 0)) render();
     },
     sair: function () { est.logado = false; est.erroLogin = false; render(); },
+    // Caminho no menu até as páginas que têm algum destes blocos: ["Configurações › Internet", …]
+    caminhos: function (blocos) {
+      var p = est.perfil, saida = [];
+      Object.keys(p.paginas).forEach(function (id) {
+        var tem = (p.paginas[id].blocos || []).some(function (b) { return blocos.indexOf(b) >= 0; });
+        if (!tem) return;
+        var g = grupoDaPagina(id), sub = subDaPagina(g, id), partes = [];
+        if (g) partes.push(rotPlano(g.titulo));
+        if (sub) partes.push(sub);
+        if (!g || rotPlano(g.titulo) !== rotPlano(pag(id).titulo)) partes.push(rotPlano(pag(id).titulo));
+        saida.push(partes.join(" › "));
+      });
+      return saida;
+    },
+    botaoSalvar: function () { return rotPlano(est.perfil.botaoSalvar); },
     paginaAtual: function () { return est.logado ? est.pagina : "login"; }
   };
 })();
@@ -3573,11 +3821,25 @@ body.com-perfil .so-sem-perfil { display: none; }
   "use strict";
   var $ = function (id) { return document.getElementById(id); };
   var clonar = function (o) { return JSON.parse(JSON.stringify(o)); };
+  var esc = function (v) {
+    return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  };
 
   var idPerfil = (location.hash || "").replace("#", "").toLowerCase() || document.body.getAttribute("data-perfil");
   var perfil = window.Perfis[idPerfil];
   window.addEventListener("hashchange", function () { location.reload(); });
-  if (!perfil) { document.body.classList.add("sem-perfil"); return; }   // mostra só a escolha do provedor
+  if (!perfil) {   // mostra só a escolha do provedor, com o progresso guardado de cada um
+    document.body.classList.add("sem-perfil");
+    document.querySelectorAll("[data-progresso]").forEach(function (el) {
+      try {
+        var d = JSON.parse(localStorage.getItem("sim-roteador-" + el.getAttribute("data-progresso")) || "null");
+        if (d && d.feitos) { el.textContent = d.feitos === 8 ? "✔ Concluído" : d.feitos + " de 8 passos"; el.className = d.feitos === 8 ? "ok" : ""; }
+      } catch (e) { /* ignora */ }
+    });
+    return;
+  }
   document.body.classList.add("com-perfil");
   var base = perfil.lan.ip.split(".").slice(0, 3).join(".");   // ex.: 192.168.15
   var IP_CAMERA = base + ".50";
@@ -3617,7 +3879,7 @@ body.com-perfil .so-sem-perfil { display: none; }
       config: configFabrica(), hosts: hostsFabrica(), cenario: cenario(), resultado: null,
       admin: { usuario: perfil.etiqueta.usuario, senha: perfil.etiqueta.senha },
       fez: { login: false, status: false, clientes: false, senhaTrocada: false, loginNovaSenha: false, ping: false },
-      hostAberto: null
+      hostAberto: null, inicio: Date.now()
     };
   }
 
@@ -3626,21 +3888,26 @@ body.com-perfil .so-sem-perfil { display: none; }
   var PASSOS = [
     {
       titulo: "Entrar no painel",
-      texto: "Digite o usuário e a senha da etiqueta do roteador (ao lado) e clique em entrar.",
+      texto: "Digite o usuário e a senha da etiqueta do roteador (aba Etiqueta, ao lado) e clique em entrar.",
+      aba: "etiqueta",
+      dica: function () { return "Copie da aba <b>Etiqueta</b> o <b>usuário</b> e a <b>senha</b>. Cuidado com letra maiúscula e minúscula. O olho 👁 mostra o que você digitou."; },
       ok: function () { return estado.fez.login; }
     },
     {
       titulo: "Ler o status",
+      aba: "rede", blocos: ["clientes"], extra: "A página de status abre sozinha logo depois de entrar.",
       texto: "Na página de status, veja se a internet (WAN) está conectada. Depois abra a lista de aparelhos conectados (procure Dispositivos, Connected Devices ou User Device).",
       ok: function () { return estado.fez.status && estado.fez.clientes; }
     },
     {
       titulo: "Ligar a internet (WAN)",
+      aba: "os", blocos: ["wan"], extra: "O tipo de conexão, o usuário e a senha estão na aba Ordem de serviço.",
       texto: "Abra a página da internet (pode se chamar Internet, WAN ou Gateway) e configure do jeito que a ordem de serviço manda. Salve.",
       ok: function () { return estado.resultado.roteador.wan.status === "conectado"; }
     },
     {
       titulo: "Configurar o Wi-Fi",
+      aba: "rede", blocos: ["wifiNome", "wifiSeg", "wifiCanal"], extra: "Canal: use 1, 6 ou 11. Depois de salvar, olhe a Interferência no Status: se não ficar Baixa, troque o canal.",
       texto: "Nome da rede (SSID): Horizonte_Escritorio. Senha com 12 caracteres ou mais. Segurança WPA2/WPA3 (ou WPA2). Escolha um canal com interferência baixa (veja no status).",
       ok: function () {
         var w = estado.config.wifi, r = estado.resultado.roteador.wifi;
@@ -3650,43 +3917,142 @@ body.com-perfil .so-sem-perfil { display: none; }
     },
     {
       titulo: "Reconectar os aparelhos",
+      aba: "rede",
+      dica: function () { return "Na aba <b>Rede</b>, clique no botão azul <b>📶 Digitar o Wi-Fi novo</b>, embaixo do desenho. O notebook e o celular ficam verdes."; },
       texto: "O notebook e o celular caíram, porque o Wi-Fi mudou. Clique no botão embaixo do mapa para digitar a rede nova neles.",
       ok: function () { return PASSOS[3].ok() && h("notebook").enlace === "ok" && h("celular").enlace === "ok"; }
     },
     {
       titulo: "Reservar o IP da câmera",
+      aba: "rede", blocos: ["reservas"], extra: "Clique em + Adicionar, digite o MAC e o IP e salve.",
       texto: "A câmera (MAC AA:BB:CC:00:00:05) precisa ter sempre o IP " + IP_CAMERA + ". Crie uma reserva no DHCP (pode se chamar Reserva, Binding ou IP fixo). Salve.",
       ok: function () { return h("camera").ip === IP_CAMERA && h("camera").origemIP === "reserva"; }
     },
     {
       titulo: "Trocar a senha do administrador",
+      aba: "etiqueta", blocos: ["admin"], extra: "A senha atual é a da etiqueta. Depois de salvar, clique em sair (no alto do painel) e entre com a senha nova.",
       texto: "Troque a senha de acesso ao painel (8 caracteres ou mais). Anote. Depois saia e entre de novo com a senha nova.",
       ok: function () { return estado.fez.loginNovaSenha; }
     },
     {
       titulo: "Teste final",
+      aba: "rede",
+      dica: function () { return "Na aba <b>Rede</b>, clique no <b>Notebook</b> do desenho. Na janela preta, digite <code>ping google.com</code> e aperte Enter (ou clique no botão ping google.com)."; },
       texto: "Clique no notebook no mapa e digite ping google.com. Precisa aparecer \"Resposta de...\".",
       ok: function () { return estado.fez.ping; }
     }
   ];
 
+  var ultimoAtual = -1, feitosAntes = null, abaManual = false;
+
+  function dicaHtml(p) {
+    if (p.dica) return p.dica();
+    var cam = PainelProvedor.caminhos(p.blocos || []);
+    var h = "No menu do painel deste roteador:<ul>" + cam.map(function (c) { return "<li><b>" + esc(c) + "</b></li>"; }).join("") + "</ul>";
+    if (p.blocos && p.blocos[0] !== "clientes") h += "Depois clique em <b>" + esc(PainelProvedor.botaoSalvar()) + "</b>, no fim da página. ";
+    return h + (p.extra ? esc(p.extra) : "");
+  }
+
   function desenharRoteiro() {
-    var ol = $("passos"), feitos = 0, atualMarcado = false;
+    var ol = $("passos"), feitos = 0, atual = -1, oks = [];
     ol.innerHTML = "";
     PASSOS.forEach(function (p, i) {
       var ok = p.ok();
+      oks.push(ok);
       if (ok) feitos++;
+      else if (atual < 0) atual = i;
       var li = document.createElement("li");
-      li.className = ok ? "feito" : (!atualMarcado ? "atual" : "");
-      if (!ok && !atualMarcado) atualMarcado = true;
+      li.className = ok ? "feito" : (atual === i ? "atual" : "");
       li.innerHTML = '<span class="num">' + (ok ? "✔" : i + 1) + '</span><div><strong></strong><p></p></div>';
       li.querySelector("strong").textContent = p.titulo;
       li.querySelector("p").textContent = p.texto;
       ol.appendChild(li);
     });
-    $("progresso").textContent = feitos + " de " + PASSOS.length + " passos";
+    $("passo-num").textContent = atual < 0 ? "8 de 8 · concluído" : "Passo " + (atual + 1) + " de " + PASSOS.length;
     $("barra-progresso").style.width = (100 * feitos / PASSOS.length) + "%";
-    $("parabens").hidden = feitos !== PASSOS.length;
+    if (atual < 0) {
+      $("passo-titulo").textContent = "Chamado concluído! 🎉";
+      $("passo-texto").textContent = "Você fez os 8 passos. Agora faça o mesmo roteiro em outro provedor: os menus mudam, as configurações são as mesmas.";
+      $("btn-dica").hidden = true; $("passo-dica").hidden = true;
+    } else {
+      $("passo-titulo").textContent = PASSOS[atual].titulo;
+      $("passo-texto").textContent = PASSOS[atual].texto;
+      $("btn-dica").hidden = false;
+      $("passo-dica").innerHTML = dicaHtml(PASSOS[atual]);
+    }
+    // passo concluído agora: avisa, fecha a dica e abre a aba que ajuda no passo novo
+    if (feitosAntes) {
+      oks.forEach(function (ok, i) { if (ok && !feitosAntes[i]) avisar("✔ Passo " + (i + 1) + " concluído: " + PASSOS[i].titulo); });
+      if (feitos === PASSOS.length && feitosAntes.indexOf(false) >= 0) setTimeout(mostrarFim, 700);
+    }
+    if (atual !== ultimoAtual) {
+      ultimoAtual = atual;
+      $("passo-dica").hidden = true; $("btn-dica").setAttribute("aria-expanded", "false");
+      if (atual >= 0 && PASSOS[atual].aba) abrirAba(PASSOS[atual].aba, true);
+    }
+    feitosAntes = oks;
+    $("btn-reconectar").classList.toggle("chama", atual === 4);
+    guardar();
+    document.querySelectorAll(".ap-abas [data-aba]").forEach(function (b) {
+      b.classList.toggle("sugerida", atual >= 0 && PASSOS[atual].aba === b.getAttribute("data-aba"));
+    });
+  }
+
+  function abrirAba(nome, automatica) {
+    if (automatica && abaManual && window.innerWidth < 900) return;   // no celular não pula sozinho
+    document.querySelectorAll(".ap-abas [data-aba]").forEach(function (b) {
+      var sim = b.getAttribute("data-aba") === nome;
+      b.setAttribute("aria-selected", sim ? "true" : "false");
+      b.tabIndex = sim ? 0 : -1;
+    });
+    document.querySelectorAll(".ap-pn").forEach(function (pn) { pn.hidden = pn.getAttribute("data-painel") !== nome; });
+  }
+
+  var tempoToast = null;
+  function avisar(txt) {
+    var t = $("toast");
+    t.textContent = txt;
+    t.hidden = false;
+    t.classList.remove("some");
+    clearTimeout(tempoToast);
+    tempoToast = setTimeout(function () { t.classList.add("some"); setTimeout(function () { t.hidden = true; }, 300); }, 3200);
+  }
+
+  function mostrarFim() {
+    var c = estado.config, min = Math.max(1, Math.round((Date.now() - estado.inicio) / 60000));
+    var seg = { wpa2wpa3: "WPA2/WPA3", wpa2: "WPA2", wpa3: "WPA3" }[c.wifi.seguranca] || c.wifi.seguranca;
+    var linhas = [
+      ["Provedor", perfil.provedor + " · " + perfil.modelo],
+      ["Internet (WAN)", { pppoe: "PPPoE · conectada", dinamico: "DHCP · conectada", estatico: "IP fixo · conectada" }[c.wan.tipo]],
+      ["Wi-Fi (SSID)", c.wifi.ssid],
+      ["Segurança", seg + " · senha com " + (c.wifi.senha || "").length + " caracteres"],
+      ["Canal", String(c.wifi.canal) + " · interferência baixa"],
+      ["Reserva da câmera", "AA:BB:CC:00:00:05 → " + IP_CAMERA],
+      ["Senha do painel", "trocada (não é mais a da etiqueta)"],
+      ["Teste", "ping google.com respondeu"]
+    ];
+    $("fim-tabela").innerHTML = linhas.map(function (l) { return "<tr><th>" + esc(l[0]) + "</th><td>" + esc(l[1]) + "</td></tr>"; }).join("");
+    $("fim-sub").textContent = "Roteador " + perfil.provedor + " configurado em cerca de " + min + " min";
+    var ids = Object.keys(window.Perfis), prox = ids[(ids.indexOf(perfil.id) + 1) % ids.length];
+    $("fim-proximo").href = "#" + prox;
+    $("fim-proximo").textContent = "Fazer na " + window.Perfis[prox].provedor + " →";
+    if (!$("dlg-fim").open) $("dlg-fim").showModal();
+  }
+
+  /* ---------------------------------------- progresso guardado no PC */
+  var CHAVE = "sim-roteador-" + idPerfil;
+  function guardar() {
+    try {
+      localStorage.setItem(CHAVE, JSON.stringify({ v: 1, config: estado.config, hosts: estado.hosts, admin: estado.admin,
+        fez: estado.fez, inicio: estado.inicio, feitos: (feitosAntes || []).filter(Boolean).length }));
+    } catch (e) { /* sem armazenamento: segue sem guardar */ }
+  }
+  function recuperar() {
+    try {
+      var d = JSON.parse(localStorage.getItem(CHAVE) || "null");
+      if (!d || d.v !== 1 || !d.config || !d.hosts) return null;
+      return d;
+    } catch (e) { return null; }
   }
 
   /* --------------------------------------------------------- simulação */
@@ -3817,7 +4183,6 @@ body.com-perfil .so-sem-perfil { display: none; }
   function preencherCartoes() {
     var e = perfil.etiqueta, o = perfil.os;
     document.title = "Roteador estilo " + perfil.provedor + " · Simulador SOHO";
-    $("nome-provedor").textContent = perfil.provedor;
     document.querySelectorAll("[data-link-perfil]").forEach(function (a) {
       if (a.getAttribute("data-link-perfil") === perfil.id) a.classList.add("ativo");
     });
@@ -3841,15 +4206,26 @@ body.com-perfil .so-sem-perfil { display: none; }
   /* ------------------------------------------------------- iniciar */
   function comecar() {
     estado = estadoInicial();
+    feitosAntes = null; ultimoAtual = -1;
+    try { localStorage.removeItem(CHAVE); } catch (e) { /* ignora */ }
     montarPainel();
     recalcular();
+    feitosAntes = PASSOS.map(function (p) { return p.ok(); });
+    avisar("Roteador de volta ao padrão de fábrica. Comece pelo passo 1.");
   }
 
   estado = estadoInicial();
+  var salvo = recuperar();
+  if (salvo) {
+    estado.config = salvo.config; estado.hosts = salvo.hosts; estado.admin = salvo.admin;
+    estado.fez = salvo.fez; estado.inicio = salvo.inicio || Date.now();
+  }
   preencherCartoes();
   Mapa.montar($("mapa"), { hosts: estado.hosts, onHostClick: abrirHost, onTesteExterno: function () {} });
   montarPainel();
   recalcular();
+  feitosAntes = PASSOS.map(function (p) { return p.ok(); });
+  if (salvo && salvo.feitos) avisar("Seu progresso foi recuperado (" + salvo.feitos + " de 8). Entre no painel de novo para continuar.");
 
   $("term-form").addEventListener("submit", function (ev) {
     ev.preventDefault();
@@ -3867,6 +4243,48 @@ body.com-perfil .so-sem-perfil { display: none; }
       if (x.wifiSalvo) x.wifiSalvo = { ssid: estado.config.wifi.ssid, senha: estado.config.wifi.senha };
     });
     recalcular();
+  });
+  $("btn-dica").addEventListener("click", function () {
+    var d = $("passo-dica"), abrir = d.hidden;
+    d.hidden = !abrir;
+    this.setAttribute("aria-expanded", abrir ? "true" : "false");
+  });
+  $("btn-lista").addEventListener("click", function () {
+    var lista = $("passos"), abrir = lista.hidden;
+    lista.hidden = !abrir;
+    $("passo-atual").hidden = abrir;
+    this.setAttribute("aria-expanded", abrir ? "true" : "false");
+    this.textContent = abrir ? "Voltar ao passo atual" : "Ver os 8 passos";
+  });
+  var abas = [].slice.call(document.querySelectorAll(".ap-abas [data-aba]"));
+  abas.forEach(function (b, i) {
+    b.addEventListener("click", function () { abaManual = true; abrirAba(b.getAttribute("data-aba")); });
+    b.addEventListener("keydown", function (ev) {   // setas trocam de aba (padrão de acessibilidade)
+      var d = ev.key === "ArrowRight" ? 1 : ev.key === "ArrowLeft" ? -1 : 0;
+      if (!d) return;
+      var alvo = abas[(i + d + abas.length) % abas.length];
+      abrirAba(alvo.getAttribute("data-aba")); alvo.focus(); ev.preventDefault();
+    });
+  });
+  // letra do painel (A− / A+): útil no projetor; fica guardada neste computador
+  var zoom = 1;
+  try { zoom = parseFloat(localStorage.getItem("sim-roteador-zoom")) || 1; } catch (e) { /* ignora */ }
+  function aplicarZoom() {
+    $("painel").style.zoom = zoom;
+    $("zoom-valor").textContent = Math.round(zoom * 100) + "%";
+    try { localStorage.setItem("sim-roteador-zoom", String(zoom)); } catch (e) { /* ignora */ }
+  }
+  document.querySelectorAll("[data-zoom]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      zoom = Math.min(1.6, Math.max(0.8, Math.round((zoom + 0.1 * +b.getAttribute("data-zoom")) * 10) / 10));
+      aplicarZoom();
+    });
+  });
+  aplicarZoom();
+  $("btn-mapa-grande").addEventListener("click", function () {
+    var grande = document.body.classList.toggle("mapa-grande");
+    this.setAttribute("aria-pressed", grande ? "true" : "false");
+    this.textContent = grande ? "⤡ Desenho menor" : "⤢ Desenho maior";
   });
   $("btn-reiniciar").addEventListener("click", function () {
     if (confirm("Começar de novo? O roteador volta ao padrão de fábrica e o roteiro zera.")) comecar();
