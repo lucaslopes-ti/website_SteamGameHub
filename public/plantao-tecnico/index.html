@@ -2868,7 +2868,7 @@ body.no-intervalo .toast { display: none; }
     for (y = 0; y < H; y++) for (x = 0; x < W; x++) {
       if ((y >= 6 && y <= 7) || (y >= 17 && y <= 18) || (y >= 28 && y <= 29)) { if (G[y][x] === "s" || (G[y][x] === "m" && x === 24)) G[y][x] = "r"; }
     }
-    rect(0, 31, 39, 36, "g"); rect(2, 32, 7, 35, "c");
+    rect(0, 31, 20, 36, "g"); rect(28, 31, 39, 36, "g");   // a João Naves segue até a borda do mapa rect(2, 32, 7, 35, "c");
     for (y = 10; y <= 35; y++) { setT(41, y, "p"); setT(48, y, "p"); }
     for (x = 41; x <= 48; x++) { setT(x, 10, "p"); setT(x, 35, "p"); }
     rect(40, 18, 40, 19, "p");
@@ -2888,7 +2888,7 @@ body.no-intervalo .toast { display: none; }
     for (y = 1; y < H; y += 3) if (G[y][24] === "m") arv(24, y, "palmeira");
     for (y = 11; y <= 34; y += 2) { arv(40, y, "copa"); arv(49, y, y % 4 ? "ipe" : "copa"); }
     [11, 34].forEach(function (yy) { for (var xx = 42; xx <= 47; xx += 2) arv(xx, yy, "copa"); });
-    arv(1, 32, "ipe"); arv(8, 33, "copa"); arv(9, 35, "ipe"); arv(22, 33, "copa"); arv(25, 35, "ipe"); arv(37, 33, "copa");
+    arv(1, 32, "ipe"); arv(8, 33, "copa"); arv(9, 35, "ipe"); arv(20, 35, "ipe"); arv(37, 33, "copa");
     // postes de luz, bancos, ponto de ônibus
     [3, 16, 31].forEach(function (x) { enfeites.push({ tipo: "poste", x: x, y: 16 }); enfeites.push({ tipo: "poste", x: x, y: 27 }); });
     [5, 12, 18].forEach(function (y) { enfeites.push({ tipo: "poste", x: 21, y: y }); });
@@ -3414,7 +3414,7 @@ body.no-intervalo .toast { display: none; }
     });
     predios.forEach(function (p, i2) { objs.push({ y: (p.y + p.h) * T - 1, f: function () { g.drawImage(SPR_PRED[i2], p.x * T - 1, p.y * T - 1); } }); });
     predios.filter(function (p) { return p.tipo === "senai"; }).forEach(function (p) {
-      objs.push({ y: (p.y + p.h) * T - 2, f: function () { g.drawImage(VAN, (p.x + p.w) * T + 6, (p.y + p.h) * T - 20); } });
+      objs.push({ y: (p.y + p.h) * T - 2, f: function () { g.drawImage(VAN, p.x * T - 38, (p.y + p.h) * T - 20); } });
     });
     var x0 = Math.floor(CAM.x / T) - 2, x1 = Math.ceil((CAM.x + vw) / T) + 2, y0 = Math.floor(CAM.y / T) - 2, y1 = Math.ceil((CAM.y + vh) / T) + 3;
     arvores.forEach(function (a) { if (a.x >= x0 && a.x <= x1 && a.y >= y0 && a.y <= y1) objs.push({ y: (a.y + 1) * T - 2, f: function () { g.drawImage(SPR_ARV[a.tipo], a.x * T - 4, (a.y + 1) * T - 34); } }); });
