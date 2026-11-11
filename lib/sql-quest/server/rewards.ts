@@ -66,55 +66,57 @@ export interface RewardProduct {
  * v5: +3 chaveiros pretos [3 unid cada, 4000 XP].
  * v6: +6 instrumentos musicais e +5 itens de tecnologia, todos dentro da área
  *     de impressão da Bambu Lab A1 (256 × 256 × 256 mm), em PLA, sem AMS.
+ * Preços (11/11/2026): nenhum item abaixo de 3000 XP, em faixas de 500 XP pelo
+ *     tamanho e tempo de impressão (3000 itens pequenos … 8000 objeto de 20 cm).
  */
 export const REWARD_PRODUCTS: readonly RewardProduct[] = [
   {
     id: "keychain",
     name: "Chaveiro simples",
     description: "Chaveiro personalizado com o logo da SQL Quest.",
-    costXp: 345,
+    costXp: 3000,
     initialStock: 5,
   },
   {
     id: "keychain-sql-logo",
     name: "Chaveiro Logo SQL",
     description: "Chaveiro em 3D com o logo da SQL Quest em relevo.",
-    costXp: 345,
+    costXp: 3500,
     initialStock: 5,
   },
   {
     id: "keychain-database",
     name: "Chaveiro Banco de Dados",
     description: "Chaveiro em formato de cilindro de banco de dados.",
-    costXp: 345,
+    costXp: 3500,
     initialStock: 5,
   },
   {
     id: "keychain-select",
     name: "Chaveiro SELECT *",
     description: "Chaveiro com o clássico comando SELECT * em relevo.",
-    costXp: 345,
+    costXp: 3500,
     initialStock: 5,
   },
   {
     id: "keychain-primary-key",
     name: "Chaveiro Chave Primária",
     description: "Chaveiro em formato de chave com a inscrição PRIMARY KEY.",
-    costXp: 345,
+    costXp: 3500,
     initialStock: 5,
   },
   {
     id: "keychain-join",
     name: "Chaveiro INNER JOIN",
     description: "Chaveiro com as tabelas conectadas de um INNER JOIN.",
-    costXp: 345,
+    costXp: 3500,
     initialStock: 5,
   },
   {
     id: "keychain-duck",
     name: "Chaveiro Pato Nadador",
     description: "Chaveiro temático em 3D de um pato nadador.",
-    costXp: 550,
+    costXp: 4000,
     initialStock: 3,
   },
   {
@@ -122,7 +124,7 @@ export const REWARD_PRODUCTS: readonly RewardProduct[] = [
     name: "Peça de personagem",
     description:
       "Peça de personagem impressa em 3D, conforme a descrição enviada no pedido.",
-    costXp: 691,
+    costXp: 4500,
     initialStock: 1,
   },
   {
@@ -130,7 +132,7 @@ export const REWARD_PRODUCTS: readonly RewardProduct[] = [
     name: "Objeto personalizado de até 12 cm",
     description:
       "Objeto personalizado impresso em 3D com até 12 cm, conforme a descrição enviada no pedido.",
-    costXp: 2072,
+    costXp: 5000,
     initialStock: 1,
   },
   {
@@ -138,7 +140,7 @@ export const REWARD_PRODUCTS: readonly RewardProduct[] = [
     name: "Item personalizado de até 15 cm",
     description:
       "Item personalizado impresso em 3D com até 15 cm, conforme a descrição enviada no pedido.",
-    costXp: 3300,
+    costXp: 6000,
     initialStock: 1,
   },
   {
@@ -146,7 +148,7 @@ export const REWARD_PRODUCTS: readonly RewardProduct[] = [
     name: "Item personalizado de até 20 cm",
     description:
       "Item personalizado impresso em 3D com até 20 cm, conforme a descrição enviada no pedido.",
-    costXp: 5500,
+    costXp: 8000,
     initialStock: 1,
   },
   {
@@ -175,42 +177,42 @@ export const REWARD_PRODUCTS: readonly RewardProduct[] = [
     id: "music-picks",
     name: "Kit 3 palhetas de violão",
     description: "Três palhetas de violão/guitarra impressas em 3D, na cor que você escolher no pedido.",
-    costXp: 400,
+    costXp: 3000,
     initialStock: 10,
   },
   {
     id: "music-whistle",
     name: "Apito de verdade",
     description: "Apito de mão impresso em 3D, que apita forte. Vem com furo para cordão ou chaveiro.",
-    costXp: 600,
+    costXp: 3500,
     initialStock: 6,
   },
   {
     id: "music-kazoo",
     name: "Kazoo",
     description: "Kazoo impresso em 3D: você cantarola dentro e ele vibra. Vem montado, com a membrana.",
-    costXp: 900,
+    costXp: 4000,
     initialStock: 5,
   },
   {
     id: "music-ocarina-mini",
     name: "Ocarina mini (6 furos)",
     description: "Ocarina pequena de 6 furos, afinada, que cabe no bolso. Dá para tocar músicas simples.",
-    costXp: 1800,
+    costXp: 4500,
     initialStock: 3,
   },
   {
     id: "music-pan-flute",
     name: "Flauta de pã (8 notas)",
     description: "Flauta de pã de 8 canos com a escala de dó maior. Impressão longa, em duas mesas.",
-    costXp: 4000,
+    costXp: 6000,
     initialStock: 2,
   },
   {
     id: "music-ocarina-12",
     name: "Ocarina de 12 furos (dó maior)",
     description: "Ocarina completa de 12 furos em dó, tocável de verdade, com acabamento caprichado.",
-    costXp: 5000,
+    costXp: 6000,
     initialStock: 2,
   },
   // ---- v6: itens de tecnologia (impressão 3D na Bambu Lab A1) ----
@@ -218,14 +220,14 @@ export const REWARD_PRODUCTS: readonly RewardProduct[] = [
     id: "tech-cable-clips",
     name: "Kit 5 presilhas para cabos",
     description: "Cinco presilhas para organizar cabos de carregador e fone na mesa ou na parede.",
-    costXp: 400,
+    costXp: 3000,
     initialStock: 10,
   },
   {
     id: "tech-sd-holder",
     name: "Porta-cartões SD e pendrives",
     description: "Estojo pequeno com encaixes para cartões SD, microSD e pendrives.",
-    costXp: 700,
+    costXp: 3500,
     initialStock: 6,
   },
   {
@@ -239,14 +241,14 @@ export const REWARD_PRODUCTS: readonly RewardProduct[] = [
     id: "tech-desk-organizer",
     name: "Organizador de mesa modular",
     description: "Organizador de mesa com espaço para canetas, celular e cabos. As peças se encaixam.",
-    costXp: 5500,
+    costXp: 6500,
     initialStock: 2,
   },
   {
     id: "tech-headphone-stand",
     name: "Suporte de headset",
     description: "Suporte de mesa para fone/headset gamer, com gancho para enrolar o cabo.",
-    costXp: 5500,
+    costXp: 6500,
     initialStock: 2,
   },
 ];
