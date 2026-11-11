@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
@@ -844,13 +844,85 @@ body.no-intervalo .toast { display: none; }
 /* v3: minimapa mais largo, escolha de personagem, segredo do ônibus, noite */
 #minimapa { width: 224px; height: 130px; }
 @media (pointer: coarse) { #minimapa { width: 154px; height: 89px; } }
-.ini-perso { display: flex; gap: 8px; flex-wrap: wrap; align-items: stretch; margin: 10px 0 4px; }
-.ini-perso p { width: 100%; margin: 0; font-weight: 700; }
-.ini-perso button { display: flex; align-items: center; gap: 6px; border: 3px solid var(--px-borda); border-radius: 6px; background: #fff; padding: 4px 10px 4px 4px; cursor: pointer; font: 700 14px var(--ap-fonte); text-align: left; box-shadow: 3px 3px 0 var(--px-borda); }
-.ini-perso button canvas { background: linear-gradient(#8fd0f0 0 62%, #6fae52 62%); border-radius: 3px; image-rendering: pixelated; }
-.ini-perso button small { color: #566476; font-weight: 600; }
-.ini-perso button.sel { background: #fff3c4; border-color: #d96d00; box-shadow: 3px 3px 0 #d96d00; }
-.surpresa .sp-onibus { font-size: 56px; animation: busPassa 1.6s ease-in-out infinite; }
+/* v4: fluxo em duas etapas — carrossel de personagens e tela de orientações */
+.tela-personagem { background: linear-gradient(180deg, rgba(9,37,82,.95), rgba(13,24,40,.96)); }
+.carrossel-card { width: min(660px, 100%); max-height: calc(100dvh - 32px); overflow: auto; padding: 18px 22px 20px;
+  background: #fffdf7; background-image: radial-gradient(circle, rgba(27,35,51,.07) 1px, transparent 1.5px); background-size: 14px 14px;
+  border: 4px solid var(--px-borda); border-radius: 8px; box-shadow: 8px 8px 0 rgba(0,0,0,.55); animation: cardEntra .28s ease-out; }
+@keyframes cardEntra { from { opacity: 0; transform: translateY(12px); } }
+@media (prefers-reduced-motion: reduce) { .carrossel-card, .ini-card { animation: none; } }
+.carrossel-topo { text-align: center; padding-bottom: 12px; margin-bottom: 14px; border-bottom: 3px dashed #e3d9c2; }
+.carrossel-topo .ini-chapeu { color: #d96d00; }
+.carrossel-topo h1 { margin: 4px 0 0; font-size: clamp(24px, 3.6vw, 32px); line-height: 1.12; letter-spacing: .3px; text-shadow: 2px 2px 0 #ffd27a; }
+.carrossel-topo h1 span { display: block; color: #d96d00; text-shadow: none; font-size: .82em; text-transform: uppercase; letter-spacing: 1px; }
+.carrossel { display: flex; align-items: center; justify-content: center; gap: 14px; }
+.carrossel-centro { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 0 1 224px; min-width: 0; }
+.carrossel-palco { position: relative; width: 100%; min-width: 0; touch-action: pan-y; }
+#car-boneco { display: block; width: 100%; height: auto; cursor: grab; touch-action: pan-y;
+  border: 4px solid var(--px-borda); border-radius: 6px; box-shadow: 4px 4px 0 rgba(17,24,39,.32); image-rendering: pixelated;
+  background: radial-gradient(circle at 76% 15%, #fff3b0 0 8%, rgba(255,243,176,0) 9%), linear-gradient(#8fd0f0 0 60%, #a7d98d 60% 64%, #6fae52 64%); }
+#car-boneco:active { cursor: grabbing; }
+.car-placa { display: inline-block; max-width: 100%; margin: 0;
+  padding: 3px 12px; background: #13233a; color: #ffd27a; border: 3px solid var(--px-borda); border-radius: 4px;
+  box-shadow: 3px 3px 0 rgba(0,0,0,.35); font-weight: 800; font-size: clamp(12px, 3vw, 15px); line-height: 1.3;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+.carrossel-seta { flex: 0 0 auto; align-self: center; margin-bottom: 39px; width: 54px; height: 54px; display: grid; place-items: center; padding: 0 0 4px;
+  font: 800 30px/1 var(--ap-fonte); color: #13233a; background: #ffd27a;
+  border: 3px solid var(--px-borda); border-radius: 6px; box-shadow: 3px 3px 0 var(--px-borda); cursor: pointer;
+  transition: background .12s, transform .08s, box-shadow .08s; }
+.carrossel-seta:hover { background: #ffc61a; }
+.carrossel-seta:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--px-borda); }
+.carrossel-laterais { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; max-width: 560px; margin: 14px auto 0; }
+.carrossel-laterais button { display: flex; align-items: center; gap: 8px; min-width: 0; padding: 5px 8px 5px 5px; text-align: left;
+  background: #fff; color: #16212e; font: 700 13px/1.25 var(--ap-fonte);
+  border: 3px solid var(--px-borda); border-radius: 6px; box-shadow: 3px 3px 0 var(--px-borda); cursor: pointer;
+  transition: background .12s, box-shadow .08s, transform .08s; }
+.carrossel-laterais button:hover { background: #fff6cc; }
+.carrossel-laterais button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--px-borda); }
+.carrossel-laterais button canvas { flex: 0 0 auto; width: 48px; height: 58px; border: 2px solid var(--px-borda); border-radius: 3px;
+  image-rendering: pixelated; background: linear-gradient(#8fd0f0 0 62%, #6fae52 62%); }
+.carrossel-laterais button span { min-width: 0; }
+.carrossel-laterais button small { display: block; color: #566476; font-weight: 600; font-size: 12px; }
+.carrossel-laterais button.sel { background: #fff3c4; border-color: #d96d00; box-shadow: 3px 3px 0 #d96d00; }
+.carrossel-pe { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; max-width: 500px; margin: 14px auto 0; }
+.carrossel-pontos { display: flex; gap: 4px; }
+.car-ponto { position: relative; width: 26px; height: 26px; padding: 0; border: 0; background: transparent; cursor: pointer; }
+.car-ponto::after { content: ""; position: absolute; inset: 5px; background: #e8edf3; border: 3px solid var(--px-borda); border-radius: 50%;
+  box-shadow: 2px 2px 0 rgba(17,24,39,.35); transition: background .12s, transform .12s; }
+.car-ponto:hover::after { background: #ffd27a; }
+.car-ponto.on::after { background: #f39200; transform: translateY(-2px); }
+.carrossel-dica { margin: 0; font-size: 13px; color: #566476; }
+.carrossel-dica kbd { font-size: 11px; min-width: 20px; }
+.carrossel-acoes { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 16px; text-align: center; }
+.carrossel-acoes .peq { margin: 0; max-width: 420px; text-align: center; }
+/* etapa 2: personagem em destaque ao lado das orientações */
+.tela-inicio { align-items: flex-start; }
+.tela-inicio > .ini-card, .tela-inicio > .carrossel-card { margin-top: auto; margin-bottom: auto; }
+.ini-heroi { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.ini-heroi-txt { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+#ini-boneco { width: 192px; height: 240px; border: 4px solid var(--px-borda); border-radius: 6px; box-shadow: 4px 4px 0 rgba(17,24,39,.3); }
+.ini-etiqueta { max-width: 200px; margin: 0; padding: 3px 10px; background: #13233a; color: #ffd27a; text-align: center; line-height: 1.25;
+  font-weight: 800; font-size: 13px; border: 3px solid var(--px-borda); border-radius: 4px; box-shadow: 3px 3px 0 rgba(17,24,39,.3); }
+#btn-trocar { font-size: 12.5px; padding: 5px 10px; }
+.ini-card { animation: cardEntra .28s ease-out; }
+@media (min-width: 641px) and (max-height: 760px) { #ini-boneco { width: 168px; height: 210px; } }
+@media (max-width: 640px) {
+  .carrossel-card { padding: 14px; }
+  .carrossel { gap: 8px; }
+  .carrossel-seta { width: 42px; height: 42px; font-size: 24px; }
+  .carrossel-laterais { gap: 6px; }
+  .carrossel-laterais button { flex-direction: column; text-align: center; padding: 5px; gap: 4px; }
+  .carrossel-laterais button canvas { width: 40px; height: 48px; }
+  .carrossel-laterais button small { font-size: 11px; line-height: 1.2; }
+  .carrossel-acoes .peq { max-width: none; text-align: center; }
+  .ini-card { gap: 14px; }
+  .ini-heroi { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .ini-heroi-txt { align-items: flex-start; }
+  #ini-boneco { width: 120px; height: 150px; }
+  .ini-etiqueta { text-align: left; }
+}
+@media (max-width: 420px) { .carrossel-laterais button { padding: 4px; } .carrossel-laterais button small { font-size: 10.5px; } }
+@media (max-width: 380px) { .trocar-longo { display: none; } }.surpresa .sp-onibus { font-size: 56px; animation: busPassa 1.6s ease-in-out infinite; }
 @keyframes busPassa { 0% { transform: translateX(-40px); } 50% { transform: translateX(40px); } 100% { transform: translateX(-40px); } }
 .sp-segredo { background: #fff3c4; border: 3px solid #d96d00; border-radius: 6px; padding: 8px 10px; }
 .intervalo.noite { background: radial-gradient(circle at 70% 20%, #24305e, #0b1024 70%); }
@@ -907,10 +979,55 @@ body.no-intervalo .toast { display: none; }
     <button type="button" class="acao" id="btn-acao" aria-label="Entrar na casa">E</button>
   </div>
 
-  <!-- ============ início ============ -->
-  <section class="tela tela-inicio" id="t-inicio">
+  <!-- ============ etapa 1: escolha do personagem ============ -->
+  <section class="tela tela-inicio tela-personagem" id="t-personagem">
+    <div class="carrossel-card">
+      <div class="carrossel-topo">
+        <p class="ini-chapeu">Redes SOHO · SENAI · Instrutor Lucas Lopes</p>
+        <h1>Escolha o seu <span>técnico SENAI</span></h1>
+      </div>
+      <div class="carrossel" role="group" aria-roledescription="carrossel" aria-label="Personagens disponíveis">
+        <button type="button" class="carrossel-seta" id="car-prev" aria-label="Personagem anterior">‹</button>
+        <div class="carrossel-centro">
+          <div class="carrossel-palco" id="car-palco">
+            <canvas id="car-boneco" width="224" height="288" aria-hidden="true"></canvas>
+          </div>
+          <p class="car-placa" id="car-nome" aria-live="polite">Técnico</p>
+        </div>
+        <button type="button" class="carrossel-seta" id="car-next" aria-label="Próximo personagem">›</button>
+      </div>
+      <div class="carrossel-laterais" role="group" aria-label="Escolher direto pelo retrato">
+        <button type="button" data-personagem="m"><canvas width="48" height="58" aria-hidden="true"></canvas><span>Técnico</span></button>
+        <button type="button" data-personagem="fp"><canvas width="48" height="58" aria-hidden="true"></canvas><span>Técnica<small>cabelo preto</small></span></button>
+        <button type="button" data-personagem="fl"><canvas width="48" height="58" aria-hidden="true"></canvas><span>Técnica<small>cabelo loiro</small></span></button>
+        <button type="button" data-personagem="ml"><canvas width="48" height="58" aria-hidden="true"></canvas><span>Técnico<small>cabelo loiro</small></span></button>
+      </div>
+      <div class="carrossel-pe">
+        <div class="carrossel-pontos" role="group" aria-label="Posição no carrossel">
+          <button type="button" class="car-ponto" data-ir="0" aria-label="Ver o Técnico"></button>
+          <button type="button" class="car-ponto" data-ir="1" aria-label="Ver a técnica de cabelo preto"></button>
+          <button type="button" class="car-ponto" data-ir="2" aria-label="Ver a técnica de cabelo loiro"></button>
+          <button type="button" class="car-ponto" data-ir="3" aria-label="Ver o técnico de cabelo loiro"></button>
+        </div>
+        <p class="carrossel-dica">Use <kbd>←</kbd> <kbd>→</kbd>, as setas ao lado ou arraste para o lado.</p>
+      </div>
+      <div class="carrossel-acoes">
+        <button type="button" class="botao grande" id="btn-escolher">Escolher este ▸</button>
+        <p class="peq">Depois você pode trocar de personagem na tela de orientações.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ etapa 2: orientações ============ -->
+  <section class="tela tela-inicio" id="t-inicio" hidden>
     <div class="ini-card">
-      <canvas id="ini-boneco" width="160" height="200" aria-hidden="true"></canvas>
+      <div class="ini-heroi">
+        <canvas id="ini-boneco" width="192" height="240" aria-hidden="true"></canvas>
+        <div class="ini-heroi-txt">
+          <p class="ini-etiqueta" id="ini-etiqueta">Técnico</p>
+          <button type="button" class="botao cinza peq-btn" id="btn-trocar">↺ Trocar<span class="trocar-longo"> personagem</span></button>
+        </div>
+      </div>
       <div class="ini-txt">
         <p class="ini-chapeu">Redes SOHO · SENAI · Instrutor Lucas Lopes</p>
         <h1>Plantão do Técnico<br><span>Santa Mônica · Uberlândia</span></h1>
@@ -921,19 +1038,12 @@ body.no-intervalo .toast { display: none; }
           <li>No <b>Prompt</b> do notebook do cliente, digite <kbd>ipconfig</kbd> e ache o <b>Gateway Padrão</b> (o IP do roteador).</li>
           <li>Digite esse IP no <b>navegador</b>, entre com o usuário e a senha da <b>etiqueta</b> e faça o que o cliente pediu.</li>
         </ol>
-        <div class="ini-perso" role="group" aria-label="Escolha seu personagem">
-          <p>Escolha seu personagem</p>
-          <button type="button" data-personagem="fp"><canvas width="48" height="58" aria-hidden="true"></canvas><span>Técnica<br><small>cabelo preto</small></span></button>
-          <button type="button" data-personagem="fl"><canvas width="48" height="58" aria-hidden="true"></canvas><span>Técnica<br><small>cabelo loiro</small></span></button>
-          <button type="button" data-personagem="m"><canvas width="48" height="58" aria-hidden="true"></canvas><span>Técnico<br><small>&nbsp;</small></span></button>
-        </div>
         <label class="ini-nome">Seu nome <input id="nome" maxlength="24" autocomplete="off" placeholder="Digite seu nome"></label>
         <p class="ini-aviso" id="aviso-nome" hidden>Digite seu nome para o código de cada OS sair com ele.</p>
         <div class="ini-botoes">
           <button type="button" class="botao grande" id="btn-comecar">Começar o plantão ▸</button>
         </div>
         <div class="xp-caixa" id="xp-caixa" hidden></div>
-        <p class="peq">Simulador educativo: os painéis imitam o estilo dos roteadores que esses provedores entregam, sem logotipos. Nomes de clientes, senhas e etiquetas são inventados. O bairro é desenhado à mão, inspirado no Santa Mônica (não é o mapa exato). Funciona sem internet.</p>
       </div>
     </div>
   </section>
@@ -959,7 +1069,7 @@ body.no-intervalo .toast { display: none; }
         <li><b>Na casa:</b> no Prompt, digite <kbd>ipconfig</kbd>. O <b>Gateway Padrão</b> é o IP do roteador. Digite esse IP no navegador, entre com o usuário e a senha da <b>Etiqueta</b> e faça cada item da lista.</li>
         <li><b>Estrelas:</b> 3 estrelas se errar no máximo 1 vez (dicas contam). Pode repetir a casa para melhorar.</li>
         <li><b>Carros:</b> atravesse na <b>faixa de pedestre</b>. Lá os carros param; fora dela, eles batem em você.</li>
-        <li><b>Intervalo:</b> das 9:30 às 10:00 e das 15:15 às 15:35 (relógio do computador) o jogo pausa sozinho. Das 18h às 7h o plantão fica fechado.</li>
+        <li><b>Intervalo:</b> das 9:30 às 10:00 e das 15:15 às 15:35 o jogo pausa sozinho. Das 18h às 7h o plantão fica fechado.</li>
         <li><b>Semáforos:</b> os carros param no vermelho. Atravesse na faixa de pedestre.</li>
       </ol>
       <p><b>Palavras do roteador</b></p>
@@ -1070,7 +1180,7 @@ body.no-intervalo .toast { display: none; }
       <div class="iv-txt">
         <p class="iv-chapeu">🌙 Plantão encerrado</p>
         <h2 id="nt-titulo">O técnico está em descanso... ou jogando! 🎮</h2>
-        <p>O Plantão do Técnico funciona das <b>7h às 18h</b> (relógio do computador). Seu progresso está salvo.</p>
+        <p>O Plantão do Técnico funciona das <b>7h às 18h</b>. Seu progresso está salvo.</p>
         <div class="iv-relogio" id="nt-relogio">00:00</div>
         <p class="iv-falta">O plantão abre em <b id="nt-falta">0 min</b></p>
       </div>
@@ -2961,7 +3071,7 @@ body.no-intervalo .toast { display: none; }
   function setT(x, y, t) { if (x >= 0 && y >= 0 && x < W && y < H) G[y][x] = t; }
   function rect(x0, y0, x1, y1, t) { for (var y = y0; y <= y1; y++) for (var x = x0; x <= x1; x++) setT(x, y, t); }
   function sol(x0, y0, x1, y1) { for (var y = y0; y <= y1; y++) for (var x = x0; x <= x1; x++) if (x >= 0 && y >= 0 && x < W && y < H) solido[y][x] = true; }
-  var LINHAS_FAIXA = { 5: 1, 8: 1, 16: 1, 19: 1, 27: 1, 30: 1 }, COLS_FAIXA = { 8: 1, 11: 1, 21: 1, 27: 1, 36: 1, 39: 1 };
+  var LINHAS_FAIXA = { 5: 1, 8: 1, 16: 1, 19: 1, 27: 1, 30: 1 }, COLS_FAIXA = { 8: 1, 11: 1, 21: 1, 27: 1 };
   function ehFaixa(x, y) { return G[y] && G[y][x] === "r" && (LINHAS_FAIXA[y] || COLS_FAIXA[x]); }
 
   function montarMapa() {
@@ -2995,8 +3105,8 @@ body.no-intervalo .toast { display: none; }
       }
     });
     predios.push({ tipo: "prefeitura", x: 1, y: 0, w: 18, h: 4, nome: "Centro Administrativo · Prefeitura" });
-    predios.push({ tipo: "ufu", x: 28, y: 10, w: 8, h: 5, nome: "UFU · Campus Santa Mônica" });
-    predios.push({ tipo: "senai", x: 12, y: 32, w: 9, h: 4, nome: "SENAI Dr. Celso Charuri · Base do Técnico" });
+    predios.push({ tipo: "ufu", x: 28, y: 9, w: 8, h: 7, nome: "UFU · Campus Santa Mônica" });
+    predios.push({ tipo: "senai", x: 12, y: 31, w: 9, h: 5, nome: "SENAI Dr. Celso Charuri · Base do Técnico" });
     predios.push({ tipo: "mercado", x: 37, y: 0, w: 8, h: 4, nome: "Mercadinho do Bairro" });
     predios.forEach(function (p) { sol(p.x, p.y, p.x + p.w - 1, p.y + p.h - 1); });
     CASAS.forEach(function (c) { sol(c.x, c.y, c.x + 2, c.y + 2); setT(c.x + 1, c.y + 3, "c"); });
@@ -3086,33 +3196,47 @@ body.no-intervalo .toast { display: none; }
     var calca = tec ? "#26324d" : "#3d4a66", calcaS = escurecer(calca, 0.75), sapato = "#3a2416";
     var lado = dir === "esq" || dir === "dir", f = dir === "esq" ? -1 : 1;
     var passo = quadro === 1 ? 1 : quadro === 2 ? -1 : 0;
+    var sx = !lado && passo ? -passo : 0;   // frente/costas: tronco pende para o lado do pé que planta
     // pernas
     if (!lado) {
-      px(g, 5, 17 - (passo > 0 ? 1 : 0), 3, 4, calca); px(g, 8, 17 - (passo < 0 ? 1 : 0), 3, 4, calcaS);
-      px(g, 5, 21 - (passo > 0 ? 1 : 0), 3, 1, sapato); px(g, 8, 21 - (passo < 0 ? 1 : 0), 3, 1, sapato);
+      if (!passo) {
+        px(g, 5, 17, 3, 4, calca); px(g, 8, 17, 3, 4, calcaS);
+        px(g, 5, 21, 3, 1, sapato); px(g, 8, 21, 3, 1, sapato);
+      } else {
+        // a perna da frente planta (pé maior, bico para fora); a de trás sobe com o joelho em 1 px
+        var pf = passo > 0 ? 5 : 8, pt = passo > 0 ? 8 : 5;
+        var cf = passo > 0 ? calca : calcaS, ct = passo > 0 ? calcaS : calca;
+        px(g, pf, 17, 3, 3, cf); px(g, pf, 20, 3, 1, cf);
+        px(g, passo > 0 ? 4 : 8, 21, 4, 1, sapato);
+        px(g, pt, 17, 3, 2, ct);
+        px(g, pt + (passo > 0 ? 0 : 1), 19, 2, 1, ct);
+        px(g, pt + (passo > 0 ? 0 : 1), 20, 2, 1, sapato);
+      }
     } else {
       px(g, 6 + passo, 17, 3, 4, calcaS); px(g, 7 - passo, 17, 3, 4, calca);
       px(g, 6 + passo + (f > 0 ? 1 : -1), 21, 3, 1, sapato); px(g, 7 - passo + (f > 0 ? 1 : -1), 21, 3, 1, sapato);
     }
     // corpo
-    var bx = lado ? 5 : 4, bw = lado ? 6 : 8;
+    var bx = (lado ? 5 : 4) + sx, bw = lado ? 6 : 8;
     px(g, bx, 10, bw, 7, roupa); px(g, bx + bw - 1, 10, 1, 7, roupaS);
-    if (v.jaleco) { px(g, 7, 10, 2, 7, v.roupa); }
+    if (v.jaleco) { px(g, lado ? 7 : bx + 3, 10, 2, 7, v.roupa); }
     if (v.avental && dir !== "cima") px(g, bx + 1, 12, bw - 2, 5, "#ffffff");
     if (tec) {
       px(g, bx, 14, bw, 1, "#ff8a1f"); px(g, bx, 15, bw, 1, "#d8e6f5");
-      if (dir === "baixo") { px(g, 6, 10, 4, 1, "#ffffff"); px(g, 5, 12, 2, 1, "#ffffff"); }
-      if (dir === "cima") { px(g, 5, 11, 6, 2, "#ffffff"); px(g, 6, 11, 1, 1, "#1f63c6"); px(g, 8, 12, 1, 1, "#1f63c6"); px(g, 10, 11, 1, 1, "#1f63c6"); }
+      if (dir === "baixo") { px(g, bx + 2, 10, 4, 1, "#ffffff"); px(g, bx + 1, 12, 2, 1, "#ffffff"); }
+      if (dir === "cima") { px(g, bx + 1, 11, 6, 2, "#ffffff"); px(g, bx + 2, 11, 1, 1, "#1f63c6"); px(g, bx + 4, 12, 1, 1, "#1f63c6"); px(g, bx + 6, 11, 1, 1, "#1f63c6"); }
       px(g, bx, 16, bw, 1, "#3a2416");
-      if (dir !== "cima") px(g, lado ? (f > 0 ? 5 : 9) : 10, 16, 2, 2, "#f39c12");
+      if (dir !== "cima") px(g, lado ? (f > 0 ? 5 : 9) : bx + bw - 2, 16, 2, 2, "#f39c12");
     } else {
       px(g, bx, 16, bw, 1, escurecer(roupa === "#f2f2f2" ? "#9aa5b1" : (v.roupa || "#888888"), 0.6));
     }
-    // braços
+    // braços (frente/costas: balanço oposto às pernas, com mão maior na descida)
     var a1 = quadro ? passo : 0;
     if (!lado) {
-      px(g, 2, 10 + a1, 2, 5, roupa); px(g, 12, 10 - a1, 2, 5, roupaS);
-      px(g, 2, 15 + a1, 2, 1, pele); px(g, 12, 15 - a1, 2, 1, peleS);
+      var sw = -a1, ax1 = 2 + sx, ax2 = 12 + sx;
+      px(g, ax1, 10 + sw, 2, 5, roupa); px(g, ax2, 10 - sw, 2, 5, roupaS);
+      px(g, ax1, 15 + sw, 2, sw > 0 ? 2 : 1, pele);
+      px(g, ax2, 15 - sw, 2, sw < 0 ? 2 : 1, peleS);
     } else {
       var ax = f > 0 ? 7 + a1 : 7 - a1;
       px(g, ax, 11, 2, 4, roupaS); px(g, ax, 15, 2, 1, pele);
@@ -3134,14 +3258,14 @@ body.no-intervalo .toast { display: none; }
     if (tec) {
       var bon = "#123f86", bonC = "#2a62b8";
       px(g, 4, 1, 8, 3, bon); px(g, 5, 0, 6, 1, bon); px(g, 6, 1, 3, 1, bonC); px(g, 7, 0, 2, 1, "#ff8a1f");
-      if (dir === "baixo") { px(g, 4, 4, 8, 1, "#0c2c5e"); px(g, 7, 2, 2, 1, "#ffffff"); px(g, 4, 5, 1, 1, cab); px(g, 11, 5, 1, 1, cab); if (v.longo) { px(g, 3, 4, 2, 7, cab); px(g, 11, 4, 2, 7, cab); px(g, 3, 4, 1, 3, clarear(cab, 0.25)); } }
-      else if (dir === "cima") { px(g, 4, 4, 8, 3, cab); px(g, 6, 3, 4, 1, "#ff8a1f"); if (v.longo) { px(g, 6, 7, 4, 5, cab); px(g, 7, 12, 2, 1, cab); px(g, 6, 7, 4, 1, "#ff8a1f"); } }
+      if (dir === "baixo") { px(g, 4, 4, 8, 1, "#0c2c5e"); px(g, 7, 2, 2, 1, "#ffffff"); px(g, 4, 5, 1, 1, cab); px(g, 11, 5, 1, 1, cab); if (v.longo) { px(g, 3, 4, 2, 7, cab); px(g, 11, 4, 2, 7, cab); px(g, 3, 4, 1, 3, clarear(cab, 0.25)); } if (sx) px(g, sx < 0 ? 3 : 12, 4, 1, 1, "#0c2c5e"); }
+      else if (dir === "cima") { px(g, 4, 4, 8, 3, cab); px(g, 6, 3, 4, 1, "#ff8a1f"); if (v.longo) { px(g, 6, 7, 4, 5, cab); px(g, 7 - sx, 12, 2, 1, cab); px(g, 6, 7, 4, 1, "#ff8a1f"); } }
       else { px(g, f > 0 ? 10 : 1, 4, 5, 1, "#0c2c5e"); px(g, f > 0 ? 4 : 9, 4, 3, 3, cab); px(g, f > 0 ? 4 : 11, 3, 1, 1, "#ff8a1f"); if (v.longo) { px(g, f > 0 ? 2 : 11, 4, 3, 8, cab); px(g, f > 0 ? 2 : 13, 5, 1, 4, clarear(cab, 0.25)); } }
     } else {
       var cabC = clarear(cab, 0.25);
       px(g, 4, 1, 8, 3, cab); px(g, 5, 0, 6, 1, cab); px(g, 6, 1, 3, 1, cabC);
       if (dir === "baixo") { px(g, 4, 4, 1, 2, cab); px(g, 11, 4, 1, 2, cab); if (v.longo) { px(g, 3, 4, 2, 7, cab); px(g, 11, 4, 2, 7, cab); } }
-      else if (dir === "cima") { px(g, 4, 4, 8, v.longo ? 8 : 4, cab); px(g, 6, 2, 3, 1, cabC); }
+      else if (dir === "cima") { px(g, 4, 4, 8, v.longo ? 8 : 4, cab); if (v.longo && passo) px(g, 6 - sx, 12, 4, 1, cab); px(g, 6, 2, 3, 1, cabC); }
       else { px(g, f > 0 ? 4 : 8, 3, 4, v.longo ? 8 : 4, cab); }
     }
     return contornar(c);
@@ -3167,7 +3291,8 @@ body.no-intervalo .toast { display: none; }
   var PERSONAGENS = {
     m: { pele: "#c98d63", cabelo: "#2a1a10", roupa: "#1f63c6" },
     fp: { pele: "#a86b45", cabelo: "#151213", roupa: "#1f63c6", longo: true },
-    fl: { pele: "#f1c9a5", cabelo: "#e9c25a", roupa: "#1f63c6", longo: true }
+    fl: { pele: "#f1c9a5", cabelo: "#e9c25a", roupa: "#1f63c6", longo: true },
+    ml: { pele: "#f1c9a5", cabelo: "#e9c25a", roupa: "#1f63c6" }
   };
   var VISUAL_TEC = PERSONAGENS.m;
 
@@ -3290,6 +3415,9 @@ body.no-intervalo .toast { display: none; }
       px(g, ox + w / 2 - 48, oy + h - 26, 7, 5, "#1f8a4c"); px(g, ox + w / 2 - 48, oy + h - 24, 7, 1, "#f2c230");
       px(g, ox + w / 2 - 40, oy + h - 26, 7, 5, "#1d4fa3"); px(g, ox + w / 2 + 40, oy + h - 26, 7, 5, "#ffffff"); px(g, ox + w / 2 + 41, oy + h - 25, 5, 1, "#c0392b");
     } else if (p.tipo === "ufu") {
+      // reentrância entre as alas: escurece a junta para a grama não aparecer no meio do prédio
+      var jx = ox + Math.round(w * 0.46), jw = Math.round(w * 0.5) - Math.round(w * 0.46);
+      px(g, jx, oy, jw, h - 12, "#7c3d20");
       [[0, 0.46], [0.5, 0.5]].forEach(function (b, k) {
         var bx = ox + Math.round(w * b[0]), bw = Math.round(w * b[1]), by = oy + (k ? 6 : 0), bh = h - (k ? 6 : 0);
         px(g, bx, by, bw, 14, "#a4552f"); px(g, bx, by + 12, bw, 2, "#7c3d20");
@@ -3317,12 +3445,12 @@ body.no-intervalo .toast { display: none; }
       "SENAI".split("").forEach(function (ch) { L[ch].forEach(function (lin, ly) { for (var k2 = 0; k2 < lin.length; k2++) if (lin[k2] === "1") px(g, lx + k2 * 2, oy + 9 + ly * 2, 2, 2, "#1f63c6"); }); lx += L[ch][0].length * 2 + 2; });
       // faixa laranja entre os andares
       px(g, bx, oy + 28, bw, 3, "#ff8a1f"); px(g, bx, oy + 28, bw, 1, "#ffb15c");
-      // térreo branco com janelas e pilares
+      // térreo branco com janelas e pilares (mais alto: duas fileiras até a porta)
       px(g, bx, oy + 31, bw, h - 31, "#f7f9fc"); px(g, bx + bw - 2, oy + 31, 2, h - 31, "#d6dee8");
-      for (i = bx + 4; i < bx + bw - 6; i += 13) { if (Math.abs(i + 4 - cxe) < 16) continue; px(g, i, oy + 36, 9, 10, "#4f95d6"); px(g, i, oy + 36, 3, 3, "#a7d6f3"); px(g, i, oy + 46, 9, 1, "#c9d3de"); }
+      for (j = oy + 36; j <= oy + h - 22 - 9; j += 13) for (i = bx + 4; i < bx + bw - 6; i += 13) { if (Math.abs(i + 4 - cxe) < 16) continue; px(g, i, j, 9, 10, "#4f95d6"); px(g, i, j, 3, 3, "#a7d6f3"); px(g, i, j + 10, 9, 1, "#c9d3de"); }
       for (i = bx; i < bx + bw; i += 26) px(g, i, oy + 31, 2, h - 31, "#e3e9f0");
       // entrada: marquise azul + porta de vidro
-      px(g, cxe - 18, oy + 31, 36, 4, "#1f63c6"); px(g, cxe - 18, oy + 34, 36, 1, "#0e2f66");
+      px(g, cxe - 18, oy + h - 26, 36, 4, "#1f63c6"); px(g, cxe - 18, oy + h - 23, 36, 1, "#0e2f66");
       px(g, cxe - 11, oy + h - 22, 22, 22, "#2f4a63"); px(g, cxe - 10, oy + h - 21, 9, 21, "#8fd0f0"); px(g, cxe + 1, oy + h - 21, 9, 21, "#8fd0f0");
       px(g, cxe - 9, oy + h - 20, 3, 6, "#d6f0fc"); px(g, cxe + 2, oy + h - 20, 3, 6, "#d6f0fc"); px(g, cxe - 1, oy + h - 12, 2, 2, "#ffd23f");
       // canteiros com flores
@@ -3330,7 +3458,7 @@ body.no-intervalo .toast { display: none; }
       // mastros: Brasil, Minas Gerais e SENAI
       var mastros = [bx + bw - 22, bx + bw - 14, bx + bw - 6];
       mastros.forEach(function (mx, k3) {
-        px(g, mx, oy + 33, 1, h - 33, "#8c949d");
+        px(g, mx, oy + 33, 1, h - 39, "#8c949d");
         if (k3 === 0) { px(g, mx + 1, oy + 33, 6, 4, "#1f8a4c"); px(g, mx + 3, oy + 34, 2, 2, "#f2c230"); px(g, mx + 4, oy + 35, 1, 1, "#1d4fa3"); }
         else if (k3 === 1) { px(g, mx + 1, oy + 33, 6, 4, "#ffffff"); px(g, mx + 3, oy + 34, 2, 2, "#c0392b"); }
         else { px(g, mx + 1, oy + 33, 6, 4, "#1f63c6"); px(g, mx + 1, oy + 36, 6, 1, "#ff8a1f"); }
@@ -3419,7 +3547,7 @@ body.no-intervalo .toast { display: none; }
   }
 
   /* ================================================================ jogador, carros */
-  var J = { x: 16.5 * T, y: 31.6 * T, dir: "baixo", passo: 0, andando: false, tonto: 0, batidas: 0 };
+  var J = { x: 16.5 * T, y: 30.4 * T, dir: "baixo", passo: 0, andando: false, tonto: 0, batidas: 0 };
   var carros = [];
   function criarCarros() {
     var cores = ["#e74c3c", "#f1c40f", "#ecf0f1", "#34495e", "#3498db", "#16a085", "#9b59b6", "#e67e22", "#c0392b", "#27ae60", "#7f8c8d", "#d35400"];
@@ -3574,6 +3702,31 @@ body.no-intervalo .toast { display: none; }
   // coordenada do mundo -> pixel CSS da tela
   function naTela(wx, wy) { return { x: (wx - CAM.x) * P / DPR, y: (wy - CAM.y) * P / DPR }; }
   function noMundo(cx, cy) { return { x: cx * DPR / P + CAM.x, y: cy * DPR / P + CAM.y }; }
+  // posição/retângulo do sprite do carro na tela (mesmas coordenadas do buffer, em px CSS)
+  function caixaCarroTela(k) {
+    var sc = P / DPR, x0, y0;
+    if (k.vert) { x0 = Math.round(k.faixa * T - 9); y0 = Math.round(k.pos - k.comp / 2 - 1); }
+    else if (k.vel >= 0 && (k.ult || 1) > 0) { x0 = Math.round(k.pos - k.comp / 2 - 1); y0 = Math.round(k.faixa * T - 13); }
+    else { x0 = Math.round(k.pos + k.comp / 2 + 1) - k.spr.width; y0 = Math.round(k.faixa * T - 13); }
+    return { x: (x0 - CAM.x) * sc, y: (y0 - CAM.y) * sc, w: k.spr.width * sc, h: k.spr.height * sc };
+  }
+  // redesenha o carro por cima dos rótulos de rua, em full-res, sem suavizar
+  function desenharCarroTela(k) {
+    var sc = P / DPR, spr = k.spr, b = caixaCarro(k);
+    ctx.fillStyle = "rgba(0,0,0,.25)";
+    ctx.fillRect((Math.round(b.x + 2) - CAM.x) * sc, (Math.round(b.y + b.h - 2) - CAM.y) * sc, b.w * sc, 3 * sc);
+    if (k.vert) {
+      ctx.drawImage(spr, (Math.round(k.faixa * T - 9) - CAM.x) * sc, (Math.round(k.pos - k.comp / 2 - 1) - CAM.y) * sc, spr.width * sc, spr.height * sc);
+    } else if (k.vel >= 0 && (k.ult || 1) > 0) {
+      ctx.drawImage(spr, (Math.round(k.pos - k.comp / 2 - 1) - CAM.x) * sc, (Math.round(k.faixa * T - 13) - CAM.y) * sc, spr.width * sc, spr.height * sc);
+    } else {
+      ctx.save();
+      ctx.translate((Math.round(k.pos + k.comp / 2 + 1) - CAM.x) * sc, (Math.round(k.faixa * T - 13) - CAM.y) * sc);
+      ctx.scale(-1, 1);
+      ctx.drawImage(spr, 0, 0, spr.width * sc, spr.height * sc);
+      ctx.restore();
+    }
+  }
 
   /* ================================================================ minimapa */
   var mm = $("minimapa"), mctx = mm.getContext("2d"), mmBase = null;
@@ -3721,7 +3874,20 @@ body.no-intervalo .toast { display: none; }
     ctx.drawImage(buf, 0, 0, BW * P, BH * P);
     // textos por cima, em resolução cheia
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    placas.forEach(function (p) { var s = naTela(p.x * T, p.y * T); if (s.x > -200 && s.x < VW + 200 && s.y > -40 && s.y < VH + 40) placaTexto(s.x, s.y, p.txt, p.vert, p.parque); });
+    var caixasPlacas = [];
+    placas.forEach(function (p) { var s = naTela(p.x * T, p.y * T); if (s.x > -200 && s.x < VW + 200 && s.y > -40 && s.y < VH + 40) { var r = placaTexto(s.x, s.y, p.txt, p.vert, p.parque); if (r) caixasPlacas.push(r); } });
+    // o rótulo de rua é pintura no asfalto: os carros passam por cima dele
+    if (caixasPlacas.length) {
+      ctx.save(); ctx.imageSmoothingEnabled = false;
+      carros.forEach(function (k) {
+        var c = caixaCarroTela(k);
+        for (var i2 = 0; i2 < caixasPlacas.length; i2++) {
+          var q = caixasPlacas[i2];
+          if (c.x < q.x + q.w && c.x + c.w > q.x && c.y < q.y + q.h && c.y + c.h > q.y) { desenharCarroTela(k); break; }
+        }
+      });
+      ctx.restore();
+    }
     predios.forEach(function (p) { var s = naTela((p.x + p.w / 2) * T, (p.y + p.h) * T + 7); placaTexto(s.x, s.y, p.nome, false, false, p.tipo === "senai" ? "#1f63c6" : "#1d1b2a"); });
     CASAS.forEach(function (k, ci) {
       var oi = osDaCasa(ci); if (oi < 0) return;
@@ -3752,7 +3918,8 @@ body.no-intervalo .toast { display: none; }
     ctx.fillStyle = cor || "#ffffff"; ctx.fillText(txt, x, y + 1);
   }
   function placaTexto(x, y, txt, vert, parque, fundo) {
-    ctx.save(); ctx.translate(Math.round(x), Math.round(y)); if (vert) ctx.rotate(-Math.PI / 2);
+    x = Math.round(x); y = Math.round(y);
+    ctx.save(); ctx.translate(x, y); if (vert) ctx.rotate(-Math.PI / 2);
     ctx.font = "800 13px " + FONTE_JOGO; ctx.textAlign = "center"; ctx.textBaseline = "middle";
     var w = Math.round(ctx.measureText(txt).width + 20), h = 24;
     ctx.fillStyle = CONTORNO; ctx.fillRect(-w / 2 - 3, -h / 2 - 3, w + 6, h + 6);
@@ -3760,6 +3927,9 @@ body.no-intervalo .toast { display: none; }
     ctx.fillStyle = "rgba(255,255,255,.85)"; ctx.fillRect(-w / 2 + 2, -h / 2 + 2, w - 4, 2); ctx.fillRect(-w / 2 + 2, h / 2 - 4, w - 4, 2);
     ctx.fillStyle = "#ffffff"; ctx.fillText(txt, 0, 1);
     ctx.restore();
+    // caixa externa da placa na tela (já rotacionada quando vert)
+    var rw = vert ? h + 6 : w + 6, rh = vert ? w + 6 : h + 6;
+    return { x: x - rw / 2, y: y - rh / 2, w: rw, h: rh };
   }
   var FONTE_JOGO = '"Trebuchet MS", "Segoe UI", system-ui, sans-serif';
   var VAN = null;
@@ -3783,9 +3953,9 @@ body.no-intervalo .toast { display: none; }
   }
   /* ================================================================ HUD e telas */
   function telas(id) {
-    ["t-inicio", "t-lista", "t-ajuda", "t-casa", "t-resultado", "t-codigos", "t-surpresa"].forEach(function (t) { $(t).hidden = t !== id; });
+    ["t-personagem", "t-inicio", "t-lista", "t-ajuda", "t-casa", "t-resultado", "t-codigos", "t-surpresa"].forEach(function (t) { $(t).hidden = t !== id; });
     emJogo = !id;
-    $("hud").hidden = id === "t-inicio" || id === "t-casa";
+    $("hud").hidden = id === "t-personagem" || id === "t-inicio" || id === "t-casa";
     $("minimapa").hidden = !!id;
     $("toque").hidden = !!id || !ehToque;
     $("teclas-ajuda").hidden = !!id || ehToque;
@@ -4282,38 +4452,272 @@ body.no-intervalo .toast { display: none; }
   var noiteAnim = false;
   function animarNoite(t) {
     if ($("t-noite").hidden) { noiteAnim = false; return; }
-    var c = $("nt-cena"), g = c.getContext("2d"), W2 = 160, H2 = 96, cena = Math.floor(t / 6000) % 2;  // 0 jogando, 1 dormindo
+    var c = $("nt-cena"), g = c.getContext("2d"), W2 = 160, H2 = 96;
+    var cena = Math.floor(t / 6000) % 2;            // 0 = jogando videogame, 1 = dormindo
+    var s = t / 1000, tvOn = cena === 0;            // s = tempo em segundos: tudo vem de senoides
     g.imageSmoothingEnabled = false;
-    px(g, 0, 0, W2, H2, "#1b2442"); px(g, 0, 70, W2, 26, "#6b4b3a"); for (var i = 0; i < W2; i += 12) px(g, i, 70, 1, 26, "#5a3d2f");
-    px(g, 0, 68, W2, 2, "#3a2a22");
-    // janela com lua e estrelas piscando
-    px(g, 10, 10, 44, 32, "#3a2a22"); px(g, 12, 12, 40, 28, "#0d1330"); px(g, 31, 12, 2, 28, "#3a2a22");
-    disco(g, 44, 20, 5, "#fff3b0"); disco(g, 46, 19, 4, "#0d1330");
-    [[16, 16], [24, 30], [20, 22], [38, 34], [48, 32], [27, 18]].forEach(function (e, k2) { if (Math.floor(t / 400 + k2 * 1.7) % 3) px(g, e[0], e[1], 1, 1, "#ffffff"); });
-    // TV na estante
-    px(g, 104, 30, 46, 30, CONTORNO); px(g, 98, 60, 58, 8, "#7a4a28");
-    var tvOn = cena === 0;
-    px(g, 106, 32, 42, 26, tvOn ? "#14233f" : "#0b0f1a");
+    g.globalAlpha = 1;
+    g.fillStyle = "#1b2442"; g.fillRect(0, 0, W2, H2);
+
+    /* ---- intensidades de luz: senoides de períodos diferentes (nada muda de repente) ---- */
+    var tremula = 0.55 + 0.26 * Math.sin(s * 6.9) + 0.12 * Math.sin(s * 11.3 + 1.7) + 0.07 * Math.sin(s * 19.1 + 0.4);
+    if (tremula < 0.12) tremula = 0.12;
+    if (tremula > 1) tremula = 1;
+    var acel = Math.max(0, Math.cos(s * 1.7));      // a bolinha cruzando a tela
+    var respira = Math.sin(s * 2.1);                // respiração, ciclo de ~3 s
+    var luar = 0.5 + 0.25 * Math.sin(s * 0.28);     // luar variando bem devagar
+    var luz1 = "rgba(150,200,255," + (0.10 + 0.13 * tremula).toFixed(3) + ")";
+    var luz2 = "rgba(170,215,255," + (0.16 + 0.22 * tremula).toFixed(3) + ")";
+
+    /* ---- parede com faixas de profundidade + rodapé ---- */
+    px(g, 0, 0, W2, 16, "#161e38");
+    px(g, 0, 16, W2, 28, "#1b2442");
+    px(g, 0, 44, W2, 18, "#1f2949");
+    px(g, 0, 62, W2, 4, "#19223c");
+    px(g, 0, 66, W2, 1, "#2b3453");
+    px(g, 0, 67, W2, 3, "#0f1626");
+
+    /* ---- piso de tábua ---- */
+    px(g, 0, 70, W2, 26, "#6b4b3a");
+    px(g, 0, 70, W2, 2, "#4f3628");
+    px(g, 0, 72, W2, 1, "#7a5743");
+    px(g, 0, 78, W2, 1, "#5a3d2f");
+    px(g, 0, 86, W2, 1, "#5a3d2f");
+    px(g, 0, 92, W2, 1, "#624434");
+    px(g, 21, 75, 2, 1, "#5a3d2f"); px(g, 58, 82, 3, 1, "#5a3d2f");
+    px(g, 118, 74, 2, 1, "#5a3d2f"); px(g, 141, 89, 3, 1, "#5a3d2f");
+
+    /* ---- tapete (passa por baixo do sofá e da estante) ---- */
+    var rug = [12, 20, 27, 32, 34, 34, 32, 27, 20, 12];
+    for (var r2 = 0; r2 < rug.length; r2++) px(g, 66 - rug[r2], 66 + r2, rug[r2] * 2, 1, "#3a2b47");
+    for (var r3 = 1; r3 < rug.length - 1; r3++) px(g, 66 - rug[r3] + 2, 66 + r3, (rug[r3] - 2) * 2, 1, "#463555");
+    px(g, 60, 69, 13, 1, "#56426a");
+
+    /* ---- janela com lua, estrelas e travessas ---- */
+    px(g, 8, 2, 48, 34, "#2f231d");
+    px(g, 9, 3, 46, 32, "#43301f");
+    px(g, 12, 6, 40, 26, "#0b1230");
+    var mg = g.createRadialGradient(44, 26, 1, 44, 26, 15);
+    mg.addColorStop(0, "rgba(255,243,176," + (0.10 + 0.06 * luar).toFixed(3) + ")");
+    mg.addColorStop(1, "rgba(255,243,176,0)");
+    g.fillStyle = mg; g.fillRect(12, 6, 40, 26);
+    disco(g, 44, 26, 4, "#fff3b0");
+    disco(g, 43, 25, 2, "#fffde0");
+    disco(g, 46, 25, 3, "#0b1230");
+    var est = [[17, 10], [22, 25], [19, 17], [38, 10], [49, 17], [27, 12], [36, 30]];
+    for (var k = 0; k < est.length; k++) {
+      g.globalAlpha = 0.25 + 0.75 * (0.5 + 0.5 * Math.sin(s * 1.3 + k * 2.1));
+      px(g, est[k][0], est[k][1], 1, 1, "#ffffff");
+    }
+    g.globalAlpha = 1;
+    px(g, 31, 6, 2, 26, "#43301f");
+    px(g, 12, 19, 40, 2, "#43301f");
+    px(g, 6, 36, 52, 3, "#43301f");
+    px(g, 6, 36, 52, 1, "#5a4133");
+    px(g, 6, 38, 52, 1, "#181022");
+
+    /* ---- sofá: encosto, assento, braços e sombra no chão ---- */
+    px(g, 40, 43, 46, 12, "#8f2f26");
+    px(g, 40, 43, 46, 2, "#b03a2e");
+    px(g, 42, 46, 19, 8, "#a93226");
+    px(g, 64, 46, 20, 8, "#b03a2e");
+    px(g, 36, 54, 54, 12, "#c0392b");
+    px(g, 36, 54, 54, 2, "#d0503f");
+    px(g, 36, 63, 54, 3, "#8f2f26");
+    px(g, 32, 50, 8, 18, "#a93226"); px(g, 32, 50, 8, 1, "#c0392b");
+    px(g, 86, 50, 8, 18, "#a93226"); px(g, 86, 50, 8, 1, "#c0392b");
+    px(g, 32, 65, 8, 3, "#7b241c"); px(g, 86, 65, 8, 3, "#7b241c");
+    px(g, 35, 68, 3, 2, "#3a2416"); px(g, 89, 68, 3, 2, "#3a2416");
+    px(g, 38, 66, 50, 2, "rgba(0,0,0,0.22)");
+
+    /* ---- luz da TV lavando a parede e o sofá (só quando ela está ligada) ---- */
     if (tvOn) {
-      var bxp = 108 + Math.abs((Math.floor(t / 40) % 72) - 36), byp = 38 + Math.abs((Math.floor(t / 55) % 30) - 15);
-      px(g, 106, 52, 42, 2, "#2ecc40"); px(g, bxp, byp, 3, 3, "#ffd23f");
-      px(g, 110, 46 + Math.round(Math.sin(t / 300) * 3), 2, 6, "#ffffff"); px(g, 142, 46 - Math.round(Math.sin(t / 300) * 3), 2, 6, "#ffffff");
-      g.fillStyle = "rgba(90,160,255," + (0.10 + 0.06 * Math.sin(t / 90)) + ")"; g.fillRect(60, 30, 100, 40);
+      var tg = g.createRadialGradient(126, 42, 4, 126, 42, 62);
+      tg.addColorStop(0, "rgba(96,164,255," + (0.15 + 0.10 * tremula).toFixed(3) + ")");
+      tg.addColorStop(0.55, "rgba(96,164,255,0.05)");
+      tg.addColorStop(1, "rgba(96,164,255,0)");
+      g.fillStyle = tg; g.fillRect(56, 0, 104, 72);
     }
-    // sofá
-    px(g, 40, 50, 56, 12, "#c0392b"); px(g, 38, 46, 60, 6, "#a93226"); px(g, 36, 50, 6, 16, "#a93226"); px(g, 94, 50, 6, 16, "#a93226"); px(g, 42, 62, 52, 4, "#7b241c");
-    // técnico (de costas para nós, olhando a TV, ou deitado dormindo)
-    if (cena === 0) {
-      var pul = Math.floor(t / 180) % 2;
-      pessoa(g, 68, 64 - pul, "dir", 0, VISUAL_TEC, true, 1);
-      px(g, 74, 52 - pul, 4, 2, "#2b2f36"); px(g, 75, 51 - pul, 1, 1, "#e74c3c");
+
+    /* ---- estante, videogame e TV ---- */
+    px(g, 98, 60, 58, 8, "#7a4a28");
+    px(g, 98, 60, 58, 1, "#8f5a33");
+    px(g, 98, 66, 58, 2, "#5b361c");
+    px(g, 100, 62, 54, 1, "#6b4022");
+    px(g, 102, 68, 3, 2, "#3a2416"); px(g, 149, 68, 3, 2, "#3a2416");
+    px(g, 103, 68, 50, 1, "rgba(0,0,0,0.25)");
+    px(g, 104, 62, 12, 3, "#232a3a");
+    px(g, 106, 63, 1, 1, tvOn ? "#2ecc40" : "rgba(70,200,110,0.35)");
+    px(g, 109, 63, 1, 1, "#c0392b");
+    px(g, 104, 30, 46, 30, "#2a3040");
+    px(g, 104, 30, 46, 2, "#3d465c");
+    px(g, 104, 58, 46, 2, "#1b202c");
+    px(g, 106, 32, 42, 25, "#0a0d17");
+    if (tvOn) {
+      px(g, 107, 33, 40, 23, "#0e1c33");
+      for (var sy = 34; sy < 56; sy += 2) px(g, 107, sy, 40, 1, "rgba(0,0,0,0.16)");
+      px(g, 107, 49, 40, 1, "#2ecc40");
+      px(g, 111, 35, 3, 1, "#ffffff"); px(g, 115, 35, 3, 1, "#ffffff");
+      px(g, 140, 35, 3, 1, "#ffffff"); px(g, 144, 35, 3, 1, "#ffffff");
+      px(g, 109, 38 + Math.round(8 * (0.5 + 0.5 * Math.sin(s * 1.7 - 0.6))), 2, 5, "#ffffff");
+      px(g, 143, 38 + Math.round(8 * (0.5 + 0.5 * Math.sin(s * 2.6 + 1.5))), 2, 5, "#e8eef7");
+      var bxp = 112 + Math.round(30 * (0.5 + 0.5 * Math.sin(s * 1.7)));
+      var byp = 38 + Math.round(9 * (0.5 + 0.5 * Math.sin(s * 2.6 + 1.1)));
+      px(g, bxp - 4, byp, 1, 1, "rgba(255,210,63,0.18)");
+      px(g, bxp - 2, byp, 1, 1, "rgba(255,210,63,0.38)");
+      px(g, bxp, byp, 2, 2, "#ffd23f");
+      px(g, bxp, byp, 1, 1, "#fff7c9");
+      px(g, 107, 33, 3, 23, "rgba(255,255,255,0.05)");
+      px(g, 122, 33, 1, 23, "rgba(255,255,255,0.04)");
+      var sg = g.createRadialGradient(126, 44, 6, 126, 44, 34);
+      sg.addColorStop(0, "rgba(120,180,255," + (0.10 + 0.10 * tremula).toFixed(3) + ")");
+      sg.addColorStop(1, "rgba(120,180,255,0)");
+      g.fillStyle = sg; g.fillRect(96, 22, 64, 50);
+      elipse(g, 128, 78, 26, 6, "rgba(120,175,255," + (0.06 + 0.05 * tremula).toFixed(3) + ")");
+      elipse(g, 126, 74, 14, 4, "rgba(165,205,255," + (0.06 + 0.05 * tremula).toFixed(3) + ")");
+      px(g, 98, 60, 58, 1, "rgba(150,200,255," + (0.10 + 0.08 * tremula).toFixed(3) + ")");
     } else {
-      g.save(); g.translate(68, 58); g.rotate(-Math.PI / 2); pessoa(g, 0, 10, "baixo", 0, VISUAL_TEC, true, 1); g.restore();
-      for (var z = 0; z < 3; z++) {
-        var fase = ((t / 1400) + z / 3) % 1, zx = 70 + z * 4 + Math.round(Math.sin(fase * 6) * 2), zy = 44 - Math.round(fase * 30);
-        g.globalAlpha = 1 - fase; px(g, zx, zy, 4, 1, "#ffffff"); px(g, zx + 2, zy + 1, 1, 1, "#ffffff"); px(g, zx + 1, zy + 2, 1, 1, "#ffffff"); px(g, zx, zy + 3, 4, 1, "#ffffff"); g.globalAlpha = 1;
-      }
+      px(g, 107, 33, 40, 23, "#080b14");
+      px(g, 109, 35, 4, 8, "rgba(150,195,255,0.10)");
+      px(g, 111, 35, 2, 6, "rgba(150,195,255,0.07)");
+      px(g, 146, 55, 1, 1, Math.sin(s * 1.1) > 0.2 ? "#e74c3c" : "rgba(231,76,60,0.25)");
+      elipse(g, 128, 78, 16, 4, "rgba(255,190,110," + (0.05 + 0.03 * luar).toFixed(3) + ")");
     }
+
+    /* ---- abajur de canto: apagado enquanto ele joga, aceso quando dorme ---- */
+    var abajur = !tvOn;
+    px(g, 150, 50, 7, 4, abajur ? "#e8b04a" : "#3f3128");
+    px(g, 150, 50, 7, 1, abajur ? "#f6cf7d" : "#4e3c30");
+    px(g, 151, 54, 5, 1, abajur ? "#c98d2e" : "#33281f");
+    px(g, 153, 55, 2, 4, "#4a3529");
+    px(g, 151, 59, 6, 1, "#2a1f1a");
+    if (abajur) {
+      var ag = g.createRadialGradient(153, 52, 2, 153, 52, 26);
+      ag.addColorStop(0, "rgba(255,190,110," + (0.20 + 0.05 * luar).toFixed(3) + ")");
+      ag.addColorStop(1, "rgba(255,190,110,0)");
+      g.fillStyle = ag; g.fillRect(126, 26, 34, 48);
+    }
+
+    /* ---- o técnico ---- */
+    var pele = VISUAL_TEC.pele, cab = VISUAL_TEC.cabelo, peleS = escurecer(pele, 0.82);
+    if (tvOn) {
+      /* sentado no sofá, de frente para a TV: tronco e cabeça balançam, ele se inclina
+         quando a bolinha acelera e os olhos piscam de vez em quando */
+      var incl = Math.round(Math.sin(s * 1.15) * 0.9);
+      var fwd = Math.round(Math.min(2, acel * 1.7 + Math.max(0, Math.sin(s * 0.62 + 0.3)) * 0.9));
+      var aura = Math.round(Math.sin(s * 1.9 + 0.7) * 0.7);
+      var maos = Math.round(Math.sin(s * 2.5));
+      var pisca = (s % 4.1) > 3.97;
+      var tx = 58 + incl + fwd, hx = tx + 1, hy = 38 + aura;
+      px(g, 70, 69, 12, 1, "rgba(0,0,0,0.22)");          // sombra de contato
+      px(g, 60, 57, 12, 5, "#33415f");                   // coxa
+      px(g, 60, 57, 12, 1, "#4a5c84");
+      px(g, 70, 57, 3, 5, "#3b4b70");                    // joelho
+      px(g, 72, 62, 5, 7, "#26324d");                    // canela
+      px(g, 76, 63, 1, 5, luz1);                         // luz da TV na perna
+      px(g, 74, 67, 9, 2, "#3a2a1e");                    // tênis
+      px(g, 74, 67, 9, 1, "#54402c");
+      px(g, 74, 69, 9, 1, "#cbbfa8");                    // sola clara
+      px(g, 58, 52, 10, 6, "#1f63c6");                   // quadril
+      px(g, 58, 52, 10, 1, "#2e77dd");
+      px(g, 57, 52, 1, 6, "rgba(0,0,0,0.26)");           // contorno nas costas
+      px(g, tx, 46 + aura, 10, 7, "#1f63c6");            // peito
+      px(g, tx, 46 + aura, 10, 1, "#2e77dd");
+      px(g, tx - 1, 46 + aura, 1, 6, "rgba(0,0,0,0.26)");
+      px(g, tx, 50 + aura, 10, 1, "#ff8a1f");            // faixa refletiva
+      px(g, tx, 51 + aura, 10, 1, "#d8e6f5");
+      px(g, tx, 47 + aura, 1, 3, "#164a99");             // costas na sombra
+      px(g, tx + 9, 47 + aura, 1, 3, luz2);              // lado pego pela TV
+      px(g, hx, hy, 8, 6, pele);                         // cabeça
+      px(g, hx + 1, hy + 6, 6, 2, pele);                 // queixo
+      px(g, hx, hy + 1, 1, 4, peleS);
+      px(g, hx + 8, hy + 4, 1, 2, pele);                 // nariz de perfil
+      px(g, hx + 2, hy + 4, 1, 2, peleS);                // orelha
+      px(g, hx + 5, hy + 6, 2, 1, "#9b4b3b");            // boca
+      px(g, hx + 5, hy + 2, 2, 1, cab);                  // sobrancelha
+      if (pisca) px(g, hx + 5, hy + 3, 2, 1, "#1d1b2a");
+      else { px(g, hx + 5, hy + 3, 1, 2, "#1d1b2a"); px(g, hx + 6, hy + 3, 1, 1, "#ffffff"); }
+      px(g, hx + 7, hy + 1, 1, 5, luz1);                 // rosto iluminado pela TV
+      px(g, hx - 1, hy - 3, 9, 3, "#123f86");            // boné
+      px(g, hx, hy - 4, 7, 1, "#123f86");
+      px(g, hx + 2, hy - 4, 3, 1, "#2a62b8");
+      px(g, hx + 8, hy - 2, 4, 1, "#0c2c5e");            // aba virada para a TV
+      px(g, hx + 3, hy - 4, 1, 1, "#ff8a1f");
+      px(g, hx - 1, hy, 2, 1, cab);
+      if (VISUAL_TEC.longo) px(g, hx - 2, hy + 1, 2, 5, cab);
+      px(g, tx + 3, 51 + aura + maos, 5, 2, "#184a91");  // braço de trás
+      px(g, tx + 9, 51 + aura + maos, 2, 2, peleS);      // mão de trás
+      px(g, tx + 7, 46 + aura, 3, 4, "#1f63c6");         // ombro
+      px(g, tx + 9, 49 + aura + maos, 4, 3, "#164a99");  // antebraço
+      px(g, tx + 12, 49 + aura + maos, 3, 3, pele);      // mão
+      px(g, tx + 12, 48 + aura + maos, 5, 1, "#2b2f36"); // controle
+      px(g, tx + 14, 48 + aura + maos, 1, 1, "#e74c3c");
+      px(g, tx + 13, 48 + aura + maos, 1, 1, pele);      // dedão
+      px(g, 90, 52, 3, 14, luz1);                        // braço do sofá sob a luz
+    } else {
+      /* dormindo: cabeça no apoio do sofá e cobertor subindo com a respiração */
+      var br = Math.round(respira);
+      var cob = "#2c6478", cobC = clarear(cob, 0.10), cobE = escurecer(cob, 0.70);
+      px(g, 79, 46, 12, 4, "#b7a482");                   // almofada de apoio
+      px(g, 78, 47, 13, 3, "#b7a482");
+      px(g, 79, 46, 11, 1, "#c9b795");
+      px(g, 80, 49, 11, 1, "#9b8868");
+      px(g, 82, 49, 9, 1, "rgba(0,0,0,0.20)");           // sombra da cabeça
+      /* silhueta do corpo sob o cobertor: um monte só, com leve afundamento na cintura */
+      var topo = [56, 54, 52, 51, 50, 49, 48, 48, 48, 49, 50, 50, 49, 48, 48, 48, 48, 49, 50, 51];
+      for (var cx2 = 0; cx2 < 20; cx2++) {
+        var bxx = 46 + cx2 * 2, bty = topo[cx2] + br;
+        px(g, bxx, bty, 2, 63 - bty, cob);
+        px(g, bxx, bty, 2, 1, cobC);
+      }
+      px(g, 46, 61, 40, 2, "rgba(0,0,0,0.16)");          // sombra sob o cobertor
+      px(g, 59, 51 + br, 1, 11 - br, cobE);              // dobras
+      px(g, 69, 53 + br, 1, 9 - br, cobE);
+      px(g, 77, 56 + br, 1, 7 - br, cobE);
+      px(g, 82, 41, 9, 1, pele);                         // cabeça deitada, meio torta
+      px(g, 82, 42, 10, 3, pele);
+      px(g, 83, 45, 9, 2, pele);
+      px(g, 84, 47, 8, 1, pele);
+      px(g, 84, 48, 8, 1, peleS);
+      px(g, 82, 43, 1, 4, "rgba(170,210,255,0.20)");     // luar no rosto
+      px(g, 91, 43, 1, 4, "rgba(255,200,130,0.20)");     // abajur do outro lado
+      px(g, 85, 45, 2, 1, "#1d1b2a"); px(g, 88, 45, 2, 1, "#1d1b2a");   // olhos fechados
+      px(g, 85, 44, 2, 1, "#5a4232"); px(g, 88, 44, 2, 1, "#5a4232");
+      px(g, 86, 47, 3, 1, "#9b4b3b");
+      px(g, 81, 38, 10, 2, "#123f86");                   // boné torto
+      px(g, 82, 40, 9, 1, "#123f86");
+      px(g, 83, 37, 6, 1, "#123f86");
+      px(g, 85, 37, 3, 1, "#2a62b8");
+      px(g, 90, 40, 3, 1, "#0c2c5e");
+      px(g, 86, 37, 1, 1, "#ff8a1f");
+      px(g, 81, 40, 2, 2, cab);
+      if (VISUAL_TEC.longo) px(g, 81, 41, 2, 5, cab);
+      for (var z = 0; z < 3; z++) {                      // Zzz em sequência, com fade
+        var fz = ((s / 3.4) + z / 3) % 1, za = Math.sin(Math.PI * fz);
+        var zx = 84 + Math.round(fz * 10), zy = 35 - Math.round(fz * 14);
+        g.globalAlpha = za * 0.85;
+        px(g, zx, zy, 4, 1, "#dbe6ff"); px(g, zx + 2, zy + 1, 1, 1, "#dbe6ff");
+        px(g, zx + 1, zy + 2, 1, 1, "#dbe6ff"); px(g, zx, zy + 3, 4, 1, "#dbe6ff");
+      }
+      g.globalAlpha = 1;
+    }
+
+    /* ---- luar atravessando a janela (mais forte quando ele dorme) ---- */
+    if (!tvOn) {
+      g.fillStyle = "rgba(150,195,255," + (0.055 + 0.03 * luar).toFixed(3) + ")";
+      g.beginPath(); g.moveTo(14, 32); g.lineTo(50, 32); g.lineTo(78, 96); g.lineTo(20, 96); g.closePath(); g.fill();
+      elipse(g, 50, 84, 22, 5, "rgba(160,200,255," + (0.06 + 0.03 * luar).toFixed(3) + ")");
+    }
+
+    /* ---- vinheta e um leve escurecer na troca de cena ---- */
+    var vg = g.createRadialGradient(80, 46, 28, 80, 46, 92);
+    vg.addColorStop(0, "rgba(0,0,0,0)");
+    vg.addColorStop(0.6, "rgba(0,0,0,0.12)");
+    vg.addColorStop(1, "rgba(0,0,0,0.42)");
+    g.fillStyle = vg; g.fillRect(0, 0, W2, H2);
+    var dip = 1 - (t % 6000) / 340;
+    if (dip > 0) { g.fillStyle = "rgba(6,8,18," + (0.45 * dip).toFixed(3) + ")"; g.fillRect(0, 0, W2, H2); }
+
     $("nt-legenda").textContent = cena === 0 ? "🎮 Jogando videogame..." : "😴 Zzz... descansando";
     requestAnimationFrame(animarNoite);
   }
@@ -4333,21 +4737,62 @@ body.no-intervalo .toast { display: none; }
   redimensionar(); addEventListener("resize", redimensionar);
   $("nome").value = E.nome;
   E.alvo = proximaOs();
+  // etapa 1: carrossel de personagens · etapa 2: orientações
+  var CARROSSEL = ["m", "fp", "fl", "ml"];
+  var NOME_PERSONAGEM = { m: "Técnico", fp: "Técnica · cabelo preto", fl: "Técnica · cabelo loiro", ml: "Técnico · cabelo loiro" };
   function escolherPersonagem(id) {
     E.personagem = PERSONAGENS[id] ? id : "m"; VISUAL_TEC = PERSONAGENS[E.personagem];
-    var ib = $("ini-boneco").getContext("2d"); ib.clearRect(0, 0, 160, 200); pessoa(ib, 80, 190, "baixo", 0, VISUAL_TEC, true, 7);
+    var ib = $("ini-boneco").getContext("2d"); ib.clearRect(0, 0, 192, 240); pessoa(ib, 96, 234, "baixo", 0, VISUAL_TEC, true, 9);
     var ivb = $("iv-boneco").getContext("2d"); ivb.clearRect(0, 0, 128, 176); pessoa(ivb, 64, 168, "baixo", 0, VISUAL_TEC, true, 7);
+    var cb = $("car-boneco"), cg = cb.getContext("2d"); cg.clearRect(0, 0, cb.width, cb.height); pessoa(cg, cb.width / 2, cb.height - 56, "baixo", 0, VISUAL_TEC, true, 10);
+    var rotulo = NOME_PERSONAGEM[E.personagem];
+    $("ini-etiqueta").textContent = rotulo;
+    $("car-nome").textContent = rotulo;
+    var atual = CARROSSEL.indexOf(E.personagem);
     Array.prototype.forEach.call(document.querySelectorAll("[data-personagem]"), function (b) {
       var sel = b.getAttribute("data-personagem") === E.personagem; b.classList.toggle("sel", sel); b.setAttribute("aria-pressed", sel ? "true" : "false");
     });
+    Array.prototype.forEach.call(document.querySelectorAll("[data-ir]"), function (b) {
+      var on = +b.getAttribute("data-ir") === atual;
+      b.classList.toggle("on", on);
+      if (on) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current");
+    });
   }
+  function irPersonagem(passo) {
+    var atual = CARROSSEL.indexOf(E.personagem); if (atual < 0) atual = 0;
+    escolherPersonagem(CARROSSEL[(atual + passo + CARROSSEL.length) % CARROSSEL.length]);
+    salvar();
+  }
+  function abrirEscolha() { escolherPersonagem(E.personagem || "m"); telas("t-personagem"); if (!ehToque) $("btn-escolher").focus(); }
   Array.prototype.forEach.call(document.querySelectorAll("[data-personagem]"), function (b) {
     var id = b.getAttribute("data-personagem"), cv2 = b.querySelector("canvas").getContext("2d");
     pessoa(cv2, 24, 54, "baixo", 0, PERSONAGENS[id], true, 2);
     b.onclick = function () { escolherPersonagem(id); salvar(); };
   });
+  $("car-prev").onclick = function () { irPersonagem(-1); };
+  $("car-next").onclick = function () { irPersonagem(1); };
+  Array.prototype.forEach.call(document.querySelectorAll("[data-ir]"), function (b) {
+    b.onclick = function () { escolherPersonagem(CARROSSEL[+b.getAttribute("data-ir")]); salvar(); };
+  });
+  // arrastar (mouse) ou passar o dedo para trocar de personagem
+  var palcoCar = $("car-palco"), arrasteX = null;
+  palcoCar.addEventListener("pointerdown", function (ev) { arrasteX = ev.clientX; });
+  palcoCar.addEventListener("pointerup", function (ev) {
+    if (arrasteX == null) return;
+    var dx = ev.clientX - arrasteX; arrasteX = null;
+    if (Math.abs(dx) > 36) irPersonagem(dx < 0 ? 1 : -1);
+  });
+  palcoCar.addEventListener("pointercancel", function () { arrasteX = null; });
+  palcoCar.addEventListener("pointerleave", function () { arrasteX = null; });
+  addEventListener("keydown", function (ev) {
+    if ($("t-personagem").hidden) return;
+    if (ev.key === "ArrowLeft") { irPersonagem(-1); ev.preventDefault(); }
+    else if (ev.key === "ArrowRight") { irPersonagem(1); ev.preventDefault(); }
+  });
+  $("btn-escolher").onclick = function () { salvar(); telas("t-inicio"); if (!ehToque) $("nome").focus(); };
+  $("btn-trocar").onclick = abrirEscolha;
   escolherPersonagem(E.personagem || "m");
-  atualizarHud(); telas("t-inicio"); iniciarXp();
+  atualizarHud(); telas("t-personagem"); iniciarXp();
   requestAnimationFrame(laco);
   // para os testes automáticos
   window.__jogo = { E: E, J: J, OS: OS, carros: carros, caixa: caixaCarro, tile: tileDe, entrarNaCasa: entrarNaCasa, estado: function () { return C; }, portaDe: portaDe, telas: telas, mover: moverCarros, tempo: function () { return TEMPO_SEM; } };
@@ -4356,3 +4801,7 @@ body.no-intervalo .toast { display: none; }
 </script>
 </body>
 </html>
+
+
+
+
