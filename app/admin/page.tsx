@@ -144,7 +144,7 @@ export default function AdminPage() {
       </div>
 
       {/* Quick Access Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-8">
         <Link
           href="/admin/saep"
           className="flex items-center gap-4 p-5 rounded-xl bg-gradient-to-r from-senai-orange/10 to-senai-orange/5 border border-senai-orange/30 hover:border-senai-orange/60 transition-all group"
@@ -167,6 +167,18 @@ export default function AdminPage() {
           <div>
             <h3 className="text-lg font-bold text-white group-hover:text-senai-blueLight transition-colors">Semear Banco SAEP</h3>
             <p className="text-sm text-gray-400">Popular banco com questões pré-definidas</p>
+          </div>
+        </Link>
+        <Link
+          href="/sql-quest/instructor/pedidos"
+          className="flex items-center gap-4 p-5 rounded-xl bg-gradient-to-r from-senai-orange/10 to-senai-orange/5 border border-senai-orange/30 hover:border-senai-orange/60 transition-all group"
+        >
+          <div className="w-12 h-12 rounded-xl bg-senai-orange/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+            🛍️
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-white group-hover:text-senai-orange transition-colors">Pedidos da Loja</h3>
+            <p className="text-sm text-gray-400">Ver e atender os pedidos de recompensas dos alunos</p>
           </div>
         </Link>
       </div>
