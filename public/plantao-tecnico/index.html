@@ -755,6 +755,71 @@ li.ok .caixinha { background: #1f8a4c; border-color: #1f8a4c; color: #fff; }
 }
 @media (max-width: 600px) { #minimapa { display: none; } .hud-btn span { display: none; } .hud-txt b { max-width: 34vw; } }
 
+/* ================================================================ v2: interface no estilo de jogo
+   Caixas com borda escura de 3px e sombra "dura" deslocada, como nos RPGs em pixel art. */
+.jt { --px-borda: #1b2333; --px-sombra: 4px 4px 0 rgba(17,24,39,.55); --px-laranja: #f39200; --px-azul: #1559b3; }
+.hud-esq, .hud-btn, .hud-xp, .aviso-porta, .toast, .ini-card, .lista-card, .fala, .tarefas, .dica, #minimapa {
+  border: 3px solid var(--px-borda); border-radius: 6px; box-shadow: var(--px-sombra); }
+.hud-esq { background: #13233a; padding: 6px 14px 6px 6px; }
+.hud-avatar { border-radius: 4px; border: 2px solid #0b1626; border-bottom: 4px solid var(--px-laranja); }
+.hud-txt b { font-size: 15px; letter-spacing: .2px; }
+.hud-txt small { color: #ffd27a; font-weight: 700; }
+.hud-btn, .hud-xp { background: #13233a; padding: 8px 12px; }
+.hud-btn:hover { background: var(--px-azul); }
+.hud-xp { background: #ffc61a; }
+.toast { border-radius: 6px; font-weight: 600; top: 74px; }
+.toast.ok { background: #1d7a43; } .toast.erro { background: #a3241c; }
+.aviso-porta { border-radius: 6px; background: #fffaf0; font-weight: 600; }
+.aviso-porta button { border: 2px solid var(--px-borda); border-radius: 4px; box-shadow: 2px 2px 0 var(--px-borda); }
+.botao { border-radius: 6px; border: 3px solid var(--px-borda); box-shadow: 3px 3px 0 var(--px-borda); }
+.botao:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--px-borda); }
+.botao.cinza { box-shadow: 3px 3px 0 var(--px-borda); } .botao.verde { box-shadow: 3px 3px 0 var(--px-borda); }
+.pulsar { animation: pulsar2 1.1s infinite; }
+@keyframes pulsar2 { 0%, 100% { box-shadow: 3px 3px 0 var(--px-borda), 0 0 0 0 rgba(31,138,76,.6); } 50% { box-shadow: 3px 3px 0 var(--px-borda), 0 0 0 9px rgba(31,138,76,0); } }
+.tela-inicio { background: linear-gradient(180deg, rgba(10,42,92,.9), rgba(13,24,40,.92)); }
+.ini-card { border-radius: 8px; background: #fffdf7; }
+#ini-boneco { border-radius: 6px; border: 3px solid var(--px-borda); background: linear-gradient(#8fd0f0 0 62%, #6fae52 62%); image-rendering: pixelated; }
+.ini-txt h1 { text-shadow: 2px 2px 0 #ffd27a; letter-spacing: .3px; }
+.ini-txt h1 span { color: #d96d00; text-shadow: none; }
+.ini-nome input { border: 3px solid var(--px-borda); border-radius: 4px; }
+.lista-card { border-radius: 8px; background: #fffdf7; }
+.os-item { border-radius: 4px; border-width: 3px; }
+.os-item:hover { border-color: var(--px-borda); }
+.os-num { border-radius: 4px; border: 2px solid var(--px-borda); }
+.fechar { border: 2px solid var(--px-borda); border-radius: 4px; }
+.medalha { border: 3px solid var(--px-borda); }
+.r-lista { border: 3px solid var(--px-borda); border-radius: 4px; }
+kbd { border-radius: 3px; border: 2px solid var(--px-borda); border-bottom-width: 3px; }
+
+/* caixa de diálogo do cliente (estilo RPG) */
+.casa-topo { border-bottom: 4px solid var(--px-laranja); }
+.fala { background: #13233a; color: #fff; padding: 10px; gap: 12px; align-items: center; }
+.fala canvas { border-radius: 4px; border: 3px solid #fff; background: #8fd0f0; image-rendering: pixelated; }
+.fala-txt { flex: 1; min-width: 0; }
+.fala-nome { display: inline-block; background: var(--px-laranja); color: #13233a; font-weight: 800; font-size: 13px; padding: 1px 8px; border: 2px solid #fff; border-radius: 3px; margin-bottom: 4px; }
+.fala p { color: #fff; font-size: 15.5px; line-height: 1.45; cursor: pointer; min-height: 3em; }
+.fala p.digitando::after { content: "▌"; color: #ffd27a; animation: piscar .6s steps(1) infinite; }
+@keyframes piscar { 50% { opacity: 0; } }
+.tarefas { background: #fffdf7; }
+.tarefas h3 { color: #13233a; }
+.caixinha { border-radius: 3px; border-color: var(--px-borda); }
+.dica { border-color: var(--px-borda); background: #fff6cc; border-radius: 6px; }
+.cmd { border: 3px solid var(--px-borda); border-radius: 6px; box-shadow: var(--px-sombra); }
+.casa-janela { border: 3px solid var(--px-borda); box-shadow: var(--px-sombra); }
+
+/* intervalo: cobre tudo e trava o jogo */
+.intervalo { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;
+  background: repeating-linear-gradient(45deg, rgba(10,22,40,.96) 0 18px, rgba(16,34,58,.96) 18px 36px); }
+.intervalo[hidden] { display: none; }
+.iv-card { display: flex; gap: 24px; align-items: center; background: #fffdf7; border: 4px solid var(--px-borda); border-radius: 8px; box-shadow: 6px 6px 0 #000; padding: 24px 28px; max-width: 640px; width: 100%; }
+#iv-boneco { flex: 0 0 auto; border: 3px solid var(--px-borda); border-radius: 6px; background: linear-gradient(#ffd27a 0 62%, #6fae52 62%); image-rendering: pixelated; }
+.iv-chapeu { margin: 0; color: #d96d00; font-weight: 800; text-transform: uppercase; letter-spacing: .8px; }
+.iv-txt h2 { margin: 4px 0 8px; font-size: 26px; }
+.iv-relogio { font: 800 44px/1 Consolas, "Courier New", monospace; color: #13233a; background: #e9f1fb; border: 3px solid var(--px-borda); border-radius: 4px; display: inline-block; padding: 8px 14px; margin: 6px 0; letter-spacing: 2px; }
+.iv-falta { margin: 6px 0 0; font-size: 17px; }
+body.no-intervalo .toast { display: none; }
+@media (max-width: 600px) { .iv-card { flex-direction: column; text-align: center; padding: 18px; } .iv-relogio { font-size: 34px; } }
+
 </style>
 </head>
 <body class="jt">
@@ -836,6 +901,8 @@ li.ok .caixinha { background: #1f8a4c; border-color: #1f8a4c; color: #fff; }
         <li><b>Entrar:</b> pare na porta e aperte <kbd>E</kbd>, <kbd>Enter</kbd> ou o botão <b>E</b>.</li>
         <li><b>Na casa:</b> no Prompt, digite <kbd>ipconfig</kbd>. O <b>Gateway Padrão</b> é o IP do roteador. Digite esse IP no navegador, entre com o usuário e a senha da <b>Etiqueta</b> e faça cada item da lista.</li>
         <li><b>Estrelas:</b> 3 estrelas se errar no máximo 1 vez (dicas contam). Pode repetir a casa para melhorar.</li>
+        <li><b>Carros:</b> atravesse na <b>faixa de pedestre</b>. Lá os carros param; fora dela, eles batem em você.</li>
+        <li><b>Intervalo:</b> das 9:30 às 10:00 e das 15:30 às 16:00 (relógio do computador) o jogo pausa sozinho.</li>
       </ol>
       <p><b>Palavras do roteador</b></p>
       <ul class="glossario">
@@ -861,7 +928,7 @@ li.ok .caixinha { background: #1f8a4c; border-color: #1f8a4c; color: #fff; }
       <aside class="casa-lado">
         <div class="fala">
           <canvas id="cliente-rosto" width="72" height="72" aria-hidden="true"></canvas>
-          <p id="cliente-fala"></p>
+          <div class="fala-txt"><span class="fala-nome" id="cliente-nome">Cliente</span><p id="cliente-fala"></p></div>
         </div>
         <div class="tarefas">
           <h3>O que fazer</h3>
@@ -923,6 +990,20 @@ li.ok .caixinha { background: #1f8a4c; border-color: #1f8a4c; color: #fff; }
       <div class="lista-topo"><h2>Meus códigos</h2><button type="button" class="fechar" data-fechar aria-label="Fechar">✕</button></div>
       <p class="peq">Mostre esta tela ao instrutor ou copie os códigos no formulário da aula.</p>
       <div id="codigos" class="r-lista"></div>
+    </div>
+  </section>
+
+  <!-- ============ intervalo (relógio do computador) ============ -->
+  <section class="intervalo" id="t-intervalo" role="alertdialog" aria-modal="true" aria-labelledby="iv-titulo" hidden>
+    <div class="iv-card">
+      <canvas id="iv-boneco" width="128" height="176" aria-hidden="true"></canvas>
+      <div class="iv-txt">
+        <p class="iv-chapeu">☕ Hora do intervalo</p>
+        <h2 id="iv-titulo">O técnico também descansa!</h2>
+        <p>O plantão está pausado de <b id="iv-faixa">9:30 às 10:00</b>. Levante, beba água e volte na hora certa. Seu progresso está salvo.</p>
+        <div class="iv-relogio" id="iv-relogio">00:00</div>
+        <p class="iv-falta">O jogo volta em <b id="iv-falta">0 min</b></p>
+      </div>
     </div>
   </section>
 
@@ -2760,71 +2841,65 @@ li.ok .caixinha { background: #1f8a4c; border-color: #1f8a4c; color: #fff; }
     return null;
   }
 
+  function osDaCasa(ci) { for (var i = 0; i < OS.length; i++) if (OS[i].casa === ci) return i; return -1; }
   /* ================================================================ mapa */
-  var T = 40, W = 50, H = 37;
-  var G = [];   // g grama, r rua, s calçada, m canteiro, w água, p trilha, c concreto (praça), x área ocupada
+  /* Tudo em pixel art: o mundo é desenhado num canvas pequeno (1 quadradinho = 16 px)
+     e ampliado sem suavizar. Chão visto de cima; casas, prédios, árvores, carros e
+     pessoas na mesma vista 3/4 (de cima e um pouco de frente), como nos RPGs 2D. */
+  var T = 16, W = 50, H = 37;
+  var G = [];   // g grama, r rua, s calçada, m canteiro, w água, p trilha, c pedra/praça
   var solido = [];
-  var arvores = [], predios = [], placas = [], postes = [];
+  var arvores = [], predios = [], enfeites = [], placas = [];
   function setT(x, y, t) { if (x >= 0 && y >= 0 && x < W && y < H) G[y][x] = t; }
   function rect(x0, y0, x1, y1, t) { for (var y = y0; y <= y1; y++) for (var x = x0; x <= x1; x++) setT(x, y, t); }
   function sol(x0, y0, x1, y1) { for (var y = y0; y <= y1; y++) for (var x = x0; x <= x1; x++) if (x >= 0 && y >= 0 && x < W && y < H) solido[y][x] = true; }
+  var LINHAS_FAIXA = { 5: 1, 8: 1, 16: 1, 19: 1, 27: 1, 30: 1 }, COLS_FAIXA = { 8: 1, 11: 1, 21: 1, 27: 1, 36: 1, 39: 1 };
+  function ehFaixa(x, y) { return G[y] && G[y][x] === "r" && (LINHAS_FAIXA[y] || COLS_FAIXA[x]); }
 
   function montarMapa() {
     for (var y = 0; y < H; y++) { G.push([]); solido.push([]); for (var x = 0; x < W; x++) { G[y].push("g"); solido[y].push(false); } }
-    // Parque do Sabiá (leste)
-    rect(40, 9, 49, 36, "g");
-    // ruas horizontais
-    rect(0, 5, 49, 5, "s"); rect(0, 6, 49, 7, "r"); rect(0, 8, 39, 8, "s");        // Av. Anselmo Alves dos Santos
-    rect(0, 16, 39, 16, "s"); rect(0, 17, 39, 18, "r"); rect(0, 19, 39, 19, "s");   // Av. Segismundo Pereira
-    rect(0, 27, 39, 27, "s"); rect(0, 28, 39, 29, "r"); rect(0, 30, 39, 30, "s");   // Av. Belarmino Cotta Pacheco
-    // ruas verticais
+    rect(0, 5, 49, 5, "s"); rect(0, 6, 49, 7, "r"); rect(0, 8, 39, 8, "s");         // Av. Anselmo Alves dos Santos
+    rect(0, 16, 39, 16, "s"); rect(0, 17, 39, 18, "r"); rect(0, 19, 39, 19, "s");    // Av. Segismundo Pereira
+    rect(0, 27, 39, 27, "s"); rect(0, 28, 39, 29, "r"); rect(0, 30, 39, 30, "s");    // Av. Belarmino Cotta Pacheco
     rect(8, 8, 8, 30, "s"); rect(9, 8, 10, 30, "r"); rect(11, 8, 11, 30, "s");
     rect(36, 8, 36, 30, "s"); rect(37, 8, 38, 30, "r"); rect(39, 8, 39, 30, "s");
-    // Av. João Naves de Ávila (com canteiro central)
     rect(21, 0, 21, 36, "s"); rect(22, 0, 23, 36, "r"); rect(24, 0, 24, 36, "m"); rect(25, 0, 26, 36, "r"); rect(27, 0, 27, 36, "s");
-    // cruzamentos: o canteiro abre nas avenidas
     [6, 7, 17, 18, 28, 29].forEach(function (yy) { setT(24, yy, "r"); });
-    // ruas que cruzam calçadas viram rua
     for (y = 0; y < H; y++) for (x = 0; x < W; x++) {
-      if (G[y][x] !== "s") continue;
-      var hRua = (y >= 6 && y <= 7) || (y >= 17 && y <= 18) || (y >= 28 && y <= 29);
-      if (hRua) G[y][x] = "r";
+      if ((y >= 6 && y <= 7) || (y >= 17 && y <= 18) || (y >= 28 && y <= 29)) { if (G[y][x] === "s" || (G[y][x] === "m" && x === 24)) G[y][x] = "r"; }
     }
-    // faixas de pedestre nas avenidas: desenhadas depois; praça + base SENAI (sul)
-    rect(0, 31, 39, 36, "g");
-    rect(2, 32, 7, 35, "c");
-    // trilha do parque
+    rect(0, 31, 39, 36, "g"); rect(2, 32, 7, 35, "c");
     for (y = 10; y <= 35; y++) { setT(41, y, "p"); setT(48, y, "p"); }
     for (x = 41; x <= 48; x++) { setT(x, 10, "p"); setT(x, 35, "p"); }
     rect(40, 18, 40, 19, "p");
-    // lago do Sabiá
     for (y = 13; y <= 32; y++) for (x = 42; x <= 47; x++) {
       var dx = (x + 0.5 - 45) / 3.1, dy = (y + 0.5 - 22.5) / 8.6;
       if (dx * dx + dy * dy < 1) { setT(x, y, "w"); solido[y][x] = true; }
     }
-    // borda do mapa (topo/norte acima das avenidas): prédios
-    predios.push({ tipo: "prefeitura", x: 1, y: 0, w: 18, h: 4, nome: "Centro Administrativo · Prefeitura de Uberlândia" });
+    predios.push({ tipo: "prefeitura", x: 1, y: 0, w: 18, h: 4, nome: "Centro Administrativo · Prefeitura" });
     predios.push({ tipo: "ufu", x: 29, y: 0, w: 19, h: 4, nome: "UFU · Campus Santa Mônica" });
     predios.push({ tipo: "senai", x: 13, y: 32, w: 7, h: 3, nome: "Base do Técnico · SENAI" });
     predios.push({ tipo: "mercado", x: 28, y: 32, w: 8, h: 3, nome: "Mercadinho do Bairro" });
     predios.forEach(function (p) { sol(p.x, p.y, p.x + p.w - 1, p.y + p.h - 1); });
-    // casas
-    CASAS.forEach(function (c) { sol(c.x, c.y, c.x + 2, c.y + 2); });
-    // árvores: quintais, canteiro, parque e praça
-    function arv(x, y, tipo) { if (solido[y] && !solido[y][x] && G[y][x] !== "r") { arvores.push({ x: x, y: y, tipo: tipo || "ipe" }); solido[y][x] = true; } }
+    CASAS.forEach(function (c) { sol(c.x, c.y, c.x + 2, c.y + 2); setT(c.x + 1, c.y + 3, "c"); });
+    function arv(x, y, tipo) { if (solido[y] && !solido[y][x] && G[y][x] !== "r" && G[y][x] !== "c") { arvores.push({ x: x, y: y, tipo: tipo || "ipe" }); solido[y][x] = true; } }
     [0, 4, 7, 12, 16, 20, 28, 31, 35].forEach(function (x) { arv(x, 10); arv(x, 21); });
     [2, 6, 13, 18, 29, 34].forEach(function (x) { arv(x, 9, "copa"); arv(x, 20, "copa"); });
     for (y = 1; y < H; y += 3) if (G[y][24] === "m") arv(24, y, "palmeira");
     for (y = 11; y <= 34; y += 2) { arv(40, y, "copa"); arv(49, y, y % 4 ? "ipe" : "copa"); }
     [11, 34].forEach(function (yy) { for (var xx = 42; xx <= 47; xx += 2) arv(xx, yy, "copa"); });
     arv(1, 32, "ipe"); arv(8, 33, "copa"); arv(9, 35, "ipe"); arv(22, 33, "copa"); arv(25, 35, "ipe"); arv(37, 33, "copa");
-    // limites
-    for (x = 0; x < W; x++) { solido[0][x] = solido[0][x] || G[0][x] === "g"; }
-    placas.push({ x: 23.5, y: 12, txt: "Av. João Naves de Ávila", vert: true });
-    placas.push({ x: 30.5, y: 6.5, txt: "Av. Anselmo Alves dos Santos" });
-    placas.push({ x: 15, y: 17.5, txt: "Av. Segismundo Pereira" });
-    placas.push({ x: 15, y: 28.5, txt: "Av. Belarmino Cotta Pacheco" });
-    placas.push({ x: 44.5, y: 9.4, txt: "Parque do Sabiá", parque: true });
+    // postes de luz, bancos, ponto de ônibus
+    [3, 16, 31].forEach(function (x) { enfeites.push({ tipo: "poste", x: x, y: 16 }); enfeites.push({ tipo: "poste", x: x, y: 27 }); });
+    [5, 12, 18].forEach(function (y) { enfeites.push({ tipo: "poste", x: 21, y: y }); });
+    enfeites.push({ tipo: "ponto", x: 27, y: 12 }); sol(27, 12, 27, 12);
+    [[3, 33], [6, 33], [43, 10], [46, 35]].forEach(function (b) { enfeites.push({ tipo: "banco", x: b[0], y: b[1] }); });
+    for (x = 0; x < W; x++) solido[0][x] = solido[0][x] || G[0][x] === "g";
+    placas.push({ x: 24.5, y: 12.5, txt: "Av. João Naves de Ávila", vert: true });
+    placas.push({ x: 31, y: 6.9, txt: "Av. Anselmo Alves dos Santos" });
+    placas.push({ x: 15.5, y: 17.9, txt: "Av. Segismundo Pereira" });
+    placas.push({ x: 15.5, y: 28.9, txt: "Av. Belarmino Cotta Pacheco" });
+    placas.push({ x: 44.5, y: 9.3, txt: "Parque do Sabiá", parque: true });
   }
   function bloqueado(px, py) {
     var x = Math.floor(px / T), y = Math.floor(py / T);
@@ -2832,259 +2907,417 @@ li.ok .caixinha { background: #1f8a4c; border-color: #1f8a4c; color: #fff; }
     return solido[y][x];
   }
 
+  /* ================================================================ pixel art: utilidades */
+  var CONTORNO = "#1d1b2a";
+  function tela(w, h) { var c = document.createElement("canvas"); c.width = w; c.height = h; return c; }
+  function px(g, x, y, w, h, cor) { g.fillStyle = cor; g.fillRect(x, y, w || 1, h || 1); }
+  function disco(g, cx, cy, r, cor) { g.fillStyle = cor; for (var y = -r; y <= r; y++) { var w = Math.round(Math.sqrt(r * r - y * y + r * 0.6)); g.fillRect(cx - w, cy + y, w * 2 + 1, 1); } }
+  function elipse(g, cx, cy, rx, ry, cor) { g.fillStyle = cor; for (var y = -ry; y <= ry; y++) { var w = Math.round(rx * Math.sqrt(Math.max(0, 1 - (y * y) / (ry * ry + 0.5)))); g.fillRect(cx - w, cy + y, w * 2 + 1, 1); } }
+  // contorno de 1 pixel ao redor de tudo que foi desenhado (estilo pixel art)
+  function contornar(cv2, cor) {
+    var g = cv2.getContext("2d"), w = cv2.width, h = cv2.height, d = g.getImageData(0, 0, w, h), a = d.data, marcar = [];
+    for (var y = 0; y < h; y++) for (var x = 0; x < w; x++) {
+      if (a[(y * w + x) * 4 + 3] > 0) continue;
+      var viz = [[1, 0], [-1, 0], [0, 1], [0, -1]].some(function (o) { var xx = x + o[0], yy = y + o[1]; return xx >= 0 && yy >= 0 && xx < w && yy < h && a[(yy * w + xx) * 4 + 3] > 200; });
+      if (viz) marcar.push(x, y);
+    }
+    g.fillStyle = cor || CONTORNO;
+    for (var i = 0; i < marcar.length; i += 2) g.fillRect(marcar[i], marcar[i + 1], 1, 1);
+    return cv2;
+  }
+  function escurecer(hex, f) {
+    var n = parseInt(hex.slice(1), 16), r = n >> 16, gg = (n >> 8) & 255, b = n & 255;
+    f = f || 0.75;
+    return "rgb(" + Math.round(r * f) + "," + Math.round(gg * f) + "," + Math.round(b * f) + ")";
+  }
+  function clarear(hex, f) {
+    var n = parseInt(hex.slice(1), 16), r = n >> 16, gg = (n >> 8) & 255, b = n & 255;
+    f = f || 0.3;
+    return "rgb(" + Math.round(r + (255 - r) * f) + "," + Math.round(gg + (255 - gg) * f) + "," + Math.round(b + (255 - b) * f) + ")";
+  }
+  function hash(x, y) { var h = (x * 374761393 + y * 668265263) | 0; h = (h ^ (h >>> 13)) * 1274126177; return ((h ^ (h >>> 16)) >>> 0) / 4294967295; }
+
+  /* ---------------------------------------------------------------- pessoas (16 x 22) */
+  /* Personagem original no estilo das aventuras 2D vistas de cima: 4 direções, 3 quadros de passo,
+     contorno escuro. Técnico: boné azul do SENAI com botão laranja, camisa azul com faixa refletiva
+     laranja, crachá branco no peito, cinto de ferramentas e calça escura. */
+  function desenharPessoa(dir, quadro, v, tec) {
+    var c = tela(16, 23), g = c.getContext("2d");
+    var pele = v.pele, peleS = escurecer(pele, 0.82), cab = v.cabelo;
+    var roupa = tec ? "#1f63c6" : (v.jaleco ? "#f2f2f2" : v.roupa), roupaS = tec ? "#164a99" : escurecer(v.jaleco ? "#f2f2f2" : v.roupa, 0.8);
+    var calca = tec ? "#26324d" : "#3d4a66", calcaS = escurecer(calca, 0.75), sapato = "#3a2416";
+    var lado = dir === "esq" || dir === "dir", f = dir === "esq" ? -1 : 1;
+    var passo = quadro === 1 ? 1 : quadro === 2 ? -1 : 0;
+    // pernas
+    if (!lado) {
+      px(g, 5, 17 - (passo > 0 ? 1 : 0), 3, 4, calca); px(g, 8, 17 - (passo < 0 ? 1 : 0), 3, 4, calcaS);
+      px(g, 5, 21 - (passo > 0 ? 1 : 0), 3, 1, sapato); px(g, 8, 21 - (passo < 0 ? 1 : 0), 3, 1, sapato);
+    } else {
+      px(g, 6 + passo, 17, 3, 4, calcaS); px(g, 7 - passo, 17, 3, 4, calca);
+      px(g, 6 + passo + (f > 0 ? 1 : -1), 21, 3, 1, sapato); px(g, 7 - passo + (f > 0 ? 1 : -1), 21, 3, 1, sapato);
+    }
+    // corpo
+    var bx = lado ? 5 : 4, bw = lado ? 6 : 8;
+    px(g, bx, 10, bw, 7, roupa); px(g, bx + bw - 1, 10, 1, 7, roupaS);
+    if (v.jaleco) { px(g, 7, 10, 2, 7, v.roupa); }
+    if (v.avental && dir !== "cima") px(g, bx + 1, 12, bw - 2, 5, "#ffffff");
+    if (tec) {
+      px(g, bx, 14, bw, 1, "#ff8a1f"); px(g, bx, 15, bw, 1, "#d8e6f5");
+      if (dir === "baixo") { px(g, 6, 10, 4, 1, "#ffffff"); px(g, 5, 12, 2, 1, "#ffffff"); }
+      if (dir === "cima") { px(g, 5, 11, 6, 2, "#ffffff"); px(g, 6, 11, 1, 1, "#1f63c6"); px(g, 8, 12, 1, 1, "#1f63c6"); px(g, 10, 11, 1, 1, "#1f63c6"); }
+      px(g, bx, 16, bw, 1, "#3a2416");
+      if (dir !== "cima") px(g, lado ? (f > 0 ? 5 : 9) : 10, 16, 2, 2, "#f39c12");
+    } else {
+      px(g, bx, 16, bw, 1, escurecer(roupa === "#f2f2f2" ? "#9aa5b1" : (v.roupa || "#888888"), 0.6));
+    }
+    // braços
+    var a1 = quadro ? passo : 0;
+    if (!lado) {
+      px(g, 2, 10 + a1, 2, 5, roupa); px(g, 12, 10 - a1, 2, 5, roupaS);
+      px(g, 2, 15 + a1, 2, 1, pele); px(g, 12, 15 - a1, 2, 1, peleS);
+    } else {
+      var ax = f > 0 ? 7 + a1 : 7 - a1;
+      px(g, ax, 11, 2, 4, roupaS); px(g, ax, 15, 2, 1, pele);
+    }
+    // cabeça
+    var hx = lado ? 4 : 4, hw = 8;
+    px(g, hx, 2, hw, 8, pele); px(g, hx + hw - 1, 3, 1, 7, peleS); px(g, hx, 2, 1, 1, "rgba(0,0,0,0)");
+    g.clearRect(hx, 2, 1, 1); g.clearRect(hx + hw - 1, 2, 1, 1); g.clearRect(hx, 9, 1, 1); g.clearRect(hx + hw - 1, 9, 1, 1);
+    // rosto
+    if (dir === "baixo") {
+      px(g, 6, 6, 1, 2, "#1d1b2a"); px(g, 9, 6, 1, 2, "#1d1b2a"); px(g, 6, 6, 1, 1, "#3c3a52");
+      px(g, 5, 8, 1, 1, "#e98b8b"); px(g, 10, 8, 1, 1, "#e98b8b"); px(g, 7, 8, 2, 1, "#9b4b3b");
+      if (v.oculos) { px(g, 5, 5, 3, 1, "#1d1b2a"); px(g, 8, 5, 3, 1, "#1d1b2a"); }
+    } else if (lado) {
+      var ex = f > 0 ? 9 : 6; px(g, ex, 6, 1, 2, "#1d1b2a"); px(g, f > 0 ? 12 : 3, 6, 1, 2, pele); px(g, f > 0 ? 8 : 7, 8, 1, 1, "#e98b8b");
+      if (v.oculos) px(g, f > 0 ? 8 : 5, 5, 4, 1, "#1d1b2a");
+    }
+    // cabelo / boné
+    if (tec) {
+      var bon = "#123f86", bonC = "#2a62b8";
+      px(g, 4, 1, 8, 3, bon); px(g, 5, 0, 6, 1, bon); px(g, 6, 1, 3, 1, bonC); px(g, 7, 0, 2, 1, "#ff8a1f");
+      if (dir === "baixo") { px(g, 4, 4, 8, 1, "#0c2c5e"); px(g, 7, 2, 2, 1, "#ffffff"); px(g, 4, 5, 1, 1, cab); px(g, 11, 5, 1, 1, cab); }
+      else if (dir === "cima") { px(g, 4, 4, 8, 3, cab); px(g, 6, 3, 4, 1, "#ff8a1f"); }
+      else { px(g, f > 0 ? 10 : 1, 4, 5, 1, "#0c2c5e"); px(g, f > 0 ? 4 : 9, 4, 3, 3, cab); px(g, f > 0 ? 4 : 11, 3, 1, 1, "#ff8a1f"); }
+    } else {
+      var cabC = clarear(cab, 0.25);
+      px(g, 4, 1, 8, 3, cab); px(g, 5, 0, 6, 1, cab); px(g, 6, 1, 3, 1, cabC);
+      if (dir === "baixo") { px(g, 4, 4, 1, 2, cab); px(g, 11, 4, 1, 2, cab); if (v.longo) { px(g, 3, 4, 2, 7, cab); px(g, 11, 4, 2, 7, cab); } }
+      else if (dir === "cima") { px(g, 4, 4, 8, v.longo ? 8 : 4, cab); px(g, 6, 2, 3, 1, cabC); }
+      else { px(g, f > 0 ? 4 : 8, 3, 4, v.longo ? 8 : 4, cab); }
+    }
+    return contornar(c);
+  }
+  var cacheSpr = {};
+  function spriteDe(dir, quadro, v, tec) {
+    var chave = dir + quadro + (tec ? "T" : JSON.stringify(v));
+    return cacheSpr[chave] || (cacheSpr[chave] = desenharPessoa(dir, quadro, v, tec));
+  }
+  // pessoa(contexto, x dos pés, y dos pés, direção, fase do passo, visual, é técnico?, escala)
+  function pessoa(c, x, y, dir, fase, v, tec, esc2) {
+    esc2 = esc2 || 1;
+    var quadro = fase ? (Math.floor(fase) % 4 === 1 ? 1 : Math.floor(fase) % 4 === 3 ? 2 : 0) : 0;
+    var s = spriteDe(dir, quadro, v, tec), w = 16 * esc2, h = 23 * esc2;
+    c.fillStyle = "rgba(20,30,20,.28)";
+    c.fillRect(Math.round(x - 5 * esc2), Math.round(y - esc2), 10 * esc2, 2 * esc2);
+    c.fillRect(Math.round(x - 4 * esc2), Math.round(y - 2 * esc2), 8 * esc2, 1 * esc2);
+    var antes = c.imageSmoothingEnabled; c.imageSmoothingEnabled = false;
+    c.drawImage(s, Math.round(x - w / 2), Math.round(y - h + (quadro ? -esc2 : 0) + esc2), w, h);
+    c.imageSmoothingEnabled = antes;
+  }
+  var VISUAL_TEC = { pele: "#c98d63", cabelo: "#2a1a10", roupa: "#1f63c6" };
+
+  /* ---------------------------------------------------------------- chão */
+  var chao = null;
+  var COR_T = { g: "#62b04a", r: "#4b505c", s: "#d6cdbd", m: "#62b04a", w: "#3f97d6", p: "#e2c48e", c: "#c9bfae" };
+  function montarChao() {
+    chao = tela(W * T, H * T); var g = chao.getContext("2d");
+    for (var y = 0; y < H; y++) for (var x = 0; x < W; x++) {
+      var t = G[y][x], X = x * T, Y = y * T;
+      px(g, X, Y, T, T, COR_T[t]);
+      for (var i = 0; i < 10; i++) {
+        var h1 = hash(x * 31 + i, y * 17 + i), h2 = hash(y * 13 + i, x * 7 - i), qx = X + Math.floor(h1 * 16), qy = Y + Math.floor(h2 * 16);
+        if (t === "g" || t === "m") px(g, qx, qy, 1, h1 > 0.5 ? 2 : 1, i % 3 ? "#4f9a3c" : "#7cc65c");
+        else if (t === "r") px(g, qx, qy, 1, 1, i % 2 ? "#444955" : "#555b68");
+        else if (t === "p") px(g, qx, qy, 1, 1, i % 2 ? "#cdae78" : "#efd6a6");
+        else if (t === "w" && i < 3) px(g, qx, qy, 3, 1, "#7cc0ee");
+      }
+      if ((t === "g") && hash(x, y) > 0.9) { var fx = X + 4 + Math.floor(hash(y, x) * 8), fy = Y + 5 + Math.floor(hash(x + 3, y) * 6); px(g, fx, fy, 1, 1, hash(x, y + 1) > 0.5 ? "#ffe066" : "#ffffff"); px(g, fx + 3, fy + 2, 1, 1, "#f78fb3"); }
+      if (t === "s") { px(g, X, Y, T, 1, "#e3dbcc"); px(g, X, Y + 8, T, 1, "#bfb5a4"); px(g, X + (y % 2 ? 4 : 12), Y, 1, 8, "#bfb5a4"); px(g, X + (y % 2 ? 12 : 4), Y + 8, 1, 8, "#bfb5a4"); }
+      if (t === "c") { px(g, X + 1, Y + 1, 6, 6, "#d8cfbf"); px(g, X + 9, Y + 2, 6, 5, "#d1c7b6"); px(g, X + 2, Y + 9, 5, 6, "#d4cab9"); px(g, X + 9, Y + 9, 6, 6, "#ddd4c5"); }
+      // meio-fio: borda escura entre calçada/grama e rua
+      if (t === "r") {
+        var cima = y > 0 && G[y - 1][x] !== "r" && G[y - 1][x] !== "w", baixo = y < H - 1 && G[y + 1][x] !== "r", esq = x > 0 && G[y][x - 1] !== "r", dir = x < W - 1 && G[y][x + 1] !== "r";
+        if (cima) { px(g, X, Y, T, 2, "#9a9384"); px(g, X, Y + 2, T, 1, "#3c404a"); }
+        if (baixo) { px(g, X, Y + T - 1, T, 1, "#9a9384"); }
+        if (esq) { px(g, X, Y, 2, T, "#9a9384"); }
+        if (dir) { px(g, X + T - 2, Y, 2, T, "#9a9384"); }
+      }
+      if (t === "w") { var bc = y > 0 && G[y - 1][x] !== "w"; if (bc) px(g, X, Y, T, 2, "#2f74a8"); }
+    }
+    // faixas centrais e de pedestre
+    for (y = 0; y < H; y++) for (x = 0; x < W; x++) {
+      if (G[y][x] !== "r") continue;
+      var X2 = x * T, Y2 = y * T;
+      if (ehFaixa(x, y)) {
+        if (LINHAS_FAIXA[y]) for (var k = 1; k < T; k += 4) px(g, X2 + k, Y2 + 3, 2, T - 6, "#f4f4f0");
+        else for (k = 1; k < T; k += 4) px(g, X2 + 3, Y2 + k, T - 6, 2, "#f4f4f0");
+        continue;
+      }
+      var horiz = (y === 6 || y === 17 || y === 28) && G[y + 1][x] === "r" && !(x >= 21 && x <= 27) && !(x >= 8 && x <= 11) && !(x >= 36 && x <= 39);
+      if (horiz && x % 2 === 0) px(g, X2 + 3, Y2 + T - 1, 10, 2, "#f2c230");
+      var vert = (x === 9 || x === 37) && !((y >= 5 && y <= 8) || (y >= 16 && y <= 19) || (y >= 27 && y <= 30));
+      if (vert && y % 2 === 0) px(g, X2 + T - 1, Y2 + 3, 2, 10, "#f2c230");
+      var av = (x === 22 || x === 25) && !((y >= 5 && y <= 8) || (y >= 16 && y <= 19) || (y >= 27 && y <= 30));
+      if (av && y % 2 === 0) px(g, X2 + T - 1, Y2 + 4, 2, 8, "#e9e9e9");
+    }
+    // canteiro central com meio-fio
+    for (y = 0; y < H; y++) if (G[y][24] === "m") { px(g, 24 * T, y * T, 1, T, "#d8d0c0"); px(g, 25 * T - 1, y * T, 1, T, "#d8d0c0"); }
+  }
+
+  /* ---------------------------------------------------------------- objetos (sprites prontos) */
+  var PAREDES = ["#f4e3c1", "#d6eaf0", "#f1d3cf", "#e0efd2", "#ecdff3", "#fbe7b0"];
+  var TELHADOS = ["#c0573a", "#8e4a3a", "#4f6d8a", "#a2463e", "#6b5b4b", "#b5612f"];
+  function spriteCasa(ci) {
+    var c = tela(3 * T + 4, 3 * T + 6), g = c.getContext("2d"), parede = PAREDES[ci % 6], telha = TELHADOS[ci % 6];
+    var ox = 2, oy = 2;
+    // parede da frente (vista 3/4)
+    px(g, ox + 2, oy + 24, 44, 22, parede); px(g, ox + 2, oy + 24, 44, 2, escurecer(parede, 0.7)); px(g, ox + 44, oy + 26, 2, 20, escurecer(parede, 0.88));
+    px(g, ox + 2, oy + 44, 44, 2, escurecer(parede, 0.8));
+    // telhado
+    px(g, ox, oy, 48, 26, telha);
+    for (var y = 0; y < 26; y += 4) px(g, ox, oy + y, 48, 1, escurecer(telha, 0.82));
+    for (y = 2; y < 26; y += 8) for (var x = (y % 16 ? 4 : 0); x < 48; x += 8) px(g, ox + x, oy + y - 1, 1, 3, escurecer(telha, 0.82));
+    px(g, ox, oy, 48, 2, clarear(telha, 0.25)); px(g, ox, oy + 12, 48, 1, clarear(telha, 0.3)); px(g, ox, oy + 24, 48, 2, escurecer(telha, 0.6));
+    // chaminé
+    px(g, ox + 36, oy - 2, 5, 7, "#8c7f73"); px(g, ox + 36, oy - 2, 5, 1, "#a69a8e");
+    // porta
+    px(g, ox + 20, oy + 32, 9, 14, "#7a4a28"); px(g, ox + 21, oy + 33, 7, 12, "#8f5a33"); px(g, ox + 26, oy + 39, 1, 1, "#f4c542");
+    px(g, ox + 19, oy + 30, 11, 2, escurecer(parede, 0.6));
+    // janelas
+    [[6, 31], [34, 31]].forEach(function (j) {
+      px(g, ox + j[0], oy + j[1], 9, 8, "#ffffff"); px(g, ox + j[0] + 1, oy + j[1] + 1, 7, 6, "#8fd0f0"); px(g, ox + j[0] + 1, oy + j[1] + 1, 3, 2, "#c9ecfb");
+      px(g, ox + j[0] + 4, oy + j[1] + 1, 1, 6, "#ffffff"); px(g, ox + j[0] - 1, oy + j[1] + 8, 11, 2, "#6b8f3a"); px(g, ox + j[0], oy + j[1] + 8, 2, 1, "#f78fb3"); px(g, ox + j[0] + 6, oy + j[1] + 8, 2, 1, "#ffe066");
+    });
+    return contornar(c);
+  }
+  function spritePlaca(op) {
+    var c = tela(12, 7), g = c.getContext("2d"); px(g, 0, 0, 12, 7, COR[op]); px(g, 1, 1, 10, 1, clarear(COR[op], 0.4)); return contornar(c);
+  }
+  function spriteArvore(tipo) {
+    var c = tela(24, 34), g = c.getContext("2d");
+    if (tipo === "palmeira") {
+      px(g, 11, 12, 3, 20, "#8b5a2b"); for (var y = 14; y < 32; y += 3) px(g, 11, y, 3, 1, "#6e4420");
+      var folha = "#3f9a3a", folhaC = "#62bd4f";
+      [[-10, 4], [10, 4], [-8, -2], [8, -2], [0, -6], [-11, 9], [11, 9]].forEach(function (o) {
+        for (var i = 0; i < 9; i++) { var t2 = i / 8; px(g, Math.round(12 + o[0] * t2), Math.round(10 + o[1] * t2 + Math.sin(t2 * 3) * 2), 2, 2, i % 2 ? folha : folhaC); }
+      });
+      return contornar(c);
+    }
+    var cor = tipo === "ipe" ? ["#d9a514", "#f2c230", "#fbe17a"] : ["#2f7d34", "#45a145", "#79c962"];
+    px(g, 10, 20, 4, 12, "#7a4a24"); px(g, 12, 20, 2, 12, "#5e3719");
+    disco(g, 7, 15, 6, cor[0]); disco(g, 17, 15, 6, cor[0]); disco(g, 12, 10, 8, cor[0]);
+    disco(g, 11, 9, 6, cor[1]); disco(g, 7, 13, 4, cor[1]); disco(g, 16, 13, 4, cor[1]);
+    px(g, 8, 6, 3, 2, cor[2]); px(g, 6, 11, 2, 2, cor[2]); px(g, 14, 8, 2, 1, cor[2]);
+    if (tipo === "ipe") { px(g, 4, 18, 1, 1, "#fbe17a"); px(g, 19, 19, 1, 1, "#fbe17a"); }
+    return contornar(c);
+  }
+  function spritePredio(p) {
+    var w = p.w * T, h = p.h * T, c = tela(w + 2, h + 10), g = c.getContext("2d"), ox = 1, oy = 1, i, j;
+    if (p.tipo === "prefeitura") {
+      px(g, ox, oy, w, 18, "#b9c0c8"); for (i = 6; i < w - 10; i += 30) { px(g, ox + i, oy + 4, 10, 7, "#9aa2ab"); px(g, ox + i + 1, oy + 5, 8, 1, "#d2d8de"); }
+      px(g, ox, oy + 16, w, 2, "#8c949d");
+      px(g, ox, oy + 18, w, h - 18, "#e9edf1");
+      for (i = 6; i < w - 8; i += 14) for (j = 22; j < h - 14; j += 12) { px(g, ox + i, oy + j, 10, 8, "#5fa8d8"); px(g, ox + i, oy + j, 4, 3, "#a7d6f3"); }
+      px(g, ox + w / 2 - 14, oy + h - 16, 28, 16, "#3d5a73"); px(g, ox + w / 2 - 13, oy + h - 15, 12, 14, "#7cc0ee"); px(g, ox + w / 2 + 1, oy + h - 15, 12, 14, "#7cc0ee");
+      [ -40, -48, 40, 48].forEach(function (d) { px(g, ox + w / 2 + d, oy + h - 26, 1, 26, "#8c949d"); });
+      px(g, ox + w / 2 - 48, oy + h - 26, 7, 5, "#1f8a4c"); px(g, ox + w / 2 - 48, oy + h - 24, 7, 1, "#f2c230");
+      px(g, ox + w / 2 - 40, oy + h - 26, 7, 5, "#1d4fa3"); px(g, ox + w / 2 + 40, oy + h - 26, 7, 5, "#ffffff"); px(g, ox + w / 2 + 41, oy + h - 25, 5, 1, "#c0392b");
+    } else if (p.tipo === "ufu") {
+      [[0, 0.46], [0.5, 0.5]].forEach(function (b, k) {
+        var bx = ox + Math.round(w * b[0]), bw = Math.round(w * b[1]), by = oy + (k ? 6 : 0), bh = h - (k ? 6 : 0);
+        px(g, bx, by, bw, 14, "#a4552f"); px(g, bx, by + 12, bw, 2, "#7c3d20");
+        px(g, bx, by + 14, bw, bh - 14, "#d98c5f"); for (j = by + 18; j < by + bh - 6; j += 2) px(g, bx, j, bw, 1, "#cc7f53");
+        for (i = bx + 5; i < bx + bw - 8; i += 13) for (j = by + 18; j < by + bh - 10; j += 13) { px(g, i, j, 8, 8, "#f5efe0"); px(g, i + 1, j + 1, 6, 6, "#6aa9cf"); px(g, i + 1, j + 1, 2, 2, "#b8def3"); }
+      });
+      px(g, ox + Math.round(w * 0.46), oy + h - 12, Math.round(w * 0.04) + 1, 12, "#9b9b9b");
+    } else if (p.tipo === "senai") {
+      px(g, ox, oy, w, 14, "#1f63c6"); px(g, ox, oy + 2, w, 1, "#3d7fe0"); px(g, ox, oy + 14, w, 3, "#ff8a1f");
+      px(g, ox, oy + 17, w, h - 17, "#fbfbfb"); px(g, ox + w - 2, oy + 17, 2, h - 17, "#dfe5ec");
+      for (i = 6; i < w - 40; i += 14) { px(g, ox + i, oy + 22, 10, 8, "#5fa8d8"); px(g, ox + i, oy + 22, 4, 3, "#a7d6f3"); }
+      px(g, ox + w - 36, oy + 21, 30, h - 21, "#9aa5b1"); for (j = oy + 23; j < oy + h; j += 3) px(g, ox + w - 35, j, 28, 1, "#b8c2cc");
+      px(g, ox + 40, oy + h - 14, 10, 14, "#1f63c6"); px(g, ox + 41, oy + h - 13, 8, 13, "#7cc0ee");
+      // letreiro "SENAI" em pixels
+      var L = { S: ["111", "100", "111", "001", "111"], E: ["111", "100", "111", "100", "111"], N: ["101", "111", "111", "111", "101"], A: ["010", "101", "111", "101", "101"], I: ["111", "010", "010", "010", "111"] };
+      var lx = ox + 8;
+      "SENAI".split("").forEach(function (ch) { L[ch].forEach(function (lin, ly) { for (var lx2 = 0; lx2 < 3; lx2++) if (lin[lx2] === "1") px(g, lx + lx2, oy + 4 + ly, 1, 1, "#ffffff"); }); lx += 5; });
+    } else {
+      px(g, ox, oy, w, 14, "#b0b6bd"); px(g, ox, oy + 14, w, h - 14, "#fff2d0");
+      for (i = 0; i < w; i += 8) px(g, ox + i, oy + 14, 8, 7, (i / 8) % 2 ? "#e67e22" : "#ffffff");
+      px(g, ox + 8, oy + 24, w - 40, 18, "#7cc0ee"); px(g, ox + 8, oy + 24, 10, 6, "#b8def3");
+      px(g, ox + w - 26, oy + 22, 14, h - 22, "#7a4a28");
+      for (i = 10; i < w - 40; i += 10) { px(g, ox + i, oy + h - 5, 7, 4, ["#e74c3c", "#f1c40f", "#2ecc71"][(i / 10) % 3]); }
+    }
+    return contornar(c);
+  }
+  function spriteEnfeite(tipo) {
+    var c, g;
+    if (tipo === "poste") { c = tela(8, 30); g = c.getContext("2d"); px(g, 3, 4, 2, 26, "#5b6470"); px(g, 1, 1, 6, 3, "#3b414a"); px(g, 2, 3, 4, 1, "#fff3b0"); px(g, 2, 28, 4, 2, "#3b414a"); }
+    else if (tipo === "banco") { c = tela(16, 10); g = c.getContext("2d"); px(g, 0, 2, 16, 3, "#a0632f"); px(g, 0, 2, 16, 1, "#c27c3f"); px(g, 1, 5, 14, 2, "#8b5326"); px(g, 1, 7, 2, 3, "#3b414a"); px(g, 13, 7, 2, 3, "#3b414a"); }
+    else { c = tela(16, 26); g = c.getContext("2d"); px(g, 0, 0, 16, 4, "#1f8a4c"); px(g, 1, 4, 1, 22, "#5b6470"); px(g, 14, 4, 1, 22, "#5b6470"); px(g, 2, 6, 12, 10, "rgba(170,215,240,.7)"); px(g, 2, 18, 12, 3, "#a0632f"); px(g, 4, 1, 8, 2, "#ffffff"); }
+    return contornar(c);
+  }
+  var SPR_CASAS = [], SPR_PLACAS = {}, SPR_ARV = {}, SPR_PRED = [], SPR_ENF = {};
+  function montarSprites() {
+    CASAS.forEach(function (k, ci) { SPR_CASAS.push(spriteCasa(ci)); });
+    Object.keys(COR).forEach(function (op) { SPR_PLACAS[op] = spritePlaca(op); });
+    ["ipe", "copa", "palmeira"].forEach(function (t2) { SPR_ARV[t2] = spriteArvore(t2); });
+    predios.forEach(function (p) { SPR_PRED.push(spritePredio(p)); });
+    ["poste", "banco", "ponto"].forEach(function (t2) { SPR_ENF[t2] = spriteEnfeite(t2); });
+  }
+
+  /* ---------------------------------------------------------------- carros (vista 3/4) */
+  function spriteCarroH(cor, onibus) {
+    // de lado, andando para a direita (espelha para a esquerda)
+    var L = onibus ? 46 : 28, c = tela(L + 2, 20), g = c.getContext("2d"), ox = 1, s = escurecer(cor, 0.72);
+    if (onibus) {
+      px(g, ox, 2, L, 14, cor); px(g, ox, 2, L, 2, clarear(cor, 0.35)); px(g, ox, 12, L, 4, s);
+      for (var i = 4; i < L - 8; i += 7) px(g, ox + i, 5, 5, 5, "#bfe6fa");
+      px(g, ox + L - 6, 4, 5, 7, "#8fd0f0"); px(g, ox + L - 2, 12, 2, 2, "#fff3b0"); px(g, ox, 12, 1, 2, "#e74c3c");
+      [6, L - 12].forEach(function (wx) { px(g, ox + wx, 15, 6, 4, "#1d1b2a"); px(g, ox + wx + 2, 16, 2, 2, "#9aa5b1"); });
+    } else {
+      px(g, ox + 7, 1, 13, 7, cor); px(g, ox + 7, 1, 13, 2, clarear(cor, 0.4));          // teto
+      px(g, ox + 8, 4, 5, 4, "#9fd7f5"); px(g, ox + 14, 4, 5, 4, "#9fd7f5"); px(g, ox + 8, 4, 2, 1, "#d6f0fc");
+      px(g, ox + 20, 4, 3, 4, "#7cc0ee");                                                 // para-brisa
+      px(g, ox, 8, L, 7, cor); px(g, ox, 8, L, 1, clarear(cor, 0.35)); px(g, ox, 13, L, 2, s);
+      px(g, ox + 13, 9, 1, 4, s); px(g, ox + L - 2, 9, 2, 2, "#fff3b0"); px(g, ox, 9, 1, 2, "#e74c3c");
+      [3, L - 9].forEach(function (wx) { px(g, ox + wx, 13, 6, 5, "#1d1b2a"); px(g, ox + wx + 2, 14, 2, 2, "#9aa5b1"); });
+    }
+    return contornar(c);
+  }
+  function spriteCarroV(cor, desce, onibus) {
+    // de frente (descendo) ou de costas (subindo), visto de cima
+    var A = onibus ? 44 : 26, c = tela(18, A + 2), g = c.getContext("2d"), oy = 1, s = escurecer(cor, 0.72);
+    px(g, 1, oy + 2, 16, A - 4, cor); px(g, 1, oy + 2, 2, A - 4, clarear(cor, 0.3)); px(g, 15, oy + 2, 2, A - 4, s);
+    if (onibus) { for (var i = 6; i < A - 8; i += 6) px(g, 3, oy + i, 12, 3, "#bfe6fa"); }
+    else { px(g, 3, oy + 7, 12, 11, clarear(cor, 0.15)); px(g, 3, oy + 8, 12, 1, clarear(cor, 0.4)); }
+    var vidro = desce ? oy + A - 9 : oy + 3, farol = desce ? oy + A - 3 : oy + 1;
+    px(g, 3, vidro, 12, 5, "#8fd0f0"); px(g, 4, vidro, 4, 1, "#d6f0fc");
+    if (!onibus) px(g, 3, desce ? oy + 3 : oy + A - 8, 12, 4, "#7cbfe6");
+    px(g, 2, farol, 3, 2, desce ? "#fff3b0" : "#e74c3c"); px(g, 13, farol, 3, 2, desce ? "#fff3b0" : "#e74c3c");
+    px(g, 0, oy + 5, 1, 5, "#1d1b2a"); px(g, 17, oy + 5, 1, 5, "#1d1b2a"); px(g, 0, oy + A - 10, 1, 5, "#1d1b2a"); px(g, 17, oy + A - 10, 1, 5, "#1d1b2a");
+    if (onibus) { px(g, 4, desce ? oy + A - 14 : oy + 9, 10, 3, "#ffffff"); }
+    return contornar(c);
+  }
+
   /* ================================================================ jogador, carros */
-  var J = { x: 16.5 * T, y: 31.4 * T, dir: "baixo", passo: 0, andando: false };
+  var J = { x: 16.5 * T, y: 31.6 * T, dir: "baixo", passo: 0, andando: false, tonto: 0, batidas: 0 };
   var carros = [];
   function criarCarros() {
-    var cores = ["#e74c3c", "#f1c40f", "#ecf0f1", "#2c3e50", "#3498db", "#16a085", "#9b59b6", "#e67e22"];
-    for (var i = 0; i < 10; i++) {
-      var v = i < 5;
-      carros.push({
-        vert: v, cor: cores[i % cores.length],
-        x: v ? (i % 2 ? 25.5 : 22.5) * T + (i % 2 ? 20 : 20) : (i * 7 % W) * T,
-        y: v ? (i * 8 % H) * T : (i % 2 ? 17.5 : 18.5) * T + (i < 8 ? 0 : 11 * T),
-        vel: (v ? (i % 2 ? 1 : -1) : (i % 2 ? 1 : -1)) * (70 + i * 9),
-        onibus: i === 2
-      });
+    var cores = ["#e74c3c", "#f1c40f", "#ecf0f1", "#34495e", "#3498db", "#16a085", "#9b59b6", "#e67e22", "#c0392b", "#27ae60", "#7f8c8d", "#d35400"];
+    function novo(vert, faixa, pos, vel, onibus, i) {
+      var cor = onibus ? "#2e86de" : cores[i % cores.length];
+      var k = { vert: vert, faixa: faixa, pos: pos, vel: vel, velMax: Math.abs(vel), onibus: !!onibus, buzinou: 0 };
+      k.spr = vert ? spriteCarroV(cor, vel > 0, onibus) : spriteCarroH(cor, onibus);
+      k.comp = vert ? (onibus ? 44 : 26) : (onibus ? 46 : 28);
+      carros.push(k);
     }
-    carros.forEach(function (c) {
-      if (c.vert) c.x = (c.vel > 0 ? 22.5 : 25.5) * T + (c.vel > 0 ? 0 : 0) + 20 - 20;
-      else c.y = (c.vel > 0 ? 18.5 : 17.5) * T;
+    var i = 0;
+    // Av. João Naves de Ávila: descendo no lado oeste (colunas 22-23), subindo no leste (25-26)
+    novo(true, 22.5, 2 * T, 46, false, i++); novo(true, 23.5, 20 * T, 40, true, i++);
+    novo(true, 25.5, 12 * T, -44, false, i++); novo(true, 26.5, 30 * T, -50, false, i++);
+    // avenidas horizontais: para a direita na faixa de baixo, para a esquerda na de cima
+    [[6.5, 7.5, 49], [17.5, 18.5, 40], [28.5, 29.5, 40]].forEach(function (av, n) {
+      novo(false, av[1], (5 + n * 9) * T, 42 + n * 4, false, i++); novo(false, av[0], (30 - n * 6) * T, -(40 + n * 5), false, i++);
+      if (n === 1) novo(false, av[1], 30 * T, 48, false, i++);
     });
-    // dois carros na Belarmino
-    carros[8].y = 29.5 * T; carros[8].vel = 80; carros[9].y = 28.5 * T; carros[9].vel = -90;
+  }
+  function caixaCarro(k) {
+    if (k.vert) return { x: k.faixa * T - 8, y: k.pos - k.comp / 2, w: 16, h: k.comp };
+    return { x: k.pos - k.comp / 2, y: k.faixa * T - 7, w: k.comp, h: 12 };
+  }
+  function limiteCarro(k) { return k.vert ? H * T : (k.faixa < 8 ? W * T : 40 * T); }
+  function tileDe(xx, yy) { var x = Math.floor(xx / T), y = Math.floor(yy / T); return G[y] && G[y][x]; }
+  function moverCarros(dt) {
+    carros.forEach(function (k) {
+      var sent = k.vel === 0 ? (k.ult || 1) : Math.sign(k.vel); k.ult = sent;
+      var frente = k.pos + sent * k.comp / 2;
+      // jogador na faixa de pedestre à frente: o carro para
+      var px0 = J.x, py0 = J.y, naFaixa = ehFaixa(Math.floor(px0 / T), Math.floor(py0 / T));
+      var mesmaFaixa = k.vert ? Math.abs(px0 - k.faixa * T) < 10 : Math.abs(py0 - k.faixa * T) < 10;
+      var dist = k.vert ? (py0 - frente) * sent : (px0 - frente) * sent;
+      var parar = naFaixa && mesmaFaixa && dist > -4 && dist < 22;
+      // carro parado à frente na mesma faixa
+      carros.forEach(function (o) {
+        if (o === k || o.vert !== k.vert || o.faixa !== k.faixa) return;
+        var d = (o.pos - k.pos) * sent - (o.comp + k.comp) / 2;
+        if (d > -2 && d < 8) parar = true;
+      });
+      if (parar) { k.vel = 0; if (!k.buzinou && naFaixa && mesmaFaixa) { k.buzinou = 1; } }
+      else { k.vel = sent * Math.min(k.velMax, Math.abs(k.vel) + 60 * dt); if (Math.abs(k.vel) < 5) k.vel = sent * 5; k.buzinou = 0; }
+      k.pos += k.vel * dt;
+      var lim = limiteCarro(k);
+      if (k.pos > lim + 40) k.pos = -40; if (k.pos < -40) k.pos = lim + 40;
+      // batida no jogador (fora da faixa os carros não param)
+      if (J.tonto <= 0 && emJogo) {
+        var b = caixaCarro(k);
+        if (J.x + 4 > b.x && J.x - 4 < b.x + b.w && J.y > b.y && J.y - 4 < b.y + b.h && Math.abs(k.vel) > 6) bater(k);
+      }
+    });
+  }
+  function bater(k) {
+    J.tonto = 1.3; J.batidas++; atualizarHud();
+    somBatida();
+    // empurra para a calçada mais perto
+    var melhor = null, md = 1e9, tx = Math.floor(J.x / T), ty = Math.floor(J.y / T);
+    for (var y = ty - 4; y <= ty + 4; y++) for (var x = tx - 4; x <= tx + 4; x++) {
+      if (!G[y] || G[y][x] === undefined || G[y][x] === "r" || solido[y][x]) continue;
+      var d = Math.hypot(x + 0.5 - J.x / T, y + 0.5 - J.y / T); if (d < md) { md = d; melhor = { x: (x + 0.5) * T, y: (y + 0.7) * T }; }
+    }
+    if (melhor) { J.x = melhor.x; J.y = melhor.y; }
+    toast("💥 <b>Opa! Um carro bateu em você.</b> Atravesse sempre na <b>faixa de pedestre</b>: lá os carros param.", "erro");
+    atualizarHud();
+  }
+  var audio = null;
+  function somBatida() {
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      [0, 0.18].forEach(function (t0) {
+        var o = audio.createOscillator(), gn = audio.createGain(); o.type = "square"; o.frequency.value = 420;
+        gn.gain.setValueAtTime(0.06, audio.currentTime + t0); gn.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + t0 + 0.15);
+        o.connect(gn); gn.connect(audio.destination); o.start(audio.currentTime + t0); o.stop(audio.currentTime + t0 + 0.16);
+      });
+    } catch (e) {}
   }
 
   /* ================================================================ canvas */
-  var cv = $("mundo"), ctx = cv.getContext("2d"), DPR = 1, ESC = 1, CAM = { x: 0, y: 0 }, VW = 0, VH = 0;
+  var cv = $("mundo"), ctx = cv.getContext("2d"), buf = tela(320, 200), bctx = buf.getContext("2d");
+  var DPR = 1, P = 3, VW = 0, VH = 0, BW = 320, BH = 200, CAM = { x: 0, y: 0 };
   function redimensionar() {
     DPR = Math.min(window.devicePixelRatio || 1, 2);
     VW = window.innerWidth; VH = window.innerHeight;
     cv.width = Math.round(VW * DPR); cv.height = Math.round(VH * DPR);
     cv.style.width = VW + "px"; cv.style.height = VH + "px";
-    ESC = Math.max(0.7, Math.min(1.35, Math.min(VW / (15 * T), VH / (10 * T))));
+    // P = tamanho de 1 pixel do jogo em pixels da tela (inteiro: pixels todos iguais)
+    P = Math.max(2, Math.round(Math.min(cv.width / (24 * T), cv.height / (14 * T))));
+    BW = Math.ceil(cv.width / P); BH = Math.ceil(cv.height / P);
+    buf.width = BW; buf.height = BH; bctx.imageSmoothingEnabled = false;
   }
-
-  function rr(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
-  function hash(x, y) { var h = (x * 374761393 + y * 668265263) | 0; h = (h ^ (h >>> 13)) * 1274126177; return ((h ^ (h >>> 16)) >>> 0) / 4294967295; }
-
-  var COR_T = { g: "#8fcf6a", r: "#5b6470", s: "#d9d3c7", m: "#7bbf5a", w: "#4aa8d8", p: "#e3c99a", c: "#cfc6b6" };
-  function desenharChao(x0, y0, x1, y1) {
-    for (var y = y0; y <= y1; y++) for (var x = x0; x <= x1; x++) {
-      var t = G[y][x], px = x * T, py = y * T;
-      ctx.fillStyle = COR_T[t] || "#8fcf6a"; ctx.fillRect(px, py, T + 0.5, T + 0.5);
-      if (t === "g" || t === "m") {
-        var h = hash(x, y);
-        if (h > 0.55) { ctx.fillStyle = "rgba(60,130,50,.22)"; ctx.fillRect(px + h * 28, py + (1 - h) * 30, 4, 4); }
-        if (h > 0.86) { ctx.fillStyle = h > 0.93 ? "#ffe35a" : "#ffffff"; ctx.beginPath(); ctx.arc(px + 10 + h * 18, py + 12, 2.2, 0, 7); ctx.fill(); }
-      } else if (t === "s") {
-        ctx.strokeStyle = "rgba(0,0,0,.07)"; ctx.lineWidth = 1; ctx.strokeRect(px + 0.5, py + 0.5, T - 1, T - 1);
-      } else if (t === "w") {
-        ctx.fillStyle = "rgba(255,255,255,.25)"; var o = (Date.now() / 900 + x * 0.7 + y) % 1;
-        ctx.fillRect(px + 6 + o * 18, py + 14, 10, 2); ctx.fillRect(px + 20 - o * 10, py + 28, 8, 2);
-      } else if (t === "p") {
-        ctx.fillStyle = "rgba(0,0,0,.05)"; ctx.fillRect(px, py + 18, T, 2);
-      } else if (t === "c") {
-        ctx.strokeStyle = "rgba(0,0,0,.06)"; ctx.strokeRect(px + 0.5, py + 0.5, T - 1, T - 1);
-      }
-    }
-    // marcas da rua
-    for (y = y0; y <= y1; y++) for (x = x0; x <= x1; x++) {
-      if (G[y][x] !== "r") continue;
-      px = x * T; py = y * T;
-      var hor = (y === 6 || y === 17 || y === 28) && !(x >= 22 && x <= 26) && !(x >= 9 && x <= 10) && !(x >= 37 && x <= 38);
-      if (hor) { ctx.fillStyle = "#f5d142"; if (x % 2 === 0) ctx.fillRect(px + 4, py + T - 2, T - 8, 4); }
-      var ver = (x === 9 || x === 37) && !((y >= 6 && y <= 7) || (y >= 17 && y <= 18) || (y >= 28 && y <= 29));
-      if (ver) { ctx.fillStyle = "#f5d142"; if (y % 2 === 0) ctx.fillRect(px + T - 2, py + 4, 4, T - 8); }
-      var av = (x === 22 || x === 25) && !((y >= 6 && y <= 7) || (y >= 17 && y <= 18) || (y >= 28 && y <= 29));
-      if (av) { ctx.fillStyle = "rgba(255,255,255,.75)"; if (y % 2 === 0) ctx.fillRect(px + T - 1.5, py + 6, 3, T - 12); }
-    }
-    // faixas de pedestre
-    ctx.fillStyle = "rgba(255,255,255,.9)";
-    [[22, 26, 5, 5], [22, 26, 8, 8], [22, 26, 16, 16], [22, 26, 19, 19], [22, 26, 27, 27], [22, 26, 30, 30]].forEach(function (f) {
-      for (var xx = f[0] * T; xx < (f[1] + 1) * T; xx += 10) ctx.fillRect(xx + 2, f[2] * T + 8, 5, T - 16);
-    });
-  }
-
-  /* ---------------------------------------------------------------- pessoas (pixel art, 12 x 16) */
-  /* Personagem original no estilo das aventuras 2D vistas de cima: sprite pequeno, contorno escuro,
-     4 direções e passo de 2 quadros. Uniforme do SENAI: boné azul, camisa azul com faixa laranja. */
-  var SPR = {
-    baixo: [
-      "...kkkkkk...", "..kccccxcck.", ".kCCCCCCCCk.", ".khssssssshk", ".kssesssessk", ".kssssmssssk",
-      "...ksssssk..", "..kbwbbbwbk.", ".kbbbbwwbbbk", "kbbbbbbbbbbk", "kooooooooook", "ksbbbbbbbbsk",
-      ".kpppppppppk"],
-    cima: [
-      "...kkkkkk...", "..kccccccck.", ".kccccxcccck", ".kccccccccck", ".khhhhhhhhhk", ".khhhhhhhhhk",
-      "...ksssssk..", "..kbbbbbbbk.", ".kbwwwwwwwbk", "kbbbbbbbbbbk", "kooooooooook", "ksbbbbbbbbsk",
-      ".kpppppppppk"],
-    dir: [
-      "...kkkkk....", "..kcccccck..", "..kccxcccCCC", "..khhssssk..", "..khssseskk.", "..khssssssk.",
-      "...ksssk....", "...kbbbbk...", "..kbbbwbbk..", "..kbbbbbbk..", "..kooooook..", "..kbbsbbgk..",
-      "...kppppk..."]
-  };
-  var PERNAS = {
-    frente: [["..kppk.kppk.", "..kppk.kppk.", "..kffk.kffk."], ["..kppk.kppk.", "..kppk.kffk.", "..kffk......"], ["..kppk.kppk.", "..kffk.kppk.", ".......kffk."]],
-    lado: [["...kppk.....", "...kppk.....", "...kfffk...."], ["..kpk.kpk...", "..kpk.kpk...", ".kfk...kfk.."], ["...kppk.....", "...kppk.....", "...kfffk...."]]
-  };
-  function paleta(v, tec) {
-    var cab = tec ? "#0d3f86" : v.cabelo;
-    return { k: "#1b1f2e", c: cab, C: tec ? "#0a2f66" : v.cabelo, x: tec ? "#ff8a1f" : v.cabelo, h: v.cabelo, s: v.pele, e: "#1b1f2e", m: "#a0583e",
-      b: v.jaleco ? "#f4f4f4" : (tec ? "#1559b3" : v.roupa), w: tec ? "#ffffff" : (v.jaleco ? v.roupa : (v.avental ? "#ffffff" : v.roupa)),
-      o: tec ? "#ff8a1f" : (v.jaleco ? "#f4f4f4" : (v.avental ? "#ffffff" : v.roupa)), p: tec ? "#22324a" : "#3b4a63", f: "#2a1a10", g: tec ? "#e67e22" : (v.jaleco ? "#f4f4f4" : v.roupa) };
-  }
-  var cacheSpr = {};
-  function spriteDe(dir, quadro, v, tec) {
-    var chave = dir + quadro + (tec ? "T" : JSON.stringify(v));
-    if (cacheSpr[chave]) return cacheSpr[chave];
-    var pal = paleta(v, tec), lado = dir === "esq" || dir === "dir";
-    var linhas = SPR[lado ? "dir" : dir].concat(PERNAS[lado ? "lado" : "frente"][quadro]);
-    var cv2 = document.createElement("canvas"); cv2.width = 12; cv2.height = 16;
-    var g = cv2.getContext("2d");
-    for (var r = 0; r < linhas.length; r++) for (var k = 0; k < 12; k++) {
-      var ch = linhas[r].charAt(dir === "esq" ? 11 - k : k);
-      if (!pal[ch]) continue;
-      g.fillStyle = pal[ch]; g.fillRect(k, r, 1, 1);
-    }
-    if (v.longo && !tec) {
-      g.fillStyle = v.cabelo;
-      if (dir === "baixo") { g.fillRect(1, 3, 1, 4); g.fillRect(10, 3, 1, 4); }
-      else if (dir === "cima") g.fillRect(2, 6, 8, 2);
-      else g.fillRect(dir === "dir" ? 2 : 9, 3, 1, 4);
-    }
-    if (v.oculos && dir === "baixo") { g.fillStyle = "#1b1f2e"; g.fillRect(3, 3, 3, 1); g.fillRect(7, 3, 3, 1); }
-    cacheSpr[chave] = cv2;
-    return cv2;
-  }
-  function pessoa(c, x, y, dir, fase, v, tec, px) {
-    px = px || 3.5;
-    var quadro = fase ? (Math.sin(fase) > 0 ? 1 : 2) : 0;
-    var w = 12 * px, h = 16 * px, bob = quadro ? -px * 0.5 : 0;
-    c.fillStyle = "rgba(0,0,0,.22)"; c.beginPath(); c.ellipse(x, y, w * 0.42, px * 1.4, 0, 0, 7); c.fill();
-    var antes = c.imageSmoothingEnabled; c.imageSmoothingEnabled = false;
-    c.drawImage(spriteDe(dir, quadro, v, tec), Math.round(x - w / 2), Math.round(y - h + bob), w, h);
-    c.imageSmoothingEnabled = antes;
-  }
-  var VISUAL_TEC = { pele: "#c98d63", cabelo: "#2a1a10", roupa: "#1559b3" };
-
-  /* ---------------------------------------------------------------- casas e prédios */
-  var PAREDES = ["#f6e7c8", "#d9ecf2", "#f3d6d2", "#e3f0d6", "#efe1f5", "#fbe9b7"];
-  var TELHADOS = ["#c0583a", "#8b4a3a", "#4f6d8a", "#a2473f", "#6b5b4b", "#b5622f"];
-  function osDaCasa(ci) { for (var i = 0; i < OS.length; i++) if (OS[i].casa === ci) return i; return -1; }
-  function casa(c, ci) {
-    var k = CASAS[ci], x = k.x * T, y = k.y * T, w = 3 * T, h = 3 * T, oi = osDaCasa(ci), os = OS[oi];
-    // muro + quintal
-    c.fillStyle = "rgba(0,0,0,.16)"; rr(c, x + 6, y + 10, w, h, 8); c.fill();
-    // parede da frente
-    c.fillStyle = PAREDES[ci % PAREDES.length]; rr(c, x + 4, y + 52, w - 8, h - 54, 4); c.fill();
-    c.strokeStyle = "rgba(0,0,0,.12)"; c.lineWidth = 2; c.stroke();
-    // telhado
-    c.fillStyle = TELHADOS[ci % TELHADOS.length]; rr(c, x - 2, y + 2, w + 4, 58, 8); c.fill();
-    c.fillStyle = "rgba(255,255,255,.12)"; rr(c, x - 2, y + 2, w + 4, 26, 8); c.fill();
-    c.strokeStyle = "rgba(0,0,0,.18)"; c.beginPath(); c.moveTo(x + 6, y + 30); c.lineTo(x + w - 6, y + 30); c.stroke();
-    for (var i = 0; i < 6; i++) { c.strokeStyle = "rgba(0,0,0,.08)"; c.beginPath(); c.moveTo(x + 8 + i * 20, y + 6); c.lineTo(x + 8 + i * 20, y + 56); c.stroke(); }
-    // porta e janelas
-    c.fillStyle = "#7a4b2a"; rr(c, x + w / 2 - 11, y + h - 34, 22, 32, 3); c.fill();
-    c.fillStyle = "#f0c040"; c.beginPath(); c.arc(x + w / 2 + 6, y + h - 18, 2, 0, 7); c.fill();
-    c.fillStyle = "#bfe3f5"; c.strokeStyle = "#fff"; c.lineWidth = 2;
-    rr(c, x + 12, y + h - 50, 26, 18, 2); c.fill(); c.stroke(); rr(c, x + w - 38, y + h - 50, 26, 18, 2); c.fill(); c.stroke();
-    // placa do provedor (sem logotipo: cor + nome) e número
-    if (os) {
-      c.fillStyle = COR[os.op]; rr(c, x + w - 40, y + h - 28, 34, 14, 3); c.fill();
-      c.fillStyle = "#fff"; c.font = "bold 9px Arial, sans-serif"; c.textAlign = "center"; c.fillText(NOME_OP[os.op], x + w - 23, y + h - 18);
-      c.fillStyle = "#333"; c.font = "bold 9px Arial"; c.fillText("nº " + os.numero, x + 25, y + h - 18);
-    }
-  }
-  function marcador(c, ci, t) {
-    var oi = osDaCasa(ci); if (oi < 0) return;
-    var k = CASAS[ci], x = (k.x + 1.5) * T, y = k.y * T - 4 + Math.sin(t / 300 + ci) * 4, os = OS[oi];
-    var est = E.progresso[os.id] || 0, lib = liberada(oi);
-    c.save();
-    c.fillStyle = "rgba(0,0,0,.2)"; c.beginPath(); c.arc(x + 2, y + 2, 15, 0, 7); c.fill();
-    c.fillStyle = est ? "#1f8a4c" : lib ? COR[os.op] : "#8a94a3"; c.beginPath(); c.arc(x, y, 15, 0, 7); c.fill();
-    c.strokeStyle = "#fff"; c.lineWidth = 3; c.stroke();
-    c.fillStyle = "#fff"; c.textAlign = "center"; c.font = "bold 18px Arial"; c.textBaseline = "middle";
-    c.fillText(est ? "✓" : lib ? "!" : "🔒", x, y + 1);
-    if (est) { c.font = "bold 11px Arial"; c.fillStyle = "#ffd23f"; c.fillText("★".repeat(est), x, y + 24); }
-    c.restore();
-  }
-  function predio(c, p) {
-    var x = p.x * T, y = p.y * T, w = p.w * T, h = p.h * T;
-    c.fillStyle = "rgba(0,0,0,.18)"; rr(c, x + 6, y + 8, w, h, 8); c.fill();
-    if (p.tipo === "prefeitura") {
-      c.fillStyle = "#e9eef2"; rr(c, x, y, w, h, 6); c.fill();
-      c.fillStyle = "#7fb3d5"; for (var i = 0; i < 16; i++) for (var j = 0; j < 2; j++) c.fillRect(x + 14 + i * 43, y + 18 + j * 40, 32, 26);
-      c.fillStyle = "#2e7d32"; c.fillRect(x + w / 2 - 50, y + h - 20, 100, 20);
-    } else if (p.tipo === "ufu") {
-      c.fillStyle = "#e7d8c3"; rr(c, x, y, w * 0.45, h, 6); c.fill(); c.fillStyle = "#d8c7ae"; rr(c, x + w * 0.5, y + 10, w * 0.5, h - 10, 6); c.fill();
-      c.fillStyle = "#8a6d4a"; for (i = 0; i < 7; i++) for (j = 0; j < 2; j++) { c.fillRect(x + 16 + i * 46, y + 20 + j * 46, 28, 22); c.fillRect(x + w * 0.5 + 16 + i * 52, y + 30 + j * 44, 30, 20); }
-    } else if (p.tipo === "senai") {
-      c.fillStyle = "#ffffff"; rr(c, x, y, w, h, 6); c.fill();
-      c.fillStyle = "#1559b3"; rr(c, x, y, w, 34, 6); c.fill(); c.fillStyle = "#ff8a1f"; c.fillRect(x, y + 34, w, 6);
-      c.fillStyle = "#bfe3f5"; for (i = 0; i < 6; i++) c.fillRect(x + 16 + i * 44, y + 56, 30, 20);
-      c.fillStyle = "#1559b3"; rr(c, x + w / 2 - 16, y + h - 34, 32, 34, 3); c.fill();
-      // van
-      var vx = x + w + 14, vy = y + h - 40; c.fillStyle = "rgba(0,0,0,.2)"; rr(c, vx + 4, vy + 4, 64, 36, 8); c.fill();
-      c.fillStyle = "#ffffff"; rr(c, vx, vy, 64, 36, 8); c.fill(); c.fillStyle = "#1559b3"; c.fillRect(vx, vy + 14, 64, 8);
-      c.fillStyle = "#9fd0ef"; rr(c, vx + 46, vy + 4, 14, 28, 4); c.fill();
-      c.fillStyle = "#fff"; c.font = "bold 7px Arial"; c.textAlign = "center"; c.fillText("SENAI", vx + 22, vy + 20);
-    } else {
-      c.fillStyle = "#fff4d6"; rr(c, x, y, w, h, 6); c.fill(); c.fillStyle = "#e67e22";
-      for (i = 0; i < 8; i++) { c.fillStyle = i % 2 ? "#e67e22" : "#fff"; c.fillRect(x + i * w / 8, y, w / 8, 22); }
-      c.fillStyle = "#bfe3f5"; c.fillRect(x + 20, y + 50, w - 40, 30);
-    }
-    // nome
-    c.font = "bold 13px Arial, sans-serif"; c.textAlign = "center"; c.textBaseline = "middle";
-    var tw = c.measureText(p.nome).width + 18, ny = p.tipo === "senai" || p.tipo === "mercado" ? y + h + 14 : y + h + 12;
-    c.fillStyle = p.tipo === "senai" ? "#1559b3" : "rgba(20,30,45,.85)"; rr(c, x + w / 2 - tw / 2, ny - 11, tw, 22, 11); c.fill();
-    c.fillStyle = "#fff"; c.fillText(p.nome, x + w / 2, ny); c.textBaseline = "alphabetic";
-  }
-  function arvore(c, a) {
-    var x = (a.x + 0.5) * T, y = (a.y + 0.85) * T;
-    c.fillStyle = "rgba(0,0,0,.2)"; c.beginPath(); c.ellipse(x + 4, y, 16, 6, 0, 0, 7); c.fill();
-    c.fillStyle = "#7a4e2d"; c.fillRect(x - 3, y - 18, 6, 18);
-    if (a.tipo === "palmeira") {
-      c.strokeStyle = "#3f8f3a"; c.lineWidth = 5; c.lineCap = "round";
-      for (var i = 0; i < 6; i++) { var ang = i * 1.05; c.beginPath(); c.moveTo(x, y - 30); c.quadraticCurveTo(x + Math.cos(ang) * 12, y - 40 + Math.sin(ang) * 6, x + Math.cos(ang) * 20, y - 28 + Math.sin(ang) * 10); c.stroke(); }
-      c.fillStyle = "#7a4e2d"; c.fillRect(x - 2.5, y - 30, 5, 12);
-      return;
-    }
-    var cor = a.tipo === "ipe" ? ["#e7b416", "#f6d04d"] : ["#3f9a45", "#5cb85c"];
-    c.fillStyle = cor[0]; c.beginPath(); c.arc(x - 9, y - 26, 13, 0, 7); c.arc(x + 9, y - 26, 13, 0, 7); c.arc(x, y - 38, 15, 0, 7); c.fill();
-    c.fillStyle = cor[1]; c.beginPath(); c.arc(x - 4, y - 40, 7, 0, 7); c.arc(x - 11, y - 29, 5, 0, 7); c.fill();
-  }
-  function carro(c, k) {
-    c.save(); c.translate(k.x, k.y);
-    if (k.vert) c.rotate(k.vel > 0 ? Math.PI / 2 : -Math.PI / 2); else if (k.vel < 0) c.rotate(Math.PI);
-    var L = k.onibus ? 74 : 40, A = k.onibus ? 26 : 22;
-    c.fillStyle = "rgba(0,0,0,.25)"; rr(c, -L / 2 + 3, -A / 2 + 4, L, A, 6); c.fill();
-    c.fillStyle = k.onibus ? "#2e86de" : k.cor; rr(c, -L / 2, -A / 2, L, A, 6); c.fill();
-    c.fillStyle = "rgba(20,30,40,.75)"; rr(c, L / 2 - 16, -A / 2 + 3, 9, A - 6, 3); c.fill();
-    if (!k.onibus) { rr(c, -L / 2 + 6, -A / 2 + 3, 7, A - 6, 3); c.fill(); }
-    else { c.fillStyle = "#cfe8ff"; for (var i = 0; i < 5; i++) c.fillRect(-L / 2 + 6 + i * 11, -A / 2 + 2, 8, 3); c.fillStyle = "#fff"; c.font = "bold 7px Arial"; c.textAlign = "center"; c.fillText("BRT", -6, 3); }
-    c.fillStyle = "#fff6b0"; c.fillRect(L / 2 - 3, -A / 2 + 2, 3, 4); c.fillRect(L / 2 - 3, A / 2 - 6, 3, 4);
-    c.restore();
-  }
-  function placa(c, p) {
-    c.save(); c.translate(p.x * T, p.y * T); if (p.vert) c.rotate(-Math.PI / 2);
-    c.font = "bold 12px Arial, sans-serif"; c.textAlign = "center"; c.textBaseline = "middle";
-    var tw = c.measureText(p.txt).width + 16;
-    c.fillStyle = p.parque ? "#2e7d32" : "#1b6e3a"; rr(c, -tw / 2, -11, tw, 22, 4); c.fill();
-    c.strokeStyle = "#fff"; c.lineWidth = 1.5; rr(c, -tw / 2 + 2, -9, tw - 4, 18, 3); c.stroke();
-    c.fillStyle = "#fff"; c.fillText(p.txt, 0, 1);
-    c.restore();
-  }
+  // coordenada do mundo -> pixel CSS da tela
+  function naTela(wx, wy) { return { x: (wx - CAM.x) * P / DPR, y: (wy - CAM.y) * P / DPR }; }
+  function noMundo(cx, cy) { return { x: cx * DPR / P + CAM.x, y: cy * DPR / P + CAM.y }; }
 
   /* ================================================================ minimapa */
   var mm = $("minimapa"), mctx = mm.getContext("2d"), mmBase = null;
   function montarMinimapa() {
-    mmBase = document.createElement("canvas"); mmBase.width = W * 4; mmBase.height = H * 4;
+    mmBase = tela(W * 4, H * 4);
     var c = mmBase.getContext("2d");
     for (var y = 0; y < H; y++) for (var x = 0; x < W; x++) { c.fillStyle = COR_T[G[y][x]]; c.fillRect(x * 4, y * 4, 4, 4); }
-    predios.forEach(function (p) { c.fillStyle = p.tipo === "senai" ? "#1559b3" : "#b9b3a8"; c.fillRect(p.x * 4, p.y * 4, p.w * 4, p.h * 4); });
-    arvores.forEach(function (a) { c.fillStyle = "#3f8f3a"; c.fillRect(a.x * 4 + 1, a.y * 4 + 1, 2, 2); });
+    predios.forEach(function (p) { c.fillStyle = p.tipo === "senai" ? "#1f63c6" : "#b9b3a8"; c.fillRect(p.x * 4, p.y * 4, p.w * 4, p.h * 4); });
+    arvores.forEach(function (a) { c.fillStyle = "#2f7d34"; c.fillRect(a.x * 4 + 1, a.y * 4 + 1, 2, 2); });
   }
   function desenharMinimapa() {
+    mctx.imageSmoothingEnabled = false;
     mctx.clearRect(0, 0, mm.width, mm.height);
     mctx.drawImage(mmBase, 0, 0, mm.width, mm.height);
     var sx = mm.width / (W * T), sy = mm.height / (H * T);
@@ -3094,37 +3327,37 @@ li.ok .caixinha { background: #1f8a4c; border-color: #1f8a4c; color: #fff; }
       mctx.fillRect(k.x * T * sx, k.y * T * sy, 3 * T * sx, 3 * T * sy);
       if (E.alvo === oi) { mctx.strokeStyle = "#ffd23f"; mctx.lineWidth = 2; mctx.strokeRect(k.x * T * sx - 2, k.y * T * sy - 2, 3 * T * sx + 4, 3 * T * sy + 4); }
     });
-    mctx.fillStyle = "#fff"; mctx.strokeStyle = "#1559b3"; mctx.lineWidth = 2;
+    mctx.fillStyle = "#ff8a1f"; carros.forEach(function (k) { var b = caixaCarro(k); mctx.fillRect((b.x + b.w / 2) * sx - 1, (b.y + b.h / 2) * sy - 1, 2, 2); });
+    mctx.fillStyle = "#fff"; mctx.strokeStyle = "#1f63c6"; mctx.lineWidth = 2;
     mctx.beginPath(); mctx.arc(J.x * sx, J.y * sy, 4, 0, 7); mctx.fill(); mctx.stroke();
   }
 
   /* ================================================================ laço */
-  var teclas = {}, toque = {}, ultimo = 0, emJogo = false, perto = -1;
-  function portaDe(ci) { var k = CASAS[ci]; return { x: (k.x + 1.5) * T, y: (k.y + 3.25) * T }; }
+  var teclas = {}, toque = {}, ultimo = 0, emJogo = false, perto = -1, pausado = false;
+  function portaDe(ci) { var k = CASAS[ci]; return { x: (k.x + 1.5) * T, y: (k.y + 3.3) * T }; }
   function atualizar(dt) {
     var vx = 0, vy = 0;
-    if (teclas.ArrowLeft || teclas.a || toque.esq) vx -= 1;
-    if (teclas.ArrowRight || teclas.d || toque.dir) vx += 1;
-    if (teclas.ArrowUp || teclas.w || toque.cima) vy -= 1;
-    if (teclas.ArrowDown || teclas.s || toque.baixo) vy += 1;
+    if (J.tonto > 0) J.tonto -= dt;
+    else {
+      if (teclas.ArrowLeft || teclas.a || toque.esq) vx -= 1;
+      if (teclas.ArrowRight || teclas.d || toque.dir) vx += 1;
+      if (teclas.ArrowUp || teclas.w || toque.cima) vy -= 1;
+      if (teclas.ArrowDown || teclas.s || toque.baixo) vy += 1;
+    }
     J.andando = !!(vx || vy);
     if (J.andando) {
-      var n = Math.hypot(vx, vy), v = 190 * dt;
+      var n = Math.hypot(vx, vy), v = 74 * dt;
       vx = vx / n * v; vy = vy / n * v;
       if (Math.abs(vx) > Math.abs(vy)) J.dir = vx > 0 ? "dir" : "esq"; else J.dir = vy > 0 ? "baixo" : "cima";
-      var hw = 10, hh = 6;
-      function livre(px, py) { return !bloqueado(px - hw, py - hh) && !bloqueado(px + hw, py - hh) && !bloqueado(px - hw, py + hh / 2) && !bloqueado(px + hw, py + hh / 2); }
+      var hw = 4, hh = 3;
+      var livre = function (px0, py0) { return !bloqueado(px0 - hw, py0 - hh) && !bloqueado(px0 + hw, py0 - hh) && !bloqueado(px0 - hw, py0) && !bloqueado(px0 + hw, py0); };
       if (livre(J.x + vx, J.y)) J.x += vx;
       if (livre(J.x, J.y + vy)) J.y += vy;
-      J.passo += dt * 11;
+      J.passo += dt * 9;
     } else J.passo = 0;
-    carros.forEach(function (k) {
-      if (k.vert) { k.y += k.vel * dt; if (k.y > H * T + 60) k.y = -60; if (k.y < -60) k.y = H * T + 60; }
-      else { k.x += k.vel * dt; var lim = 40 * T; if (k.x > lim + 60) k.x = -60; if (k.x < -60) k.x = lim + 60; }
-    });
-    // porta perto?
+    moverCarros(dt);
     var achou = -1;
-    CASAS.forEach(function (k, ci) { var p = portaDe(ci); if (Math.hypot(J.x - p.x, J.y - p.y) < 34) achou = ci; });
+    CASAS.forEach(function (k, ci) { var p = portaDe(ci); if (Math.hypot(J.x - p.x, J.y - p.y) < 13) achou = ci; });
     if (achou !== perto) { perto = achou; mostrarAvisoPorta(); }
   }
   function mostrarAvisoPorta() {
@@ -3144,65 +3377,143 @@ li.ok .caixinha { background: #1f8a4c; border-color: #1f8a4c; color: #fff; }
     a.hidden = false;
   }
 
+  function bolha(g, x, y, cor, simbolo) {
+    // balão de pixel 13 x 15 com ponta
+    px(g, x - 6, y - 14, 13, 11, CONTORNO); px(g, x - 5, y - 15, 11, 13, CONTORNO);
+    px(g, x - 5, y - 13, 11, 9, cor); px(g, x - 4, y - 14, 9, 11, cor); px(g, x - 4, y - 13, 9, 2, clarear(cor === "#8a94a3" ? "#8a94a3" : cor, 0.3));
+    px(g, x - 1, y - 3, 3, 2, CONTORNO); px(g, x, y - 1, 1, 1, CONTORNO); px(g, x, y - 3, 1, 1, cor);
+    g.fillStyle = "#ffffff";
+    if (simbolo === "!") { px(g, x - 1, y - 12, 2, 5, "#fff"); px(g, x - 1, y - 6, 2, 2, "#fff"); }
+    else if (simbolo === "ok") { px(g, x - 3, y - 9, 1, 1, "#fff"); px(g, x - 2, y - 8, 1, 1, "#fff"); px(g, x - 1, y - 7, 1, 1, "#fff"); px(g, x, y - 8, 1, 1, "#fff"); px(g, x + 1, y - 9, 1, 1, "#fff"); px(g, x + 2, y - 10, 1, 1, "#fff"); px(g, x + 3, y - 11, 1, 1, "#fff"); }
+    else { px(g, x - 3, y - 9, 7, 5, "#fff"); px(g, x - 2, y - 12, 1, 3, "#fff"); px(g, x + 2, y - 12, 1, 3, "#fff"); px(g, x - 1, y - 13, 3, 1, "#fff"); px(g, x, y - 8, 1, 2, cor); }
+  }
+
   function desenhar(t) {
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    ctx.fillStyle = "#6fae52"; ctx.fillRect(0, 0, VW, VH);
-    var vw = VW / ESC, vh = VH / ESC;
-    CAM.x = Math.max(0, Math.min(W * T - vw, J.x - vw / 2)); CAM.y = Math.max(0, Math.min(H * T - vh, J.y - vh / 2 - 20));
-    if (vw > W * T) CAM.x = (W * T - vw) / 2; if (vh > H * T) CAM.y = (H * T - vh) / 2;
-    ctx.setTransform(DPR * ESC, 0, 0, DPR * ESC, -CAM.x * DPR * ESC, -CAM.y * DPR * ESC);
-    var x0 = Math.max(0, Math.floor(CAM.x / T)), y0 = Math.max(0, Math.floor(CAM.y / T));
-    var x1 = Math.min(W - 1, Math.ceil((CAM.x + vw) / T)), y1 = Math.min(H - 1, Math.ceil((CAM.y + vh) / T));
-    desenharChao(x0, y0, x1, y1);
-    // alvo do GPS: círculo na porta
-    if (E.alvo != null) {
-      var pa = portaDe(OS[E.alvo].casa), pul = (Math.sin(t / 250) + 1) / 2;
-      ctx.strokeStyle = "rgba(255,210,63," + (0.5 + pul * 0.5) + ")"; ctx.lineWidth = 4;
-      ctx.beginPath(); ctx.ellipse(pa.x, pa.y - 4, 22 + pul * 6, 11 + pul * 3, 0, 0, 7); ctx.stroke();
+    var vw = BW, vh = BH;
+    var cx = Math.round(J.x - vw / 2), cy = Math.round(J.y - vh / 2 - 8);
+    CAM.x = Math.max(0, Math.min(W * T - vw, cx)); CAM.y = Math.max(0, Math.min(H * T - vh, cy));
+    if (vw > W * T) CAM.x = Math.round((W * T - vw) / 2); if (vh > H * T) CAM.y = Math.round((H * T - vh) / 2);
+    var g = bctx;
+    g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = "#3e7a33"; g.fillRect(0, 0, vw, vh);
+    g.setTransform(1, 0, 0, 1, -CAM.x, -CAM.y);
+    g.drawImage(chao, 0, 0);
+    // água brilhando
+    for (var i = 0; i < 14; i++) { var wx = 42 * T + Math.floor(hash(i, 3) * 6 * T), wy = 14 * T + Math.floor(hash(3, i) * 17 * T); if (tileDe(wx, wy) === "w" && Math.floor(t / 400 + i) % 3 === 0) px(g, wx, wy, 3, 1, "#d6f0fc"); }
+    // alvo do GPS: anel piscando na porta
+    if (E.alvo != null && emJogo !== null) {
+      var pa = portaDe(OS[E.alvo].casa), on = Math.floor(t / 300) % 2;
+      elipse(g, Math.round(pa.x), Math.round(pa.y - 2), 10 + on, 4 + on, on ? "rgba(255,210,63,.85)" : "rgba(255,210,63,.55)");
+      elipse(g, Math.round(pa.x), Math.round(pa.y - 2), 7 + on, 2 + on, "rgba(0,0,0,0)");
     }
-    carros.forEach(function (k) { carro(ctx, k); });
-    // objetos ordenados pela altura
     var objs = [];
-    CASAS.forEach(function (k, ci) { objs.push({ y: (k.y + 3) * T, f: function () { casa(ctx, ci); } }); });
-    predios.forEach(function (p) { objs.push({ y: (p.y + p.h) * T, f: function () { predio(ctx, p); } }); });
-    arvores.forEach(function (a) { if (a.x >= x0 - 1 && a.x <= x1 + 1 && a.y >= y0 - 1 && a.y <= y1 + 2) objs.push({ y: (a.y + 0.85) * T, f: function () { arvore(ctx, a); } }); });
-    // clientes na porta das OS liberadas e não feitas
+    CASAS.forEach(function (k, ci) {
+      objs.push({ y: (k.y + 3) * T - 1, f: function () {
+        g.drawImage(SPR_CASAS[ci], k.x * T - 2, k.y * T - 4);
+        var oi = osDaCasa(ci); if (oi >= 0) g.drawImage(SPR_PLACAS[OS[oi].op], k.x * T + 34, k.y * T + 33);
+      } });
+    });
+    predios.forEach(function (p, i2) { objs.push({ y: (p.y + p.h) * T - 1, f: function () { g.drawImage(SPR_PRED[i2], p.x * T - 1, p.y * T - 1); } }); });
+    predios.filter(function (p) { return p.tipo === "senai"; }).forEach(function (p) {
+      objs.push({ y: (p.y + p.h) * T - 2, f: function () { g.drawImage(VAN, (p.x + p.w) * T + 6, (p.y + p.h) * T - 20); } });
+    });
+    var x0 = Math.floor(CAM.x / T) - 2, x1 = Math.ceil((CAM.x + vw) / T) + 2, y0 = Math.floor(CAM.y / T) - 2, y1 = Math.ceil((CAM.y + vh) / T) + 3;
+    arvores.forEach(function (a) { if (a.x >= x0 && a.x <= x1 && a.y >= y0 && a.y <= y1) objs.push({ y: (a.y + 1) * T - 2, f: function () { g.drawImage(SPR_ARV[a.tipo], a.x * T - 4, (a.y + 1) * T - 34); } }); });
+    enfeites.forEach(function (e2) {
+      if (e2.x < x0 || e2.x > x1 || e2.y < y0 || e2.y > y1) return;
+      var s = SPR_ENF[e2.tipo];
+      objs.push({ y: (e2.y + 1) * T - 3, f: function () { g.drawImage(s, Math.round((e2.x + 0.5) * T - s.width / 2), (e2.y + 1) * T - s.height - 1); } });
+    });
+    carros.forEach(function (k) {
+      var b = caixaCarro(k);
+      objs.push({ y: b.y + b.h, f: function () {
+        g.fillStyle = "rgba(0,0,0,.25)"; g.fillRect(Math.round(b.x + 2), Math.round(b.y + b.h - 2), b.w, 3);
+        if (k.vert) g.drawImage(k.spr, Math.round(k.faixa * T - 9), Math.round(k.pos - k.comp / 2 - 1));
+        else if (k.vel >= 0 && (k.ult || 1) > 0) g.drawImage(k.spr, Math.round(k.pos - k.comp / 2 - 1), Math.round(k.faixa * T - 13));
+        else { g.save(); g.translate(Math.round(k.pos + k.comp / 2 + 1), 0); g.scale(-1, 1); g.drawImage(k.spr, 0, Math.round(k.faixa * T - 13)); g.restore(); }
+      } });
+    });
     CASAS.forEach(function (k, ci) {
       var oi = osDaCasa(ci); if (oi < 0 || !liberada(oi) || feita(oi)) return;
       var p = portaDe(ci);
-      objs.push({ y: p.y - 6, f: function () { pessoa(ctx, p.x + 30, p.y - 6, "baixo", Math.sin(t / 400 + ci) * 0.4, OS[oi].visual, false); } });
+      objs.push({ y: p.y - 3, f: function () { pessoa(g, Math.round(p.x + 13), Math.round(p.y - 3), "baixo", Math.floor(t / 500 + ci) % 4 === 1 ? 1 : 0, OS[oi].visual, false); } });
     });
-    objs.push({ y: J.y, f: function () { pessoa(ctx, J.x, J.y, J.dir, J.passo, VISUAL_TEC, true); } });
+    objs.push({ y: J.y, f: function () {
+      if (J.tonto > 0 && Math.floor(t / 90) % 2) return;
+      pessoa(g, Math.round(J.x), Math.round(J.y), J.dir, J.passo, VISUAL_TEC, true);
+      if (J.tonto > 0) { var a2 = t / 120; for (var s2 = 0; s2 < 3; s2++) px(g, Math.round(J.x + Math.cos(a2 + s2 * 2.1) * 7), Math.round(J.y - 25 + Math.sin(a2 + s2 * 2.1) * 2), 2, 2, "#ffe066"); }
+    } });
     objs.sort(function (a, b) { return a.y - b.y; }).forEach(function (o) { o.f(); });
-    CASAS.forEach(function (k, ci) { marcador(ctx, ci, t); });
-    placas.forEach(function (p) { placa(ctx, p); });
-    // seta do GPS na borda da tela
+    // balões das OS
+    CASAS.forEach(function (k, ci) {
+      var oi = osDaCasa(ci); if (oi < 0) return;
+      var os = OS[oi], est = E.progresso[os.id] || 0, lib = liberada(oi), sobe = Math.floor(t / 350 + ci) % 2;
+      bolha(g, (k.x + 1.5) * T, k.y * T - 4 - sobe, est ? "#1f8a4c" : lib ? COR[os.op] : "#8a94a3", est ? "ok" : lib ? "!" : "cadeado");
+    });
+    // amplia sem suavizar
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(buf, 0, 0, BW * P, BH * P);
+    // textos por cima, em resolução cheia
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    placas.forEach(function (p) { var s = naTela(p.x * T, p.y * T); if (s.x > -200 && s.x < VW + 200 && s.y > -40 && s.y < VH + 40) placaTexto(s.x, s.y, p.txt, p.vert, p.parque); });
+    predios.forEach(function (p) { var s = naTela((p.x + p.w / 2) * T, (p.y + p.h) * T + 7); placaTexto(s.x, s.y, p.nome, false, false, p.tipo === "senai" ? "#1f63c6" : "#1d1b2a"); });
+    CASAS.forEach(function (k, ci) {
+      var oi = osDaCasa(ci); if (oi < 0) return;
+      var s = naTela(k.x * T + 40, k.y * T + 36.5), s2 = naTela(k.x * T + 10, k.y * T + 29);
+      rotulo(s.x, s.y, NOME_OP[OS[oi].op], 10 * P / 4);
+      rotulo(s2.x, s2.y, "nº " + OS[oi].numero, 9 * P / 4, "#3b2a1a", "#f4ecd8");
+    });
+    // seta do GPS na borda
     if (E.alvo != null) {
-      var pa2 = portaDe(OS[E.alvo].casa), sx = (pa2.x - CAM.x) * ESC, sy = (pa2.y - CAM.y) * ESC;
-      var dentro = sx > 30 && sy > 70 && sx < VW - 30 && sy < VH - 30;
-      if (!dentro) {
-        var cx = VW / 2, cy = VH / 2, ang = Math.atan2(sy - cy, sx - cx);
-        var m = 46, ex = Math.max(m, Math.min(VW - m, cx + Math.cos(ang) * VW)), ey = Math.max(m + 50, Math.min(VH - m - 60, cy + Math.sin(ang) * VH));
+      var pa2 = portaDe(OS[E.alvo].casa), sp = naTela(pa2.x, pa2.y);
+      if (!(sp.x > 30 && sp.y > 80 && sp.x < VW - 30 && sp.y < VH - 30)) {
+        var cxs = VW / 2, cys = VH / 2, ang = Math.atan2(sp.y - cys, sp.x - cxs);
+        var m = 50, ex = Math.max(m, Math.min(VW - m, cxs + Math.cos(ang) * VW)), ey = Math.max(m + 56, Math.min(VH - m - 60, cys + Math.sin(ang) * VH));
         ctx.save(); ctx.translate(ex, ey); ctx.rotate(ang);
-        ctx.fillStyle = "#ffd23f"; ctx.strokeStyle = "#1b2a3d"; ctx.lineWidth = 3;
-        ctx.beginPath(); ctx.moveTo(22, 0); ctx.lineTo(-10, -15); ctx.lineTo(-4, 0); ctx.lineTo(-10, 15); ctx.closePath(); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = "#ffd23f"; ctx.strokeStyle = CONTORNO; ctx.lineWidth = 4; ctx.lineJoin = "miter";
+        ctx.beginPath(); ctx.moveTo(24, 0); ctx.lineTo(-10, -16); ctx.lineTo(-4, 0); ctx.lineTo(-10, 16); ctx.closePath(); ctx.stroke(); ctx.fill();
         ctx.restore();
-        ctx.font = "bold 12px Arial"; ctx.textAlign = "center"; ctx.fillStyle = "#1b2a3d";
         var dist = Math.round(Math.hypot(pa2.x - J.x, pa2.y - J.y) / T * 4);
-        ctx.fillStyle = "rgba(255,255,255,.92)"; rr(ctx, ex - 40, ey + 20, 80, 20, 10); ctx.fill();
-        ctx.fillStyle = "#1b2a3d"; ctx.fillText(OS[E.alvo].cliente.split(" ")[0] + " · " + dist + " m", ex, ey + 34);
+        rotulo(ex, ey + 32, OS[E.alvo].cliente.split(" ")[0] + " · " + dist + " m", 12, CONTORNO, "#fff7d6");
       }
     }
   }
+  function rotulo(x, y, txt, tam, cor, fundo) {
+    ctx.font = "800 " + Math.round(tam) + "px " + FONTE_JOGO; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    var w = ctx.measureText(txt).width + tam * 0.9, h = tam * 1.6;
+    if (fundo) { ctx.fillStyle = CONTORNO; ctx.fillRect(Math.round(x - w / 2 - 2), Math.round(y - h / 2 - 2), Math.round(w + 4), Math.round(h + 4)); ctx.fillStyle = fundo; ctx.fillRect(Math.round(x - w / 2), Math.round(y - h / 2), Math.round(w), Math.round(h)); }
+    else { ctx.lineWidth = 3; ctx.strokeStyle = CONTORNO; ctx.strokeText(txt, x, y + 1); }
+    ctx.fillStyle = cor || "#ffffff"; ctx.fillText(txt, x, y + 1);
+  }
+  function placaTexto(x, y, txt, vert, parque, fundo) {
+    ctx.save(); ctx.translate(Math.round(x), Math.round(y)); if (vert) ctx.rotate(-Math.PI / 2);
+    ctx.font = "800 13px " + FONTE_JOGO; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    var w = Math.round(ctx.measureText(txt).width + 20), h = 24;
+    ctx.fillStyle = CONTORNO; ctx.fillRect(-w / 2 - 3, -h / 2 - 3, w + 6, h + 6);
+    ctx.fillStyle = fundo || (parque ? "#2e7d32" : "#17663a"); ctx.fillRect(-w / 2, -h / 2, w, h);
+    ctx.fillStyle = "rgba(255,255,255,.85)"; ctx.fillRect(-w / 2 + 2, -h / 2 + 2, w - 4, 2); ctx.fillRect(-w / 2 + 2, h / 2 - 4, w - 4, 2);
+    ctx.fillStyle = "#ffffff"; ctx.fillText(txt, 0, 1);
+    ctx.restore();
+  }
+  var FONTE_JOGO = '"Trebuchet MS", "Segoe UI", system-ui, sans-serif';
+  var VAN = null;
+  function montarVan() {
+    // van do técnico: branca com faixa azul e laranja do SENAI
+    var c = tela(32, 22), g = c.getContext("2d");
+    px(g, 1, 3, 29, 13, "#f4f6f8"); px(g, 1, 3, 29, 2, "#ffffff"); px(g, 1, 13, 29, 3, "#c9d1d9");
+    px(g, 22, 5, 7, 5, "#8fd0f0"); px(g, 23, 5, 2, 1, "#d6f0fc"); px(g, 3, 6, 6, 4, "#8fd0f0");
+    px(g, 1, 10, 29, 2, "#1f63c6"); px(g, 1, 12, 29, 1, "#f39200");
+    px(g, 28, 13, 2, 2, "#fff3b0"); px(g, 1, 13, 1, 2, "#e74c3c");
+    [4, 21].forEach(function (wx) { px(g, wx, 15, 6, 5, "#1d1b2a"); px(g, wx + 2, 16, 2, 2, "#9aa5b1"); });
+    VAN = contornar(c);
+  }
   function laco(t) {
     var dt = Math.min(0.05, (t - (ultimo || t)) / 1000); ultimo = t;
-    if (emJogo) atualizar(dt);
+    if (emJogo && !pausado) atualizar(dt);
+    else if (!pausado) moverCarros(dt);
     desenhar(t);
     if (emJogo) desenharMinimapa();
     requestAnimationFrame(laco);
   }
-
   /* ================================================================ HUD e telas */
   function telas(id) {
     ["t-inicio", "t-lista", "t-ajuda", "t-casa", "t-resultado", "t-codigos"].forEach(function (t) { $(t).hidden = t !== id; });
@@ -3217,7 +3528,7 @@ li.ok .caixinha { background: #1f8a4c; border-color: #1f8a4c; color: #fff; }
   function atualizarHud() {
     var n = OS.filter(function (o, i) { return feita(i); }).length;
     $("hud-nome").textContent = E.nome || "Técnico(a)";
-    $("hud-os").textContent = n + " de " + OS.length + " OS · " + estrelasTotais() + " de " + OS.length * 3 + " ★";
+    $("hud-os").textContent = n + " de " + OS.length + " OS · " + estrelasTotais() + " de " + OS.length * 3 + " ★" + (J.batidas ? " · 💥 " + J.batidas : "");
   }
   var toastT = 0;
   function toast(txt, tipo) {
@@ -3307,6 +3618,14 @@ li.ok .caixinha { background: #1f8a4c; border-color: #1f8a4c; color: #fff; }
     return c;
   }
 
+  // fala do cliente aparecendo letra por letra (clique para mostrar tudo)
+  var falaT = 0;
+  function escreverFala(txt) {
+    var el = $("cliente-fala"), i = 0; clearInterval(falaT); el.textContent = ""; el.classList.add("digitando");
+    function fim() { clearInterval(falaT); el.textContent = txt; el.classList.remove("digitando"); }
+    el.onclick = fim;
+    falaT = setInterval(function () { if (pausado) return; i += 2; el.textContent = txt.slice(0, i); if (i >= txt.length) fim(); }, 22);
+  }
   function entrarNaCasa(oi) {
     var os = OS[oi], p = PERFIS[os.op];
     C = { oi: oi, os: os, perfil: p, config: configInicial(p, os), hosts: hostsIniciais(p), cenario: cenario(p),
@@ -3317,10 +3636,11 @@ li.ok .caixinha { background: #1f8a4c; border-color: #1f8a4c; color: #fff; }
     $("casa-ponto").style.background = COR[os.op];
     $("casa-titulo").textContent = "OS nº " + String(oi + 1).padStart(2, "0") + " · " + os.lugar;
     $("casa-sub").textContent = os.cliente + " · roteador da " + p.provedor;
-    $("cliente-fala").innerHTML = "<b>" + esc(os.cliente) + ":</b> " + esc(os.fala);
+    $("cliente-nome").textContent = os.cliente;
+    escreverFala(os.fala);
     var rc = $("cliente-rosto").getContext("2d"); rc.clearRect(0, 0, 72, 72);
     rc.fillStyle = "#e9f1fb"; rc.beginPath(); rc.arc(36, 36, 36, 0, 7); rc.fill();
-    rc.save(); rc.translate(36, 100); rc.scale(1.25, 1.25); pessoa(rc, 0, 0, "baixo", 0, os.visual, false); rc.restore();
+    pessoa(rc, 36, 104, "baixo", 0, os.visual, false, 4);
     $("toast").hidden = true; $("url").value = ""; $("dica").hidden = true; $("etiqueta").hidden = true;
     $("btn-dica").setAttribute("aria-expanded", "false");
     $("painel").innerHTML = '<div class="nav-vazio"><div class="nav-ico">🌐</div><p><b>Navegador aberto.</b></p><p>Primeiro descubra o <b>IP do roteador</b>: no <b>Prompt de Comando</b> (tela preta acima), digite <b>ipconfig</b> e procure o <b>Gateway Padrão</b>.</p></div>';
@@ -3631,9 +3951,9 @@ li.ok .caixinha { background: #1f8a4c; border-color: #1f8a4c; color: #fff; }
   // tocar no mundo: anda até lá (bom para quem usa mouse)
   cv.addEventListener("pointerdown", function (ev) {
     if (!emJogo) return;
-    var wx = ev.clientX / ESC + CAM.x, wy = ev.clientY / ESC + CAM.y;
+    var m = noMundo(ev.clientX, ev.clientY), wx = m.x, wy = m.y;
     CASAS.forEach(function (k, ci) {
-      if (wx >= k.x * T && wx <= (k.x + 3) * T && wy >= k.y * T - 30 && wy <= (k.y + 3.5) * T) { var oi = osDaCasa(ci); if (liberada(oi)) { E.alvo = oi; toast("📍 GPS: " + esc(OS[oi].lugar) + ". Siga o círculo amarelo até a porta."); } }
+      if (wx >= k.x * T && wx <= (k.x + 3) * T && wy >= k.y * T - 8 && wy <= (k.y + 3.5) * T) { var oi = osDaCasa(ci); if (liberada(oi)) { E.alvo = oi; toast("📍 GPS: " + esc(OS[oi].lugar) + ". Siga o círculo amarelo até a porta."); } }
     });
   });
 
@@ -3647,13 +3967,53 @@ li.ok .caixinha { background: #1f8a4c; border-color: #1f8a4c; color: #fff; }
   };
   $("nome").addEventListener("keydown", function (ev) { if (ev.key === "Enter") $("btn-comecar").click(); });
 
+  /* ================================================================ intervalo pelo relógio do computador */
+  // 9:30–10:00 e 15:30–16:00 (hora do Windows). O jogo inteiro fica pausado e coberto.
+  var INTERVALOS = [[9 * 60 + 30, 10 * 60], [15 * 60 + 30, 16 * 60]];
+  var SEM_INTERVALO = /sem-intervalo/.test(location.hash), FORCAR_INTERVALO = /forcar-intervalo/.test(location.hash);
+  var emIntervalo = false;
+  function hm(m) { return Math.floor(m / 60) + ":" + String(m % 60).padStart(2, "0"); }
+  function faixaAgora(d) {
+    var m = d.getHours() * 60 + d.getMinutes();
+    if (FORCAR_INTERVALO) return [m, m + 30];
+    for (var i = 0; i < INTERVALOS.length; i++) if (m >= INTERVALOS[i][0] && m < INTERVALOS[i][1]) return INTERVALOS[i];
+    return null;
+  }
+  function checarIntervalo() {
+    var d = new Date(), f = SEM_INTERVALO ? null : faixaAgora(d), ov = $("t-intervalo");
+    if (f) {
+      if (!emIntervalo) {
+        emIntervalo = true; pausado = true; teclas = {}; toque = {};
+        if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+        ov.hidden = false; document.body.classList.add("no-intervalo");
+      }
+      $("iv-faixa").textContent = hm(f[0]) + " às " + hm(f[1]);
+      $("iv-relogio").textContent = String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0") + ":" + String(d.getSeconds()).padStart(2, "0");
+      var falta = f[1] * 60 - (d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds());
+      $("iv-falta").textContent = falta > 60 ? Math.ceil(falta / 60) + " min" : falta + " s";
+    } else if (emIntervalo) {
+      emIntervalo = false; pausado = false; ov.hidden = true; document.body.classList.remove("no-intervalo");
+      toast("🔔 Fim do intervalo! O plantão continua.", "ok");
+    }
+  }
+  // durante o intervalo, nenhuma tecla, clique ou toque chega ao jogo ou ao painel
+  ["keydown", "keyup", "keypress", "pointerdown", "mousedown", "click", "touchstart", "submit", "input", "focusin"].forEach(function (tipo) {
+    addEventListener(tipo, function (ev) {
+      if (!emIntervalo) return;
+      ev.stopPropagation(); ev.preventDefault();
+      if (tipo === "focusin" && ev.target && ev.target.blur) ev.target.blur();
+    }, true);
+  });
+  (function () { var ivb = $("iv-boneco").getContext("2d"); pessoa(ivb, 64, 168, "baixo", 0, VISUAL_TEC, true, 7); })();
+  checarIntervalo(); setInterval(checarIntervalo, 1000);
+
   /* ================================================================ início */
   carregar();
-  montarMapa(); criarCarros(); montarMinimapa();
+  montarMapa(); montarChao(); montarSprites(); montarVan(); criarCarros(); montarMinimapa();
   redimensionar(); addEventListener("resize", redimensionar);
   $("nome").value = E.nome;
   E.alvo = proximaOs();
-  var ib = $("ini-boneco").getContext("2d"); ib.save(); ib.translate(80, 190); ib.scale(2.6, 2.6); pessoa(ib, 0, 0, "baixo", 0, VISUAL_TEC, true); ib.restore();
+  var ib = $("ini-boneco").getContext("2d"); pessoa(ib, 80, 190, "baixo", 0, VISUAL_TEC, true, 7);
   atualizarHud(); telas("t-inicio"); iniciarXp();
   requestAnimationFrame(laco);
   // para os testes automáticos
