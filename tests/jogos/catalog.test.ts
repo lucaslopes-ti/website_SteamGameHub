@@ -64,4 +64,24 @@ describe("XP dos jogos das aulas", () => {
       })
     ).toBe(100);
   });
+
+  it("plantão do técnico tem 16 OS e 1800 XP no total", () => {
+    const plantao = JOGO_POR_ID.get("plantao-tecnico")!;
+    expect(plantao.fases).toHaveLength(16);
+    expect(plantao.fases.map((f) => f.id)).toEqual(
+      Array.from({ length: 16 }, (_, i) => `os${String(i + 1).padStart(2, "0")}`)
+    );
+    expect(xpMaximoDoJogo(plantao)).toBe(1800);
+    const r = aplicarResultadoFase([], "plantao-tecnico", "os01", 3);
+    expect(r).toMatchObject({ ok: true, xpGanho: 100 });
+  });
+
+  it("os dois jogos somam XP juntos no saldo", () => {
+    expect(
+      computeEarnedXpFromDoc({
+        completedLessonIds: [],
+        gameMissionIds: ["montador-cabo:cores-1", "plantao-tecnico:os05-1", "plantao-tecnico:os05-2"],
+      })
+    ).toBe(60 + 40 + 30);
+  });
 });
