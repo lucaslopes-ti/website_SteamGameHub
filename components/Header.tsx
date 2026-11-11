@@ -24,6 +24,7 @@ import {
   Upload,
   Cable,
   ShoppingBag,
+  MapPinned,
 } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useAuth } from "./AuthProvider";
@@ -81,6 +82,12 @@ export default function Header() {
       href: "/montador-cabo",
       label: "Montador de Cabo",
       icon: Cable,
+      isStatic: true,
+    },
+    {
+      href: "/plantao-tecnico",
+      label: "Plantão do Técnico",
+      icon: MapPinned,
       isNew: true,
       isStatic: true,
     },

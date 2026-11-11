@@ -45,6 +45,26 @@ export const JOGOS_XP: readonly JogoXp[] = [
     xpPorEstrela: [60, 40, 40],
     bonusCompleto: 200,
   },
+  {
+    id: "plantao-tecnico",
+    nome: "Plantão do Técnico (roteadores no bairro Santa Mônica)",
+    fases: [
+      { id: "os01", nome: "OS 01 · Salão de beleza (Vivo)" },
+      { id: "os02", nome: "OS 02 · Casa do Seu Jorge (Claro)" },
+      { id: "os03", nome: "OS 03 · Estudante da UFU (Algar)" },
+      { id: "os04", nome: "OS 04 · Padaria Pão Quente (MZNet)" },
+      { id: "os05", nome: "OS 05 · República de estudantes (Vivo)" },
+      { id: "os06", nome: "OS 06 · Academia perto do Sabiá (Claro)" },
+      { id: "os07", nome: "OS 07 · Escritório de contabilidade (Algar)" },
+      { id: "os08", nome: "OS 08 · Lanchonete do Kaique (MZNet)" },
+      { id: "os09", nome: "OS 09 · Consultório (Vivo)" },
+      { id: "os10", nome: "OS 10 · Loja de capinhas (Claro)" },
+      { id: "os11", nome: "OS 11 · Casa do professor (Algar)" },
+      { id: "os12", nome: "OS 12 · Clínica veterinária (MZNet)" },
+    ],
+    xpPorEstrela: [40, 30, 30],
+    bonusCompleto: 200,
+  },
 ];
 
 export const JOGO_POR_ID: ReadonlyMap<string, JogoXp> = new Map(

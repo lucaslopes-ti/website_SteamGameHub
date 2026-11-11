@@ -97,13 +97,14 @@ const nextConfig = {
 
   // Simuladores e jogos das aulas (Redes SOHO e Microcomputadores): arquivos únicos
   // estáticos em public/ (gerados no repositório aulas-redes). Estes atalhos deixam
-  // o endereço curto: /simulador-roteador, /montador-cabo, /caca-ao-sinal e /oficina-tecnico
+  // o endereço curto: /simulador-roteador, /montador-cabo, /caca-ao-sinal, /oficina-tecnico e /plantao-tecnico
   async rewrites() {
     return [
       { source: '/simulador-roteador', destination: '/simulador-roteador/index.html' },
       { source: '/montador-cabo', destination: '/montador-cabo/index.html' },
       { source: '/caca-ao-sinal', destination: '/caca-ao-sinal/index.html' },
       { source: '/oficina-tecnico', destination: '/oficina-tecnico/index.html' },
+      { source: '/plantao-tecnico', destination: '/plantao-tecnico/index.html' },
     ];
   },
 };
