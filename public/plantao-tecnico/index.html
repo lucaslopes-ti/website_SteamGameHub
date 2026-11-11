@@ -841,12 +841,31 @@ body.no-intervalo .toast { display: none; }
   .fala p, .tarefas li { font-size: 14px; }
 }
 
+/* v3: minimapa mais largo, escolha de personagem, segredo do ônibus, noite */
+#minimapa { width: 224px; height: 130px; }
+@media (pointer: coarse) { #minimapa { width: 154px; height: 89px; } }
+.ini-perso { display: flex; gap: 8px; flex-wrap: wrap; align-items: stretch; margin: 10px 0 4px; }
+.ini-perso p { width: 100%; margin: 0; font-weight: 700; }
+.ini-perso button { display: flex; align-items: center; gap: 6px; border: 3px solid var(--px-borda); border-radius: 6px; background: #fff; padding: 4px 10px 4px 4px; cursor: pointer; font: 700 14px var(--ap-fonte); text-align: left; box-shadow: 3px 3px 0 var(--px-borda); }
+.ini-perso button canvas { background: linear-gradient(#8fd0f0 0 62%, #6fae52 62%); border-radius: 3px; image-rendering: pixelated; }
+.ini-perso button small { color: #566476; font-weight: 600; }
+.ini-perso button.sel { background: #fff3c4; border-color: #d96d00; box-shadow: 3px 3px 0 #d96d00; }
+.surpresa .sp-onibus { font-size: 56px; animation: busPassa 1.6s ease-in-out infinite; }
+@keyframes busPassa { 0% { transform: translateX(-40px); } 50% { transform: translateX(40px); } 100% { transform: translateX(-40px); } }
+.sp-segredo { background: #fff3c4; border: 3px solid #d96d00; border-radius: 6px; padding: 8px 10px; }
+.intervalo.noite { background: radial-gradient(circle at 70% 20%, #24305e, #0b1024 70%); }
+.nt-card { max-width: 760px; }
+.nt-cena-caixa { flex: 0 0 auto; text-align: center; }
+#nt-cena { width: 320px; height: 192px; border: 3px solid var(--px-borda); border-radius: 6px; image-rendering: pixelated; display: block; }
+#nt-legenda { margin: 6px 0 0; font-weight: 800; color: #13233a; }
+@media (max-width: 700px) { .nt-card { flex-direction: column; text-align: center; } #nt-cena { width: 240px; height: 144px; margin: 0 auto; } }
+
 </style>
 </head>
 <body class="jt">
   <!-- ============ mundo ============ -->
   <canvas id="mundo" aria-label="Bairro Santa Mônica, em Uberlândia, visto de cima"></canvas>
-  <canvas id="minimapa" width="200" height="144" aria-hidden="true"></canvas>
+  <canvas id="minimapa" width="224" height="130" aria-hidden="true"></canvas>
 
   <header class="hud" id="hud" hidden>
     <div class="hud-esq">
@@ -902,6 +921,12 @@ body.no-intervalo .toast { display: none; }
           <li>No <b>Prompt</b> do notebook do cliente, digite <kbd>ipconfig</kbd> e ache o <b>Gateway Padrão</b> (o IP do roteador).</li>
           <li>Digite esse IP no <b>navegador</b>, entre com o usuário e a senha da <b>etiqueta</b> e faça o que o cliente pediu.</li>
         </ol>
+        <div class="ini-perso" role="group" aria-label="Escolha seu personagem">
+          <p>Escolha seu personagem</p>
+          <button type="button" data-personagem="fp"><canvas width="48" height="58" aria-hidden="true"></canvas><span>Técnica<br><small>cabelo preto</small></span></button>
+          <button type="button" data-personagem="fl"><canvas width="48" height="58" aria-hidden="true"></canvas><span>Técnica<br><small>cabelo loiro</small></span></button>
+          <button type="button" data-personagem="m"><canvas width="48" height="58" aria-hidden="true"></canvas><span>Técnico<br><small>&nbsp;</small></span></button>
+        </div>
         <label class="ini-nome">Seu nome <input id="nome" maxlength="24" autocomplete="off" placeholder="Digite seu nome"></label>
         <p class="ini-aviso" id="aviso-nome" hidden>Digite seu nome para o código de cada OS sair com ele.</p>
         <div class="ini-botoes">
@@ -934,7 +959,8 @@ body.no-intervalo .toast { display: none; }
         <li><b>Na casa:</b> no Prompt, digite <kbd>ipconfig</kbd>. O <b>Gateway Padrão</b> é o IP do roteador. Digite esse IP no navegador, entre com o usuário e a senha da <b>Etiqueta</b> e faça cada item da lista.</li>
         <li><b>Estrelas:</b> 3 estrelas se errar no máximo 1 vez (dicas contam). Pode repetir a casa para melhorar.</li>
         <li><b>Carros:</b> atravesse na <b>faixa de pedestre</b>. Lá os carros param; fora dela, eles batem em você.</li>
-        <li><b>Intervalo:</b> das 9:30 às 10:00 e das 15:30 às 15:45 (relógio do computador) o jogo pausa sozinho.</li>
+        <li><b>Intervalo:</b> das 9:30 às 10:00 e das 15:15 às 15:35 (relógio do computador) o jogo pausa sozinho. Das 18h às 7h o plantão fica fechado.</li>
+        <li><b>Semáforos:</b> os carros param no vermelho. Atravesse na faixa de pedestre.</li>
       </ol>
       <p><b>Palavras do roteador</b></p>
       <ul class="glossario">
@@ -1022,6 +1048,32 @@ body.no-intervalo .toast { display: none; }
       <div class="lista-topo"><h2>Meus códigos</h2><button type="button" class="fechar" data-fechar aria-label="Fechar">✕</button></div>
       <p class="peq">Mostre esta tela ao instrutor ou copie os códigos no formulário da aula.</p>
       <div id="codigos" class="r-lista"></div>
+    </div>
+  </section>
+
+  <!-- ============ segredo do ônibus (raro) ============ -->
+  <section class="tela tela-lista" id="t-surpresa" hidden>
+    <div class="lista-card resultado surpresa">
+      <div class="sp-onibus" aria-hidden="true">🚌💨</div>
+      <h2>Ops! O ônibus te pegou!</h2>
+      <p><b>Cuidado para atravessar a rua:</b> olhe para os dois lados, use a faixa de pedestre e espere o sinal.</p>
+      <p class="sp-segredo">🤫 Você achou um <b>segredo raro</b> do jogo! Chame o professor e mostre este código para ganhar uma recompensa:</p>
+      <p class="r-cod"><b id="sp-codigo">BUS-0000</b></p>
+      <div class="ini-botoes"><button type="button" class="botao" data-fechar>Combinado, vou atravessar na faixa!</button></div>
+    </div>
+  </section>
+
+  <!-- ============ noite: plantão fechado das 18h às 7h ============ -->
+  <section class="intervalo noite" id="t-noite" role="alertdialog" aria-modal="true" aria-labelledby="nt-titulo" hidden>
+    <div class="iv-card nt-card">
+      <div class="nt-cena-caixa"><canvas id="nt-cena" width="160" height="96" aria-hidden="true"></canvas><p id="nt-legenda">🎮 Jogando videogame...</p></div>
+      <div class="iv-txt">
+        <p class="iv-chapeu">🌙 Plantão encerrado</p>
+        <h2 id="nt-titulo">O técnico está em descanso... ou jogando! 🎮</h2>
+        <p>O Plantão do Técnico funciona das <b>7h às 18h</b> (relógio do computador). Seu progresso está salvo.</p>
+        <div class="iv-relogio" id="nt-relogio">00:00</div>
+        <p class="iv-falta">O plantão abre em <b id="nt-falta">0 min</b></p>
+      </div>
     </div>
   </section>
 
@@ -2758,10 +2810,10 @@ body.no-intervalo .toast { display: none; }
 
   /* casas: canto de cima à esquerda, em quadradinhos (tiles). Cada casa tem 3 x 3. */
   var CASAS = [
-    { x: 1, y: 12 }, { x: 4, y: 12 }, { x: 13, y: 12 }, { x: 17, y: 12 }, { x: 29, y: 12 }, { x: 32, y: 12 },
+    { x: 1, y: 12 }, { x: 4, y: 12 }, { x: 13, y: 12 }, { x: 17, y: 12 }, { x: 29, y: 1 }, { x: 32, y: 1 },   // 4 e 5: em frente à Anselmo (a UFU ocupa a quadra)
     { x: 1, y: 23 }, { x: 4, y: 23 }, { x: 13, y: 23 }, { x: 17, y: 23 }, { x: 29, y: 23 }, { x: 32, y: 23 },
     // rua de baixo, perto da Base do SENAI e do Mercadinho (OS 13 a 16)
-    { x: 0, y: 32 }, { x: 4, y: 32 }, { x: 8, y: 32 }, { x: 36, y: 32 }
+    { x: 0, y: 32 }, { x: 4, y: 32 }, { x: 31, y: 32 }, { x: 36, y: 32 }
   ];
 
   var OS = [
@@ -2884,9 +2936,9 @@ body.no-intervalo .toast { display: none; }
   /* ================================================================ estado salvo */
   var E = { nome: "", progresso: {}, codigos: {}, alvo: null };
   function carregar() {
-    try { var d = JSON.parse(localStorage.getItem(CHAVE) || "null"); if (d && d.progresso) { E.nome = d.nome || ""; E.progresso = d.progresso; E.codigos = d.codigos || {}; } } catch (e) {}
+    try { var d = JSON.parse(localStorage.getItem(CHAVE) || "null"); if (d && d.progresso) { E.nome = d.nome || ""; E.progresso = d.progresso; E.codigos = d.codigos || {}; E.easter = d.easter || ""; E.personagem = d.personagem || "m"; } } catch (e) {}
   }
-  function salvar() { try { localStorage.setItem(CHAVE, JSON.stringify({ nome: E.nome, progresso: E.progresso, codigos: E.codigos })); } catch (e) {} }
+  function salvar() { try { localStorage.setItem(CHAVE, JSON.stringify({ nome: E.nome, progresso: E.progresso, codigos: E.codigos, easter: E.easter || "", personagem: E.personagem || "m" })); } catch (e) {} }
   var TODAS = /todas|livre|professor/.test(location.hash);
 
   function liberada(i) { return TODAS || i < 4 || (E.progresso[OS[i - 4].id] || 0) > 0; }
@@ -2902,10 +2954,10 @@ body.no-intervalo .toast { display: none; }
   /* Tudo em pixel art: o mundo é desenhado num canvas pequeno (1 quadradinho = 16 px)
      e ampliado sem suavizar. Chão visto de cima; casas, prédios, árvores, carros e
      pessoas na mesma vista 3/4 (de cima e um pouco de frente), como nos RPGs 2D. */
-  var T = 16, W = 50, H = 37;
+  var T = 16, W = 64, H = 37;
   var G = [];   // g grama, r rua, s calçada, m canteiro, w água, p trilha, c pedra/praça
   var solido = [];
-  var arvores = [], predios = [], enfeites = [], placas = [], PONTE = {};
+  var arvores = [], predios = [], enfeites = [], placas = [], PONTE = {}, OBST = [];
   function setT(x, y, t) { if (x >= 0 && y >= 0 && x < W && y < H) G[y][x] = t; }
   function rect(x0, y0, x1, y1, t) { for (var y = y0; y <= y1; y++) for (var x = x0; x <= x1; x++) setT(x, y, t); }
   function sol(x0, y0, x1, y1) { for (var y = y0; y <= y1; y++) for (var x = x0; x <= x1; x++) if (x >= 0 && y >= 0 && x < W && y < H) solido[y][x] = true; }
@@ -2914,7 +2966,7 @@ body.no-intervalo .toast { display: none; }
 
   function montarMapa() {
     for (var y = 0; y < H; y++) { G.push([]); solido.push([]); for (var x = 0; x < W; x++) { G[y].push("g"); solido[y].push(false); } }
-    rect(0, 5, 49, 5, "s"); rect(0, 6, 49, 7, "r"); rect(0, 8, 39, 8, "s");         // Av. Anselmo Alves dos Santos
+    rect(0, 5, W - 1, 5, "s"); rect(0, 6, W - 1, 7, "r"); rect(0, 8, W - 1, 8, "s");         // Av. Anselmo Alves dos Santos
     rect(0, 16, 39, 16, "s"); rect(0, 17, 39, 18, "r"); rect(0, 19, 39, 19, "s");    // Av. Segismundo Pereira
     rect(0, 27, 39, 27, "s"); rect(0, 28, 39, 29, "r"); rect(0, 30, 39, 30, "s");    // Av. Belarmino Cotta Pacheco
     rect(8, 8, 8, 30, "s"); rect(9, 8, 10, 30, "r"); rect(11, 8, 11, 30, "s");
@@ -2925,14 +2977,17 @@ body.no-intervalo .toast { display: none; }
       if ((y >= 6 && y <= 7) || (y >= 17 && y <= 18) || (y >= 28 && y <= 29)) { if (G[y][x] === "s" || (G[y][x] === "m" && x === 24)) G[y][x] = "r"; }
     }
     rect(0, 31, 20, 36, "g"); rect(28, 31, 39, 36, "g");   // a João Naves segue até a borda do mapa
-    for (y = 10; y <= 35; y++) { setT(41, y, "p"); setT(48, y, "p"); }
-    for (x = 41; x <= 48; x++) { setT(x, 10, "p"); setT(x, 35, "p"); }
-    rect(40, 18, 40, 19, "p");
-    for (y = 13; y <= 32; y++) for (x = 42; x <= 47; x++) {
-      var dx = (x + 0.5 - 45) / 3.1, dy = (y + 0.5 - 22.5) / 8.6;
+    // Rua Elis Regina (onde fica o SENAI) desce até a borda de baixo
+    rect(8, 31, 8, 36, "s"); rect(9, 31, 10, 36, "r"); rect(11, 31, 11, 36, "s");
+    // Parque do Sabiá: de frente para a Av. Anselmo Alves dos Santos, com trilhas e uma lagoa grande no meio
+    for (y = 9; y <= 35; y++) { setT(42, y, "p"); setT(61, y, "p"); }
+    for (x = 42; x <= 61; x++) { setT(x, 10, "p"); setT(x, 35, "p"); }
+    for (y = 11; y <= 34; y++) for (x = 43; x <= 60; x++) {
+      var dx = (x + 0.5 - 51.5) / 7.2, dy = (y + 0.5 - 22.5) / 10.6;
       if (dx * dx + dy * dy < 1) { setT(x, y, "w"); solido[y][x] = true; }
+      else if (dx * dx + dy * dy < 1.18) setT(x, y, "p");   // trilha em volta da lagoa
     }
-    // Segismundo e Belarmino atravessam o parque até a borda do mapa, com ponte sobre o lago
+    // Segismundo e Belarmino atravessam o parque até a borda do mapa, com ponte sobre a lagoa
     [[16, 19], [27, 30]].forEach(function (av) {
       for (var yy = av[0]; yy <= av[1]; yy++) for (var xx = 40; xx < W; xx++) {
         if (G[yy][xx] === "w") PONTE[xx + "," + yy] = 1;
@@ -2940,29 +2995,49 @@ body.no-intervalo .toast { display: none; }
       }
     });
     predios.push({ tipo: "prefeitura", x: 1, y: 0, w: 18, h: 4, nome: "Centro Administrativo · Prefeitura" });
-    predios.push({ tipo: "ufu", x: 29, y: 0, w: 19, h: 4, nome: "UFU · Campus Santa Mônica" });
-    predios.push({ tipo: "senai", x: 13, y: 32, w: 7, h: 3, nome: "Base do Técnico · SENAI" });
-    predios.push({ tipo: "mercado", x: 28, y: 32, w: 8, h: 3, nome: "Mercadinho do Bairro" });
+    predios.push({ tipo: "ufu", x: 28, y: 10, w: 8, h: 5, nome: "UFU · Campus Santa Mônica" });
+    predios.push({ tipo: "senai", x: 12, y: 32, w: 9, h: 4, nome: "SENAI Dr. Celso Charuri · Base do Técnico" });
+    predios.push({ tipo: "mercado", x: 37, y: 0, w: 8, h: 4, nome: "Mercadinho do Bairro" });
     predios.forEach(function (p) { sol(p.x, p.y, p.x + p.w - 1, p.y + p.h - 1); });
     CASAS.forEach(function (c) { sol(c.x, c.y, c.x + 2, c.y + 2); setT(c.x + 1, c.y + 3, "c"); });
     function arv(x, y, tipo) { if (solido[y] && !solido[y][x] && G[y][x] !== "r" && G[y][x] !== "c" && !(x >= 40 && G[y][x] === "s")) { arvores.push({ x: x, y: y, tipo: tipo || "ipe" }); solido[y][x] = true; } }
     [0, 4, 7, 12, 16, 20, 28, 31, 35].forEach(function (x) { arv(x, 10); arv(x, 21); });
     [2, 6, 13, 18, 29, 34].forEach(function (x) { arv(x, 9, "copa"); arv(x, 20, "copa"); });
     for (y = 1; y < H; y += 3) if (G[y][24] === "m") arv(24, y, "palmeira");
-    for (y = 11; y <= 34; y += 2) { arv(40, y, "copa"); arv(49, y, y % 4 ? "ipe" : "copa"); }
-    [11, 34].forEach(function (yy) { for (var xx = 42; xx <= 47; xx += 2) arv(xx, yy, "copa"); });
-    arv(20, 35, "ipe"); arv(3, 36, "copa"); arv(39, 36, "copa");
+    // Sabiá: muitas árvores (ipês, copas e palmeiras), sem fechar as trilhas
+    for (y = 9; y <= 36; y++) for (x = 40; x < W; x++) {
+      if (G[y][x] !== "g") continue;
+      var hh = hash(x * 3 + 1, y * 5 + 2);
+      if (hh > 0.38) arv(x, y, hh > 0.86 ? "palmeira" : hh > 0.62 ? "ipe" : "copa");
+    }
+    for (x = 46; x < W; x += 3) arv(x, 2, x % 2 ? "copa" : "ipe");
+    arv(3, 36, "copa"); arv(39, 36, "copa"); arv(29, 35, "ipe");
     // postes de luz, bancos, ponto de ônibus
     [3, 16, 31].forEach(function (x) { enfeites.push({ tipo: "poste", x: x, y: 16 }); enfeites.push({ tipo: "poste", x: x, y: 27 }); });
-    [5, 12, 18].forEach(function (y) { enfeites.push({ tipo: "poste", x: 21, y: y }); });
+    [12, 23, 34].forEach(function (y) { enfeites.push({ tipo: "poste", x: 21, y: y }); });
+    // semáforos em cada cruzamento: um para a avenida (h) e outro para a rua que cruza (v)
+    [[6, 7], [17, 18], [28, 29]].forEach(function (hz) {
+      [[9, 10], [22, 26], [37, 38]].forEach(function (vt) {
+        enfeites.push({ tipo: "semaforo", eixo: "h", x: vt[0] - 1, y: hz[0] - 1 });
+        enfeites.push({ tipo: "semaforo", eixo: "v", x: vt[1] + 1, y: hz[1] + 1 });
+      });
+    });
+    // postes e semáforos têm colisão na base
+    enfeites.forEach(function (e2) { if (e2.tipo === "poste" || e2.tipo === "semaforo") OBST.push({ x: (e2.x + 0.5) * T, y: (e2.y + 1) * T - 3 }); });
     enfeites.push({ tipo: "ponto", x: 27, y: 12 }); sol(27, 12, 27, 12);
-    [[43, 10], [46, 35]].forEach(function (b) { enfeites.push({ tipo: "banco", x: b[0], y: b[1] }); });
+    [[44, 11], [58, 11], [44, 34], [58, 34]].forEach(function (b) { enfeites.push({ tipo: "banco", x: b[0], y: b[1] }); });
     for (x = 0; x < W; x++) solido[0][x] = solido[0][x] || G[0][x] === "g";
     placas.push({ x: 24.5, y: 12.5, txt: "Av. João Naves de Ávila", vert: true });
     placas.push({ x: 31, y: 6.9, txt: "Av. Anselmo Alves dos Santos" });
     placas.push({ x: 15.5, y: 17.9, txt: "Av. Segismundo Pereira" });
     placas.push({ x: 15.5, y: 28.9, txt: "Av. Belarmino Cotta Pacheco" });
-    placas.push({ x: 44.5, y: 9.3, txt: "Parque do Sabiá", parque: true });
+    placas.push({ x: 51.5, y: 9.4, txt: "Parque do Sabiá", parque: true });
+    placas.push({ x: 10, y: 33.5, txt: "R. Elis Regina", vert: true });
+  }
+  // base de poste/semáforo: caixinha de 4 x 3 px
+  function batePoste(x0, y0, x1, y1) {
+    for (var i = 0; i < OBST.length; i++) { var o = OBST[i]; if (x0 < o.x + 2 && x1 > o.x - 2 && y0 < o.y + 2 && y1 > o.y - 2) return true; }
+    return false;
   }
   function bloqueado(px, py) {
     var x = Math.floor(px / T), y = Math.floor(py / T);
@@ -3059,9 +3134,9 @@ body.no-intervalo .toast { display: none; }
     if (tec) {
       var bon = "#123f86", bonC = "#2a62b8";
       px(g, 4, 1, 8, 3, bon); px(g, 5, 0, 6, 1, bon); px(g, 6, 1, 3, 1, bonC); px(g, 7, 0, 2, 1, "#ff8a1f");
-      if (dir === "baixo") { px(g, 4, 4, 8, 1, "#0c2c5e"); px(g, 7, 2, 2, 1, "#ffffff"); px(g, 4, 5, 1, 1, cab); px(g, 11, 5, 1, 1, cab); }
-      else if (dir === "cima") { px(g, 4, 4, 8, 3, cab); px(g, 6, 3, 4, 1, "#ff8a1f"); }
-      else { px(g, f > 0 ? 10 : 1, 4, 5, 1, "#0c2c5e"); px(g, f > 0 ? 4 : 9, 4, 3, 3, cab); px(g, f > 0 ? 4 : 11, 3, 1, 1, "#ff8a1f"); }
+      if (dir === "baixo") { px(g, 4, 4, 8, 1, "#0c2c5e"); px(g, 7, 2, 2, 1, "#ffffff"); px(g, 4, 5, 1, 1, cab); px(g, 11, 5, 1, 1, cab); if (v.longo) { px(g, 3, 4, 2, 7, cab); px(g, 11, 4, 2, 7, cab); px(g, 3, 4, 1, 3, clarear(cab, 0.25)); } }
+      else if (dir === "cima") { px(g, 4, 4, 8, 3, cab); px(g, 6, 3, 4, 1, "#ff8a1f"); if (v.longo) { px(g, 6, 7, 4, 5, cab); px(g, 7, 12, 2, 1, cab); px(g, 6, 7, 4, 1, "#ff8a1f"); } }
+      else { px(g, f > 0 ? 10 : 1, 4, 5, 1, "#0c2c5e"); px(g, f > 0 ? 4 : 9, 4, 3, 3, cab); px(g, f > 0 ? 4 : 11, 3, 1, 1, "#ff8a1f"); if (v.longo) { px(g, f > 0 ? 2 : 11, 4, 3, 8, cab); px(g, f > 0 ? 2 : 13, 5, 1, 4, clarear(cab, 0.25)); } }
     } else {
       var cabC = clarear(cab, 0.25);
       px(g, 4, 1, 8, 3, cab); px(g, 5, 0, 6, 1, cab); px(g, 6, 1, 3, 1, cabC);
@@ -3073,7 +3148,7 @@ body.no-intervalo .toast { display: none; }
   }
   var cacheSpr = {};
   function spriteDe(dir, quadro, v, tec) {
-    var chave = dir + quadro + (tec ? "T" : JSON.stringify(v));
+    var chave = dir + quadro + (tec ? "T" : "") + JSON.stringify(v);
     return cacheSpr[chave] || (cacheSpr[chave] = desenharPessoa(dir, quadro, v, tec));
   }
   // pessoa(contexto, x dos pés, y dos pés, direção, fase do passo, visual, é técnico?, escala)
@@ -3088,7 +3163,13 @@ body.no-intervalo .toast { display: none; }
     c.drawImage(s, Math.round(x - w / 2), Math.round(y - h + (quadro ? -esc2 : 0) + esc2), w, h);
     c.imageSmoothingEnabled = antes;
   }
-  var VISUAL_TEC = { pele: "#c98d63", cabelo: "#2a1a10", roupa: "#1f63c6" };
+  // escolha na tela inicial: técnico, técnica de cabelo preto ou técnica loira
+  var PERSONAGENS = {
+    m: { pele: "#c98d63", cabelo: "#2a1a10", roupa: "#1f63c6" },
+    fp: { pele: "#a86b45", cabelo: "#151213", roupa: "#1f63c6", longo: true },
+    fl: { pele: "#f1c9a5", cabelo: "#e9c25a", roupa: "#1f63c6", longo: true }
+  };
+  var VISUAL_TEC = PERSONAGENS.m;
 
   /* ---------------------------------------------------------------- chão */
   var chao = null;
@@ -3217,15 +3298,43 @@ body.no-intervalo .toast { display: none; }
       });
       px(g, ox + Math.round(w * 0.46), oy + h - 12, Math.round(w * 0.04) + 1, 12, "#9b9b9b");
     } else if (p.tipo === "senai") {
-      px(g, ox, oy, w, 14, "#1f63c6"); px(g, ox, oy + 2, w, 1, "#3d7fe0"); px(g, ox, oy + 14, w, 3, "#ff8a1f");
-      px(g, ox, oy + 17, w, h - 17, "#fbfbfb"); px(g, ox + w - 2, oy + 17, 2, h - 17, "#dfe5ec");
-      for (i = 6; i < w - 40; i += 14) { px(g, ox + i, oy + 22, 10, 8, "#5fa8d8"); px(g, ox + i, oy + 22, 4, 3, "#a7d6f3"); }
-      px(g, ox + w - 36, oy + 21, 30, h - 21, "#9aa5b1"); for (j = oy + 23; j < oy + h; j += 3) px(g, ox + w - 35, j, 28, 1, "#b8c2cc");
-      px(g, ox + 40, oy + h - 14, 10, 14, "#1f63c6"); px(g, ox + 41, oy + h - 13, 8, 13, "#7cc0ee");
-      // letreiro "SENAI" em pixels
-      var L = { S: ["111", "100", "111", "001", "111"], E: ["111", "100", "111", "100", "111"], N: ["101", "111", "111", "111", "101"], A: ["010", "101", "111", "101", "101"], I: ["111", "010", "010", "010", "111"] };
-      var lx = ox + 8;
-      "SENAI".split("").forEach(function (ch) { L[ch].forEach(function (lin, ly) { for (var lx2 = 0; lx2 < 3; lx2++) if (lin[lx2] === "1") px(g, lx + lx2, oy + 4 + ly, 1, 1, "#ffffff"); }); lx += 5; });
+      // SENAI Dr. Celso Charuri: prédio de 2 andares, fachada de vidro, letreiro, marquise, bandeiras, jardim e estacionamento com a van
+      var L = { S: ["111", "100", "111", "001", "111"], E: ["111", "100", "111", "100", "111"], N: ["1001", "1101", "1011", "1001", "1001"], A: ["0110", "1001", "1111", "1001", "1001"], I: ["111", "010", "010", "010", "111"] };
+      // estacionamento
+      px(g, ox, oy + 26, 30, h - 26, "#5d6470"); for (j = oy + 30; j < oy + h - 2; j += 12) px(g, ox + 2, j, 26, 1, "#f4f4f0");
+      if (VAN) g.drawImage(VAN, ox - 1, oy + h - 24);
+      var bx = ox + 32, bw = w - 32, cxe = bx + Math.round(bw / 2);
+      // sombra e cobertura
+      px(g, bx + 2, oy + h, bw - 2, 3, "rgba(0,0,0,.25)");
+      px(g, bx, oy, bw, 5, "#0e2f66"); px(g, bx, oy, bw, 1, "#3d7fe0"); px(g, bx + bw - 14, oy - 0, 8, 3, "#9aa5b1");
+      // andar de cima: vidro azul com reflexo
+      px(g, bx, oy + 5, bw, 23, "#2563c9");
+      for (i = bx + 2; i < bx + bw - 2; i += 8) for (j = oy + 7; j < oy + 26; j += 9) { px(g, i, j, 6, 7, "#5aa3e6"); px(g, i, j, 6, 1, "#a8d6fa"); }
+      for (i = 0; i < 18; i++) px(g, bx + 60 + i, oy + 7 + Math.floor(i * 1.0), 2, 1, "rgba(255,255,255,.55)");
+      // letreiro branco com SENAI em letras grandes
+      px(g, bx + 5, oy + 7, 46, 16, "#ffffff"); px(g, bx + 5, oy + 21, 46, 2, "#ff8a1f");
+      var lx = bx + 7;
+      "SENAI".split("").forEach(function (ch) { L[ch].forEach(function (lin, ly) { for (var k2 = 0; k2 < lin.length; k2++) if (lin[k2] === "1") px(g, lx + k2 * 2, oy + 9 + ly * 2, 2, 2, "#1f63c6"); }); lx += L[ch][0].length * 2 + 2; });
+      // faixa laranja entre os andares
+      px(g, bx, oy + 28, bw, 3, "#ff8a1f"); px(g, bx, oy + 28, bw, 1, "#ffb15c");
+      // térreo branco com janelas e pilares
+      px(g, bx, oy + 31, bw, h - 31, "#f7f9fc"); px(g, bx + bw - 2, oy + 31, 2, h - 31, "#d6dee8");
+      for (i = bx + 4; i < bx + bw - 6; i += 13) { if (Math.abs(i + 4 - cxe) < 16) continue; px(g, i, oy + 36, 9, 10, "#4f95d6"); px(g, i, oy + 36, 3, 3, "#a7d6f3"); px(g, i, oy + 46, 9, 1, "#c9d3de"); }
+      for (i = bx; i < bx + bw; i += 26) px(g, i, oy + 31, 2, h - 31, "#e3e9f0");
+      // entrada: marquise azul + porta de vidro
+      px(g, cxe - 18, oy + 31, 36, 4, "#1f63c6"); px(g, cxe - 18, oy + 34, 36, 1, "#0e2f66");
+      px(g, cxe - 11, oy + h - 22, 22, 22, "#2f4a63"); px(g, cxe - 10, oy + h - 21, 9, 21, "#8fd0f0"); px(g, cxe + 1, oy + h - 21, 9, 21, "#8fd0f0");
+      px(g, cxe - 9, oy + h - 20, 3, 6, "#d6f0fc"); px(g, cxe + 2, oy + h - 20, 3, 6, "#d6f0fc"); px(g, cxe - 1, oy + h - 12, 2, 2, "#ffd23f");
+      // canteiros com flores
+      for (i = bx + 2; i < bx + bw - 4; i += 6) { if (Math.abs(i + 2 - cxe) < 14) continue; px(g, i, oy + h - 5, 5, 4, "#3f8f3a"); px(g, i + 1, oy + h - 6, 1, 1, ["#ff6b8a", "#ffd23f", "#ffffff"][(i >> 1) % 3]); px(g, i + 3, oy + h - 6, 1, 1, "#ff8a1f"); }
+      // mastros: Brasil, Minas Gerais e SENAI
+      var mastros = [bx + bw - 22, bx + bw - 14, bx + bw - 6];
+      mastros.forEach(function (mx, k3) {
+        px(g, mx, oy + 33, 1, h - 33, "#8c949d");
+        if (k3 === 0) { px(g, mx + 1, oy + 33, 6, 4, "#1f8a4c"); px(g, mx + 3, oy + 34, 2, 2, "#f2c230"); px(g, mx + 4, oy + 35, 1, 1, "#1d4fa3"); }
+        else if (k3 === 1) { px(g, mx + 1, oy + 33, 6, 4, "#ffffff"); px(g, mx + 3, oy + 34, 2, 2, "#c0392b"); }
+        else { px(g, mx + 1, oy + 33, 6, 4, "#1f63c6"); px(g, mx + 1, oy + 36, 6, 1, "#ff8a1f"); }
+      });
     } else {
       px(g, ox, oy, w, 14, "#b0b6bd"); px(g, ox, oy + 14, w, h - 14, "#fff2d0");
       for (i = 0; i < w; i += 8) px(g, ox + i, oy + 14, 8, 7, (i / 8) % 2 ? "#e67e22" : "#ffffff");
@@ -3270,6 +3379,30 @@ body.no-intervalo .toast { display: none; }
     }
     return contornar(c);
   }
+  // ambulância e guincho (vistos de lado, andando para a direita)
+  function spriteEspecial(tipo) {
+    var L = tipo === "guincho" ? 36 : 30, c = tela(L + 2, 22), g = c.getContext("2d"), ox = 1;
+    if (tipo === "ambulancia") {
+      px(g, ox, 3, L - 7, 12, "#f6f7f9"); px(g, ox, 3, L - 7, 1, "#ffffff"); px(g, ox + L - 8, 6, 8, 9, "#f6f7f9");
+      px(g, ox + L - 7, 7, 5, 4, "#8fd0f0"); px(g, ox + L - 6, 7, 2, 1, "#d6f0fc"); px(g, ox + 3, 6, 5, 4, "#8fd0f0");
+      px(g, ox, 11, L, 2, "#e74c3c"); px(g, ox, 13, L, 2, "#c9d1d9");
+      px(g, ox + 12, 5, 5, 1, "#e74c3c"); px(g, ox + 14, 3, 1, 5, "#e74c3c");             // cruz
+      px(g, ox + 9, 1, 3, 2, "#e74c3c"); px(g, ox + 13, 1, 3, 2, "#3498db");               // giroflex
+      px(g, ox + L - 2, 12, 2, 2, "#fff3b0"); px(g, ox, 12, 1, 2, "#e74c3c");
+      [3, L - 10].forEach(function (wx) { px(g, ox + wx, 14, 6, 5, "#1d1b2a"); px(g, ox + wx + 2, 15, 2, 2, "#9aa5b1"); });
+    } else {
+      var cor = "#f39c12";
+      px(g, ox, 9, L, 6, cor); px(g, ox, 9, L, 1, clarear(cor, 0.35)); px(g, ox, 13, L, 2, escurecer(cor, 0.7));
+      px(g, ox + L - 14, 2, 12, 8, cor); px(g, ox + L - 14, 2, 12, 1, clarear(cor, 0.4));   // cabine
+      px(g, ox + L - 12, 4, 5, 4, "#9fd7f5"); px(g, ox + L - 6, 4, 3, 4, "#7cc0ee"); px(g, ox + L - 9, 0, 3, 2, "#ffd23f");
+      px(g, ox + 1, 8, L - 16, 1, "#7f8c8d");                                                 // plataforma
+      for (var i = 0; i < 10; i++) px(g, ox + 4 + i, 8 - Math.round(i * 0.6), 2, 1, "#566573"); // lança
+      px(g, ox + 3, 8, 1, 4, "#2c3e50"); px(g, ox + 2, 12, 3, 1, "#2c3e50");                 // gancho
+      px(g, ox + L - 2, 11, 2, 2, "#fff3b0"); px(g, ox, 11, 1, 2, "#e74c3c");
+      [3, 12, L - 9].forEach(function (wx) { px(g, ox + wx, 14, 6, 5, "#1d1b2a"); px(g, ox + wx + 2, 15, 2, 2, "#9aa5b1"); });
+    }
+    return contornar(c);
+  }
   function spriteCarroV(cor, desce, onibus) {
     // de frente (descendo) ou de costas (subindo), visto de cima
     var A = onibus ? 44 : 26, c = tela(18, A + 2), g = c.getContext("2d"), oy = 1, s = escurecer(cor, 0.72);
@@ -3290,11 +3423,11 @@ body.no-intervalo .toast { display: none; }
   var carros = [];
   function criarCarros() {
     var cores = ["#e74c3c", "#f1c40f", "#ecf0f1", "#34495e", "#3498db", "#16a085", "#9b59b6", "#e67e22", "#c0392b", "#27ae60", "#7f8c8d", "#d35400"];
-    function novo(vert, faixa, pos, vel, onibus, i) {
+    function novo(vert, faixa, pos, vel, onibus, i, tipo) {
       var cor = onibus ? "#2e86de" : cores[i % cores.length];
-      var k = { vert: vert, faixa: faixa, pos: pos, vel: vel, velMax: Math.abs(vel), onibus: !!onibus, buzinou: 0 };
-      k.spr = vert ? spriteCarroV(cor, vel > 0, onibus) : spriteCarroH(cor, onibus);
-      k.comp = vert ? (onibus ? 44 : 26) : (onibus ? 46 : 28);
+      var k = { vert: vert, faixa: faixa, pos: pos, vel: vel, velMax: Math.abs(vel), onibus: !!onibus, buzinou: 0, tipo: tipo || "" };
+      k.spr = tipo ? spriteEspecial(tipo) : vert ? spriteCarroV(cor, vel > 0, onibus) : spriteCarroH(cor, onibus);
+      k.comp = vert ? (onibus ? 44 : 26) : (onibus ? 46 : tipo === "guincho" ? 36 : tipo === "ambulancia" ? 30 : 28);
       carros.push(k);
     }
     var i = 0;
@@ -3305,7 +3438,12 @@ body.no-intervalo .toast { display: none; }
     [[6.5, 7.5, 49], [17.5, 18.5, 40], [28.5, 29.5, 40]].forEach(function (av, n) {
       novo(false, av[1], (5 + n * 9) * T, 42 + n * 4, false, i++); novo(false, av[0], (30 - n * 6) * T, -(40 + n * 5), false, i++);
       if (n === 1) novo(false, av[1], 30 * T, 48, false, i++);
+      novo(false, av[1], (48 + n * 4) * T, 44, false, i++);
     });
+    // ambulância, guincho e mais um ônibus circulando
+    novo(false, 7.5, 40 * T, 50, false, i++, "ambulancia");
+    novo(false, 28.5, 52 * T, -38, false, i++, "guincho");
+    novo(false, 6.5, 56 * T, -36, true, i++);
   }
   function caixaCarro(k) {
     if (k.vert) return { x: k.faixa * T - 8, y: k.pos - k.comp / 2, w: 16, h: k.comp };
@@ -3319,7 +3457,34 @@ body.no-intervalo .toast { display: none; }
   function sobrepoe(a, b) { return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y; }
   function limiteCarro(k) { return k.vert ? H * T : W * T; }
   function tileDe(xx, yy) { var x = Math.floor(xx / T), y = Math.floor(yy / T); return G[y] && G[y][x]; }
+  // semáforos: ciclo de 16 s (avenida verde 6 s, amarelo 2 s; depois a rua que cruza)
+  var TEMPO_SEM = 0;
+  function luz(eixo) {
+    var c = TEMPO_SEM % 16;
+    if (eixo === "h") return c < 6 ? "verde" : c < 8 ? "amarelo" : "vermelho";
+    return c < 8 ? "vermelho" : c < 14 ? "verde" : "amarelo";
+  }
+  var ZONAS_H = [[8, 12], [21, 28], [36, 40]], ZONAS_V = [[5, 9], [16, 20], [27, 31]];
+  function paraNoSinal(k, sent, frente) {
+    var cor = luz(k.vert ? "v" : "h"); if (cor === "verde") return false;
+    var zonas = k.vert ? ZONAS_V : ZONAS_H;
+    for (var i = 0; i < zonas.length; i++) {
+      var entra = (sent > 0 ? zonas[i][0] : zonas[i][1]) * T, d = (entra - frente) * sent;
+      if (d >= (cor === "amarelo" ? 5 : -1) && d < 16) return true;
+    }
+    return false;
+  }
+  function desenharSemaforo(g, x, y, cor) {
+    x = Math.round(x); y = Math.round(y);
+    px(g, x - 2, y - 1, 5, 2, "#2b2f36"); px(g, x - 1, y - 22, 2, 22, "#4b525c"); px(g, x - 1, y - 22, 1, 22, "#6b737e");
+    px(g, x - 4, y - 36, 9, 16, CONTORNO); px(g, x - 3, y - 35, 7, 14, "#2b2f36");
+    [["vermelho", "#ff4136", "#5a1d1a", 0], ["amarelo", "#ffd23f", "#5a4a1a", 4], ["verde", "#2ecc40", "#1a4a22", 8]].forEach(function (l) {
+      px(g, x - 2, y - 34 + l[3], 5, 3, cor === l[0] ? l[1] : l[2]);
+      if (cor === l[0]) px(g, x - 1, y - 34 + l[3], 2, 1, "#ffffff");
+    });
+  }
   function moverCarros(dt) {
+    TEMPO_SEM += dt;
     carros.forEach(function (k) {
       var sent = k.vel === 0 ? (k.ult || 1) : Math.sign(k.vel); k.ult = sent;
       var frente = k.pos + sent * k.comp / 2;
@@ -3327,7 +3492,7 @@ body.no-intervalo .toast { display: none; }
       var px0 = J.x, py0 = J.y, naFaixa = ehFaixa(Math.floor(px0 / T), Math.floor(py0 / T));
       var mesmaFaixa = k.vert ? Math.abs(px0 - k.faixa * T) < 10 : Math.abs(py0 - k.faixa * T) < 10;
       var dist = k.vert ? (py0 - frente) * sent : (px0 - frente) * sent;
-      var parar = naFaixa && mesmaFaixa && dist > -4 && dist < 22;
+      var parar = (naFaixa && mesmaFaixa && dist > -4 && dist < 22) || paraNoSinal(k, sent, frente);
       // carro parado à frente na mesma faixa
       carros.forEach(function (o) {
         if (o === k || o.vert !== k.vert || o.faixa !== k.faixa) return;
@@ -3335,14 +3500,18 @@ body.no-intervalo .toast { display: none; }
         if (d > -2 && d < 8) parar = true;
       });
       // cruzamento: espera o carro da outra avenida passar (sem passar por cima)
-      if (!parar) carros.forEach(function (o, oi) {
-        if (o === k || o.vert === k.vert || parar) return;
+      // trava de segurança: quem espera o cruzamento há mais de 4 s passa (evita engarrafamento eterno)
+      var cruz = false;
+      if (!parar && (k.espera || 0) < 4) carros.forEach(function (o, oi) {
+        if (o === k || o.vert === k.vert || cruz) return;
         if (sobrepoe(aFrente(k, 10), caixaCarro(o)) && !sobrepoe(caixaCarro(k), caixaCarro(o))) {
           // os dois querem entrar ao mesmo tempo: passa quem vem primeiro na lista
           if (sobrepoe(aFrente(o, 10), caixaCarro(k)) && carros.indexOf(k) < oi) return;
-          parar = true;
+          cruz = true;
         }
       });
+      k.espera = cruz ? (k.espera || 0) + dt : (Math.abs(k.vel) > 6 ? 0 : (k.espera || 0));
+      if (cruz) parar = true;
       if (parar) { k.vel = 0; if (!k.buzinou && naFaixa && mesmaFaixa) { k.buzinou = 1; } }
       else { k.vel = sent * Math.min(k.velMax, Math.abs(k.vel) + 60 * dt); if (Math.abs(k.vel) < 5) k.vel = sent * 5; k.buzinou = 0; }
       k.pos += k.vel * dt;
@@ -3355,6 +3524,14 @@ body.no-intervalo .toast { display: none; }
       }
     });
   }
+  // easter egg (raro): atropelado pelo ônibus
+  function surpresaOnibus() {
+    var n = (E.nome || "x").toUpperCase(), h2 = 0;
+    for (var i = 0; i < n.length; i++) h2 = (h2 * 31 + n.charCodeAt(i)) % 9000;
+    E.easter = "BUS-" + (1000 + h2); salvar();
+    $("sp-codigo").textContent = E.easter;
+    telas("t-surpresa");
+  }
   function bater(k) {
     J.tonto = 1.3; J.batidas++; atualizarHud();
     somBatida();
@@ -3365,6 +3542,7 @@ body.no-intervalo .toast { display: none; }
       var d = Math.hypot(x + 0.5 - J.x / T, y + 0.5 - J.y / T); if (d < md) { md = d; melhor = { x: (x + 0.5) * T, y: (y + 0.7) * T }; }
     }
     if (melhor) { J.x = melhor.x; J.y = melhor.y; }
+    if (k.onibus && Math.random() < 0.3) { setTimeout(surpresaOnibus, 500); return; }
     toast("💥 <b>Opa! Um carro bateu em você.</b> Atravesse sempre na <b>faixa de pedestre</b>: lá os carros param.", "erro");
     atualizarHud();
   }
@@ -3441,7 +3619,7 @@ body.no-intervalo .toast { display: none; }
       vx = vx / n * v; vy = vy / n * v * 0.65;
       if (Math.abs(vx) > Math.abs(vy)) J.dir = vx > 0 ? "dir" : "esq"; else J.dir = vy > 0 ? "baixo" : "cima";
       var hw = 4, hh = 3;
-      var livre = function (px0, py0) { return !bloqueado(px0 - hw, py0 - hh) && !bloqueado(px0 + hw, py0 - hh) && !bloqueado(px0 - hw, py0) && !bloqueado(px0 + hw, py0); };
+      var livre = function (px0, py0) { return !bloqueado(px0 - hw, py0 - hh) && !bloqueado(px0 + hw, py0 - hh) && !bloqueado(px0 - hw, py0) && !bloqueado(px0 + hw, py0) && !batePoste(px0 - hw, py0 - hh, px0 + hw, py0); };
       if (livre(J.x + vx, J.y)) J.x += vx;
       if (livre(J.x, J.y + vy)) J.y += vy;
       J.passo += dt * 9;
@@ -3489,7 +3667,7 @@ body.no-intervalo .toast { display: none; }
     g.setTransform(1, 0, 0, 1, -CAM.x, -CAM.y);
     g.drawImage(chao, 0, 0);
     // água brilhando
-    for (var i = 0; i < 14; i++) { var wx = 42 * T + Math.floor(hash(i, 3) * 6 * T), wy = 14 * T + Math.floor(hash(3, i) * 17 * T); if (tileDe(wx, wy) === "w" && Math.floor(t / 400 + i) % 3 === 0) px(g, wx, wy, 3, 1, "#d6f0fc"); }
+    for (var i = 0; i < 30; i++) { var wx = 45 * T + Math.floor(hash(i, 3) * 13 * T), wy = 13 * T + Math.floor(hash(3, i) * 20 * T); if (tileDe(wx, wy) === "w" && Math.floor(t / 400 + i) % 3 === 0) px(g, wx, wy, 3, 1, "#d6f0fc"); }
     // alvo do GPS: anel piscando na porta
     if (E.alvo != null && emJogo !== null) {
       var pa = portaDe(OS[E.alvo].casa), on = Math.floor(t / 300) % 2;
@@ -3504,13 +3682,11 @@ body.no-intervalo .toast { display: none; }
       } });
     });
     predios.forEach(function (p, i2) { objs.push({ y: (p.y + p.h) * T - 1, f: function () { g.drawImage(SPR_PRED[i2], p.x * T - 1, p.y * T - 1); } }); });
-    predios.filter(function (p) { return p.tipo === "senai"; }).forEach(function (p) {
-      objs.push({ y: (p.y + p.h) * T - 2, f: function () { g.drawImage(VAN, p.x * T - 33, (p.y + p.h) * T - 20); } });
-    });
     var x0 = Math.floor(CAM.x / T) - 2, x1 = Math.ceil((CAM.x + vw) / T) + 2, y0 = Math.floor(CAM.y / T) - 2, y1 = Math.ceil((CAM.y + vh) / T) + 3;
     arvores.forEach(function (a) { if (a.x >= x0 && a.x <= x1 && a.y >= y0 && a.y <= y1) objs.push({ y: (a.y + 1) * T - 2, f: function () { g.drawImage(SPR_ARV[a.tipo], a.x * T - 4, (a.y + 1) * T - 34); } }); });
     enfeites.forEach(function (e2) {
       if (e2.x < x0 || e2.x > x1 || e2.y < y0 || e2.y > y1) return;
+      if (e2.tipo === "semaforo") { objs.push({ y: (e2.y + 1) * T - 3, f: function () { desenharSemaforo(g, (e2.x + 0.5) * T, (e2.y + 1) * T - 3, luz(e2.eixo)); } }); return; }
       var s = SPR_ENF[e2.tipo];
       objs.push({ y: (e2.y + 1) * T - 3, f: function () { g.drawImage(s, Math.round((e2.x + 0.5) * T - s.width / 2), (e2.y + 1) * T - s.height - 1); } });
     });
@@ -3607,7 +3783,7 @@ body.no-intervalo .toast { display: none; }
   }
   /* ================================================================ HUD e telas */
   function telas(id) {
-    ["t-inicio", "t-lista", "t-ajuda", "t-casa", "t-resultado", "t-codigos"].forEach(function (t) { $(t).hidden = t !== id; });
+    ["t-inicio", "t-lista", "t-ajuda", "t-casa", "t-resultado", "t-codigos", "t-surpresa"].forEach(function (t) { $(t).hidden = t !== id; });
     emJogo = !id;
     $("hud").hidden = id === "t-inicio" || id === "t-casa";
     $("minimapa").hidden = !!id;
@@ -3931,6 +4107,7 @@ body.no-intervalo .toast { display: none; }
     var linhas = OS.filter(function (o) { return E.codigos[o.id]; }).map(function (o) {
       var k = E.codigos[o.id]; return "<div><span>OS " + o.id.slice(2) + " · " + esc(o.lugar) + " (" + NOME_OP[o.op] + ")</span><b>" + esc(k.codigo) + " · " + "★".repeat(k.estrelas) + "</b></div>";
     });
+    if (E.easter) linhas.push("<div><span>🚌 Segredo do ônibus</span><b>" + esc(E.easter) + "</b></div>");
     $("codigos").innerHTML = (E.nome ? "<div><span>Nome</span><b>" + esc(E.nome) + "</b></div>" : "") + (linhas.join("") || "<p>Nenhuma OS entregue ainda.</p>");
     telas("t-codigos");
   }
@@ -4061,7 +4238,9 @@ body.no-intervalo .toast { display: none; }
 
   /* ================================================================ intervalo pelo relógio do computador */
   // 9:30–10:00 e 15:30–15:45 (hora do Windows). O jogo inteiro fica pausado e coberto.
-  var INTERVALOS = [[9 * 60 + 30, 10 * 60], [15 * 60 + 30, 15 * 60 + 45]];
+  var INTERVALOS = [[9 * 60 + 30, 10 * 60], [15 * 60 + 15, 15 * 60 + 35]];
+  var ABRE = 7 * 60, FECHA = 18 * 60;   // o plantão funciona das 7h às 18h
+  var FORCAR_NOITE = /forcar-noite/.test(location.hash);
   var SEM_INTERVALO = /sem-intervalo/.test(location.hash), FORCAR_INTERVALO = /forcar-intervalo/.test(location.hash);
   var emIntervalo = false;
   function hm(m) { return Math.floor(m / 60) + ":" + String(m % 60).padStart(2, "0"); }
@@ -4072,21 +4251,71 @@ body.no-intervalo .toast { display: none; }
     return null;
   }
   function checarIntervalo() {
-    var d = new Date(), f = SEM_INTERVALO ? null : faixaAgora(d), ov = $("t-intervalo");
-    if (f) {
+    var d = new Date(), m = d.getHours() * 60 + d.getMinutes(), ov = $("t-intervalo");
+    var noite = !SEM_INTERVALO && (FORCAR_NOITE || m >= FECHA || m < ABRE);
+    var f = SEM_INTERVALO || noite ? null : faixaAgora(d);
+    var relogio = String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0") + ":" + String(d.getSeconds()).padStart(2, "0");
+    if (f || noite) {
       if (!emIntervalo) {
         emIntervalo = true; pausado = true; teclas = {}; toque = {};
         if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
-        ov.hidden = false; document.body.classList.add("no-intervalo");
+        document.body.classList.add("no-intervalo");
       }
-      $("iv-faixa").textContent = hm(f[0]) + " às " + hm(f[1]);
-      $("iv-relogio").textContent = String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0") + ":" + String(d.getSeconds()).padStart(2, "0");
-      var falta = f[1] * 60 - (d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds());
-      $("iv-falta").textContent = falta > 60 ? Math.ceil(falta / 60) + " min" : falta + " s";
+      ov.hidden = !!noite; $("t-noite").hidden = !noite;
+      if (noite) {
+        $("nt-relogio").textContent = relogio;
+        var faltaN = ((ABRE - m + 1440) % 1440) * 60 - d.getSeconds();
+        $("nt-falta").textContent = faltaN >= 3600 ? Math.floor(faltaN / 3600) + " h " + Math.floor(faltaN % 3600 / 60) + " min" : Math.ceil(faltaN / 60) + " min";
+        if (!noiteAnim) { noiteAnim = true; requestAnimationFrame(animarNoite); }
+      } else {
+        $("iv-faixa").textContent = hm(f[0]) + " às " + hm(f[1]);
+        $("iv-relogio").textContent = relogio;
+        var falta = f[1] * 60 - (d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds());
+        $("iv-falta").textContent = falta > 60 ? Math.ceil(falta / 60) + " min" : falta + " s";
+      }
     } else if (emIntervalo) {
-      emIntervalo = false; pausado = false; ov.hidden = true; document.body.classList.remove("no-intervalo");
-      toast("🔔 Fim do intervalo! O plantão continua.", "ok");
+      emIntervalo = false; pausado = false; ov.hidden = true; $("t-noite").hidden = true; document.body.classList.remove("no-intervalo");
+      toast("🔔 O plantão está aberto! Bom trabalho.", "ok");
     }
+  }
+  // tela da noite: o técnico descansa no sofá... ou joga videogame
+  var noiteAnim = false;
+  function animarNoite(t) {
+    if ($("t-noite").hidden) { noiteAnim = false; return; }
+    var c = $("nt-cena"), g = c.getContext("2d"), W2 = 160, H2 = 96, cena = Math.floor(t / 6000) % 2;  // 0 jogando, 1 dormindo
+    g.imageSmoothingEnabled = false;
+    px(g, 0, 0, W2, H2, "#1b2442"); px(g, 0, 70, W2, 26, "#6b4b3a"); for (var i = 0; i < W2; i += 12) px(g, i, 70, 1, 26, "#5a3d2f");
+    px(g, 0, 68, W2, 2, "#3a2a22");
+    // janela com lua e estrelas piscando
+    px(g, 10, 10, 44, 32, "#3a2a22"); px(g, 12, 12, 40, 28, "#0d1330"); px(g, 31, 12, 2, 28, "#3a2a22");
+    disco(g, 44, 20, 5, "#fff3b0"); disco(g, 46, 19, 4, "#0d1330");
+    [[16, 16], [24, 30], [20, 22], [38, 34], [48, 32], [27, 18]].forEach(function (e, k2) { if (Math.floor(t / 400 + k2 * 1.7) % 3) px(g, e[0], e[1], 1, 1, "#ffffff"); });
+    // TV na estante
+    px(g, 104, 30, 46, 30, CONTORNO); px(g, 98, 60, 58, 8, "#7a4a28");
+    var tvOn = cena === 0;
+    px(g, 106, 32, 42, 26, tvOn ? "#14233f" : "#0b0f1a");
+    if (tvOn) {
+      var bxp = 108 + Math.abs((Math.floor(t / 40) % 72) - 36), byp = 38 + Math.abs((Math.floor(t / 55) % 30) - 15);
+      px(g, 106, 52, 42, 2, "#2ecc40"); px(g, bxp, byp, 3, 3, "#ffd23f");
+      px(g, 110, 46 + Math.round(Math.sin(t / 300) * 3), 2, 6, "#ffffff"); px(g, 142, 46 - Math.round(Math.sin(t / 300) * 3), 2, 6, "#ffffff");
+      g.fillStyle = "rgba(90,160,255," + (0.10 + 0.06 * Math.sin(t / 90)) + ")"; g.fillRect(60, 30, 100, 40);
+    }
+    // sofá
+    px(g, 40, 50, 56, 12, "#c0392b"); px(g, 38, 46, 60, 6, "#a93226"); px(g, 36, 50, 6, 16, "#a93226"); px(g, 94, 50, 6, 16, "#a93226"); px(g, 42, 62, 52, 4, "#7b241c");
+    // técnico (de costas para nós, olhando a TV, ou deitado dormindo)
+    if (cena === 0) {
+      var pul = Math.floor(t / 180) % 2;
+      pessoa(g, 68, 64 - pul, "dir", 0, VISUAL_TEC, true, 1);
+      px(g, 74, 52 - pul, 4, 2, "#2b2f36"); px(g, 75, 51 - pul, 1, 1, "#e74c3c");
+    } else {
+      g.save(); g.translate(68, 58); g.rotate(-Math.PI / 2); pessoa(g, 0, 10, "baixo", 0, VISUAL_TEC, true, 1); g.restore();
+      for (var z = 0; z < 3; z++) {
+        var fase = ((t / 1400) + z / 3) % 1, zx = 70 + z * 4 + Math.round(Math.sin(fase * 6) * 2), zy = 44 - Math.round(fase * 30);
+        g.globalAlpha = 1 - fase; px(g, zx, zy, 4, 1, "#ffffff"); px(g, zx + 2, zy + 1, 1, 1, "#ffffff"); px(g, zx + 1, zy + 2, 1, 1, "#ffffff"); px(g, zx, zy + 3, 4, 1, "#ffffff"); g.globalAlpha = 1;
+      }
+    }
+    $("nt-legenda").textContent = cena === 0 ? "🎮 Jogando videogame..." : "😴 Zzz... descansando";
+    requestAnimationFrame(animarNoite);
   }
   // durante o intervalo, nenhuma tecla, clique ou toque chega ao jogo ou ao painel
   ["keydown", "keyup", "keypress", "pointerdown", "mousedown", "click", "touchstart", "submit", "input", "focusin"].forEach(function (tipo) {
@@ -4096,20 +4325,32 @@ body.no-intervalo .toast { display: none; }
       if (tipo === "focusin" && ev.target && ev.target.blur) ev.target.blur();
     }, true);
   });
-  (function () { var ivb = $("iv-boneco").getContext("2d"); pessoa(ivb, 64, 168, "baixo", 0, VISUAL_TEC, true, 7); })();
   checarIntervalo(); setInterval(checarIntervalo, 1000);
 
   /* ================================================================ início */
   carregar();
-  montarMapa(); montarChao(); montarSprites(); montarVan(); criarCarros(); montarMinimapa();
+  montarMapa(); montarChao(); montarVan(); montarSprites(); criarCarros(); montarMinimapa();
   redimensionar(); addEventListener("resize", redimensionar);
   $("nome").value = E.nome;
   E.alvo = proximaOs();
-  var ib = $("ini-boneco").getContext("2d"); pessoa(ib, 80, 190, "baixo", 0, VISUAL_TEC, true, 7);
+  function escolherPersonagem(id) {
+    E.personagem = PERSONAGENS[id] ? id : "m"; VISUAL_TEC = PERSONAGENS[E.personagem];
+    var ib = $("ini-boneco").getContext("2d"); ib.clearRect(0, 0, 160, 200); pessoa(ib, 80, 190, "baixo", 0, VISUAL_TEC, true, 7);
+    var ivb = $("iv-boneco").getContext("2d"); ivb.clearRect(0, 0, 128, 176); pessoa(ivb, 64, 168, "baixo", 0, VISUAL_TEC, true, 7);
+    Array.prototype.forEach.call(document.querySelectorAll("[data-personagem]"), function (b) {
+      var sel = b.getAttribute("data-personagem") === E.personagem; b.classList.toggle("sel", sel); b.setAttribute("aria-pressed", sel ? "true" : "false");
+    });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-personagem]"), function (b) {
+    var id = b.getAttribute("data-personagem"), cv2 = b.querySelector("canvas").getContext("2d");
+    pessoa(cv2, 24, 54, "baixo", 0, PERSONAGENS[id], true, 2);
+    b.onclick = function () { escolherPersonagem(id); salvar(); };
+  });
+  escolherPersonagem(E.personagem || "m");
   atualizarHud(); telas("t-inicio"); iniciarXp();
   requestAnimationFrame(laco);
   // para os testes automáticos
-  window.__jogo = { E: E, J: J, OS: OS, carros: carros, caixa: caixaCarro, tile: tileDe, entrarNaCasa: entrarNaCasa, estado: function () { return C; }, portaDe: portaDe, telas: telas };
+  window.__jogo = { E: E, J: J, OS: OS, carros: carros, caixa: caixaCarro, tile: tileDe, entrarNaCasa: entrarNaCasa, estado: function () { return C; }, portaDe: portaDe, telas: telas, mover: moverCarros, tempo: function () { return TEMPO_SEM; } };
 })();
 
 </script>
