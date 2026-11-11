@@ -315,13 +315,13 @@ function desenharMapa(){
   const est=p=>[1,2,3].map(k=>`<span class="${k<=p?"on":""}">★</span>`).join("");
   let html=`<div class="mundo-palco"><svg class="estrada" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${deco}<path class="base" d="${caminho}"/>${caminhoFeito?`<path class="feito" d="${caminhoFeito}"/>`:""}<path class="tracejado" d="${caminho}"/></svg>`;
   FASES.forEach((f,i)=>{const p=E.progresso[f.id]||0,ab=aberta(i);
-    html+=`<button class="no ${p?"feita":""} ${ab?"":"bloq"} ${i===FASE_SEL?"sel":""} ${i===atual?"atual":""}" data-no="${i}" style="left:${pos[i][0]}%;top:${pos[i][1]}%;--g1:${f.g1};--g2:${f.g2}" title="${ab?f.t:"Termine a fase anterior para abrir"}">${i===atual?`<span class="bandeira">🚩</span>`:""}<span class="bola">${ab?f.ic:"🔒"}</span><span class="rotulo">${f.n}</span><span class="est">${est(p)}</span></button>`;});
+    html+=`<button class="no ${p?"feita":""} ${ab?"":"bloq"} ${i===FASE_SEL?"sel":""} ${i===atual?"atual":""}" data-no="${i}" style="left:${pos[i][0]}%;top:${pos[i][1]}%;--g1:${f.g1};--g2:${f.g2}" title="${ab?"Jogar: "+f.t:"Termine a fase anterior para abrir"}">${i===atual?`<span class="bandeira">🚩</span>`:""}<span class="bola">${ab?f.ic:"🔒"}</span><span class="rotulo">${f.n}</span><span class="est">${est(p)}</span></button>`;});
   html+=`</div>`;
   const f=FASES[FASE_SEL],p=E.progresso[f.id]||0;
   html+=`<div class="mundo-info"><span class="ic" style="--g1:${f.g1};--g2:${f.g2}">${f.ic}</span><div class="txt"><span class="num">${f.n}</span><h2>${f.t}</h2><p>${f.d}</p></div><div class="estrelas">${est(p)}</div><button class="botao dour" data-fase="${f.id}">${p?"Jogar de novo":"Jogar"} ▸</button></div>`;
   $("mapa-fases").innerHTML=html;
   atualizarBotaoComecar();
-  document.querySelectorAll("[data-no]").forEach(b=>b.onclick=()=>{const i=+b.dataset.no;if(!aberta(i)){b.animate([{transform:"translate(-50%,-50%) translateX(-6px)"},{transform:"translate(-50%,-50%) translateX(6px)"},{transform:"translate(-50%,-50%)"}],{duration:250});return;}FASE_SEL=i;somClique();desenharMapa();});
+  document.querySelectorAll("[data-no]").forEach(b=>b.onclick=()=>{const i=+b.dataset.no;if(!aberta(i)){b.animate([{transform:"translate(-50%,-50%) translateX(-6px)"},{transform:"translate(-50%,-50%) translateX(6px)"},{transform:"translate(-50%,-50%)"}],{duration:250});return;}FASE_SEL=i;desenharMapa();if(!garantirNome())return;somClique();jogarFase(FASES[i].id);});
   document.querySelectorAll("[data-fase]").forEach(b=>b.onclick=()=>{if(!garantirNome())return;somClique();jogarFase(b.dataset.fase);});}
 function jogarFase(id){const i=FASES.findIndex(f=>f.id===id);if(i>=0)FASE_SEL=i;E.faseAtual=id;INICIO[id]();}
 /* "Começar o plantão" abre a fase escolhida no mapa (por padrão, a próxima que falta), não volta sempre para a Fase 1 */

@@ -725,7 +725,7 @@ function desenharMapa(){
   let deco="";for(let i=0;i<14;i++){const x=(i*137)%W,y=(i*251)%H;deco+=`<circle class="deco" cx="${x}" cy="${y}" r="${18+(i*7)%30}"/>`;}
   let html=`<div class="mundo-palco"><svg class="estrada" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${deco}<path class="base" d="${caminho}"/>${caminhoFeito?`<path class="feito" d="${caminhoFeito}"/>`:""}<path class="tracejado" d="${caminho}"/></svg>`;
   fases.forEach((f,i)=>{const p=E.progresso[f.id]||0,ab=aberta(i);
-    html+=`<button class="no ${p?"feita":""} ${ab?"":"bloq"} ${i===FASE_SEL?"sel":""} ${i===atual?"atual":""}" data-no="${i}" style="left:${pos[i][0]}%;top:${pos[i][1]}%;--g1:${f.g[0]};--g2:${f.g[1]}" title="${ab?f.t:"Termine a fase anterior para abrir"}">
+    html+=`<button class="no ${p?"feita":""} ${ab?"":"bloq"} ${i===FASE_SEL?"sel":""} ${i===atual?"atual":""}" data-no="${i}" style="left:${pos[i][0]}%;top:${pos[i][1]}%;--g1:${f.g[0]};--g2:${f.g[1]}" title="${ab?"Jogar: "+f.t:"Termine a fase anterior para abrir"}">
       ${i===atual?`<span class="bandeira">${ic("bandeira")}</span>`:""}<span class="bola">${ab?ic(f.ic):ic("cadeado")}</span>
       <span class="rotulo">${f.n}</span><span class="est">${[1,2,3].map(k=>`<span class="${k<=p?"on":""}">★</span>`).join("")}</span></button>`;});
   html+=`</div>`;
@@ -733,7 +733,7 @@ function desenharMapa(){
   html+=`<div class="mundo-info"><span class="icone" style="--g1:${f.g[0]};--g2:${f.g[1]}">${ic(f.ic)}</span><div class="txt"><span class="num" style="color:var(--dour);font-weight:800;font-size:13px">${f.n}</span><h2>${f.t}</h2><p>${f.d}</p>${XP.on&&XP.logado?`<div class="cod-fase xp-fase">${ic("raio","dourado")} XP desta fase no Game Hub: <b>${xpDaFase(f.id,XP.estrelas[f.id]||0)} de ${xpDaFase(f.id,3)}</b></div>`:""}${E.codigos[f.id]?`<div class="cod-fase" title="Concluída em ${E.codigos[f.id].quando}">Código: <b>${E.codigos[f.id].codigo}</b></div>`:""}</div><div class="estrelas" title="${p} de 3 estrelas">${[1,2,3].map(k=>`<span class="${k<=p?"on":""}">★</span>`).join("")}</div><button class="botao dour" data-fase="${f.id}">${p?"Jogar de novo":"Jogar"} ▸</button></div>`;
   $("mapa-fases").innerHTML=html;
   atualizarBotaoComecar();
-  document.querySelectorAll("[data-no]").forEach(b=>b.onclick=()=>{const i=+b.dataset.no;if(!aberta(i)){b.animate([{transform:"translate(-50%,-50%) translateX(-6px)"},{transform:"translate(-50%,-50%) translateX(6px)"},{transform:"translate(-50%,-50%)"}],{duration:250});return;}FASE_SEL=i;somClique();desenharMapa();});
+  document.querySelectorAll("[data-no]").forEach(b=>b.onclick=()=>{const i=+b.dataset.no;if(!aberta(i)){b.animate([{transform:"translate(-50%,-50%) translateX(-6px)"},{transform:"translate(-50%,-50%) translateX(6px)"},{transform:"translate(-50%,-50%)"}],{duration:250});return;}FASE_SEL=i;desenharMapa();if(!garantirNome())return;somClique();jogarFase(FASES_MAPA[i].id);});
   document.querySelectorAll("[data-fase]").forEach(b=>b.onclick=()=>{if(!garantirNome())return;somClique();jogarFase(b.dataset.fase);});
 }
 const INICIO={bancada:()=>iniciarBancada(),gaveta:()=>iniciarGaveta(),fibra:()=>iniciarFibra(),tomada:()=>iniciarTomada(),qualcabo:()=>iniciarQuiz("qualcabo"),cores:()=>iniciarCores(),ferramentas:()=>iniciarQuiz("ferramentas"),regras:()=>iniciarQuiz("regras")};
