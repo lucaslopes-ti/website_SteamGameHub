@@ -2905,7 +2905,7 @@ body.no-intervalo .toast { display: none; }
   var T = 16, W = 50, H = 37;
   var G = [];   // g grama, r rua, s calçada, m canteiro, w água, p trilha, c pedra/praça
   var solido = [];
-  var arvores = [], predios = [], enfeites = [], placas = [];
+  var arvores = [], predios = [], enfeites = [], placas = [], PONTE = {};
   function setT(x, y, t) { if (x >= 0 && y >= 0 && x < W && y < H) G[y][x] = t; }
   function rect(x0, y0, x1, y1, t) { for (var y = y0; y <= y1; y++) for (var x = x0; x <= x1; x++) setT(x, y, t); }
   function sol(x0, y0, x1, y1) { for (var y = y0; y <= y1; y++) for (var x = x0; x <= x1; x++) if (x >= 0 && y >= 0 && x < W && y < H) solido[y][x] = true; }
@@ -2932,13 +2932,20 @@ body.no-intervalo .toast { display: none; }
       var dx = (x + 0.5 - 45) / 3.1, dy = (y + 0.5 - 22.5) / 8.6;
       if (dx * dx + dy * dy < 1) { setT(x, y, "w"); solido[y][x] = true; }
     }
+    // Segismundo e Belarmino atravessam o parque até a borda do mapa, com ponte sobre o lago
+    [[16, 19], [27, 30]].forEach(function (av) {
+      for (var yy = av[0]; yy <= av[1]; yy++) for (var xx = 40; xx < W; xx++) {
+        if (G[yy][xx] === "w") PONTE[xx + "," + yy] = 1;
+        G[yy][xx] = (yy === av[0] || yy === av[1]) ? "s" : "r"; solido[yy][xx] = false;
+      }
+    });
     predios.push({ tipo: "prefeitura", x: 1, y: 0, w: 18, h: 4, nome: "Centro Administrativo · Prefeitura" });
     predios.push({ tipo: "ufu", x: 29, y: 0, w: 19, h: 4, nome: "UFU · Campus Santa Mônica" });
     predios.push({ tipo: "senai", x: 13, y: 32, w: 7, h: 3, nome: "Base do Técnico · SENAI" });
     predios.push({ tipo: "mercado", x: 28, y: 32, w: 8, h: 3, nome: "Mercadinho do Bairro" });
     predios.forEach(function (p) { sol(p.x, p.y, p.x + p.w - 1, p.y + p.h - 1); });
     CASAS.forEach(function (c) { sol(c.x, c.y, c.x + 2, c.y + 2); setT(c.x + 1, c.y + 3, "c"); });
-    function arv(x, y, tipo) { if (solido[y] && !solido[y][x] && G[y][x] !== "r" && G[y][x] !== "c") { arvores.push({ x: x, y: y, tipo: tipo || "ipe" }); solido[y][x] = true; } }
+    function arv(x, y, tipo) { if (solido[y] && !solido[y][x] && G[y][x] !== "r" && G[y][x] !== "c" && !(x >= 40 && G[y][x] === "s")) { arvores.push({ x: x, y: y, tipo: tipo || "ipe" }); solido[y][x] = true; } }
     [0, 4, 7, 12, 16, 20, 28, 31, 35].forEach(function (x) { arv(x, 10); arv(x, 21); });
     [2, 6, 13, 18, 29, 34].forEach(function (x) { arv(x, 9, "copa"); arv(x, 20, "copa"); });
     for (y = 1; y < H; y += 3) if (G[y][24] === "m") arv(24, y, "palmeira");
@@ -3127,6 +3134,18 @@ body.no-intervalo .toast { display: none; }
       var av = (x === 22 || x === 25) && !((y >= 5 && y <= 8) || (y >= 16 && y <= 19) || (y >= 27 && y <= 30));
       if (av && y % 2 === 0) px(g, X2 + T - 1, Y2 + 4, 2, 8, "#e9e9e9");
     }
+    // ponte sobre o lago: sombra na água, mureta de pedra e postes
+    Object.keys(PONTE).forEach(function (chave) {
+      var xy = chave.split(","), x3 = +xy[0], y3 = +xy[1], X3 = x3 * T, Y3 = y3 * T;
+      if (G[y3][x3] !== "s") return;
+      var topo = y3 === 16 || y3 === 27;
+      px(g, X3, Y3, T, T, "#cfc6b5"); px(g, X3, Y3 + 7, T, 1, "#b3a994"); px(g, X3 + (x3 % 2 ? 3 : 11), Y3, 1, T, "#b3a994");
+      if (topo) { px(g, X3, Y3, T, 4, "#8d8676"); px(g, X3, Y3, T, 1, "#e9e3d6"); if (x3 % 2 === 0) px(g, X3 + 6, Y3 - 3, 4, 6, "#6f695c"); }
+      else {
+        px(g, X3, Y3 + T - 4, T, 4, "#8d8676"); px(g, X3, Y3 + T - 4, T, 1, "#e9e3d6"); if (x3 % 2 === 0) px(g, X3 + 6, Y3 + T - 6, 4, 6, "#6f695c");
+        if (G[y3 + 1] && G[y3 + 1][x3] === "w") { px(g, X3, Y3 + T, T, 4, "rgba(10,40,70,.45)"); px(g, X3 + 4, Y3 + T, 3, 6, "#6f695c"); }
+      }
+    });
     // canteiro central com meio-fio
     for (y = 0; y < H; y++) if (G[y][24] === "m") { px(g, 24 * T, y * T, 1, T, "#d8d0c0"); px(g, 25 * T - 1, y * T, 1, T, "#d8d0c0"); }
   }
@@ -3298,7 +3317,7 @@ body.no-intervalo .toast { display: none; }
     return { x: sent > 0 ? b.x + b.w : b.x - d, y: b.y, w: d, h: b.h };
   }
   function sobrepoe(a, b) { return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y; }
-  function limiteCarro(k) { return k.vert ? H * T : (k.faixa < 8 ? W * T : 40 * T); }
+  function limiteCarro(k) { return k.vert ? H * T : W * T; }
   function tileDe(xx, yy) { var x = Math.floor(xx / T), y = Math.floor(yy / T); return G[y] && G[y][x]; }
   function moverCarros(dt) {
     carros.forEach(function (k) {
@@ -4090,7 +4109,7 @@ body.no-intervalo .toast { display: none; }
   atualizarHud(); telas("t-inicio"); iniciarXp();
   requestAnimationFrame(laco);
   // para os testes automáticos
-  window.__jogo = { E: E, J: J, OS: OS, carros: carros, caixa: caixaCarro, entrarNaCasa: entrarNaCasa, estado: function () { return C; }, portaDe: portaDe, telas: telas };
+  window.__jogo = { E: E, J: J, OS: OS, carros: carros, caixa: caixaCarro, tile: tileDe, entrarNaCasa: entrarNaCasa, estado: function () { return C; }, portaDe: portaDe, telas: telas };
 })();
 
 </script>
