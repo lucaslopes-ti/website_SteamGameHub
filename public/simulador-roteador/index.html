@@ -641,7 +641,7 @@ body { font-family: var(--ap-fonte); background: var(--ap-fundo); color: var(--a
 .mapa-area { background: none; border: 0; padding: 0; }
 .mapa-area .mp-mapa { border-radius: 8px; }
 /* o desenho encolhe pela altura para caber ao lado do painel sem rolar */
-@media (min-width: 861px) { .mapa-area .mp-svg { max-height: max(300px, calc(100vh - var(--ap-topo-h) - 420px)); width: auto; max-width: 100%; margin: 0 auto; } }
+@media (min-width: 861px) { .mapa-area { max-width: calc(max(300px, 100vh - var(--ap-topo-h) - 420px) * 1000 / 1205 + 2px); margin: 0 auto; } }
 .mapa-area .mp-btn { display: none; } /* teste de NAT não faz parte deste roteiro */
 .ap-mapa-topo { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin: 8px 0; }
 .mapa-dica { margin: 0; font-size: 13px; color: var(--ap-suave); }
@@ -653,7 +653,7 @@ body { font-family: var(--ap-fonte); background: var(--ap-fundo); color: var(--a
 @media (max-width: 1100px) and (min-width: 861px), (max-width: 400px) { .ap-abas .longo { display: none; } .ap-abas .curto { display: inline; } }
 /* desenho maior: a lateral ocupa metade da tela */
 body.mapa-grande { --ap-lado: minmax(0, 1fr); }
-body.mapa-grande .mapa-area .mp-svg { max-height: none; width: 100%; }
+body.mapa-grande .mapa-area { max-width: none; }
 
 .sim-btn { padding: 8px 14px; border: 1px solid #c6cfd9; background: #f6f8fa; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; color: var(--ap-tinta); text-decoration: none; display: inline-block; text-align: center; }
 .sim-btn:hover { background: #eaeef3; }
@@ -928,6 +928,30 @@ body.com-perfil .so-sem-perfil { display: none; }
 }
 @media (max-width: 860px) { #btn-mapa-grande { display: none; } }
 
+/* ------------------------------------------- Prompt de Comando (cara de Windows) */
+.dlg-cmd { width: min(820px, calc(100vw - 24px)); border-radius: 8px; background: #0c0c0c; }
+.cmd-cab { background: #f3f3f3; color: #1b1b1b; padding: 6px 6px 6px 12px; gap: 10px; justify-content: flex-start; border-bottom: 1px solid #ddd; }
+.cmd-cab strong { flex: 1; font-weight: 400; font-size: 13px; font-family: "Segoe UI", system-ui, sans-serif; }
+.cmd-icone { background: #0c0c0c; color: #ccc; font: 700 9px Consolas, monospace; padding: 2px 3px; border-radius: 2px; border: 1px solid #555; }
+.cmd-cab .dlg-fechar { color: #333; width: 40px; height: 28px; border-radius: 4px; font-size: 15px; }
+.cmd-cab .dlg-fechar:hover { background: #c42b1c; color: #fff; }
+.dlg-cmd .term { background: #0c0c0c; color: #cccccc; font: 15px/1.35 "Cascadia Mono", Consolas, "Courier New", monospace; height: min(52vh, 420px); padding: 10px 14px 0; }
+.dlg-cmd .term div { min-height: 1.35em; }
+.dlg-cmd .term .term-erro { color: #cccccc; }
+.dlg-cmd .term .term-nota { color: #f9d45c; font-family: "Segoe UI", system-ui, sans-serif; font-size: 13.5px; margin: 4px 0 8px; }
+.dlg-cmd .term-entrada { background: #0c0c0c; color: #ccc; font: 15px "Cascadia Mono", Consolas, monospace; padding: 0 14px 12px; gap: 0; }
+.dlg-cmd .term-entrada input { font: inherit; color: #ccc; caret-color: #ccc; padding-left: 0; }
+.dlg-cmd .term-entrada input:disabled { opacity: 0; }
+.term-parar { margin-left: 8px; background: #c42b1c; color: #fff; border: 0; border-radius: 4px; padding: 4px 10px; font: 600 13px "Segoe UI", system-ui, sans-serif; cursor: pointer; }
+.dlg-cmd .term-atalhos { background: #f3f3f3; border-top: 1px solid #ddd; align-items: center; }
+.dlg-cmd .term-atalhos span { font-size: 12.5px; color: #555; margin-right: 2px; }
+.dlg-cmd .term-atalhos button { background: #fff; }
+.dlg-cmd .term-atalhos button:hover { background: #e8eef5; }
+.dlg-cmd .term-entrada:has(input:disabled) > span { visibility: hidden; }
+.ap-btn-prompt { width: 100%; margin-top: 8px; background: #1b1b1b; color: #eee; border-color: #1b1b1b; }
+.ap-btn-prompt:hover { background: #000; }
+.ap-btn-prompt span { font-family: Consolas, monospace; color: #9cdcfe; margin-right: 4px; }
+
 </style>
   <style>
 /* Cores e formas de cada painel, imitando a aparência das telas reais (densas, letra pequena,
@@ -1154,6 +1178,7 @@ body.com-perfil .so-sem-perfil { display: none; }
 
       <section class="ap-pn" role="tabpanel" id="pn-rede" aria-labelledby="aba-rede" data-painel="rede">
         <button id="btn-reconectar" type="button" class="sim-btn sim-btn-destaque">📶 Digitar o Wi-Fi novo no notebook e no celular</button>
+        <button id="btn-prompt" type="button" class="sim-btn ap-btn-prompt"><span aria-hidden="true">C:\&gt;</span> Abrir o Prompt de Comando do notebook</button>
         <div class="ap-mapa-topo">
           <p class="mapa-dica">Clique num aparelho para usar <code>ipconfig</code> e <code>ping</code>.</p>
           <button type="button" class="ap-link" id="btn-mapa-grande" aria-pressed="false">⤢ Desenho maior</button>
@@ -1198,22 +1223,28 @@ body.com-perfil .so-sem-perfil { display: none; }
     </div>
   </dialog>
 
-  <dialog id="dlg-host" class="dlg">
-    <div class="dlg-cab">
+  <dialog id="dlg-host" class="dlg dlg-cmd">
+    <div class="dlg-cab cmd-cab">
+      <span class="cmd-icone" aria-hidden="true">C:\</span>
       <strong id="dlg-host-nome"></strong>
       <button type="button" class="dlg-fechar" data-fechar aria-label="Fechar">✕</button>
     </div>
     <div class="term" id="term-saida" aria-live="polite"></div>
     <form class="term-entrada" id="term-form">
-      <span>C:\&gt;</span>
-      <input id="term-cmd" autocomplete="off" spellcheck="false" placeholder="ipconfig   ·   ping roteador   ·   ping google.com" aria-label="Comando">
+      <span>C:\Users\aluno&gt;</span>
+      <input id="term-cmd" autocomplete="off" spellcheck="false" aria-label="Comando">
+      <button type="button" id="term-parar" class="term-parar" hidden>■ Parar (Ctrl+C)</button>
     </form>
     <div class="term-atalhos">
+      <span>Atalhos:</span>
       <button type="button" data-cmd="ipconfig">ipconfig</button>
+      <button type="button" data-cmd="ipconfig /all">ipconfig /all</button>
       <button type="button" data-cmd="ping roteador">ping roteador</button>
-      <button type="button" data-cmd="ping 8.8.8.8">ping 8.8.8.8</button>
       <button type="button" data-cmd="ping google.com">ping google.com</button>
-      <button type="button" data-cmd="cls">cls (limpar)</button>
+      <button type="button" data-cmd="ping -t google.com">ping -t google.com</button>
+      <button type="button" data-cmd="tracert google.com">tracert google.com</button>
+      <button type="button" data-cmd="nslookup google.com">nslookup google.com</button>
+      <button type="button" data-cmd="cls">cls</button>
     </div>
   </dialog>
 
@@ -3937,7 +3968,7 @@ body.com-perfil .so-sem-perfil { display: none; }
     {
       titulo: "Teste final",
       aba: "rede",
-      dica: function () { return "Na aba <b>Rede</b>, clique no <b>Notebook</b> do desenho. Na janela preta, digite <code>ping google.com</code> e aperte Enter (ou clique no botão ping google.com)."; },
+      dica: function () { return "Na aba <b>Rede</b>, clique em <b>Abrir o Prompt de Comando do notebook</b> (ou no notebook do desenho). Na janela preta, digite <code>ping google.com</code> e aperte Enter. As respostas chegam uma por segundo, como no Windows."; },
       texto: "Clique no notebook no mapa e digite ping google.com. Precisa aparecer \"Resposta de...\".",
       ok: function () { return estado.fez.ping; }
     }
@@ -3983,7 +4014,12 @@ body.com-perfil .so-sem-perfil { display: none; }
     // passo concluído agora: avisa, fecha a dica e abre a aba que ajuda no passo novo
     if (feitosAntes) {
       oks.forEach(function (ok, i) { if (ok && !feitosAntes[i]) avisar("✔ Passo " + (i + 1) + " concluído: " + PASSOS[i].titulo); });
-      if (feitos === PASSOS.length && feitosAntes.indexOf(false) >= 0) setTimeout(mostrarFim, 700);
+      if (feitos === PASSOS.length && feitosAntes.indexOf(false) >= 0) {
+        // com o Prompt aberto, o relatório espera o aluno ver o ping até o fim e fechar a janela
+        if ($("dlg-host").open) {
+          fimPendente = true;
+        } else setTimeout(mostrarFim, 700);
+      }
     }
     if (atual !== ultimoAtual) {
       ultimoAtual = atual;
@@ -4018,7 +4054,9 @@ body.com-perfil .so-sem-perfil { display: none; }
     tempoToast = setTimeout(function () { t.classList.add("some"); setTimeout(function () { t.hidden = true; }, 300); }, 3200);
   }
 
+  var fimPendente = false, avisouFim = false;
   function mostrarFim() {
+    fimPendente = false; avisouFim = false;
     var c = estado.config, min = Math.max(1, Math.round((Date.now() - estado.inicio) / 60000));
     var seg = { wpa2wpa3: "WPA2/WPA3", wpa2: "WPA2", wpa3: "WPA3" }[c.wifi.seguranca] || c.wifi.seguranca;
     var linhas = [
@@ -4113,68 +4151,282 @@ body.com-perfil .so-sem-perfil { display: none; }
     });
   }
 
-  /* -------------------------------------------------- terminal do host */
-  function escrever(linhas) {
-    var saida = $("term-saida");
-    [].concat(linhas).forEach(function (l) {
-      var p = document.createElement("div");
-      p.textContent = l || " ";
-      saida.appendChild(p);
-    });
+  /* -------------------------------------------------- terminal do host
+     Imita o Prompt de Comando do Windows em português: as respostas do ping
+     chegam uma por segundo, com tempos que variam, TTL e estatísticas no fim.
+     Ctrl+C (ou o botão Parar) interrompe, como no Windows. */
+  var PROMPT = "C:\\Users\\aluno>";
+  var IP_GOOGLE = "142.250.79.46", IPV6_GOOGLE = "2800:3f0:4001:83b::200e";
+  var tarefa = null;           // comando em andamento (ping, tracert…)
+  var historico = [], posHist = 0;
+
+  function linhaTerm(txt, cls) {
+    var saida = $("term-saida"), p = document.createElement("div");
+    p.textContent = txt || " ";
+    if (cls) p.className = cls;
+    saida.appendChild(p);
     saida.scrollTop = saida.scrollHeight;
   }
+  function escrever(linhas) { [].concat(linhas).forEach(function (l) { linhaTerm(l); }); }
 
-  function ipconfig(id) {
-    var r = estado.resultado.hosts[id];
-    var host = estado.hosts.filter(function (x) { return x.id === id; })[0];
-    var linhas = ["", "Configuração de IP do Windows", "", host.conexao === "wifi" ? "Adaptador de Rede sem Fio Wi-Fi:" : "Adaptador Ethernet Ethernet:", ""];
-    if (r.enlace !== "ok") {
-      linhas.push("   Estado da mídia. . . . . . . . . . : mídia desconectada");
-    } else {
-      linhas.push("   Endereço IPv4. . . . . . . . . . . : " + (r.ip || "") + (r.origemIP === "apipa" ? " (Autoconfiguração)" : ""));
-      linhas.push("   Máscara de Sub-rede. . . . . . . . : " + (r.mascara || ""));
-      linhas.push("   Gateway Padrão . . . . . . . . . . : " + (r.gateway || ""));
-      linhas.push("   Servidores DNS . . . . . . . . . . : " + (r.dns || ""));
-      linhas.push("   Endereço físico (MAC). . . . . . . : " + host.mac.replace(/:/g, "-"));
+  function hostDe(id) { return estado.hosts.filter(function (x) { return x.id === id; })[0]; }
+  function sorteio(min, max) { return min + Math.floor(Math.random() * (max - min + 1)); }
+
+  // Executa uma lista de passos { atraso, linha | fazer() } um de cada vez
+  function rodar(passos, aoParar) {
+    var cancelado = false, i = 0, timer = null;
+    tarefa = {
+      parar: function () {
+        if (cancelado) return;
+        cancelado = true; clearTimeout(timer);
+        if (aoParar) aoParar();
+        terminar();
+      }
+    };
+    $("term-cmd").disabled = true;
+    $("term-parar").hidden = false;
+    function proximo() {
+      if (cancelado) return;
+      if (i >= passos.length) { terminar(); return; }
+      var p = passos[i++];
+      timer = setTimeout(function () {
+        if (cancelado) return;
+        if (p.fazer) p.fazer(); else linhaTerm(p.linha);
+        proximo();
+      }, p.atraso || 0);
     }
-    linhas.push("");
-    return linhas;
+    function terminar() {
+      tarefa = null;
+      $("term-parar").hidden = true;
+      $("term-cmd").disabled = false;
+      linhaTerm("");
+      if (fimPendente && !avisouFim) {
+        avisouFim = true;
+        linhaTerm("✔ Chamado concluído! Feche esta janela (✕) para ver o relatório do técnico.", "term-nota");
+        linhaTerm("");
+      }
+      $("term-cmd").focus();
+    }
+    proximo();
   }
 
+  /* ------------------------------------------------------------ ipconfig */
+  function ipconfig(id, tudo) {
+    var r = estado.resultado.hosts[id], host = hostDe(id), wifi = host.conexao === "wifi";
+    var l = ["", "Configuração de IP do Windows", ""];
+    if (tudo) {
+      l.push("   Nome do host. . . . . . . . . . . . . . . . : " + host.nome.toUpperCase().replace(/\s+/g, "-").normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
+      l.push("   Tipo de nó. . . . . . . . . . . . . . . . . : híbrido");
+      l.push("   Roteamento de IP ativado. . . . . . . . . . : não", "");
+    }
+    l.push(wifi ? "Adaptador de Rede sem Fio Wi-Fi:" : "Adaptador Ethernet Ethernet:", "");
+    if (r.enlace !== "ok") {
+      l.push("   Estado da mídia. . . . . . . . . . . . . . : mídia desconectada");
+      l.push("   Sufixo DNS específico de conexão. . . . . . : ");
+      if (tudo) l.push("   Endereço Físico . . . . . . . . . . . . . . : " + host.mac.replace(/:/g, "-"));
+      l.push("");
+      return l;
+    }
+    var fim = parseInt(host.mac.split(":").slice(-2).join(""), 16).toString(16);
+    l.push("   Sufixo DNS específico de conexão. . . . . . : ");
+    if (tudo) {
+      l.push("   Descrição . . . . . . . . . . . . . . . . . : " + (wifi ? "Intel(R) Wi-Fi 6 AX201 160MHz" : "Realtek PCIe GbE Family Controller"));
+      l.push("   Endereço Físico . . . . . . . . . . . . . . : " + host.mac.replace(/:/g, "-"));
+      l.push("   DHCP Habilitado . . . . . . . . . . . . . . : " + (r.origemIP === "fixo" ? "Não" : "Sim"));
+    }
+    l.push("   Endereço IPv6 de link local . . . . . . . . : fe80::1c4d:" + fim + ":9a2e:" + fim + "%" + (wifi ? "18" : "12") + (tudo ? "(Preferencial)" : ""));
+    l.push("   Endereço IPv4. . . . . . . . . . . . . . . : " + (r.ip || "") + (r.origemIP === "apipa" ? "(Autoconfiguração)" : (tudo ? "(Preferencial)" : "")));
+    l.push("   Máscara de Sub-rede . . . . . . . . . . . . : " + (r.mascara || ""));
+    l.push("   Gateway Padrão. . . . . . . . . . . . . . . : " + (r.gateway || ""));
+    if (tudo) {
+      if (r.origemIP === "dhcp" || r.origemIP === "reserva") l.push("   Servidor DHCP . . . . . . . . . . . . . . . : " + (r.gateway || estado.config.lan.ip));
+      l.push("   Servidores DNS. . . . . . . . . . . . . . . : " + (r.dns || estado.config.lan.ip));
+      l.push("   NetBIOS em Tcpip. . . . . . . . . . . . . . : Habilitado");
+    }
+    l.push("");
+    return l;
+  }
+
+  /* ----------------------------------------------------------------- ping */
+  // Descobre para onde vai o ping e se ele chega, usando o motor do simulador
+  function alvoDoPing(alvo) {
+    var a = alvo.toLowerCase(), r = estado.resultado, origem = r.hosts[estado.hostAberto];
+    var porNome = hostDe(a);
+    var resp = Motor.ping(r, estado.hostAberto, porNome ? porNome.id : a);
+    var ehNome = !/^\d+\.\d+\.\d+\.\d+$/.test(a);
+    var info = { ok: resp.ok, nome: alvo, ip: a, internet: false, ttl: 128, ms: [1, 4], semRede: origem.enlace !== "ok" || !origem.ip };
+    if (a === "roteador" || a === estado.config.lan.ip || a === origem.gateway) {
+      info.ip = origem.gateway || estado.config.lan.ip; info.nome = null; info.ttl = 64; info.ms = [1, 6];
+    } else if (porNome) {
+      var x = r.hosts[porNome.id]; info.ip = x.ip || "0.0.0.0"; info.nome = null;
+      info.ttl = porNome.id === "camera" || porNome.id === "impressora" ? 64 : 128; info.ms = porNome.conexao === "wifi" ? [3, 12] : [1, 7];
+    } else if (a === "google.com" || a === "www.google.com") {
+      info.ip = IP_GOOGLE; info.internet = true; info.ttl = 117; info.ms = [12, 24];
+      info.dnsFalha = !resp.ok && (!origem.temInternet || !origem.resolveNomes);
+    } else if (ehNome) {
+      info.dnsFalha = true; info.ok = false;
+    } else {
+      info.nome = null; info.internet = !resp.ok ? false : true; info.ttl = a === "8.8.8.8" ? 117 : 56; info.ms = [12, 28];
+    }
+    // o notebook e o celular estão no Wi-Fi: o primeiro salto já demora um pouco mais
+    if (hostDe(estado.hostAberto).conexao === "wifi") { info.ms = [info.ms[0] + 1, info.ms[1] + 3]; }
+    return info;
+  }
+
+  function comandoPing(args) {
+    var alvo = null, n = 4, sempre = false;
+    for (var i = 0; i < args.length; i++) {
+      var a = args[i].toLowerCase();
+      if (a === "-t" || a === "/t") sempre = true;
+      else if ((a === "-n" || a === "/n") && args[i + 1]) { n = Math.max(1, Math.min(50, parseInt(args[++i], 10) || 4)); }
+      else if (a.charAt(0) !== "-" && a.charAt(0) !== "/") alvo = args[i];
+    }
+    if (!alvo) {
+      escrever(["", "Uso: ping [-t] [-n contagem] nome_do_destino", "",
+        "Opções:", "    -t             Executa ping no host especificado até ser interrompido (Ctrl+C).",
+        "    -n contagem    Número de solicitações de eco a serem enviadas.", ""]);
+      return;
+    }
+    var info = alvoDoPing(alvo);
+    if (info.dnsFalha) {
+      rodar([{ atraso: info.semRede ? 300 : 2200, linha: "A solicitação ping não pôde encontrar o host " + alvo + ". Verifique o nome e tente novamente." }]);
+      return;
+    }
+    var mostra = info.nome ? info.nome + " [" + info.ip + "]" : info.ip;
+    var enviados = 0, recebidos = 0, tempos = [], passos = [], total = sempre ? 1000 : n;
+    function estatisticas() {
+      var perdidos = enviados - recebidos, pct = enviados ? Math.round(100 * perdidos / enviados) : 0;
+      linhaTerm("");
+      linhaTerm("Estatísticas do Ping para " + info.ip + ":");
+      linhaTerm("    Pacotes: Enviados = " + enviados + ", Recebidos = " + recebidos + ", Perdidos = " + perdidos + " (" + pct + "% de");
+      linhaTerm("             perda),");
+      if (recebidos) {
+        var mn = Math.min.apply(null, tempos), mx = Math.max.apply(null, tempos);
+        var md = Math.round(tempos.reduce(function (s, t) { return s + t; }, 0) / tempos.length);
+        linhaTerm("Aproximar um número redondo de vezes em milissegundos:");
+        linhaTerm("    Mínimo = " + mn + "ms, Máximo = " + mx + "ms, Média = " + md + "ms");
+      }
+    }
+    passos.push({ atraso: info.internet && info.nome ? 350 : 60, linha: "" });
+    passos.push({ atraso: 0, linha: "Disparando " + mostra + " com 32 bytes de dados:" });
+    for (var k = 0; k < total; k++) {
+      passos.push({
+        atraso: k === 0 ? 250 : 1000,
+        fazer: function () {
+          enviados++;
+          if (info.semRede) { linhaTerm("PING: falha na transmissão. Falha geral."); return; }
+          if (!info.ok) {
+            // sem resposta: o Windows espera 4 s antes de desistir de cada pedido
+            linhaTerm("Esgotado o tempo limite do pedido.", "term-erro");
+            return;
+          }
+          var t = sorteio(info.ms[0], info.ms[1]);
+          if (info.internet && Math.random() < .12) t += sorteio(8, 30);   // um pico de vez em quando, como na vida real
+          recebidos++; tempos.push(t);
+          var tempo = t <= 1 && !info.internet ? "tempo<1ms" : "tempo=" + t + "ms";
+          linhaTerm("Resposta de " + info.ip + ": bytes=32 " + tempo + " TTL=" + info.ttl);
+          if (!animando) {
+            animando = true;
+            var caminho = [estado.hostAberto, "roteador"];
+            if (info.internet) caminho.push("internet");
+            var pr = Mapa.mostrarPacote(caminho);
+            var solta = function () { animando = false; };
+            if (pr && pr.then) pr.then(solta, solta); else setTimeout(solta, 900);
+          }
+          if (info.internet && info.nome && estado.hostAberto === "notebook" && !estado.fez.ping) {
+            estado.fez.ping = true; desenharRoteiro();
+          }
+        }
+      });
+      if (!info.ok && !info.semRede) passos[passos.length - 1].atraso = k === 0 ? 3000 : 4000;
+    }
+    passos.push({ atraso: 0, fazer: estatisticas });
+    rodar(passos, function () { estatisticas(); linhaTerm("Control-C"); linhaTerm("^C"); });
+  }
+  var animando = false;
+
+  /* -------------------------------------------------------------- tracert */
+  function comandoTracert(args) {
+    var alvo = args.filter(function (a) { return a.charAt(0) !== "-"; })[0];
+    if (!alvo) { escrever(["", "Uso: tracert nome_do_destino", ""]); return; }
+    var info = alvoDoPing(alvo);
+    if (info.dnsFalha || info.semRede) {
+      rodar([{ atraso: 1800, linha: "Não foi possível resolver o nome do sistema de destino " + alvo + "." }]);
+      return;
+    }
+    var gw = estado.resultado.hosts[estado.hostAberto].gateway || estado.config.lan.ip;
+    var saltos = [gw];
+    if (info.internet) saltos = saltos.concat(["100.64.0.1", "187.16.214.33", "*", "72.14.204.181", "108.170.245.97", info.ip]);
+    else if (info.ip !== gw) saltos.push(info.ip);
+    var mostra = info.nome ? info.nome + " [" + info.ip + "]" : info.ip;
+    var passos = [{ atraso: 300, linha: "" }, { atraso: 0, linha: "Rastreando a rota para " + mostra }, { atraso: 0, linha: "com no máximo 30 saltos:" }, { atraso: 0, linha: "" }];
+    var chegou = info.ok;
+    saltos.forEach(function (ip, i) {
+      var num = ("   " + (i + 1)).slice(-3);
+      if (ip === "*" || (!chegou && i > 0)) {
+        passos.push({ atraso: 3000, linha: num + "     *        *        *     Esgotado o tempo limite do pedido." });
+        return;
+      }
+      var base = i === 0 ? 1 : 3 + i * 2;
+      var col = function () { var t = sorteio(base, base + 4); return ("      " + (t <= 1 ? "<1" : t) + " ms").slice(-8); };
+      passos.push({ atraso: i === 0 ? 400 : 900, linha: num + " " + col() + " " + col() + " " + col() + "  " + ip });
+    });
+    if (!chegou && saltos.length === 1) passos.push({ atraso: 3000, linha: "  2     *        *        *     Esgotado o tempo limite do pedido." });
+    passos.push({ atraso: 200, linha: "" }, { atraso: 0, linha: "Rastreamento concluído." });
+    rodar(passos);
+  }
+
+  /* -------------------------------------------------------------- nslookup */
+  function comandoNslookup(args) {
+    var alvo = args[0];
+    var r = estado.resultado.hosts[estado.hostAberto];
+    var dns = r.dns || r.gateway || estado.config.lan.ip;
+    if (!alvo) { escrever(["", "Uso: nslookup nome", ""]); return; }
+    if (r.enlace !== "ok" || !r.ip) {
+      rodar([{ atraso: 2000, linha: "*** O servidor padrão não está disponível." }]);
+      return;
+    }
+    var info = alvoDoPing(alvo);
+    var passos = [{ atraso: 400, linha: "Servidor:  UnKnown" }, { atraso: 0, linha: "Address:  " + dns }, { atraso: 0, linha: "" }];
+    if (!r.resolveNomes) {
+      passos.push({ atraso: 2000, linha: "DNS request timed out." }, { atraso: 0, linha: "    timeout was 2 seconds." },
+        { atraso: 2000, linha: "*** Tempo limite da solicitação para UnKnown expirou" });
+    } else if (alvo.toLowerCase().indexOf("google.com") >= 0) {
+      passos.push({ atraso: 300, linha: "Não é resposta autoritativa:" }, { atraso: 0, linha: "Nome:    google.com" },
+        { atraso: 0, linha: "Addresses:  " + IPV6_GOOGLE }, { atraso: 0, linha: "          " + IP_GOOGLE });
+    } else {
+      passos.push({ atraso: 600, linha: "*** UnKnown não encontrou " + alvo + ": Non-existent domain" });
+    }
+    if (info) rodar(passos);
+  }
+
+  /* ------------------------------------------------------------- comandos */
   function executar(cmd) {
     cmd = cmd.trim();
+    linhaTerm(PROMPT + cmd);
     if (!cmd) return;
-    escrever("C:\\> " + cmd);
-    var partes = cmd.toLowerCase().split(/\s+/);
-    if (partes[0] === "ipconfig") {
-      escrever(ipconfig(estado.hostAberto));
-    } else if (partes[0] === "ping" && partes[1]) {
-      var alvo = partes[1];
-      var porNome = estado.hosts.filter(function (x) { return x.id === alvo; })[0];
-      var resp = Motor.ping(estado.resultado, estado.hostAberto, porNome ? porNome.id : alvo);
-      escrever(resp.linhas.concat([""]));
-      if (resp.ok) {
-        var internet = alvo === "8.8.8.8" || (alvo.indexOf(".") > 0 && isNaN(alvo.replace(/\./g, "")));
-        var caminho = [estado.hostAberto, "roteador"];
-        if (internet) caminho.push("internet");
-        Mapa.mostrarPacote(caminho);
-        if (alvo === "google.com" && estado.hostAberto === "notebook") { estado.fez.ping = true; desenharRoteiro(); }
-      }
-    } else if (partes[0] === "cls") {
-      $("term-saida").innerHTML = "";
-    } else {
-      escrever(["'" + partes[0] + "' não é reconhecido como um comando. Use ipconfig ou ping.", ""]);
-    }
+    historico.push(cmd); posHist = historico.length;
+    var partes = cmd.split(/\s+/), nome = partes[0].toLowerCase().replace(/\.exe$/, ""), args = partes.slice(1);
+    if (nome === "ipconfig") escrever(ipconfig(estado.hostAberto, args.some(function (a) { return /^[-/]all$/i.test(a); })));
+    else if (nome === "ping") comandoPing(args);
+    else if (nome === "tracert") comandoTracert(args);
+    else if (nome === "nslookup") comandoNslookup(args);
+    else if (nome === "cls") $("term-saida").innerHTML = "";
+    else if (nome === "help" || nome === "ajuda") escrever(["", "Comandos deste simulador:", "  ipconfig        ipconfig /all", "  ping roteador   ping google.com   ping 8.8.8.8   ping -t google.com",
+      "  tracert google.com   nslookup google.com   cls", "Para parar um comando: Ctrl+C (ou o botão Parar).", ""]);
+    else escrever(["'" + partes[0] + "' não é reconhecido como um comando interno", "ou externo, um programa operável ou um arquivo em lotes.", ""]);
   }
 
   function abrirHost(id) {
-    var host = estado.hosts.filter(function (x) { return x.id === id; })[0];
+    var host = hostDe(id);
     if (!host) return;
+    if (tarefa) tarefa.parar();
     estado.hostAberto = id;
     $("dlg-host-nome").textContent = "Prompt de Comando · " + host.nome;
     $("term-saida").innerHTML = "";
+    escrever(["Microsoft Windows [versão 10.0.22631.4460]", "(c) Microsoft Corporation. Todos os direitos reservados.", ""]);
     var problemas = estado.resultado.hosts[id].problemas || [];
-    if (problemas.length) escrever(["Observação do técnico: " + problemas[0].texto, ""]);
+    if (problemas.length) { linhaTerm("Observação do técnico: " + problemas[0].texto, "term-nota"); linhaTerm(""); }
     $("dlg-host").showModal();
     $("term-cmd").focus();
   }
@@ -4229,11 +4481,26 @@ body.com-perfil .so-sem-perfil { display: none; }
 
   $("term-form").addEventListener("submit", function (ev) {
     ev.preventDefault();
+    if (tarefa) return;
     executar($("term-cmd").value);
     $("term-cmd").value = "";
   });
+  $("term-cmd").addEventListener("keydown", function (ev) {   // seta para cima/baixo: comandos anteriores
+    if (ev.key === "ArrowUp" && posHist > 0) { this.value = historico[--posHist]; ev.preventDefault(); }
+    else if (ev.key === "ArrowDown") { posHist = Math.min(historico.length, posHist + 1); this.value = historico[posHist] || ""; ev.preventDefault(); }
+  });
+  document.addEventListener("keydown", function (ev) {
+    if ($("dlg-host").open && ev.ctrlKey && (ev.key === "c" || ev.key === "C") && tarefa && !String(window.getSelection())) { tarefa.parar(); ev.preventDefault(); }
+  });
+  $("btn-prompt").addEventListener("click", function () { abrirHost("notebook"); });
+  $("term-parar").addEventListener("click", function () { if (tarefa) tarefa.parar(); });
+  $("dlg-host").addEventListener("close", function () {
+    if (tarefa) tarefa.parar();
+    if (fimPendente) setTimeout(mostrarFim, 400);
+  });
+  $("term-saida").addEventListener("click", function () { if (!String(window.getSelection())) $("term-cmd").focus(); });
   document.querySelectorAll("[data-cmd]").forEach(function (b) {
-    b.addEventListener("click", function () { executar(b.getAttribute("data-cmd")); });
+    b.addEventListener("click", function () { if (!tarefa) executar(b.getAttribute("data-cmd")); });
   });
   document.querySelectorAll("[data-fechar]").forEach(function (b) {
     b.addEventListener("click", function () { b.closest("dialog").close(); });
