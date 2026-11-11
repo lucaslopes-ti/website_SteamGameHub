@@ -23,6 +23,7 @@ import {
   ChevronDown,
   Upload,
   Cable,
+  ShoppingBag,
 } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useAuth } from "./AuthProvider";
@@ -75,6 +76,7 @@ export default function Header() {
     { href: "/materiais", label: "Materiais", icon: BookOpen },
     { href: "/simulado-saep", label: "Simulado SAEP", icon: Trophy },
     { href: "/sql-quest", label: "SENAI Quest", icon: Database },
+    { href: "/sql-quest/loja", label: "Loja", icon: ShoppingBag },
     {
       href: "/montador-cabo",
       label: "Montador de Cabo",
@@ -84,9 +86,22 @@ export default function Header() {
     },
   ];
 
-  const isActive = useCallback(
+  const matches = useCallback(
     (href: string) => pathname === href || pathname.startsWith(`${href}/`),
     [pathname]
+  );
+
+  // Ativo = rota que casa com a URL, desde que nenhum item mais específico
+  // também case (ex.: em /sql-quest/loja só "Loja" fica ativo, não "SENAI Quest").
+  const isActive = useCallback(
+    (href: string) =>
+      matches(href) &&
+      !mainItems.some(
+        (other) => other.href.length > href.length && other.href.startsWith(`${href}/`) && matches(other.href)
+      ),
+    // mainItems é recriado a cada render, mas só depende de t(); pathname basta aqui.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [matches]
   );
 
   const closeMenus = useCallback(() => {
@@ -419,10 +434,11 @@ export default function Header() {
               </button>
               <Link
                 href="/upload"
-                className="hidden h-10 items-center gap-2 rounded-lg border border-[var(--secondary-20)] bg-[var(--secondary-10)] px-4 text-sm font-semibold text-[var(--secondary)] transition-[background-color,transform] duration-150 ease-out hover:bg-[var(--secondary-20)] active:scale-[0.97] sm:inline-flex"
+                className="hidden h-10 items-center gap-2 rounded-lg border border-[var(--secondary-20)] bg-[var(--secondary-10)] px-4 text-sm font-semibold text-[var(--secondary)] transition-[background-color,transform] duration-150 ease-out hover:bg-[var(--secondary-20)] active:scale-[0.97] sm:inline-flex lg:max-xl:px-3"
               >
                 <Upload aria-hidden="true" className="h-4 w-4" />
-                {t("header.upload")}
+                {/* Entre 1024px e 1279px vira só ícone, para a navegação caber. */}
+                <span className="lg:max-xl:sr-only">{t("header.upload")}</span>
               </Link>
 
               {isAuthenticated ? (
