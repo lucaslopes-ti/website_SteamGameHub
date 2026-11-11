@@ -13,6 +13,9 @@ import type { MetadataRoute } from "next";
  * modificação no documento (`updatedAt`). `createdAt` indica criação e não é
  * usado, pois edições posteriores do jogo não o atualizam.
  */
+/** Regera o sitemap a cada hora, para incluir jogos aprovados depois do deploy. */
+export const revalidate = 3600;
+
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://senaigamehub.vercel.app";
 
