@@ -511,7 +511,7 @@ a.chip{text-decoration:none}
     <p class="peq">Código de conclusão: anote no roteiro. Ele também fica guardado em <b><i data-ic="prancheta"></i> Códigos</b>, no topo da tela.</p>
     <div class="codigo" id="r-codigo"></div>
   </div>
-  <div style="text-align:center"><button class="botao dour" id="r-voltar">Voltar ao mapa</button></div>
+  <div style="text-align:center"><button class="botao cinza" id="r-voltar">Voltar ao mapa</button> <button class="botao dour" id="r-prox" hidden>Próxima fase ▸</button></div>
 </section>
 
 <!-- CÓDIGOS -->
@@ -698,9 +698,9 @@ function svgCabo({decapado=0,fios=null,conector=false,cortado=false,ferido=false
 }
 
 /* ================= mapa de fases ================= */
-let FASE_SEL=null;
+let FASE_SEL=null,FASES_MAPA=[];
 function desenharMapa(){
-  const fases=[
+  const fases=FASES_MAPA=[
     {n:"FASE 1",ic:"rj45",g:["#2f7cf6","#5b4ff0"],t:"Bancada: 3 cabos",d:"O cabo inteiro pelo POP, nas duas pontas: cortar, decapar, ordenar, cortar reto, inserir, crimpar, conferir contra a luz, testar e etiquetar.",id:"bancada"},
     {n:"FASE 2",ic:"lupa",g:["#f5b942","#e0662b"],t:"Caça-defeitos",d:"8 cabos da gaveta: teste, ache o defeito, escolha a caixa certa e conserte na bancada os que têm conserto.",id:"gaveta"},
     {n:"FASE 3",ic:"lampada",g:["#a78bfa","#e0559b"],t:"Fibra: pode ou não pode?",d:"10 situações de fibra óptica e segurança. Responda rápido e sem errar.",id:"fibra"},
@@ -732,13 +732,23 @@ function desenharMapa(){
   const f=fases[FASE_SEL],p=E.progresso[f.id]||0;
   html+=`<div class="mundo-info"><span class="icone" style="--g1:${f.g[0]};--g2:${f.g[1]}">${ic(f.ic)}</span><div class="txt"><span class="num" style="color:var(--dour);font-weight:800;font-size:13px">${f.n}</span><h2>${f.t}</h2><p>${f.d}</p>${XP.on&&XP.logado?`<div class="cod-fase xp-fase">${ic("raio","dourado")} XP desta fase no Game Hub: <b>${xpDaFase(f.id,XP.estrelas[f.id]||0)} de ${xpDaFase(f.id,3)}</b></div>`:""}${E.codigos[f.id]?`<div class="cod-fase" title="Concluída em ${E.codigos[f.id].quando}">Código: <b>${E.codigos[f.id].codigo}</b></div>`:""}</div><div class="estrelas" title="${p} de 3 estrelas">${[1,2,3].map(k=>`<span class="${k<=p?"on":""}">★</span>`).join("")}</div><button class="botao dour" data-fase="${f.id}">${p?"Jogar de novo":"Jogar"} ▸</button></div>`;
   $("mapa-fases").innerHTML=html;
+  atualizarBotaoComecar();
   document.querySelectorAll("[data-no]").forEach(b=>b.onclick=()=>{const i=+b.dataset.no;if(!aberta(i)){b.animate([{transform:"translate(-50%,-50%) translateX(-6px)"},{transform:"translate(-50%,-50%) translateX(6px)"},{transform:"translate(-50%,-50%)"}],{duration:250});return;}FASE_SEL=i;somClique();desenharMapa();});
-  document.querySelectorAll("[data-fase]").forEach(b=>b.onclick=()=>{if(!garantirNome())return;somClique();({bancada:iniciarBancada,gaveta:iniciarGaveta,fibra:iniciarFibra,tomada:iniciarTomada,qualcabo:()=>iniciarQuiz("qualcabo"),cores:iniciarCores,ferramentas:()=>iniciarQuiz("ferramentas"),regras:()=>iniciarQuiz("regras")})[b.dataset.fase]();});
+  document.querySelectorAll("[data-fase]").forEach(b=>b.onclick=()=>{if(!garantirNome())return;somClique();jogarFase(b.dataset.fase);});
 }
+const INICIO={bancada:()=>iniciarBancada(),gaveta:()=>iniciarGaveta(),fibra:()=>iniciarFibra(),tomada:()=>iniciarTomada(),qualcabo:()=>iniciarQuiz("qualcabo"),cores:()=>iniciarCores(),ferramentas:()=>iniciarQuiz("ferramentas"),regras:()=>iniciarQuiz("regras")};
+function jogarFase(id){const i=FASES_MAPA.findIndex(f=>f.id===id);if(i>=0)FASE_SEL=i;INICIO[id]();}
+/* "Começar o plantão" abre a fase escolhida no mapa (por padrão, a próxima que falta), não volta sempre para a Fase 1 */
+function atualizarBotaoComecar(){const b=$("btn-comecar"),f=FASES_MAPA[FASE_SEL];if(!b||!f)return;
+  const algumaFeita=FASES_MAPA.some(x=>(E.progresso[x.id]||0)>0),p=E.progresso[f.id]||0;
+  b.textContent=!algumaFeita?"Começar o plantão":p?`Jogar de novo · ${f.n.replace("FASE","Fase")}`:`Continuar o plantão · ${f.n.replace("FASE","Fase")}`;}
+/* próxima fase depois do resultado, se já estiver aberta */
+function proximaFase(){const i=FASES_MAPA.findIndex(f=>f.id===E.faseAtual);const n=FASES_MAPA[i+1];
+  return i>=0&&n&&(location.hash.includes("livre")||(E.progresso[FASES_MAPA[i].id]||0)>0)?n:null;}
 let _rz=null;window.addEventListener("resize",()=>{clearTimeout(_rz);_rz=setTimeout(()=>{if(document.getElementById("t-inicio").classList.contains("ativa"))desenharMapa();},200);});
 window.addEventListener("hashchange",desenharMapa);
 function garantirNome(){const n=$("nome").value.trim();if(!n){const c=$("nome");c.classList.remove("erro");void c.offsetWidth;c.classList.add("erro");$("aviso-nome").hidden=false;c.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>c.focus({preventScroll:true}),350);let t=document.getElementById("toast-nome");if(!t){t=document.createElement("div");t.id="toast-nome";t.setAttribute("role","alert");document.body.appendChild(t);}t.textContent="Antes de jogar, escreva o seu nome no começo da página.";t.hidden=false;clearTimeout(t._t);t._t=setTimeout(()=>t.hidden=true,3500);return false;}$("aviso-nome").hidden=true;$("nome").classList.remove("erro");E.nome=n;$("hud-nome").innerHTML=ic("capacete")+" "+escapar(n);salvar();return true;}
-$("btn-comecar").onclick=()=>{if(!garantirNome())return;somClique();iniciarBancada();};
+$("btn-comecar").onclick=()=>{if(!garantirNome())return;somClique();jogarFase((FASES_MAPA[FASE_SEL]||{id:"bancada"}).id);};
 $("btn-cola").onclick=()=>{telas("t-cola");};
 $("cola-voltar").onclick=()=>{telas(E.voltarPara||"t-inicio");};
 $("cola-corpo").innerHTML=T568B.map((k,i)=>`<tr><td><b>${i+1}</b></td><td><span class="amostra" style="background:${FIOS[k].cor}"></span>${FIOS[k].nome}</td><td><span class="amostra" style="background:${FIOS[T568A[i]].cor}"></span>${FIOS[T568A[i]].nome}</td></tr>`).join("");
@@ -1565,14 +1575,21 @@ function aoPremioXp(m){
   if(m.ok)lerResumoXp(m);
   const caixa=$("r-xp");
   if(m.pedido===XP.ultimoPedido){
-    if(m.ok&&m.xpGanho>0){caixa.className="card xp-res ganhou";caixa.innerHTML=`<div class="xp-num">+${m.xpGanho} XP</div><p>Guardado na sua conta do SENAI Game Hub. Agora você tem <b>${XP.total} XP</b>. Troque na <a href="/sql-quest/loja">Loja de recompensas</a>.</p>`;somBom();}
-    else if(m.ok){caixa.className="card xp-res";caixa.innerHTML=`<p>${ic("check","dourado")} O XP destas estrelas já está na sua conta (<b>${XP.total} XP</b>). Faça mais estrelas nesta fase para ganhar mais.</p>`;}
+    if(m.ok&&m.xpGanho>0){caixa.className="card xp-res ganhou";caixa.innerHTML=`<div class="xp-num">+${m.xpGanho} XP</div><p>${explicarXp(m.xpGanho)}</p><p>Guardado na sua conta do SENAI Game Hub. Agora você tem <b>${XP.total} XP</b>. Troque na <a href="/sql-quest/loja">Loja de recompensas</a>.</p>`;somBom();}
+    else if(m.ok){caixa.className="card xp-res";caixa.innerHTML=`<p>${ic("check","dourado")} Esta fase já tinha ${XP.antes} estrela${XP.antes>1?"s":""} na sua conta, então estas estrelas não somam XP de novo (<b>${XP.total} XP</b> no total).${XP.antes<3?` A próxima estrela desta fase vale +${XP.porEstrela[XP.antes]} XP.`:""}</p>`;}
     else if(m.logado===false){caixa.className="card xp-res";caixa.innerHTML=`<p>Entre no Game Hub para guardar o XP. ${linkEntrar()}</p>`;}
     else{caixa.className="card xp-res";caixa.innerHTML=`<p>${ic("alerta","dourado")} Não deu para salvar o XP agora (${escapar(m.error||"sem conexão")}). Jogue a fase de novo mais tarde.</p>`;}
     caixa.hidden=false;
   }
   desenharXp();
 }
+/* O XP é por estrela e entra uma vez só: 1ª estrela 60, 2ª +40, 3ª +40. Repetir uma fase só soma as estrelas novas. */
+function explicarXp(ganho){const a=XP.antes||0,e=Math.max(XP.pedidoEst||0,a),ord=n=>n+"ª";
+  const novas=[];for(let i=a;i<e;i++)novas.push(`${ord(i+1)} estrela +${XP.porEstrela[i]}`);
+  let t=novas.length?`${novas.join(", ")} nesta fase.`:"";
+  if(a)t+=` ${a===1?"A 1ª estrela já tinha":"A 1ª e a 2ª estrela já tinham"} rendido ${xpDaFase(XP.pedidoFase,a)} XP antes, por isso só entra a diferença.`;
+  const bonus=ganho-xpDaFase(XP.pedidoFase,e)+xpDaFase(XP.pedidoFase,a);if(bonus>0)t+=` Bônus de jogo completo: +${bonus} XP!`;
+  return t.trim();}
 function linkEntrar(){return `<a class="botao dour peq-btn" href="/login?redirect=/montador-cabo">Entrar</a> <a class="botao cinza peq-btn" href="/cadastro?redirect=/montador-cabo">Criar cadastro</a>`;}
 function desenharXp(){
   const chip=$("hud-xp"),caixa=$("xp-caixa");
@@ -1596,7 +1613,7 @@ function premiarXp(fase,est){
     try{const p=JSON.parse(sessionStorage.getItem(XP_PENDENTE)||"{}");p[fase]=Math.max(p[fase]||0,est);sessionStorage.setItem(XP_PENDENTE,JSON.stringify(p));}catch(e){}
     caixa.className="card xp-res";caixa.innerHTML=`<p>${ic("raio","dourado")} Estas estrelas valem até <b>${xpDaFase(fase,est)} XP</b> no SENAI Game Hub. Entre agora (nesta mesma aba) e o XP é guardado.</p><p>${linkEntrar()}</p>`;caixa.hidden=false;return;
   }
-  XP.ultimoPedido="p"+(++XP.pedidos);
+  XP.ultimoPedido="p"+(++XP.pedidos);XP.pedidoFase=fase;XP.pedidoEst=est;XP.antes=XP.estrelas[fase]||0;
   caixa.className="card xp-res";caixa.innerHTML=`<p>${ic("raio","dourado")} Guardando o XP na sua conta...</p>`;caixa.hidden=false;
   enviarXp({acao:"premiar",pedido:XP.ultimoPedido,fase,estrelas:est});
 }
@@ -1616,8 +1633,10 @@ function mostrarResultado(tit,sub,est,linhas){
   if(E.faseAtual){E.codigos[E.faseAtual]={codigo:cod,estrelas:est,quando:new Date().toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})};salvar();}
   telas("t-resultado");if(est>=2){somBom();setTimeout(somBom,250);}
   premiarXp(E.faseAtual,est);
+  const prox=proximaFase();$("r-prox").hidden=!prox;if(prox)$("r-prox").textContent=`Próxima: ${prox.n.replace("FASE","Fase")} ▸`;
 }
 $("r-voltar").onclick=()=>{desenharMapa();telas("t-inicio");};
+$("r-prox").onclick=()=>{const prox=proximaFase();if(!prox)return;somClique();jogarFase(prox.id);};
 function mostrarCodigos(){const nomes={bancada:"Fase 1 · Bancada: 3 cabos",gaveta:"Fase 2 · Caça-defeitos",fibra:"Fase 3 · Fibra: pode ou não pode?",tomada:"Fase 4 · Tomada de rede",qualcabo:"Fase 5 · Qual cabo eu uso?",cores:"Fase 6 · Corrida das cores",ferramentas:"Fase 7 · Ferramenta certa",regras:"Fase 8 · Regras da instalação"};
   $("c-lista").innerHTML=Object.entries(nomes).map(([k,t])=>{const c=E.codigos[k];return `<div class="${c?"tem":""}"><span>${t}${c?`<small>${"★".repeat(c.estrelas)} · ${c.quando}</small>`:"<small>ainda não concluída</small>"}</span><b class="codigo-p">${c?c.codigo:"—"}</b></div>`;}).join("")+(E.nome?`<p class="peq">Técnico(a): <b>${E.nome}</b></p>`:"");
   telas("t-codigos");}

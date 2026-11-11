@@ -250,7 +250,7 @@ input.nome.erro{border:2px solid #ff5a5f;box-shadow:0 0 0 4px rgba(255,90,95,.25
     <p class="peq">Código de conclusão: mostre ao instrutor e anote no registro individual</p>
     <div class="codigo" id="r-codigo"></div>
   </div>
-  <div style="text-align:center"><button class="botao dour" id="r-voltar">Voltar ao mapa das fases</button></div>
+  <div style="text-align:center"><button class="botao cinza" id="r-voltar">Voltar ao mapa das fases</button> <button class="botao dour" id="r-prox" hidden>Próxima fase ▸</button></div>
 </section>
 </main>
 <div class="cheia" id="cheia"><button id="cheia-sair">Clique em qualquer lugar para sair</button></div>
@@ -320,8 +320,16 @@ function desenharMapa(){
   const f=FASES[FASE_SEL],p=E.progresso[f.id]||0;
   html+=`<div class="mundo-info"><span class="ic" style="--g1:${f.g1};--g2:${f.g2}">${f.ic}</span><div class="txt"><span class="num">${f.n}</span><h2>${f.t}</h2><p>${f.d}</p></div><div class="estrelas">${est(p)}</div><button class="botao dour" data-fase="${f.id}">${p?"Jogar de novo":"Jogar"} ▸</button></div>`;
   $("mapa-fases").innerHTML=html;
+  atualizarBotaoComecar();
   document.querySelectorAll("[data-no]").forEach(b=>b.onclick=()=>{const i=+b.dataset.no;if(!aberta(i)){b.animate([{transform:"translate(-50%,-50%) translateX(-6px)"},{transform:"translate(-50%,-50%) translateX(6px)"},{transform:"translate(-50%,-50%)"}],{duration:250});return;}FASE_SEL=i;somClique();desenharMapa();});
-  document.querySelectorAll("[data-fase]").forEach(b=>b.onclick=()=>{if(!garantirNome())return;somClique();INICIO[b.dataset.fase]();});}
+  document.querySelectorAll("[data-fase]").forEach(b=>b.onclick=()=>{if(!garantirNome())return;somClique();jogarFase(b.dataset.fase);});}
+function jogarFase(id){const i=FASES.findIndex(f=>f.id===id);if(i>=0)FASE_SEL=i;E.faseAtual=id;INICIO[id]();}
+/* "Começar o plantão" abre a fase escolhida no mapa (por padrão, a próxima que falta), não volta sempre para a Fase 1 */
+function atualizarBotaoComecar(){const b=$("btn-comecar"),f=FASES[FASE_SEL];if(!b||!f)return;
+  const algumaFeita=FASES.some(x=>(E.progresso[x.id]||0)>0),p=E.progresso[f.id]||0;
+  b.textContent=!algumaFeita?"Começar o plantão":p?`Jogar de novo · ${f.n.replace("FASE","Fase")}`:`Continuar o plantão · ${f.n.replace("FASE","Fase")}`;}
+function proximaFase(){const i=FASES.findIndex(f=>f.id===E.faseAtual);const n=FASES[i+1];
+  return i>=0&&n&&(location.hash.includes("todas")||(E.progresso[FASES[i].id]||0)>0)?n:null;}
 let _rz=null;window.addEventListener("resize",()=>{clearTimeout(_rz);_rz=setTimeout(()=>{if(document.getElementById("t-inicio").classList.contains("ativa"))desenharMapa();},200);});
 window.addEventListener("hashchange",()=>desenharMapa());
 function garantirNome(){const c=$("nome"),n=c.value.trim();if(!n){c.classList.remove("erro");void c.offsetWidth;c.classList.add("erro");$("aviso-nome").hidden=false;
@@ -329,7 +337,7 @@ function garantirNome(){const c=$("nome"),n=c.value.trim();if(!n){c.classList.re
   let t=document.getElementById("toast-nome");if(!t){t=document.createElement("div");t.id="toast-nome";t.setAttribute("role","alert");document.body.appendChild(t);}
   t.textContent="Antes de jogar, escreva o seu nome no começo da página.";t.hidden=false;clearTimeout(t._t);t._t=setTimeout(()=>t.hidden=true,3500);return false;}
   $("aviso-nome").hidden=true;c.classList.remove("erro");E.nome=n;$("hud-nome").textContent="👷 "+n;salvar();return true;}
-$("btn-comecar").onclick=()=>{if(!garantirNome())return;somClique();iniciarCabe();};
+$("btn-comecar").onclick=()=>{if(!garantirNome())return;somClique();jogarFase((FASES[FASE_SEL]||FASES[0]).id);};
 $("btn-teste").onclick=()=>{if(!garantirNome())return;somClique();iniciarPerif();};
 
 /* ================= FASE 1 ================= */
@@ -442,6 +450,7 @@ function mostrarResultado(tit,sub,est,linhas){esconderRelogio();$("r-titulo").te
   $("r-lista").innerHTML=linhas.map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join("")+`<div><span>Pontos no plantão</span><b>${E.pontos}</b></div><div><span>Estrelas nas 4 fases</span><b>${total} de 12 · ${cargo}</b></div>`;
   $("r-codigo").textContent=codigo();telas("t-resultado");if(est>=2){somBom();setTimeout(somBom,250);}}
 $("r-voltar").onclick=()=>{desenharMapa();telas("t-inicio");};
+$("r-prox").onclick=()=>{const prox=proximaFase();if(!prox)return;somClique();jogarFase(prox.id);};
 const INICIO={cabe:iniciarCabe,pop:iniciarPop,tela:iniciarTela,perif:iniciarPerif};
 carregar();if(E.nome){$("nome").value=E.nome;$("hud-nome").textContent="👷 "+E.nome;}
 desenharMapa();
