@@ -45,8 +45,8 @@ export default function Header() {
   const [moreOpen, setMoreOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  // Entre 1024px e 1535px a busca vira um botão que abre uma linha extra,
-  // para a navegação em pílulas caber sem espremer o campo.
+  // No desktop (1280px+) a busca é um botão que abre uma linha extra,
+  // para todos os botões da navegação em pílulas caberem sem espremer nada.
   const [searchOpen, setSearchOpen] = useState(false);
 
   const searchRef = useRef<HTMLInputElement>(null);
@@ -132,7 +132,7 @@ export default function Header() {
 
   // Fecha o painel mobile ao crescer para o breakpoint desktop.
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px)");
+    const mq = window.matchMedia("(min-width: 1280px)");
     const onChange = (e: MediaQueryListEvent) => {
       if (e.matches) setMobileOpen(false);
     };
@@ -349,7 +349,7 @@ export default function Header() {
             <nav
               id="navigation"
               aria-label="Navegação principal"
-              className="hd-nav-track ml-1 hidden shrink-0 lg:flex"
+              className="hd-nav-track mx-auto hidden shrink-0 xl:flex"
             >
               {mainItems.map((item) =>
                 renderNavLink(
@@ -409,7 +409,7 @@ export default function Header() {
             </nav>
 
             {/* Busca */}
-            <div className="hidden min-w-0 flex-1 justify-center px-1 md:flex lg:hidden 2xl:flex 2xl:px-3">
+            <div className="hidden min-w-0 flex-1 justify-center px-1 md:flex xl:hidden">
               <form
                 role="search"
                 onSubmit={handleSearch}
@@ -431,7 +431,7 @@ export default function Header() {
                   setMoreOpen(false);
                   setUserMenuOpen(false);
                 }}
-                className="hidden h-10 w-10 items-center justify-center rounded-full border border-[var(--outline-10)] bg-[var(--surface-container-lowest)] text-[var(--on-surface)] transition-[background-color,transform] duration-150 ease-out hover:bg-white/10 active:scale-95 lg:flex 2xl:hidden"
+                className="hidden h-10 w-10 items-center justify-center rounded-full border border-[var(--outline-10)] bg-[var(--surface-container-lowest)] text-[var(--on-surface)] transition-[background-color,transform] duration-150 ease-out hover:bg-white/10 active:scale-95 xl:flex"
               >
                 {searchOpen ? (
                   <X aria-hidden="true" className="h-4 w-4" />
@@ -444,8 +444,7 @@ export default function Header() {
                 className="hidden h-10 items-center gap-2 rounded-lg border border-[var(--secondary-20)] bg-[var(--secondary-10)] px-4 text-sm font-semibold text-[var(--secondary)] transition-[background-color,transform] duration-150 ease-out hover:bg-[var(--secondary-20)] active:scale-[0.97] sm:inline-flex lg:max-xl:px-3"
               >
                 <Upload aria-hidden="true" className="h-4 w-4" />
-                {/* Entre 1024px e 1279px vira só ícone, para a navegação caber. */}
-                <span className="lg:max-xl:sr-only">{t("header.upload")}</span>
+                <span>{t("header.upload")}</span>
               </Link>
 
               {isAuthenticated ? (
@@ -535,7 +534,7 @@ export default function Header() {
                   setMoreOpen(false);
                   setUserMenuOpen(false);
                 }}
-                className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--outline-10)] bg-[var(--surface-container-lowest)] text-[var(--on-surface-variant)] transition-[color,background-color,transform] duration-150 ease-out hover:text-[var(--primary)] active:scale-95 lg:hidden"
+                className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--outline-10)] bg-[var(--surface-container-lowest)] text-[var(--on-surface-variant)] transition-[color,background-color,transform] duration-150 ease-out hover:text-[var(--primary)] active:scale-95 xl:hidden"
               >
                 {mobileOpen ? (
                   <X aria-hidden="true" className="h-5 w-5" />
@@ -549,7 +548,7 @@ export default function Header() {
           {searchOpen && (
             <div
               id="desktop-search"
-              className="hd-panel-in container relative z-10 mx-auto hidden px-6 pb-3 lg:block 2xl:hidden"
+              className="hd-panel-in container relative z-10 mx-auto hidden px-6 pb-3 xl:block"
             >
               <form
                 role="search"
@@ -564,7 +563,7 @@ export default function Header() {
           {/* Atalhos visíveis no celular/tablet: chips com rolagem horizontal */}
           <nav
             aria-label="Atalhos"
-            className="hd-chips container relative z-10 mx-auto px-4 pb-2.5 lg:hidden"
+            className="hd-chips container relative z-10 mx-auto px-4 pb-2.5 lg:px-6 xl:hidden"
           >
             {/* Itens novos primeiro, para aparecerem sem precisar rolar */}
             {[...mainItems]
@@ -605,7 +604,7 @@ export default function Header() {
           <div
             id="mobile-menu"
             ref={panelRef}
-            className="hd-panel-in max-h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain border-b border-[var(--outline-10)] bg-[var(--surface)] lg:hidden"
+            className="hd-panel-in max-h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain border-b border-[var(--outline-10)] bg-[var(--surface)] xl:hidden"
           >
             <div className="border-b border-[var(--outline-10)] p-4">
               <form role="search" onSubmit={handleSearch} className="hd-search relative">
