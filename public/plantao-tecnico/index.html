@@ -820,6 +820,27 @@ kbd { border-radius: 3px; border: 2px solid var(--px-borda); border-bottom-width
 body.no-intervalo .toast { display: none; }
 @media (max-width: 600px) { .iv-card { flex-direction: column; text-align: center; padding: 18px; } .iv-relogio { font-size: 34px; } }
 
+/* quadro fixo "Como andar" (computador) */
+.teclas-ajuda { position: fixed; left: 12px; bottom: 12px; z-index: 5; background: #13233a; color: #fff; border: 3px solid var(--px-borda); border-radius: 6px; box-shadow: var(--px-sombra); padding: 8px 12px 10px; }
+.ta-tit { margin: 0 0 6px; font-weight: 800; font-size: 13px; color: #ffd27a; text-transform: uppercase; letter-spacing: .6px; }
+.ta-linha { display: flex; align-items: center; gap: 10px; }
+.ta-ou { font-size: 13px; color: #b8c6d6; }
+.ta-cruz { display: grid; grid-template-columns: repeat(3, 28px); grid-template-rows: repeat(2, 28px); gap: 3px; }
+.ta-cruz kbd { display: grid; place-items: center; min-width: 0; padding: 0; font-size: 13px; }
+.ta-cruz .c { grid-area: 1 / 2; } .ta-cruz .e { grid-area: 2 / 1; } .ta-cruz .b { grid-area: 2 / 2; } .ta-cruz .d { grid-area: 2 / 3; }
+.ta-acao { margin: 8px 0 0; font-size: 13px; }
+@media (max-height: 520px), (max-width: 700px) { .teclas-ajuda { display: none; } }
+@media (max-height: 700px) {
+  .teclas-ajuda { padding: 5px 8px 6px; }
+  .ta-tit { font-size: 11px; margin-bottom: 4px; }
+  .ta-cruz { grid-template-columns: repeat(3, 21px); grid-template-rows: repeat(2, 21px); gap: 2px; }
+  .ta-cruz kbd { font-size: 11px; }
+  .ta-acao { font-size: 11px; margin-top: 4px; }
+  .cmd-corpo { height: 150px; }
+  .casa-lado { gap: 8px; }
+  .fala p, .tarefas li { font-size: 14px; }
+}
+
 </style>
 </head>
 <body class="jt">
@@ -830,7 +851,7 @@ body.no-intervalo .toast { display: none; }
   <header class="hud" id="hud" hidden>
     <div class="hud-esq">
       <span class="hud-avatar" aria-hidden="true">🧰</span>
-      <div class="hud-txt"><b id="hud-nome">Técnico(a)</b><small id="hud-os">0 de 12 OS · 0 ★</small></div>
+      <div class="hud-txt"><b id="hud-nome">Técnico(a)</b><small id="hud-os">0 de 16 OS · 0 ★</small></div>
     </div>
     <div class="hud-dir">
       <a class="hud-xp" id="hud-xp" hidden href="#">⚡ XP</a>
@@ -844,6 +865,17 @@ body.no-intervalo .toast { display: none; }
     <button type="button" id="btn-entrar">Entrar <kbd>E</kbd></button>
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <!-- teclas para andar (computador) -->
+  <aside class="teclas-ajuda" id="teclas-ajuda" hidden aria-label="Como andar">
+    <p class="ta-tit">Como andar</p>
+    <div class="ta-linha">
+      <div class="ta-cruz"><kbd class="c">W</kbd><kbd class="e">A</kbd><kbd class="b">S</kbd><kbd class="d">D</kbd></div>
+      <span class="ta-ou">ou</span>
+      <div class="ta-cruz"><kbd class="c">▲</kbd><kbd class="e">◀</kbd><kbd class="b">▼</kbd><kbd class="d">▶</kbd></div>
+    </div>
+    <p class="ta-acao"><kbd>E</kbd> entra na casa</p>
+  </aside>
 
   <!-- controles de toque -->
   <div class="toque" id="toque" hidden>
@@ -865,7 +897,7 @@ body.no-intervalo .toast { display: none; }
         <h1>Plantão do Técnico<br><span>Santa Mônica · Uberlândia</span></h1>
         <p>Você é técnico(a) do SENAI de plantão no bairro Santa Mônica. Ande pelas ruas, entre nas casas e configure o roteador de cada cliente: <b>Vivo</b>, <b>Claro</b>, <b>Algar</b> e <b>MZNet</b>.</p>
         <ol class="ini-passos">
-          <li><b>Ande</b> com as setas (ou W A S D). No celular, use os botões.</li>
+          <li><b>Ande</b> com <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> ou com as setas <kbd>▲</kbd> <kbd>◀</kbd> <kbd>▼</kbd> <kbd>▶</kbd>. No celular, use os botões.</li>
           <li>Chegue na <b>porta</b> de uma casa com <span class="bal">!</span> e aperte <kbd>E</kbd>.</li>
           <li>No <b>Prompt</b> do notebook do cliente, digite <kbd>ipconfig</kbd> e ache o <b>Gateway Padrão</b> (o IP do roteador).</li>
           <li>Digite esse IP no <b>navegador</b>, entre com o usuário e a senha da <b>etiqueta</b> e faça o que o cliente pediu.</li>
@@ -885,7 +917,7 @@ body.no-intervalo .toast { display: none; }
   <section class="tela tela-lista" id="t-lista" hidden>
     <div class="lista-card">
       <div class="lista-topo"><h2>📋 Ordens de serviço do plantão</h2><button type="button" class="fechar" data-fechar aria-label="Fechar">✕</button></div>
-      <p class="peq">Cada provedor tem 3 casas. A 2ª casa de um provedor abre quando você termina a 1ª, e assim por diante. Toque numa OS para o GPS mostrar o caminho.</p>
+      <p class="peq">Cada provedor tem 4 casas. A 2ª casa de um provedor abre quando você termina a 1ª, e assim por diante. Toque numa OS para o GPS mostrar o caminho.</p>
       <div id="lista-os" class="lista-os"></div>
       <div class="lista-rodape"><button type="button" class="botao cinza" id="btn-codigos">Ver meus códigos</button></div>
     </div>
@@ -896,7 +928,7 @@ body.no-intervalo .toast { display: none; }
     <div class="lista-card">
       <div class="lista-topo"><h2>Como jogar</h2><button type="button" class="fechar" data-fechar aria-label="Fechar">✕</button></div>
       <ol class="ini-passos">
-        <li><b>Andar:</b> setas ou W A S D. No celular, os botões do canto.</li>
+        <li><b>Andar:</b> <kbd>W</kbd> cima, <kbd>A</kbd> esquerda, <kbd>S</kbd> baixo, <kbd>D</kbd> direita, ou as setas <kbd>▲</kbd> <kbd>◀</kbd> <kbd>▼</kbd> <kbd>▶</kbd>. No celular, os botões do canto.</li>
         <li><b>GPS:</b> a seta amarela aponta a próxima OS. O círculo amarelo marca a porta.</li>
         <li><b>Entrar:</b> pare na porta e aperte <kbd>E</kbd>, <kbd>Enter</kbd> ou o botão <b>E</b>.</li>
         <li><b>Na casa:</b> no Prompt, digite <kbd>ipconfig</kbd>. O <b>Gateway Padrão</b> é o IP do roteador. Digite esse IP no navegador, entre com o usuário e a senha da <b>Etiqueta</b> e faça cada item da lista.</li>
@@ -2727,7 +2759,9 @@ body.no-intervalo .toast { display: none; }
   /* casas: canto de cima à esquerda, em quadradinhos (tiles). Cada casa tem 3 x 3. */
   var CASAS = [
     { x: 1, y: 12 }, { x: 4, y: 12 }, { x: 13, y: 12 }, { x: 17, y: 12 }, { x: 29, y: 12 }, { x: 32, y: 12 },
-    { x: 1, y: 23 }, { x: 4, y: 23 }, { x: 13, y: 23 }, { x: 17, y: 23 }, { x: 29, y: 23 }, { x: 32, y: 23 }
+    { x: 1, y: 23 }, { x: 4, y: 23 }, { x: 13, y: 23 }, { x: 17, y: 23 }, { x: 29, y: 23 }, { x: 32, y: 23 },
+    // rua de baixo, perto da Base do SENAI e do Mercadinho (OS 13 a 16)
+    { x: 0, y: 32 }, { x: 4, y: 32 }, { x: 8, y: 32 }, { x: 36, y: 32 }
   ];
 
   var OS = [
@@ -2791,7 +2825,29 @@ body.no-intervalo .toast { display: none; }
       visual: { pele: "#e2b48c", cabelo: "#6d6d6d", roupa: "#2f86d6", jaleco: true },
       fala: "Clínica nova! A internet não liga, a câmera do canil precisa de IP fixo e ninguém pode entrar no painel com a senha da etiqueta.",
       inicio: { wanErrada: true },
-      tarefas: [{ tipo: "wan" }, { tipo: "reserva", disp: "câmera do canil", mac: "AA:BB:CC:00:00:05", ip: "50" }, { tipo: "admin" }] }
+      tarefas: [{ tipo: "wan" }, { tipo: "reserva", disp: "câmera do canil", mac: "AA:BB:CC:00:00:05", ip: "50" }, { tipo: "admin" }] },
+
+    /* ---------------- nível 4: quatro tarefas (abrem depois das OS 9 a 12) ---------------- */
+    { id: "os13", op: "vivo", casa: 12, numero: 1500, cliente: "Dona Lúcia", lugar: "Imobiliária da Lúcia",
+      visual: { pele: "#e8b896", cabelo: "#7a4a2a", roupa: "#34495e", longo: true, oculos: true },
+      fala: "A imobiliária está com o Wi-Fi aberto, sem senha! E a internet caiu. Quero o nome Imob_Lucia, a senha Aluguel2026 e ninguém mexendo no painel.",
+      inicio: { wanErrada: true, aberta: true },
+      tarefas: [{ tipo: "wan" }, { tipo: "ssid", alvo: "Imob_Lucia" }, { tipo: "senha", alvo: "Aluguel2026" }, { tipo: "admin" }] },
+    { id: "os14", op: "claro", casa: 13, numero: 1520, cliente: "Teacher Ana", lugar: "Escola de inglês",
+      visual: { pele: "#f4cfae", cabelo: "#d9a441", roupa: "#c0392b", longo: true },
+      fala: "Os alunos não pegam IP no Wi-Fi! Acho que desligaram o DHCP. A smart TV da sala precisa de IP fixo e o Wi-Fi está num canal lotado.",
+      inicio: { dhcpDesligado: true },
+      tarefas: [{ tipo: "dhcp" }, { tipo: "reserva", disp: "smart TV", mac: "AA:BB:CC:00:00:07", ip: "70" }, { tipo: "canal" }, { tipo: "ssid", alvo: "English_School" }] },
+    { id: "os15", op: "algar", casa: 14, numero: 1540, cliente: "Léo", lugar: "Hamburgueria do Léo",
+      visual: { pele: "#a86b45", cabelo: "#1d1d1d", roupa: "#e67e22", avental: true },
+      fala: "Alguém desligou o Wi-Fi e ainda escondeu o nome da rede! Quero o Wi-Fi ligado, aparecendo, com a senha Burger2026, e trocar a senha do painel.",
+      inicio: { wifiDesligado: true, oculto: true },
+      tarefas: [{ tipo: "ativo" }, { tipo: "oculto" }, { tipo: "senha", alvo: "Burger2026" }, { tipo: "admin" }] },
+    { id: "os16", op: "mznet", casa: 15, numero: 1580, cliente: "Seu Zé", lugar: "Oficina mecânica",
+      visual: { pele: "#d29a6e", cabelo: "#555555", roupa: "#2c3e50" },
+      fala: "A internet da oficina não liga, o Wi-Fi vive lento e o PC do caixa precisa de IP fixo para a maquininha de cartão. Ah, e põe a senha Oficina2026.",
+      inicio: { wanErrada: true },
+      tarefas: [{ tipo: "wan" }, { tipo: "canal" }, { tipo: "reserva", disp: "PC do caixa", mac: "AA:BB:CC:00:00:08", ip: "80" }, { tipo: "senha", alvo: "Oficina2026" }] }
   ];
 
   window.JogoDados = { CASAS: CASAS, OS: OS };
@@ -2868,7 +2924,7 @@ body.no-intervalo .toast { display: none; }
     for (y = 0; y < H; y++) for (x = 0; x < W; x++) {
       if ((y >= 6 && y <= 7) || (y >= 17 && y <= 18) || (y >= 28 && y <= 29)) { if (G[y][x] === "s" || (G[y][x] === "m" && x === 24)) G[y][x] = "r"; }
     }
-    rect(0, 31, 20, 36, "g"); rect(28, 31, 39, 36, "g");   // a João Naves segue até a borda do mapa rect(2, 32, 7, 35, "c");
+    rect(0, 31, 20, 36, "g"); rect(28, 31, 39, 36, "g");   // a João Naves segue até a borda do mapa
     for (y = 10; y <= 35; y++) { setT(41, y, "p"); setT(48, y, "p"); }
     for (x = 41; x <= 48; x++) { setT(x, 10, "p"); setT(x, 35, "p"); }
     rect(40, 18, 40, 19, "p");
@@ -2888,12 +2944,12 @@ body.no-intervalo .toast { display: none; }
     for (y = 1; y < H; y += 3) if (G[y][24] === "m") arv(24, y, "palmeira");
     for (y = 11; y <= 34; y += 2) { arv(40, y, "copa"); arv(49, y, y % 4 ? "ipe" : "copa"); }
     [11, 34].forEach(function (yy) { for (var xx = 42; xx <= 47; xx += 2) arv(xx, yy, "copa"); });
-    arv(1, 32, "ipe"); arv(8, 33, "copa"); arv(9, 35, "ipe"); arv(20, 35, "ipe"); arv(37, 33, "copa");
+    arv(20, 35, "ipe"); arv(3, 36, "copa"); arv(39, 36, "copa");
     // postes de luz, bancos, ponto de ônibus
     [3, 16, 31].forEach(function (x) { enfeites.push({ tipo: "poste", x: x, y: 16 }); enfeites.push({ tipo: "poste", x: x, y: 27 }); });
     [5, 12, 18].forEach(function (y) { enfeites.push({ tipo: "poste", x: 21, y: y }); });
     enfeites.push({ tipo: "ponto", x: 27, y: 12 }); sol(27, 12, 27, 12);
-    [[3, 33], [6, 33], [43, 10], [46, 35]].forEach(function (b) { enfeites.push({ tipo: "banco", x: b[0], y: b[1] }); });
+    [[43, 10], [46, 35]].forEach(function (b) { enfeites.push({ tipo: "banco", x: b[0], y: b[1] }); });
     for (x = 0; x < W; x++) solido[0][x] = solido[0][x] || G[0][x] === "g";
     placas.push({ x: 24.5, y: 12.5, txt: "Av. João Naves de Ávila", vert: true });
     placas.push({ x: 31, y: 6.9, txt: "Av. Anselmo Alves dos Santos" });
@@ -3236,6 +3292,12 @@ body.no-intervalo .toast { display: none; }
     if (k.vert) return { x: k.faixa * T - 8, y: k.pos - k.comp / 2, w: 16, h: k.comp };
     return { x: k.pos - k.comp / 2, y: k.faixa * T - 7, w: k.comp, h: 12 };
   }
+  function aFrente(k, d) {
+    var b = caixaCarro(k), sent = k.vel === 0 ? (k.ult || 1) : Math.sign(k.vel);
+    if (k.vert) return { x: b.x, y: sent > 0 ? b.y + b.h : b.y - d, w: b.w, h: d };
+    return { x: sent > 0 ? b.x + b.w : b.x - d, y: b.y, w: d, h: b.h };
+  }
+  function sobrepoe(a, b) { return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y; }
   function limiteCarro(k) { return k.vert ? H * T : (k.faixa < 8 ? W * T : 40 * T); }
   function tileDe(xx, yy) { var x = Math.floor(xx / T), y = Math.floor(yy / T); return G[y] && G[y][x]; }
   function moverCarros(dt) {
@@ -3252,6 +3314,15 @@ body.no-intervalo .toast { display: none; }
         if (o === k || o.vert !== k.vert || o.faixa !== k.faixa) return;
         var d = (o.pos - k.pos) * sent - (o.comp + k.comp) / 2;
         if (d > -2 && d < 8) parar = true;
+      });
+      // cruzamento: espera o carro da outra avenida passar (sem passar por cima)
+      if (!parar) carros.forEach(function (o, oi) {
+        if (o === k || o.vert === k.vert || parar) return;
+        if (sobrepoe(aFrente(k, 10), caixaCarro(o)) && !sobrepoe(caixaCarro(k), caixaCarro(o))) {
+          // os dois querem entrar ao mesmo tempo: passa quem vem primeiro na lista
+          if (sobrepoe(aFrente(o, 10), caixaCarro(k)) && carros.indexOf(k) < oi) return;
+          parar = true;
+        }
       });
       if (parar) { k.vel = 0; if (!k.buzinou && naFaixa && mesmaFaixa) { k.buzinou = 1; } }
       else { k.vel = sent * Math.min(k.velMax, Math.abs(k.vel) + 60 * dt); if (Math.abs(k.vel) < 5) k.vel = sent * 5; k.buzinou = 0; }
@@ -3346,8 +3417,9 @@ body.no-intervalo .toast { display: none; }
     }
     J.andando = !!(vx || vy);
     if (J.andando) {
-      var n = Math.hypot(vx, vy), v = 74 * dt;
-      vx = vx / n * v; vy = vy / n * v;
+      // vista 3/4: a tela mostra menos chão na vertical, então subir/descer anda mais devagar
+      var n = Math.hypot(vx, vy), v = 70 * dt;
+      vx = vx / n * v; vy = vy / n * v * 0.65;
       if (Math.abs(vx) > Math.abs(vy)) J.dir = vx > 0 ? "dir" : "esq"; else J.dir = vy > 0 ? "baixo" : "cima";
       var hw = 4, hh = 3;
       var livre = function (px0, py0) { return !bloqueado(px0 - hw, py0 - hh) && !bloqueado(px0 + hw, py0 - hh) && !bloqueado(px0 - hw, py0) && !bloqueado(px0 + hw, py0); };
@@ -3414,7 +3486,7 @@ body.no-intervalo .toast { display: none; }
     });
     predios.forEach(function (p, i2) { objs.push({ y: (p.y + p.h) * T - 1, f: function () { g.drawImage(SPR_PRED[i2], p.x * T - 1, p.y * T - 1); } }); });
     predios.filter(function (p) { return p.tipo === "senai"; }).forEach(function (p) {
-      objs.push({ y: (p.y + p.h) * T - 2, f: function () { g.drawImage(VAN, p.x * T - 38, (p.y + p.h) * T - 20); } });
+      objs.push({ y: (p.y + p.h) * T - 2, f: function () { g.drawImage(VAN, p.x * T - 33, (p.y + p.h) * T - 20); } });
     });
     var x0 = Math.floor(CAM.x / T) - 2, x1 = Math.ceil((CAM.x + vw) / T) + 2, y0 = Math.floor(CAM.y / T) - 2, y1 = Math.ceil((CAM.y + vh) / T) + 3;
     arvores.forEach(function (a) { if (a.x >= x0 && a.x <= x1 && a.y >= y0 && a.y <= y1) objs.push({ y: (a.y + 1) * T - 2, f: function () { g.drawImage(SPR_ARV[a.tipo], a.x * T - 4, (a.y + 1) * T - 34); } }); });
@@ -3521,6 +3593,7 @@ body.no-intervalo .toast { display: none; }
     $("hud").hidden = id === "t-inicio" || id === "t-casa";
     $("minimapa").hidden = !!id;
     $("toque").hidden = !!id || !ehToque;
+    $("teclas-ajuda").hidden = !!id || ehToque;
     mostrarAvisoPorta();
   }
   var ehToque = ("ontouchstart" in window) || (navigator.maxTouchPoints > 0);
@@ -3751,7 +3824,7 @@ body.no-intervalo .toast { display: none; }
     if (v === "cls") { $("cmd-saida").innerHTML = ""; return; }
     if (v === "ipconfig" || v === "ipconfig /all") {
       cmdEscrever(linhasIpconfig(v !== "ipconfig") + "\n");
-      if (!C.ipconfig) { C.ipconfig = true; $("url").disabled = false; toast("✔ Achou o Gateway Padrão: " + C.perfil.url + ". Agora digite no navegador.", "ok"); setTimeout(function () { $("url").focus(); }, 80); }
+      if (!C.ipconfig) { C.ipconfig = true; $("url").disabled = false; toast("✔ Achou o Gateway Padrão: " + C.perfil.url + ". Agora digite no navegador.", "ok"); setTimeout(function () { if (document.activeElement === $("cmd-in")) $("url").focus(); }, 80); }
       return;
     }
     var mp = v.match(/^ping (\S+)/);
@@ -4017,7 +4090,7 @@ body.no-intervalo .toast { display: none; }
   atualizarHud(); telas("t-inicio"); iniciarXp();
   requestAnimationFrame(laco);
   // para os testes automáticos
-  window.__jogo = { E: E, J: J, OS: OS, entrarNaCasa: entrarNaCasa, estado: function () { return C; }, portaDe: portaDe, telas: telas };
+  window.__jogo = { E: E, J: J, OS: OS, carros: carros, caixa: caixaCarro, entrarNaCasa: entrarNaCasa, estado: function () { return C; }, portaDe: portaDe, telas: telas };
 })();
 
 </script>
