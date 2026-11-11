@@ -733,69 +733,175 @@ body.com-perfil .so-sem-perfil { display: none; }
 .pp-layout-topo .pp-corpo, .pp-layout-abas .pp-corpo { align-content: flex-start; align-items: stretch; }
 .pp-layout-abas .pp-nav-sub { align-self: stretch; }
 
+/* ------------------------------------------------- v3: aparência de firmware (rodapé, marca) */
+.pp-pe { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; padding: 6px 14px; font-size: 11px; color: #8a9099; border-top: 1px solid #e1e4e8; background: #fff; }
+.pp-pe-sim { color: #a07c00; }
+.pp-marca-nome b { font-weight: inherit; }
+.pp-usuario { opacity: .9; }
+
 </style>
   <style>
-/* Cores e formas de cada painel. Nenhum logotipo oficial: só texto, cores e layout. */
+/* Cores e formas de cada painel, imitando a aparência das telas reais (densas, letra pequena,
+   formulários em tabela). Nenhum logotipo oficial: só texto, cores e layout. */
 
-/* Vivo: barra roxa, menu lateral branco, botões arredondados (estilo dos roteadores Fibra AC) */
+/* ============================================================ VIVO
+   Roteador Fibra AC: cabeçalho branco com a marca em roxo e minúsculas, menu lateral roxo,
+   conteúdo branco em caixas com faixa de título cinza, botões roxos arredondados. */
 .pp-raiz[data-tema="vivo"] {
-  --pp-cor: #660099; --pp-cor-escura: #4a0070; --pp-cor-clara: #f1e6f7; --pp-fundo: #fafafa; --pp-raio: 18px;
-  --pp-fonte: "Roboto", "Segoe UI", Arial, sans-serif;
+  --pp-cor: #660099; --pp-cor-escura: #4a0070; --pp-cor-clara: #f3eaf8; --pp-fundo: #f0f0f2; --pp-raio: 3px;
+  --pp-fonte: "Roboto", "Segoe UI", Arial, sans-serif; font-size: 13px; color: #333;
 }
-.pp-raiz[data-tema="vivo"] .pp-cab { background: #660099; }
-.pp-raiz[data-tema="vivo"] .pp-marca-nome { font-weight: 400; font-size: 22px; letter-spacing: .5px; }
-.pp-raiz[data-tema="vivo"] .pp-btn { border-radius: 20px; }
-.pp-raiz[data-tema="vivo"] .pp-nav-lateral { flex-basis: 210px; }
-.pp-raiz[data-tema="vivo"] .pp-grupo-titulo { color: #660099; text-transform: none; font-size: 14px; letter-spacing: 0; }
-.pp-raiz[data-tema="vivo"] .pp-card { border-top-width: 0; border-left: 4px solid #660099; border-radius: 12px; }
+.pp-raiz[data-tema="vivo"] .pp-cab { background: #fff; color: #660099; border-bottom: 4px solid #660099; padding: 8px 16px; }
+.pp-raiz[data-tema="vivo"] .pp-simbolo { display: none; }
+.pp-raiz[data-tema="vivo"] .pp-marca-nome { font-size: 30px; font-weight: 300; letter-spacing: -1px; line-height: 1; }
+.pp-raiz[data-tema="vivo"] .pp-marca-1 { font-weight: 700; text-transform: lowercase; }
+.pp-raiz[data-tema="vivo"] .pp-marca-2 { font-size: 15px; letter-spacing: 0; color: #777; }
+.pp-raiz[data-tema="vivo"] .pp-modelo { color: #777; border-left: 1px solid #ccc; padding-left: 10px; }
+.pp-raiz[data-tema="vivo"] .pp-cab-dir { color: #555; }
+.pp-raiz[data-tema="vivo"] .pp-sair { background: #660099; color: #fff; border: 0; border-radius: 16px; padding: 5px 14px; }
+.pp-raiz[data-tema="vivo"] .pp-nav-lateral { flex-basis: 200px; background: #4a0070; border-right: 0; padding: 0; color: #fff; }
+.pp-raiz[data-tema="vivo"] .pp-grupo-titulo { color: #fff; background: #3a0058; text-transform: uppercase; font-size: 11px; letter-spacing: .8px; padding: 9px 14px; margin-top: 1px; }
+.pp-raiz[data-tema="vivo"] .pp-nav-lateral .pp-item { color: #ead9f4; padding: 7px 14px 7px 20px; border-left: 4px solid transparent; font-size: 13px; }
+.pp-raiz[data-tema="vivo"] .pp-nav-lateral .pp-item:hover { background: #5b1585; }
+.pp-raiz[data-tema="vivo"] .pp-nav-lateral .pp-item.ativo { background: #fff; color: #660099; border-left-color: #f0a400; font-weight: 700; }
+.pp-raiz[data-tema="vivo"] .pp-nav-lateral .pp-trad { color: inherit; opacity: .7; }
+.pp-raiz[data-tema="vivo"] .pp-conteudo { background: #fff; margin: 10px; border: 1px solid #dcdce0; padding: 12px 16px; }
+.pp-raiz[data-tema="vivo"] .pp-trilha { font-size: 18px; font-weight: 400; color: #660099; border-bottom: 1px solid #e3e3e8; }
+.pp-raiz[data-tema="vivo"] .pp-card { border: 1px solid #dcdce0; border-top: 0; border-radius: 0; padding: 0 0 6px; }
+.pp-raiz[data-tema="vivo"] .pp-card h4 { background: #f0f0f2; color: #4a0070; padding: 6px 10px; margin: 0 0 6px; font-size: 13px; border-top: 3px solid #660099; }
+.pp-raiz[data-tema="vivo"] .pp-card .pp-kv { margin: 0 10px; width: calc(100% - 20px); }
+.pp-raiz[data-tema="vivo"] .pp-btn { border-radius: 16px; padding: 6px 20px; }
+.pp-raiz[data-tema="vivo"] .pp-campo input, .pp-raiz[data-tema="vivo"] .pp-campo select { border: 0; border-bottom: 1px solid #999; border-radius: 0; background: #fafafa; }
+.pp-raiz[data-tema="vivo"] .pp-tabela th { background: #660099; color: #fff; }
+.pp-raiz[data-tema="vivo"] .pp-login-caixa { border-top: 5px solid #660099; border-radius: 0; }
 
-/* Claro: barra vermelha, abas cinza-escuras, subabas brancas (estilo gateway de cabo) */
+/* ============================================================ CLARO
+   Gateway de cabo: barra preta com a marca em vermelho, abas escuras em caixa alta,
+   subabas cinza claro, caixas com título vermelho, botões vermelhos retos. */
 .pp-raiz[data-tema="claro"] {
-  --pp-cor: #da291c; --pp-cor-escura: #9b1b12; --pp-cor-clara: #fde9e7; --pp-fundo: #f2f2f2; --pp-raio: 4px;
-  --pp-fonte: Arial, Helvetica, sans-serif;
+  --pp-cor: #da291c; --pp-cor-escura: #a3170d; --pp-cor-clara: #fdecea; --pp-fundo: #ececec; --pp-raio: 2px;
+  --pp-fonte: Arial, Helvetica, sans-serif; font-size: 13px; color: #333;
 }
-.pp-raiz[data-tema="claro"] .pp-cab { background: #da291c; }
-.pp-raiz[data-tema="claro"] .pp-marca-nome { font-size: 20px; }
-.pp-raiz[data-tema="claro"] .pp-nav-abas { background: #333; }
-.pp-raiz[data-tema="claro"] .pp-aba { color: #eee; }
-.pp-raiz[data-tema="claro"] .pp-aba .pp-trad { color: #bbb; }
-.pp-raiz[data-tema="claro"] .pp-aba.ativo { background: #fff; color: #da291c; border-top: 3px solid #da291c; }
-.pp-raiz[data-tema="claro"] .pp-aba.ativo .pp-trad { color: #a55; }
+.pp-raiz[data-tema="claro"] .pp-cab { background: #1d1d1d; color: #fff; border-bottom: 3px solid #da291c; padding: 8px 16px; }
+.pp-raiz[data-tema="claro"] .pp-simbolo { color: #da291c; width: 30px; height: 30px; }
+.pp-raiz[data-tema="claro"] .pp-marca-nome { font-size: 24px; }
+.pp-raiz[data-tema="claro"] .pp-marca-1 { color: #da291c; font-weight: 700; text-transform: lowercase; }
+.pp-raiz[data-tema="claro"] .pp-marca-2 { font-weight: 400; font-size: 16px; }
+.pp-raiz[data-tema="claro"] .pp-modelo { color: #aaa; }
+.pp-raiz[data-tema="claro"] .pp-sair { border-color: #666; color: #ddd; }
+.pp-raiz[data-tema="claro"] .pp-nav-abas { background: #3a3a3a; }
+.pp-raiz[data-tema="claro"] .pp-aba { color: #eee; text-transform: uppercase; font-size: 12px; letter-spacing: .5px; padding: 10px 16px; border-right: 1px solid #4a4a4a; }
+.pp-raiz[data-tema="claro"] .pp-aba .pp-trad { color: #aaa; text-transform: none; letter-spacing: 0; }
+.pp-raiz[data-tema="claro"] .pp-aba.ativo { background: #da291c; color: #fff; border-top: 0; }
+.pp-raiz[data-tema="claro"] .pp-aba.ativo .pp-trad { color: #ffd9d5; }
+.pp-raiz[data-tema="claro"] .pp-nav-subtopo { background: #f7f7f7; border-bottom: 1px solid #d5d5d5; }
+.pp-raiz[data-tema="claro"] .pp-nav-subtopo .pp-item { font-size: 12.5px; padding: 8px 12px; }
+.pp-raiz[data-tema="claro"] .pp-nav-subtopo .pp-item.ativo { color: #da291c; border-bottom-color: #da291c; font-weight: 700; }
+.pp-raiz[data-tema="claro"] .pp-conteudo { background: #fff; margin: 10px; border: 1px solid #d5d5d5; padding: 10px 16px 16px; }
+.pp-raiz[data-tema="claro"] .pp-trilha { font-size: 17px; color: #da291c; border-bottom: 1px solid #e5e5e5; }
+.pp-raiz[data-tema="claro"] .pp-card { border: 1px solid #d5d5d5; border-top: 0; border-radius: 0; padding: 0 0 6px; }
+.pp-raiz[data-tema="claro"] .pp-card h4 { background: #f2f2f2; color: #da291c; padding: 6px 10px; margin: 0 0 6px; font-size: 12.5px; text-transform: uppercase; border-top: 2px solid #da291c; }
+.pp-raiz[data-tema="claro"] .pp-card .pp-kv { margin: 0 10px; width: calc(100% - 20px); }
+.pp-raiz[data-tema="claro"] .pp-tabela th { background: #3a3a3a; color: #fff; }
+.pp-raiz[data-tema="claro"] .pp-btn { text-transform: uppercase; font-size: 12px; letter-spacing: .4px; padding: 7px 18px; }
 
-/* Algar: ONT GPON com cabeçalho claro, barra de abas escura e menu lateral cinza (estilo Huawei EG8145) */
+/* ============================================================ ALGAR
+   ONT estilo Huawei EG8145: cabeçalho branco, barra de abas cinza em degradê, submenu cinza com
+   setinhas, título da página em faixa, texto de explicação em caixa, formulário em tabela,
+   botões pequenos cinza. */
 .pp-raiz[data-tema="algar"] {
-  --pp-cor: #00a19a; --pp-cor-escura: #00594f; --pp-cor-clara: #e0f4f2; --pp-fundo: #fff; --pp-raio: 2px;
-  --pp-fonte: Tahoma, Verdana, Arial, sans-serif;
+  --pp-cor: #00a19a; --pp-cor-escura: #006b65; --pp-cor-clara: #e3f4f3; --pp-fundo: #fff; --pp-raio: 2px;
+  --pp-fonte: Tahoma, Verdana, Arial, sans-serif; font-size: 12px; color: #333;
 }
-.pp-raiz[data-tema="algar"] { font-size: 13px; }
-.pp-raiz[data-tema="algar"] .pp-cab { background: #fff; color: #00594f; border-bottom: 1px solid #ddd; }
-.pp-raiz[data-tema="algar"] .pp-sair { color: #00594f; }
-.pp-raiz[data-tema="algar"] .pp-nav-abas { background: linear-gradient(#4f5b66, #36404a); }
-.pp-raiz[data-tema="algar"] .pp-aba { color: #fff; font-weight: 400; padding: 9px 13px; }
-.pp-raiz[data-tema="algar"] .pp-aba .pp-trad { color: #c9d3dc; }
-.pp-raiz[data-tema="algar"] .pp-aba.ativo { background: #00a19a; color: #fff; }
+.pp-raiz[data-tema="algar"] .pp-cab { background: #fff; color: #006b65; border-bottom: 1px solid #ccc; padding: 6px 14px; }
+.pp-raiz[data-tema="algar"] .pp-simbolo { color: #00a19a; }
+.pp-raiz[data-tema="algar"] .pp-marca-nome { font-size: 20px; font-family: Arial, sans-serif; }
+.pp-raiz[data-tema="algar"] .pp-marca-1 { font-weight: 700; }
+.pp-raiz[data-tema="algar"] .pp-marca-2 { color: #666; font-weight: 400; }
+.pp-raiz[data-tema="algar"] .pp-modelo { color: #888; }
+.pp-raiz[data-tema="algar"] .pp-sair { color: #006b65; border: 0; text-decoration: underline; padding: 2px 4px; }
+.pp-raiz[data-tema="algar"] .pp-nav-abas { background: linear-gradient(#6b7680, #48525b); border-bottom: 3px solid #00a19a; }
+.pp-raiz[data-tema="algar"] .pp-aba { color: #fff; font-weight: 400; padding: 8px 12px; font-size: 12px; border-right: 1px solid #5c666f; }
+.pp-raiz[data-tema="algar"] .pp-aba .pp-trad { color: #cfd6dc; }
+.pp-raiz[data-tema="algar"] .pp-aba.ativo { background: #00a19a; color: #fff; font-weight: 700; }
 .pp-raiz[data-tema="algar"] .pp-aba.ativo .pp-trad { color: #e0fffb; }
-.pp-raiz[data-tema="algar"] .pp-nav-sub { background: #f0f2f4; flex-basis: 210px; }
-.pp-raiz[data-tema="algar"] .pp-nav-sub .pp-item.ativo { background: #fff; color: #00594f; border-left: 3px solid #00a19a; }
-.pp-raiz[data-tema="algar"] .pp-trilha { color: #333; font-size: 15px; border-bottom-color: #00a19a; }
-.pp-raiz[data-tema="algar"] .pp-tabela th { background: #e8ecef; color: #333; }
+.pp-raiz[data-tema="algar"] .pp-nav-sub { background: #eceff1; flex-basis: 190px; border-right: 1px solid #ccd2d6; padding: 4px 0; }
+.pp-raiz[data-tema="algar"] .pp-nav-sub .pp-item { padding: 6px 10px 6px 18px; font-size: 12px; position: relative; border-bottom: 1px solid #e0e4e7; }
+.pp-raiz[data-tema="algar"] .pp-nav-sub .pp-item::before { content: "›"; position: absolute; left: 8px; color: #00a19a; font-weight: 700; }
+.pp-raiz[data-tema="algar"] .pp-nav-sub .pp-item.ativo { background: #fff; color: #006b65; font-weight: 700; border-left: 3px solid #00a19a; }
+.pp-raiz[data-tema="algar"] .pp-conteudo { padding: 10px 14px; }
+.pp-raiz[data-tema="algar"] .pp-trilha { font-size: 13px; font-weight: 700; color: #333; background: #e6eaed; border: 1px solid #ccd2d6; border-left: 4px solid #00a19a; padding: 6px 10px; }
+.pp-raiz[data-tema="algar"] .pp-form { max-width: 640px; }
+.pp-raiz[data-tema="algar"] .pp-campo { margin: 0; gap: 0; border: 1px solid #dde2e5; border-top: 0; }
+.pp-raiz[data-tema="algar"] .pp-form > .pp-campo:first-child, .pp-raiz[data-tema="algar"] .pp-secao + .pp-campo { border-top: 1px solid #dde2e5; }
+.pp-raiz[data-tema="algar"] .pp-campo label { font-weight: 400; background: #f4f6f7; padding: 7px 10px; align-self: stretch; display: flex; align-items: center; flex-wrap: wrap; gap: 3px; }
+.pp-raiz[data-tema="algar"] .pp-campo input, .pp-raiz[data-tema="algar"] .pp-campo select { margin: 4px 8px; padding: 3px 5px; border-radius: 0; border-color: #a9b3ba; font-size: 12px; }
+.pp-raiz[data-tema="algar"] .pp-check label { background: none; }
+.pp-raiz[data-tema="algar"] .pp-olho { margin: 4px 8px 4px 0; padding: 1px 6px; border-radius: 0; }
+.pp-raiz[data-tema="algar"] .pp-secao, .pp-raiz[data-tema="algar"] .pp-sub { font-size: 12px; color: #333; background: #e6eaed; padding: 5px 8px; margin: 12px 0 0; border: 1px solid #ccd2d6; }
+.pp-raiz[data-tema="algar"] .pp-nota { background: #f7f9fa; border: 1px dashed #ccd2d6; padding: 5px 8px; }
+.pp-raiz[data-tema="algar"] .pp-rodape { border-top: 0; margin-top: 10px; }
+.pp-raiz[data-tema="algar"] .pp-btn { border-radius: 2px; padding: 3px 16px; font-size: 12px; background: linear-gradient(#fdfdfd, #dfe3e6); border-color: #9aa5ad; color: #222; font-weight: 400; }
+.pp-raiz[data-tema="algar"] .pp-btn-primario { background: linear-gradient(#18b8b0, #00857f); color: #fff; border-color: #00706b; }
+.pp-raiz[data-tema="algar"] .pp-card { border: 1px solid #ccd2d6; border-top: 0; border-radius: 0; padding: 0 0 4px; }
+.pp-raiz[data-tema="algar"] .pp-card h4 { background: linear-gradient(#f4f6f7, #e1e6e9); color: #333; padding: 5px 8px; margin: 0 0 4px; font-size: 12px; border-top: 1px solid #ccd2d6; }
+.pp-raiz[data-tema="algar"] .pp-card .pp-kv { margin: 0 8px; width: calc(100% - 16px); font-size: 12px; }
+.pp-raiz[data-tema="algar"] .pp-tabela { font-size: 12px; }
+.pp-raiz[data-tema="algar"] .pp-tabela th { background: #e6eaed; color: #333; }
+.pp-raiz[data-tema="algar"] .pp-tabela tr:nth-child(even) td { background: #f7f9fa; }
+.pp-raiz[data-tema="algar"] .pp-login { background: linear-gradient(#f4f6f7, #dfe5e8); }
+.pp-raiz[data-tema="algar"] .pp-login-caixa { border-radius: 0; box-shadow: 0 1px 6px rgba(0,0,0,.2); }
 
-/* MZNet: ONT GPON com barra azul, abas brancas e menu em árvore (estilo ZTE F670) */
+/* ============================================================ MZNET
+   ONT estilo ZTE F670: barra azul com faixa laranja, abas brancas sobre o azul, menu em árvore
+   cinza com ▸, seções em faixa azul-clara, formulário compacto e botões cinza. */
 .pp-raiz[data-tema="mznet"] {
-  --pp-cor: #0068b7; --pp-cor-escura: #004a85; --pp-cor-clara: #e5eff8; --pp-fundo: #fafbfc; --pp-raio: 0;
-  --pp-fonte: Verdana, Tahoma, sans-serif;
+  --pp-cor: #0068b7; --pp-cor-escura: #004a85; --pp-cor-clara: #e5eff8; --pp-fundo: #fff; --pp-raio: 0;
+  --pp-fonte: Verdana, Tahoma, sans-serif; font-size: 11.5px; color: #333;
 }
-.pp-raiz[data-tema="mznet"] { font-size: 12.5px; }
-.pp-raiz[data-tema="mznet"] .pp-cab { background: linear-gradient(90deg, #004a85, #0068b7); border-bottom: 3px solid #f39200; }
+.pp-raiz[data-tema="mznet"] .pp-cab { background: linear-gradient(90deg, #003a6b, #0068b7); border-bottom: 3px solid #f39200; padding: 8px 14px; }
 .pp-raiz[data-tema="mznet"] .pp-simbolo { color: #f39200; }
-.pp-raiz[data-tema="mznet"] .pp-nav-abas { background: #fff; border-bottom: 2px solid #0068b7; }
-.pp-raiz[data-tema="mznet"] .pp-aba { color: #333; font-weight: 400; }
-.pp-raiz[data-tema="mznet"] .pp-aba .pp-trad { color: #888; }
-.pp-raiz[data-tema="mznet"] .pp-aba.ativo { background: #0068b7; color: #fff; }
-.pp-raiz[data-tema="mznet"] .pp-aba.ativo .pp-trad { color: #d6e6f5; }
-.pp-raiz[data-tema="mznet"] .pp-nav-sub { background: #eef1f4; flex-basis: 200px; }
+.pp-raiz[data-tema="mznet"] .pp-marca-nome { font-size: 20px; font-style: italic; }
+.pp-raiz[data-tema="mznet"] .pp-marca-1 { font-weight: 700; }
+.pp-raiz[data-tema="mznet"] .pp-marca-2 { color: #f7c27a; font-weight: 400; }
+.pp-raiz[data-tema="mznet"] .pp-sair { border: 0; text-decoration: underline; }
+.pp-raiz[data-tema="mznet"] .pp-nav-abas { background: #0068b7; border-bottom: 0; padding-left: 8px; }
+.pp-raiz[data-tema="mznet"] .pp-aba { color: #fff; font-weight: 400; padding: 7px 14px; font-size: 12px; }
+.pp-raiz[data-tema="mznet"] .pp-aba .pp-trad { color: #bcd6ee; }
+.pp-raiz[data-tema="mznet"] .pp-aba.ativo { background: #fff; color: #0068b7; font-weight: 700; }
+.pp-raiz[data-tema="mznet"] .pp-aba.ativo .pp-trad { color: #6a8fb3; }
+.pp-raiz[data-tema="mznet"] .pp-nav-sub { background: #eef1f4; flex-basis: 190px; border-right: 1px solid #c9d1d9; }
+.pp-raiz[data-tema="mznet"] .pp-nav-sub .pp-item, .pp-raiz[data-tema="mznet"] .pp-nav-sub .pp-subgrupo-titulo { font-size: 11.5px; }
+.pp-raiz[data-tema="mznet"] .pp-nav-sub .pp-item { padding: 5px 10px 5px 26px; position: relative; }
+.pp-raiz[data-tema="mznet"] .pp-nav-sub .pp-item::before { content: "▸"; position: absolute; left: 14px; color: #8aa; }
 .pp-raiz[data-tema="mznet"] .pp-nav-sub .pp-item.ativo { background: #0068b7; color: #fff; }
+.pp-raiz[data-tema="mznet"] .pp-nav-sub .pp-item.ativo::before { color: #fff; }
 .pp-raiz[data-tema="mznet"] .pp-nav-sub .pp-item.ativo .pp-trad { color: #d6e6f5; }
+.pp-raiz[data-tema="mznet"] .pp-conteudo { padding: 10px 14px; }
+.pp-raiz[data-tema="mznet"] .pp-trilha { font-size: 12px; font-weight: 400; color: #555; border-bottom: 1px solid #dde3ea; }
+.pp-raiz[data-tema="mznet"] .pp-secao, .pp-raiz[data-tema="mznet"] .pp-sub { font-size: 12px; color: #fff; background: #4a8cc9; padding: 5px 8px; margin: 12px 0 8px; }
+.pp-raiz[data-tema="mznet"] .pp-secao::before, .pp-raiz[data-tema="mznet"] .pp-sub::before { content: "▾ "; }
+.pp-raiz[data-tema="mznet"] .pp-campo { margin-bottom: 4px; grid-template-columns: minmax(150px, 210px) minmax(0, 1fr); }
+.pp-raiz[data-tema="mznet"] .pp-com-olho { grid-template-columns: minmax(150px, 210px) minmax(0, 1fr) auto; }
+.pp-raiz[data-tema="mznet"] .pp-campo label { font-weight: 400; text-align: right; }
+.pp-raiz[data-tema="mznet"] .pp-check { padding-left: 222px; }
+.pp-raiz[data-tema="mznet"] .pp-check label { text-align: left; justify-content: flex-start; }
+.pp-raiz[data-tema="mznet"] .pp-campo input, .pp-raiz[data-tema="mznet"] .pp-campo select { padding: 3px 5px; font-size: 11.5px; border-color: #9fb0c0; }
+.pp-raiz[data-tema="mznet"] .pp-rodape { justify-content: flex-end; border-top: 1px solid #dde3ea; }
+.pp-raiz[data-tema="mznet"] .pp-btn { padding: 3px 18px; font-size: 11.5px; background: linear-gradient(#fafafa, #e3e6e9); border-color: #9aa5ad; color: #222; font-weight: 400; }
+.pp-raiz[data-tema="mznet"] .pp-btn-primario { background: linear-gradient(#3d8fd6, #0068b7); color: #fff; border-color: #004a85; }
+.pp-raiz[data-tema="mznet"] .pp-card { border: 1px solid #c9d1d9; border-top: 0; padding: 0 0 4px; }
+.pp-raiz[data-tema="mznet"] .pp-card h4 { background: #4a8cc9; color: #fff; padding: 4px 8px; margin: 0 0 4px; font-size: 12px; }
+.pp-raiz[data-tema="mznet"] .pp-card .pp-kv { margin: 0 8px; width: calc(100% - 16px); font-size: 11.5px; }
+.pp-raiz[data-tema="mznet"] .pp-tabela { font-size: 11.5px; }
+.pp-raiz[data-tema="mznet"] .pp-tabela th { background: #dfe9f4; color: #003a6b; }
+.pp-raiz[data-tema="mznet"] .pp-login { background: #eef3f8; }
+.pp-raiz[data-tema="mznet"] .pp-login-caixa { border-radius: 0; border-top: 4px solid #0068b7; }
+
+@media (max-width: 760px) { .pp-raiz[data-tema="mznet"] .pp-check { padding-left: 0; } }
+
+/* valores sem quebrar no meio da palavra */
+.pp-raiz .pp-kv td { word-break: normal; overflow-wrap: anywhere; }
 
 </style>
 </head>
@@ -2781,9 +2887,10 @@ body.com-perfil .so-sem-perfil { display: none; }
     id: "vivo",
     provedor: "Vivo",
     tema: "vivo",
+    rodape: "Vivo Fibra · Firmware BR_SV_g13.12_RTF_TEF001 · Copyright © 2026",
     layout: "lateral",
     marca: "Vivo Fibra",
-    modelo: "Roteador Wi-Fi Fibra AC (simulado)",
+    modelo: "Roteador Wi-Fi Fibra AC",
     url: "192.168.15.1",
     etiqueta: { usuario: "admin", senha: "fibra1515", ssid: "VIVOFIBRA-2C01", wifiSenha: "vivofibra15", mac: "D8:4A:2C:7A:2C:01", serie: "VVFB2C7A2C01" },
     os: { tipo: "pppoe", usuario: "horizonte@cliente", senha: "fibra2026",
@@ -2799,7 +2906,7 @@ body.com-perfil .so-sem-perfil { display: none; }
     wanFabrica: "dinamico",
     canalFabrica: 6,
     vizinhos: [1, 1, 6, 6, 6],
-    statusExtra: [["Modelo", "RTF-AC (simulado)"], ["Versão do firmware|programa interno", "BR_SV_g13.12_RTF_TEF001"], ["Número de série", "VVFB2C7A2C01"]],
+    statusExtra: [["Modelo", "RTF-AC"], ["Versão do firmware|programa interno", "BR_SV_g13.12_RTF_TEF001"], ["Número de série", "VVFB2C7A2C01"]],
     menu: [
       { titulo: "Status", itens: ["status", "clientes"] },
       { titulo: "Configurações", itens: ["wifi", "wifi5", "lan", "wan"] },
@@ -2845,9 +2952,10 @@ body.com-perfil .so-sem-perfil { display: none; }
     id: "claro",
     provedor: "Claro",
     tema: "claro",
+    rodape: "Claro Wi-Fi · DOCSIS 3.1 · © 2026 Todos os direitos reservados",
     layout: "topo",
     marca: "Claro Wi-Fi",
-    modelo: "Gateway Wi-Fi DOCSIS 3.1 (simulado)",
+    modelo: "Gateway Wi-Fi DOCSIS 3.1",
     url: "192.168.0.1",
     etiqueta: { usuario: "admin", senha: "claro0101", ssid: "CLARO_2G7B20", wifiSenha: "claro2g0101", mac: "A4:91:B1:93:7B:20", serie: "CLGW937B20" },
     os: { tipo: "dinamico", usuario: "", senha: "",
@@ -2911,9 +3019,10 @@ body.com-perfil .so-sem-perfil { display: none; }
     id: "algar",
     provedor: "Algar",
     tema: "algar",
+    rodape: "Copyright © 2026 · Todos os direitos reservados · EG8145",
     layout: "abas",
     marca: "Algar Fibra",
-    modelo: "ONT GPON Wi-Fi 5 · EG8145 (simulado)",
+    modelo: "ONT GPON Wi-Fi 5 · EG8145",
     url: "192.168.100.1",
     etiqueta: { usuario: "admin", senha: "algar1111", ssid: "ALGAR_1E10", wifiSenha: "algarwifi11", mac: "48:7B:6B:51:1E:10", serie: "48575443A1B2C3D4" },
     os: { tipo: "pppoe", usuario: "horizonte@fibra.net", senha: "uber2026",
@@ -2929,7 +3038,7 @@ body.com-perfil .so-sem-perfil { display: none; }
     wanFabrica: "dinamico",
     canalFabrica: 1,
     vizinhos: [1, 1, 1, 11, 11, 11],
-    statusExtra: [["Device Type|tipo", "EG8145 (simulado)"], ["Software Version|versão do programa", "V5R020C00S180"], ["ONT Registration Status|registro na fibra", "O5 (normal)"], ["Rx Optical Power|sinal da fibra", "-19.42 dBm"]],
+    statusExtra: [["Device Type|tipo", "EG8145"], ["Software Version|versão do programa", "V5R020C00S180"], ["ONT Registration Status|registro na fibra", "O5 (normal)"], ["Rx Optical Power|sinal da fibra", "-19.42 dBm"]],
     menu: [
       { titulo: "Status", itens: ["status", "clientes", "optico"] },
       { titulo: "WAN", itens: ["wan"] },
@@ -2985,9 +3094,10 @@ body.com-perfil .so-sem-perfil { display: none; }
     id: "mznet",
     provedor: "MZNet",
     tema: "mznet",
+    rodape: "Copyright © 2026 · Todos os direitos reservados · F670",
     layout: "abas",
     marca: "MZNet Fibra",
-    modelo: "ONT GPON F670 (simulado)",
+    modelo: "ONT GPON F670",
     url: "192.168.1.1",
     etiqueta: { usuario: "user", senha: "user1234", ssid: "MZNET_4A30", wifiSenha: "mznetwifi1", mac: "E0:19:54:84:4A:30", serie: "ZTEGC84A4A30" },
     os: { tipo: "pppoe", usuario: "horizonte.escritorio", senha: "mz@2026",
@@ -3003,7 +3113,7 @@ body.com-perfil .so-sem-perfil { display: none; }
     wanFabrica: "dinamico",
     canalFabrica: 6,
     vizinhos: [11, 11, 6, 6, 6, 3],
-    statusExtra: [["Model|modelo", "F670 (simulado)"], ["Software Version|versão do programa", "V9.0.10P1N8"], ["PON State|estado da fibra", "Registered|registrada"], ["Rx Power|sinal da fibra", "-20.1 dBm"]],
+    statusExtra: [["Model|modelo", "F670"], ["Software Version|versão do programa", "V9.0.10P1N8"], ["PON State|estado da fibra", "Registered|registrada"], ["Rx Power|sinal da fibra", "-20.1 dBm"]],
     menu: [
       { titulo: "Status", itens: ["status", "clientes"] },
       { titulo: "Network|rede", itens: [
@@ -3274,11 +3384,18 @@ body.com-perfil .so-sem-perfil { display: none; }
   }
 
   function cabecalho() {
-    var p = est.perfil;
+    var p = est.perfil, modelo = String(p.modelo || "").replace(/\s*\(simulado\)/, "");
+    var nome = String(p.marca || "").split(" "), marca1 = nome.shift(), marca2 = nome.join(" ");
     return '<header class="pp-cab"><div class="pp-marca"><span class="pp-simbolo" aria-hidden="true"></span>' +
-      '<span class="pp-marca-nome">' + esc(p.marca) + '</span><span class="pp-modelo">' + esc(p.modelo) + "</span></div>" +
+      '<span class="pp-marca-nome"><b class="pp-marca-1">' + esc(marca1) + '</b>' + (marca2 ? ' <span class="pp-marca-2">' + esc(marca2) + "</span>" : "") +
+      '</span><span class="pp-modelo">' + esc(modelo) + "</span></div>" +
       (est.logado ? '<div class="pp-cab-dir"><span class="pp-usuario">👤 ' + esc(p.etiqueta.usuario) + '</span><button type="button" class="pp-sair" data-sair>' + rot(p.botaoSair) + "</button></div>" : "") +
-      '</header><div class="pp-faixa-sim">Simulador educativo SENAI · imita o estilo do painel, não é a página oficial do provedor</div>';
+      "</header>";
+  }
+
+  function rodape() {
+    return '<footer class="pp-pe"><span>' + esc(est.perfil.rodape || "Copyright © 2026. Todos os direitos reservados.") + "</span>" +
+      '<span class="pp-pe-sim">Simulador educativo SENAI · imita o estilo do painel, não é a página oficial do provedor</span></footer>';
   }
 
   function telaLogin() {
@@ -3290,7 +3407,7 @@ body.com-perfil .so-sem-perfil { display: none; }
       '<button type="button" class="pp-olho" data-olho="pp-login-s" title="Mostrar/ocultar">👁</button></div>' +
       (est.erroLogin ? '<p class="pp-erro">' + rot(l.erro) + "</p>" : "") +
       '<button type="submit" class="pp-btn pp-btn-primario pp-btn-largo">' + esc(rotPlano(l.botao)) + "</button>" +
-      '<p class="pp-nota">' + esc(l.dica) + "</p></form></div>";
+      '<p class="pp-nota">' + esc(l.dica) + "</p></form></div>" + rodape();
   }
 
   function render() {
@@ -3302,7 +3419,7 @@ body.com-perfil .so-sem-perfil { display: none; }
     var trilha = (g ? rot(g.titulo) + ' <span class="pp-seta">›</span> ' : "") + (sub ? esc(sub) + ' <span class="pp-seta">›</span> ' : "") + rot(pag(id).titulo);
     var aviso = est.aviso ? '<div class="pp-aviso pp-aviso-' + est.aviso.tipo + '">' + esc(est.aviso.texto) + "</div>" : "";
     r.innerHTML = cabecalho() + '<div class="pp-corpo">' + htmlMenu() +
-      '<main class="pp-conteudo"><div class="pp-trilha">' + trilha + "</div>" + aviso + paginaHtml(id) + "</main></div>";
+      '<main class="pp-conteudo"><div class="pp-trilha">' + trilha + "</div>" + aviso + paginaHtml(id) + "</main></div>" + rodape();
     est.aviso = null;
     atualizarVisibilidade();
     ligar();
