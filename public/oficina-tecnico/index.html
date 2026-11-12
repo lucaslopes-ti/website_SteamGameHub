@@ -176,7 +176,8 @@ input.nome::placeholder{color:#5f7592;font-weight:500}
 .campo-linha:focus-within{border-color:var(--ambar);box-shadow:0 0 0 3px rgba(255,176,32,.18),inset 0 2px 8px rgba(0,0,0,.45)}
 input.nome.erro{border:0}
 .campo-linha:has(input.erro){border-color:var(--verm);box-shadow:0 0 0 4px rgba(255,93,104,.2);animation:treme .35s}
-.aviso-nome[hidden],#toast-nome[hidden]{display:none}
+.aviso-nome[hidden],#toast-nome[hidden],#toast-rec[hidden]{display:none}
+#toast-rec{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:85;max-width:min(560px,92vw);padding:12px 18px;border-radius:12px;background:#14532d;border:1px solid #37df8b;color:#eafff3;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.45)}
 .aviso-nome{margin:8px 0 0;color:#ffdfe2;background:linear-gradient(180deg,#7a1720,#4a0b11);border:1px solid #b73642;
   border-radius:10px;padding:9px 13px;font-weight:700;font-size:13.5px;display:inline-block;box-shadow:0 8px 20px rgba(120,20,30,.35)}
 .acoes{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0 16px}
@@ -1255,6 +1256,7 @@ function aoStatusXp(m){
   if(XP.logado){
     lerResumoXp(m);
     if(!$("nome").value.trim()&&XP.nome)$("nome").value=XP.nome.slice(0,24);
+    recuperarDaConta();
     let pend={};
     try{pend=JSON.parse(sessionStorage.getItem(XP_PENDENTE)||"{}");sessionStorage.removeItem(XP_PENDENTE);}catch(e){}
     Object.keys(pend).forEach(fase=>{if((XP.estrelas[fase]||0)<pend[fase])enviarXp({acao:"premiar",pedido:"pend-"+fase,fase,estrelas:pend[fase]});});
@@ -1262,6 +1264,16 @@ function aoStatusXp(m){
   desenharXp();
   if(XP.resultadoPendente){const r=XP.resultadoPendente;XP.resultadoPendente=null;premiarXp(r.fase,r.est);}
 }
+/* O progresso das fases fica no navegador (localStorage). Em outro PC ou navegador limpo ele some,
+   mas as estrelas ficam na conta do Game Hub: aqui elas voltam para o jogo. */
+function recuperarDaConta(){
+  let rec=0;
+  FASES.forEach(f=>{const conta=XP.estrelas[f.id]||0;if(conta>(E.progresso[f.id]||0)){E.progresso[f.id]=conta;rec++;}});
+  if(!rec)return;
+  if(!E.nome&&XP.nome)E.nome=XP.nome.slice(0,24);
+  salvar();FASE_SEL=null;if(document.getElementById("t-inicio").classList.contains("ativa"))desenharMapa();
+  let t=document.getElementById("toast-rec");if(!t){t=document.createElement("div");t.id="toast-rec";t.setAttribute("role","status");document.body.appendChild(t);}
+  t.textContent="💾 Progresso recuperado da sua conta do Game Hub: "+rec+(rec>1?" fases":" fase")+" com as estrelas que você já tinha.";t.hidden=false;clearTimeout(t._t);t._t=setTimeout(()=>t.hidden=true,4500);}
 function linkEntrar(){return `<a class="botao cinza" href="/login?redirect=${ROTA}">Entrar</a> <a class="botao" href="/cadastro?redirect=${ROTA}">Criar cadastro</a>`;}
 function aoPremioXp(m){
   if(m.ok)lerResumoXp(m);
@@ -1342,8 +1354,8 @@ function mostrarResultado(tit,sub,est,linhas,fase){esconderRelogio();$("r-titulo
   $("r-estrelas").innerHTML=[1,2,3].map(i=>`<span class="${i<=est?"on":""}">★</span>`).join("");
   const total=FASES.reduce((s,f)=>s+(E.progresso[f.id]||0),0);const cargo=total>=11?"Técnico(a) sênior":total>=8?"Técnico(a) pleno":total>=4?"Técnico(a) júnior":"Estagiário(a) de bancada";
   $("r-lista").innerHTML=linhas.map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join("")+`<div><span>Pontos no plantão</span><b>${E.pontos}</b></div><div><span>Estrelas nas 4 fases</span><b>${total} de 12 · ${cargo}</b></div>`;
-  $("r-codigo").textContent=codigo();telas("t-resultado");contarPontos();confete(est);premiarXp(fase,est);if(est>=2){somBom();setTimeout(somBom,250);}}
-$("r-voltar").onclick=()=>{desenharMapa();telas("t-inicio");};
+  $("r-codigo").textContent=codigo();$("r-prox").hidden=!proximaFase();telas("t-resultado");contarPontos();confete(est);premiarXp(fase,est);if(est>=2){somBom();setTimeout(somBom,250);}}
+$("r-voltar").onclick=()=>{FASE_SEL=null;desenharMapa();telas("t-inicio");};
 $("r-prox").onclick=()=>{const prox=proximaFase();if(!prox)return;somClique();jogarFase(prox.id);};
 const INICIO={cabe:iniciarCabe,pop:iniciarPop,tela:iniciarTela,perif:iniciarPerif};
 carregar();if(E.som===false){somLigado=false;$("btn-som").textContent="🔇";}if(E.nome){$("nome").value=E.nome;$("hud-nome").textContent="👷 "+E.nome;}

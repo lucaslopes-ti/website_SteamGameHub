@@ -25,6 +25,7 @@ import {
   Cable,
   ShoppingBag,
   MapPinned,
+  Wrench,
 } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useAuth } from "./AuthProvider";
@@ -88,6 +89,13 @@ export default function Header() {
       href: "/plantao-tecnico",
       label: "Plantão do Técnico",
       icon: MapPinned,
+      isNew: true,
+      isStatic: true,
+    },
+    {
+      href: "/oficina-tecnico",
+      label: "Oficina do Técnico",
+      icon: Wrench,
       isNew: true,
       isStatic: true,
     },
