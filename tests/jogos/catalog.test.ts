@@ -65,13 +65,13 @@ describe("XP dos jogos das aulas", () => {
     ).toBe(100);
   });
 
-  it("plantão do técnico tem 16 OS e 1800 XP no total", () => {
+  it("plantão do técnico tem 25 OS e 2700 XP no total", () => {
     const plantao = JOGO_POR_ID.get("plantao-tecnico")!;
-    expect(plantao.fases).toHaveLength(16);
+    expect(plantao.fases).toHaveLength(25);
     expect(plantao.fases.map((f) => f.id)).toEqual(
-      Array.from({ length: 16 }, (_, i) => `os${String(i + 1).padStart(2, "0")}`)
+      Array.from({ length: 25 }, (_, i) => `os${String(i + 1).padStart(2, "0")}`)
     );
-    expect(xpMaximoDoJogo(plantao)).toBe(1800);
+    expect(xpMaximoDoJogo(plantao)).toBe(2700);
     const r = aplicarResultadoFase([], "plantao-tecnico", "os01", 3);
     expect(r).toMatchObject({ ok: true, xpGanho: 100 });
   });

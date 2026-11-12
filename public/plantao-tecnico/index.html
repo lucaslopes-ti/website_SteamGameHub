@@ -942,7 +942,7 @@ body.no-intervalo .toast { display: none; }
   <header class="hud" id="hud" hidden>
     <div class="hud-esq">
       <span class="hud-avatar" aria-hidden="true">🧰</span>
-      <div class="hud-txt"><b id="hud-nome">Técnico(a)</b><small id="hud-os">0 de 16 OS · 0 ★</small></div>
+      <div class="hud-txt"><b id="hud-nome">Técnico(a)</b><small id="hud-os">0 de 25 OS · 0 ★</small></div>
     </div>
     <div class="hud-dir">
       <a class="hud-xp" id="hud-xp" hidden href="#">⚡ XP</a>
@@ -2903,7 +2903,7 @@ body.no-intervalo .toast { display: none; }
   <script>
 /*
  * Ordens de serviço (OS) do jogo "Plantão do Técnico · Santa Mônica".
- * Cada OS é uma casa do bairro com um roteador de provedor (perfis.js) e de 1 a 3 tarefas.
+ * Cada OS é uma casa do bairro com um roteador de provedor (perfis.js) e de 1 a 5 tarefas.
  * Os painéis são os mesmos do Simulador de roteadores (painel-provedor.js).
  *
  * Tipos de tarefa (conferidos em jogo.js):
@@ -2923,7 +2923,11 @@ body.no-intervalo .toast { display: none; }
     { x: 1, y: 12 }, { x: 4, y: 12 }, { x: 13, y: 12 }, { x: 17, y: 12 }, { x: 29, y: 1 }, { x: 32, y: 1 },   // 4 e 5: em frente à Anselmo (a UFU ocupa a quadra)
     { x: 1, y: 23 }, { x: 4, y: 23 }, { x: 13, y: 23 }, { x: 17, y: 23 }, { x: 29, y: 23 }, { x: 32, y: 23 },
     // rua de baixo, perto da Base do SENAI e do Mercadinho (OS 13 a 16)
-    { x: 0, y: 32 }, { x: 4, y: 32 }, { x: 31, y: 32 }, { x: 36, y: 32 }
+    { x: 0, y: 32 }, { x: 4, y: 32 }, { x: 31, y: 32 }, { x: 36, y: 32 },
+    // OS 17 a 22: comércio na Anselmo, em frente ao Parque do Sabiá
+    { x: 46, y: 1 }, { x: 49, y: 1 }, { x: 52, y: 1 }, { x: 55, y: 1 }, { x: 58, y: 1 }, { x: 61, y: 1 },
+    // OS 23 e 24: Belarmino, perto da Base do SENAI; OS 25: quiosque dentro do Sabiá
+    { x: 28, y: 32 }, { x: 39, y: 32 }, { x: 58, y: 11 }
   ];
 
   var OS = [
@@ -3009,7 +3013,55 @@ body.no-intervalo .toast { display: none; }
       visual: { pele: "#d29a6e", cabelo: "#555555", roupa: "#2c3e50" },
       fala: "A internet da oficina não liga, o Wi-Fi vive lento e o PC do caixa precisa de IP fixo para a maquininha de cartão. Ah, e põe a senha Oficina2026.",
       inicio: { wanErrada: true },
-      tarefas: [{ tipo: "wan" }, { tipo: "canal" }, { tipo: "reserva", disp: "PC do caixa", mac: "AA:BB:CC:00:00:08", ip: "80" }, { tipo: "senha", alvo: "Oficina2026" }] }
+      tarefas: [{ tipo: "wan" }, { tipo: "canal" }, { tipo: "reserva", disp: "PC do caixa", mac: "AA:BB:CC:00:00:08", ip: "80" }, { tipo: "senha", alvo: "Oficina2026" }] },
+
+    /* ---------------- nível 4 (continuação): comércio da Anselmo (abrem depois das OS 13 a 16) ---------------- */
+    { id: "os17", op: "vivo", casa: 16, numero: 2010, cliente: "Carla", lugar: "Pet shop Amigo Fiel",
+      visual: { pele: "#c68a5e", cabelo: "#3b2414", roupa: "#27ae60", longo: true },
+      fala: "O Wi-Fi do pet shop está sem senha e lento à tarde. Quero o nome PetShop_AmigoFiel, a senha Patinhas2026 e ninguém entrando no painel.",
+      inicio: { aberta: true },
+      tarefas: [{ tipo: "ssid", alvo: "PetShop_AmigoFiel" }, { tipo: "senha", alvo: "Patinhas2026" }, { tipo: "canal" }, { tipo: "admin" }] },
+    { id: "os18", op: "claro", casa: 17, numero: 2040, cliente: "Seu Giovanni", lugar: "Pizzaria Bella Massa",
+      visual: { pele: "#f1c9a5", cabelo: "#2a2a2a", roupa: "#ffffff", avental: true },
+      fala: "Mexeram no aparelho da Claro: a internet caiu e os celulares não pegam IP. Quero também o nome Pizzaria_Bella e a senha Calabresa26.",
+      inicio: { wanErrada: true, dhcpDesligado: true },
+      tarefas: [{ tipo: "wan" }, { tipo: "dhcp" }, { tipo: "ssid", alvo: "Pizzaria_Bella" }, { tipo: "senha", alvo: "Calabresa26" }] },
+    { id: "os19", op: "algar", casa: 18, numero: 2070, cliente: "Nanda", lugar: "Estúdio de tatuagem",
+      visual: { pele: "#e8b88f", cabelo: "#8e44ad", roupa: "#111111", longo: true },
+      fala: "O Wi-Fi do estúdio está desligado! A câmera da porta precisa de IP fixo, a rede fica num canal lotado e a senha do painel ainda é a da etiqueta.",
+      inicio: { wifiDesligado: true },
+      tarefas: [{ tipo: "ativo" }, { tipo: "reserva", disp: "câmera da porta", mac: "AA:BB:CC:00:00:09", ip: "90" }, { tipo: "canal" }, { tipo: "admin" }] },
+    { id: "os20", op: "mznet", casa: 19, numero: 2100, cliente: "Dona Rosa", lugar: "Mercearia da Dona Rosa",
+      visual: { pele: "#8d5a3b", cabelo: "#cfcfcf", roupa: "#d35400", longo: true, oculos: true },
+      fala: "Meu neto escondeu o nome do Wi-Fi e a internet parou. A maquininha de cartão precisa de IP fixo. E coloca a senha Mercearia26.",
+      inicio: { wanErrada: true, oculto: true },
+      tarefas: [{ tipo: "wan" }, { tipo: "oculto" }, { tipo: "reserva", disp: "maquininha de cartão", mac: "AA:BB:CC:00:00:0A", ip: "100" }, { tipo: "senha", alvo: "Mercearia26" }] },
+
+    /* ---------------- nível 5: cinco tarefas (abrem depois das OS 17 a 20) ---------------- */
+    { id: "os21", op: "vivo", casa: 20, numero: 2130, cliente: "Dr. Fábio", lugar: "Escritório de advocacia",
+      visual: { pele: "#5c3a24", cabelo: "#111111", roupa: "#2c3e50", oculos: true },
+      fala: "Escritório novo! A internet não liga, a impressora precisa de IP fixo, o Wi-Fi está num canal cheio, quero o nome Advocacia_Fabio e trocar a senha do painel.",
+      inicio: { wanErrada: true },
+      tarefas: [{ tipo: "wan" }, { tipo: "reserva", disp: "impressora", mac: "AA:BB:CC:00:00:0B", ip: "110" }, { tipo: "canal" }, { tipo: "ssid", alvo: "Advocacia_Fabio" }, { tipo: "admin" }] },
+    { id: "os22", op: "claro", casa: 21, numero: 2160, cliente: "Thiago", lugar: "Barbearia do Thiago",
+      visual: { pele: "#7a4b2e", cabelo: "#111111", roupa: "#c0392b" },
+      fala: "Desligaram o Wi-Fi e esconderam o nome! Quero a rede Barbearia_Thiago aparecendo, com a senha Navalha2026, e a TV do salão sempre no mesmo IP.",
+      inicio: { wifiDesligado: true, oculto: true },
+      tarefas: [{ tipo: "ativo" }, { tipo: "oculto" }, { tipo: "ssid", alvo: "Barbearia_Thiago" }, { tipo: "senha", alvo: "Navalha2026" }, { tipo: "reserva", disp: "TV do salão", mac: "AA:BB:CC:00:00:0C", ip: "120" }] },
+    { id: "os23", op: "algar", casa: 22, numero: 1490, cliente: "Dra. Sônia", lugar: "Farmácia Santa Mônica",
+      visual: { pele: "#f3d0b0", cabelo: "#6d4c2a", roupa: "#ffffff", jaleco: true, longo: true },
+      fala: "A ONT nova da farmácia veio sem internet e sem DHCP. A impressora fiscal precisa de IP fixo. Quero a senha Remedio2026 no Wi-Fi e trocar a senha do painel.",
+      inicio: { wanErrada: true, dhcpDesligado: true },
+      tarefas: [{ tipo: "wan" }, { tipo: "dhcp" }, { tipo: "reserva", disp: "impressora fiscal", mac: "AA:BB:CC:00:00:0D", ip: "130" }, { tipo: "senha", alvo: "Remedio2026" }, { tipo: "admin" }] },
+    { id: "os24", op: "mznet", casa: 23, numero: 1620, cliente: "Maestro Pedro", lugar: "Escola de música",
+      visual: { pele: "#d29a6e", cabelo: "#555555", roupa: "#16a085", oculos: true },
+      fala: "O Wi-Fi da escola vive travando nas aulas on-line. A caixa de som Wi-Fi precisa de IP fixo. Quero o nome Escola_Musica, a senha Partitura26 e trocar a senha do painel.",
+      tarefas: [{ tipo: "canal" }, { tipo: "ssid", alvo: "Escola_Musica" }, { tipo: "senha", alvo: "Partitura26" }, { tipo: "reserva", disp: "caixa de som Wi-Fi", mac: "AA:BB:CC:00:00:0E", ip: "140" }, { tipo: "admin" }] },
+    { id: "os25", op: "vivo", casa: 24, numero: 1, cliente: "Seu Raimundo", lugar: "Quiosque do Sabiá",
+      visual: { pele: "#a86b45", cabelo: "#cfcfcf", roupa: "#f39c12", avental: true },
+      fala: "O quiosque do parque está sem nada: sem internet, Wi-Fi desligado e escondido! Quero a rede Quiosque_Sabia com a senha AguaDeCoco26.",
+      inicio: { wanErrada: true, wifiDesligado: true, oculto: true },
+      tarefas: [{ tipo: "wan" }, { tipo: "ativo" }, { tipo: "oculto" }, { tipo: "ssid", alvo: "Quiosque_Sabia" }, { tipo: "senha", alvo: "AguaDeCoco26" }] }
   ];
 
   window.JogoDados = { CASAS: CASAS, OS: OS };
@@ -3117,6 +3169,7 @@ body.no-intervalo .toast { display: none; }
     // Sabiá: muitas árvores (ipês, copas e palmeiras), sem fechar as trilhas
     for (y = 9; y <= 36; y++) for (x = 40; x < W; x++) {
       if (G[y][x] !== "g") continue;
+      if (x >= 56 && x <= 61 && y >= 10 && y <= 16) continue;   // espaço livre em volta do Quiosque do Sabiá (OS 25)
       var hh = hash(x * 3 + 1, y * 5 + 2);
       if (hh > 0.38) arv(x, y, hh > 0.86 ? "palmeira" : hh > 0.62 ? "ipe" : "copa");
     }
@@ -3135,7 +3188,7 @@ body.no-intervalo .toast { display: none; }
     // postes e semáforos têm colisão na base
     enfeites.forEach(function (e2) { if (e2.tipo === "poste" || e2.tipo === "semaforo") OBST.push({ x: (e2.x + 0.5) * T, y: (e2.y + 1) * T - 3 }); });
     enfeites.push({ tipo: "ponto", x: 27, y: 12 }); sol(27, 12, 27, 12);
-    [[44, 11], [58, 11], [44, 34], [58, 34]].forEach(function (b) { enfeites.push({ tipo: "banco", x: b[0], y: b[1] }); });
+    [[44, 11], [56, 9], [44, 34], [58, 34]].forEach(function (b) { enfeites.push({ tipo: "banco", x: b[0], y: b[1] }); });
     for (x = 0; x < W; x++) solido[0][x] = solido[0][x] || G[0][x] === "g";
     placas.push({ x: 24.5, y: 12.5, txt: "Av. João Naves de Ávila", vert: true });
     placas.push({ x: 31, y: 6.9, txt: "Av. Anselmo Alves dos Santos" });
