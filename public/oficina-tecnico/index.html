@@ -176,6 +176,8 @@ input.nome::placeholder{color:#5f7592;font-weight:500}
 .campo-linha:focus-within{border-color:var(--ambar);box-shadow:0 0 0 3px rgba(255,176,32,.18),inset 0 2px 8px rgba(0,0,0,.45)}
 input.nome.erro{border:0}
 .campo-linha:has(input.erro){border-color:var(--verm);box-shadow:0 0 0 4px rgba(255,93,104,.2);animation:treme .35s}
+#toast-rec[hidden]{display:none}
+#toast-rec{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:85;max-width:min(560px,92vw);padding:12px 18px;border-radius:12px;background:#14532d;border:1px solid #37df8b;color:#eafff2;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.45);text-align:center}
 .aviso-nome[hidden],#toast-nome[hidden]{display:none}
 .aviso-nome{margin:8px 0 0;color:#ffdfe2;background:linear-gradient(180deg,#7a1720,#4a0b11);border:1px solid #b73642;
   border-radius:10px;padding:9px 13px;font-weight:700;font-size:13.5px;display:inline-block;box-shadow:0 8px 20px rgba(120,20,30,.35)}
@@ -1216,7 +1218,7 @@ F_PANEL .... OK</pre>
   </div>
   <div class="res-acoes">
     <button class="botao cinza" id="r-voltar">Voltar ao bairro</button>
-    <button class="botao dour" id="r-prox" hidden>Próxima fase ▸</button>
+    <button class="botao dour" id="r-prox" hidden>Ir para a próxima casa ▸</button>
   </div>
 </section>
 </main>
@@ -1585,10 +1587,21 @@ function aoStatusXp(m){
     let pend={};
     try{pend=JSON.parse(sessionStorage.getItem(XP_PENDENTE)||"{}");sessionStorage.removeItem(XP_PENDENTE);}catch(e){}
     Object.keys(pend).forEach(fase=>{if((XP.estrelas[fase]||0)<pend[fase])enviarXp({acao:"premiar",pedido:"pend-"+fase,fase,estrelas:pend[fase]});});
+    recuperarDaConta();
   }
   desenharXp();
   if(XP.resultadoPendente){const r=XP.resultadoPendente;XP.resultadoPendente=null;premiarXp(r.fase,r.est);}
 }
+/* Progresso salvo só neste navegador: em outro PC as fases voltariam a ficar trancadas.
+   As estrelas que já estão na conta do Game Hub repõem o progresso local. */
+function recuperarDaConta(){
+  let rec=0;
+  FASES.forEach(f=>{const conta=XP.estrelas[f.id]||0;if(conta>(E.progresso[f.id]||0)){E.progresso[f.id]=conta;rec++;}});
+  if(!rec)return;
+  if(!E.nome&&XP.nome){E.nome=XP.nome.slice(0,24);$("hud-nome").textContent="👷 "+E.nome;}
+  salvar();FASE_SEL=proximaEstacao();desenharListaEstacoes();
+  let t=document.getElementById("toast-rec");if(!t){t=document.createElement("div");t.id="toast-rec";t.setAttribute("role","status");document.body.appendChild(t);}
+  t.textContent="💾 Progresso recuperado da sua conta do Game Hub: "+rec+(rec>1?" fases":" fase")+" com as estrelas que você já tinha.";t.hidden=false;clearTimeout(t._t);t._t=setTimeout(()=>t.hidden=true,4500);}
 function linkEntrar(){return `<a class="botao cinza" href="/login?redirect=${ROTA}">Entrar</a> <a class="botao" href="/cadastro?redirect=${ROTA}">Criar cadastro</a>`;}
 function aoPremioXp(m){
   if(m.ok)lerResumoXp(m);
@@ -1619,7 +1632,7 @@ function desenharXp(){
   if(XP.logado){
     if(chip){chip.textContent="⚡ "+XP.total+" XP";chip.href="/sql-quest/loja";chip.title="Seu XP no SENAI Game Hub (abre a Loja)";}
     const pct=XP.xpMax?Math.round(XP.xpNoJogo/XP.xpMax*100):0;
-    if(caixa)caixa.innerHTML=`<div class="xp-topo">⚡ <b>XP no SENAI Game Hub</b> <span class="peq">· ${esc(XP.nome||"aluno(a)")}</span></div><div class="xp-barra"><i style="width:${pct}%"></i></div><p class="peq">Neste jogo: <b>${XP.xpNoJogo} de ${XP.xpMax} XP</b>. Cada fase: 1ª estrela ${XP.porEstrela[0]} XP, 2ª +${XP.porEstrela[1]}, 3ª +${XP.porEstrela[2]}. As 4 fases com 3 estrelas: +${XP.bonus} XP. Troque o XP na <a href="/sql-quest/loja">Loja</a> por impressões 3D.</p>`;
+    if(caixa)caixa.innerHTML=`<div class="xp-topo">⚡ <b>XP no SENAI Game Hub</b> <span class="peq">· ${esc(XP.nome||"aluno(a)")}</span></div><div class="xp-barra"><i style="width:${pct}%"></i></div><p class="peq">Neste jogo: <b>${XP.xpNoJogo} de ${XP.xpMax} XP</b>. Cada fase: 1ª estrela ${XP.porEstrela[0]} XP, 2ª +${XP.porEstrela[1]}, 3ª +${XP.porEstrela[2]}. As ${FASES.length} fases com 3 estrelas: +${XP.bonus} XP. Troque o XP na <a href="/sql-quest/loja">Loja</a> por impressões 3D.</p>`;
   }else{
     if(chip){chip.textContent="⚡ Ganhe XP";chip.href="/login?redirect="+ROTA;chip.title="Entre no SENAI Game Hub para ganhar XP";}
     if(caixa)caixa.innerHTML=`<div class="xp-topo">⚡ <b>Ganhe XP de verdade</b></div><p class="peq">Quem tem cadastro no SENAI Game Hub ganha XP com as estrelas de cada fase e troca na Loja por impressões 3D. Dá para jogar sem entrar, mas aí o XP não fica guardado.</p><p>${linkEntrar()}</p>`;
@@ -1671,9 +1684,13 @@ function mostrarResultado(tit,sub,est,linhas,fase){esconderRelogio();$("r-titulo
   const cargo=total>=16?"Técnico(a) sênior":total>=11?"Técnico(a) pleno":total>=4?"Técnico(a) júnior":"Estagiário(a) de bancada";
   $("r-lista").innerHTML=linhas.map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join("")+`<div><span>Pontos no plantão</span><b>${E.pontos}</b></div><div><span>Estrelas nas ${FASES.length} fases</span><b>${total} de ${FASES.length*3} · ${cargo}</b></div>`;
   $("r-codigo").textContent=codigo();telas("t-resultado");contarPontos();confete(est);premiarXp(fase,est);if(est>=2){somBom();setTimeout(somBom,250);}
-  FASE_SEL=proximaEstacao();desenharListaEstacoes();}
+  const atual=FASES.findIndex(f=>f.id===fase),prox=proximaEstacao();
+  $("r-prox").hidden=prox===atual||(E.progresso[FASES[prox].id]||0)>0;
+  FASE_SEL=prox;desenharListaEstacoes();}
 $("r-voltar").onclick=()=>{if(!mundoIniciado){telas("t-inicio");return;}somClique();telas(null);};
-$("r-prox").onclick=()=>{const prox=proximaEstacao();if(prox===FASE_SEL)return;somClique();telas(null);};
+$("r-prox").onclick=()=>{FASE_SEL=proximaEstacao();desenharListaEstacoes();somClique();
+  if(!mundoIniciado){jogarFase(FASES[FASE_SEL].id);return;}
+  telas(null);const f=FASES[FASE_SEL];toastMundo("🧭 GPS: siga a seta amarela até a casa de "+f.cli.nome+" · "+f.n+" · "+f.t+".");};
 /* ================================================================ MUNDO: bairro Santa Mônica (motor adaptado do Plantão) ================================================================ */
 const Mundo = (function () {
   "use strict";
@@ -2600,7 +2617,7 @@ const Mundo = (function () {
     if (emJogo) desenharMinimapa();
     requestAnimationFrame(laco);
   }
-﻿  /* ================================================================ dois mapas + portal */
+  /* ================================================================ dois mapas + portal */
   /* Mapa 0: bairro Santa Mônica (ambientação + SENAI). Mapa 1: bairro da oficina,
      onde ficam as 6 casas de cliente. A troca é feita por um portal (boca de rua /
      portão) com cortina. Cada mapa guarda chão, sprites, casas e minimapa prontos. */
