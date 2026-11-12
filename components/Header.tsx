@@ -43,6 +43,7 @@ export default function Header() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [simulatorsOpen, setSimulatorsOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -51,6 +52,8 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
 
   const searchRef = useRef<HTMLInputElement>(null);
+  const simulatorsRef = useRef<HTMLDivElement>(null);
+  const mobileSimulatorsRef = useRef<HTMLDivElement>(null);
   const moreRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -76,9 +79,19 @@ export default function Header() {
   const mainItems: NavItem[] = [
     { href: "/games", label: t("header.games"), icon: Gamepad2 },
     { href: "/materiais", label: "Materiais", icon: BookOpen },
-    { href: "/simulado-saep", label: "Simulado SAEP", icon: Trophy },
     { href: "/sql-quest", label: "SENAI Quest", icon: Database },
     { href: "/sql-quest/loja", label: "Loja", icon: ShoppingBag },
+  ];
+
+  const simulatorItems: NavItem[] = [
+    { href: "/simulado-saep", label: "Simulador SAEP", icon: Trophy },
+    {
+      href: "/oficina-tecnico",
+      label: "Oficina do Técnico",
+      icon: Wrench,
+      isNew: true,
+      isStatic: true,
+    },
     {
       href: "/montador-cabo",
       label: "Montador de Cabo",
@@ -89,13 +102,6 @@ export default function Header() {
       href: "/plantao-tecnico",
       label: "Plantão do Técnico",
       icon: MapPinned,
-      isNew: true,
-      isStatic: true,
-    },
-    {
-      href: "/oficina-tecnico",
-      label: "Oficina do Técnico",
-      icon: Wrench,
       isNew: true,
       isStatic: true,
     },
@@ -121,6 +127,7 @@ export default function Header() {
 
   const closeMenus = useCallback(() => {
     setMobileOpen(false);
+    setSimulatorsOpen(false);
     setMoreOpen(false);
     setUserMenuOpen(false);
     setSearchOpen(false);
@@ -180,10 +187,13 @@ export default function Header() {
 
   // Clique fora fecha dropdowns e o painel mobile.
   useEffect(() => {
-    if (!mobileOpen && !moreOpen && !userMenuOpen) return;
+    if (!mobileOpen && !simulatorsOpen && !moreOpen && !userMenuOpen) return;
     const onPointerDown = (e: PointerEvent) => {
       const target = e.target as Node;
       if (
+        (simulatorsOpen &&
+          (simulatorsRef.current?.contains(target) ||
+            mobileSimulatorsRef.current?.contains(target))) ||
         (moreOpen && moreRef.current?.contains(target)) ||
         (userMenuOpen && userRef.current?.contains(target)) ||
         (mobileOpen && panelRef.current?.contains(target))
@@ -194,7 +204,7 @@ export default function Header() {
     };
     document.addEventListener("pointerdown", onPointerDown);
     return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, [mobileOpen, moreOpen, userMenuOpen, closeMenus]);
+  }, [mobileOpen, simulatorsOpen, moreOpen, userMenuOpen, closeMenus]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -371,6 +381,52 @@ export default function Header() {
                 )
               )}
 
+              {/* Simuladores: dropdown com todos os simuladores */}
+              <div ref={simulatorsRef} className="relative">
+                <button
+                  type="button"
+                  aria-expanded={simulatorsOpen}
+                  aria-haspopup="true"
+                  onClick={() => {
+                    setSimulatorsOpen((v) => !v);
+                    setMoreOpen(false);
+                    setUserMenuOpen(false);
+                  }}
+                  data-active={simulatorItems.some((i) => !i.isStatic && isActive(i.href))}
+                  data-open={simulatorsOpen}
+                  className="hd-nav-item"
+                >
+                  <Cpu aria-hidden="true" className="hd-nav-icon h-4 w-4 shrink-0" />
+                  Simuladores
+                  <ChevronDown
+                    aria-hidden="true"
+                    className={`h-3.5 w-3.5 transition-transform duration-200 ease-out ${
+                      simulatorsOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+
+                <div
+                  data-open={simulatorsOpen}
+                  className="hd-menu absolute left-0 top-full z-50 mt-1.5 w-64 origin-top-left rounded-xl border border-[var(--outline-10)] bg-[var(--surface-container-high)] p-1.5 shadow-2xl shadow-black/40"
+                  role="group"
+                  aria-label="Simuladores"
+                >
+                  {simulatorItems.map((item) =>
+                    renderNavLink(
+                      item,
+                      dropdownItemClass(item.href),
+                      <>
+                        <item.icon aria-hidden="true" className="h-4 w-4 shrink-0" />
+                        <span className="flex-1 text-left">{item.label}</span>
+                        {item.isNew && <NewBadge />}
+                      </>,
+                      closeMenus
+                    )
+                  )}
+                </div>
+              </div>
+
               {/* Mais: páginas secundárias */}
               <div ref={moreRef} className="relative">
                 <button
@@ -379,6 +435,7 @@ export default function Header() {
                   aria-haspopup="true"
                   onClick={() => {
                     setMoreOpen((v) => !v);
+                    setSimulatorsOpen(false);
                     setUserMenuOpen(false);
                   }}
                   data-active={exploreItems.some((i) => isActive(i.href))}
@@ -436,6 +493,7 @@ export default function Header() {
                 aria-label={searchOpen ? "Fechar busca" : t("header.searchPlaceholder")}
                 onClick={() => {
                   setSearchOpen((v) => !v);
+                  setSimulatorsOpen(false);
                   setMoreOpen(false);
                   setUserMenuOpen(false);
                 }}
@@ -464,6 +522,7 @@ export default function Header() {
                     aria-label={`Menu do usuário${user?.name ? `: ${user.name}` : ""}`}
                     onClick={() => {
                       setUserMenuOpen((v) => !v);
+                      setSimulatorsOpen(false);
                       setMoreOpen(false);
                     }}
                     className="flex h-10 w-10 select-none items-center justify-center rounded-full border border-[var(--outline-10)] bg-[var(--surface-container-lowest)] text-sm font-bold text-[var(--secondary)] transition-[border-color,transform] duration-150 ease-out hover:border-[var(--secondary-container)] active:scale-95"
@@ -539,6 +598,7 @@ export default function Header() {
                 aria-label={mobileOpen ? "Fechar menu" : "Abrir menu"}
                 onClick={() => {
                   setMobileOpen((v) => !v);
+                  setSimulatorsOpen(false);
                   setMoreOpen(false);
                   setUserMenuOpen(false);
                 }}
@@ -569,25 +629,71 @@ export default function Header() {
           )}
 
           {/* Atalhos visíveis no celular/tablet: chips com rolagem horizontal */}
-          <nav
-            aria-label="Atalhos"
-            className="hd-chips container relative z-10 mx-auto px-4 pb-2.5 lg:px-6 xl:hidden"
-          >
-            {/* Itens novos primeiro, para aparecerem sem precisar rolar */}
-            {[...mainItems]
-              .sort((x, y) => Number(!!y.isNew) - Number(!!x.isNew))
-              .map((item) =>
-              renderNavLink(
-                item,
-                "hd-nav-item hd-chip",
-                <>
-                  <item.icon aria-hidden="true" className="hd-nav-icon h-4 w-4 shrink-0" />
-                  {item.label}
-                  {item.isNew && <NewBadge />}
-                </>
-              )
+          <div ref={mobileSimulatorsRef} className="relative z-10 xl:hidden">
+            <nav
+              aria-label="Atalhos"
+              className="hd-chips container mx-auto px-4 pb-2.5 lg:px-6"
+            >
+              {mainItems.map((item) =>
+                renderNavLink(
+                  item,
+                  "hd-nav-item hd-chip",
+                  <>
+                    <item.icon aria-hidden="true" className="hd-nav-icon h-4 w-4 shrink-0" />
+                    {item.label}
+                    {item.isNew && <NewBadge />}
+                  </>
+                )
+              )}
+
+              <button
+                type="button"
+                aria-expanded={simulatorsOpen}
+                aria-haspopup="true"
+                onClick={() => {
+                  setSimulatorsOpen((v) => !v);
+                  setMobileOpen(false);
+                  setMoreOpen(false);
+                  setUserMenuOpen(false);
+                }}
+                data-active={simulatorItems.some((i) => !i.isStatic && isActive(i.href))}
+                data-open={simulatorsOpen}
+                className="hd-nav-item hd-chip"
+              >
+                <Cpu aria-hidden="true" className="hd-nav-icon h-4 w-4 shrink-0" />
+                Simuladores
+                <ChevronDown
+                  aria-hidden="true"
+                  className={`h-3.5 w-3.5 transition-transform duration-200 ease-out ${
+                    simulatorsOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+            </nav>
+
+            {simulatorsOpen && (
+              <div
+                role="group"
+                aria-label="Simuladores"
+                className="hd-panel-in container mx-auto px-4 pb-3 lg:px-6"
+              >
+                <div className="grid grid-cols-1 gap-1 rounded-xl border border-[var(--outline-10)] bg-[var(--surface-container-high)] p-2 shadow-xl sm:grid-cols-2">
+                  {simulatorItems.map((item) =>
+                    renderNavLink(
+                      item,
+                      dropdownItemClass(item.href),
+                      <>
+                        <item.icon aria-hidden="true" className="h-4 w-4 shrink-0" />
+                        <span className="flex-1 text-left">{item.label}</span>
+                        {item.isNew && <NewBadge />}
+                      </>,
+                      closeMenus
+                    )
+                  )}
+                </div>
+              </div>
             )}
-          </nav>
+          </div>
         </div>
 
         {/* Faixa de novidades */}
@@ -626,6 +732,26 @@ export default function Header() {
               </p>
               <div className="flex flex-col gap-0.5">
                 {mainItems.map((item) =>
+                  renderNavLink(
+                    item,
+                    item.isNew
+                      ? "hd-mobile-new flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-semibold"
+                      : mobileItemClass(item.href),
+                    <>
+                      <item.icon aria-hidden="true" className="h-5 w-5 shrink-0" />
+                      {item.label}
+                      {item.isNew && <NewBadge />}
+                    </>,
+                    () => setMobileOpen(false)
+                  )
+                )}
+              </div>
+
+              <p className="px-3 pb-1.5 pt-4 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--outline)]">
+                Simuladores
+              </p>
+              <div className="flex flex-col gap-0.5">
+                {simulatorItems.map((item) =>
                   renderNavLink(
                     item,
                     item.isNew

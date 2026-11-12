@@ -276,17 +276,6 @@ body {
   line-height: 1;
 }
 
-/* Entre 1280px e 1535px os ícones saem da barra desktop para todos os botões
-   caberem numa linha só (de 1536px em diante cabem com ícone). */
-@media (min-width: 1280px) and (max-width: 1535px) {
-  .hd-nav-track .hd-nav-icon {
-    display: none;
-  }
-  .hd-nav-track .hd-nav-item {
-    padding: 0 0.6rem;
-  }
-}
-
 /* Celular/tablet: atalhos em chips com rolagem horizontal */
 .hd-chips {
   display: flex;
