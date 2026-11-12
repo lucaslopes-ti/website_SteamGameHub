@@ -86,6 +86,8 @@ export const JOGOS_XP: readonly JogoXp[] = [
       { id: "pop", nome: "Fase 2 · POP sem energia" },
       { id: "tela", nome: "Fase 3 · O que a tela diz?" },
       { id: "perif", nome: "Fase 4 · Teste de periféricos" },
+      { id: "limp", nome: "Fase 5 · Limpeza e pasta térmica" },
+      { id: "fonte", nome: "Fase 6 · Fonte e energia" },
     ],
     xpPorEstrela: [40, 30, 30],
     bonusCompleto: 200,
