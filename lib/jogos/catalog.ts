@@ -78,6 +78,18 @@ export const JOGOS_XP: readonly JogoXp[] = [
     xpPorEstrela: [40, 30, 30],
     bonusCompleto: 200,
   },
+  {
+    id: "oficina-tecnico",
+    nome: "Oficina do Técnico (bancada de manutenção)",
+    fases: [
+      { id: "cabe", nome: "Fase 1 · Cabe ou não cabe?" },
+      { id: "pop", nome: "Fase 2 · POP sem energia" },
+      { id: "tela", nome: "Fase 3 · O que a tela diz?" },
+      { id: "perif", nome: "Fase 4 · Teste de periféricos" },
+    ],
+    xpPorEstrela: [40, 30, 30],
+    bonusCompleto: 200,
+  },
 ];
 
 export const JOGO_POR_ID: ReadonlyMap<string, JogoXp> = new Map(

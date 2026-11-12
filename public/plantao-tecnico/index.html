@@ -3166,6 +3166,9 @@ body.no-intervalo .toast { display: none; }
     [0, 4, 7, 12, 16, 20, 28, 31, 35].forEach(function (x) { arv(x, 10); arv(x, 21); });
     [2, 6, 13, 18, 29, 34].forEach(function (x) { arv(x, 9, "copa"); arv(x, 20, "copa"); });
     for (y = 1; y < H; y += 3) if (G[y][24] === "m") arv(24, y, "palmeira");
+    // árvores de Natal nas margens da lagoa do Sabiá (época de fim de ano),
+    // antes do laço aleatório para garantirem o tile
+    arv(43, 32, "natal"); arv(59, 13, "natal");
     // Sabiá: muitas árvores (ipês, copas e palmeiras), sem fechar as trilhas
     for (y = 9; y <= 36; y++) for (x = 40; x < W; x++) {
       if (G[y][x] !== "g") continue;
@@ -3440,6 +3443,20 @@ body.no-intervalo .toast { display: none; }
   }
   function spriteArvore(tipo) {
     var c = tela(24, 34), g = c.getContext("2d");
+    if (tipo === "natal") {
+      // pinheiro de Natal decorado: três camadas verdes, neve nas pontas,
+      // luzes coloridas e estrela no topo
+      px(g, 10, 28, 4, 6, "#5e3719"); px(g, 10, 28, 1, 6, "#4a2a12");
+      for (var ty = 5; ty <= 12; ty++) { var w2 = 2 + (ty - 5); px(g, 12 - w2, ty, w2 * 2, 1, "#1f7a34"); }
+      for (ty = 12; ty <= 20; ty++) { w2 = 3 + (ty - 12); px(g, 12 - w2, ty, w2 * 2, 1, "#2f8f42"); }
+      for (ty = 20; ty <= 27; ty++) { w2 = 4 + (ty - 20); px(g, 12 - w2, ty, w2 * 2, 1, "#256e33"); }
+      px(g, 12, 5, 1, 1, "#eaf6ff"); px(g, 8, 13, 1, 1, "#eaf6ff"); px(g, 16, 13, 1, 1, "#eaf6ff");
+      px(g, 5, 21, 1, 1, "#eaf6ff"); px(g, 19, 21, 1, 1, "#eaf6ff"); px(g, 12, 27, 1, 1, "#eaf6ff");
+      var LUZ = ["#ff5a5f", "#ffd23f", "#5cc8ff", "#8cff9b"];
+      [[11, 8], [14, 10], [10, 14], [15, 16], [9, 18], [13, 19], [7, 23], [12, 23], [17, 24], [10, 26], [15, 26]].forEach(function (p2, i3) { px(g, p2[0], p2[1], 1, 1, LUZ[i3 % 4]); });
+      px(g, 11, 2, 3, 1, "#ffd23f"); px(g, 12, 1, 1, 3, "#ffd23f"); px(g, 10, 3, 1, 1, "#ffe066"); px(g, 14, 3, 1, 1, "#ffe066");
+      return contornar(c);
+    }
     if (tipo === "palmeira") {
       px(g, 11, 12, 3, 20, "#8b5a2b"); for (var y = 14; y < 32; y += 3) px(g, 11, y, 3, 1, "#6e4420");
       var folha = "#3f9a3a", folhaC = "#62bd4f";
@@ -3536,7 +3553,7 @@ body.no-intervalo .toast { display: none; }
   function montarSprites() {
     CASAS.forEach(function (k, ci) { SPR_CASAS.push(spriteCasa(ci)); });
     Object.keys(COR).forEach(function (op) { SPR_PLACAS[op] = spritePlaca(op); });
-    ["ipe", "copa", "palmeira"].forEach(function (t2) { SPR_ARV[t2] = spriteArvore(t2); });
+    ["ipe", "copa", "palmeira", "natal"].forEach(function (t2) { SPR_ARV[t2] = spriteArvore(t2); });
     predios.forEach(function (p) { SPR_PRED.push(spritePredio(p)); });
     ["poste", "banco", "ponto"].forEach(function (t2) { SPR_ENF[t2] = spriteEnfeite(t2); });
   }
@@ -3723,7 +3740,7 @@ body.no-intervalo .toast { display: none; }
       var d = Math.hypot(x + 0.5 - J.x / T, y + 0.5 - J.y / T); if (d < md) { md = d; melhor = { x: (x + 0.5) * T, y: (y + 0.7) * T }; }
     }
     if (melhor) { J.x = melhor.x; J.y = melhor.y; }
-    if (k.onibus && Math.random() < 0.3) { setTimeout(surpresaOnibus, 500); return; }
+    if (k.onibus && Math.random() < 0.05) { setTimeout(surpresaOnibus, 500); return; }
     toast("💥 <b>Opa! Um carro bateu em você.</b> Atravesse sempre na <b>faixa de pedestre</b>: lá os carros param.", "erro");
     atualizarHud();
   }
