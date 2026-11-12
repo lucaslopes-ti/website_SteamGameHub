@@ -26,6 +26,7 @@ import {
   ShoppingBag,
   MapPinned,
   Wrench,
+  Cpu,
 } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useAuth } from "./AuthProvider";
