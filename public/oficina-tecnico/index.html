@@ -812,6 +812,52 @@ body.no-mundo .mundo-jogo{display:block}
   font-size:12.5px;line-height:1.6;color:var(--tinta-2)}
 .nota-mundo b{color:var(--tinta)}
 
+/* ---------- visual v2.1: retratos dos clientes, cor da fase, clientes no início ---------- */
+.retrato{flex:none;position:relative;width:54px;height:54px;border-radius:13px;overflow:hidden;
+  background:radial-gradient(circle at 50% 30%,rgba(255,255,255,.28),transparent 60%),linear-gradient(160deg,var(--g1),var(--g2));
+  border:2px solid #06101d;box-shadow:inset 0 -8px 14px rgba(0,0,0,.28),0 3px 0 #030a14}
+.retrato img{position:absolute;left:50%;bottom:-6%;width:92%;height:auto;transform:translateX(-50%);image-rendering:pixelated;
+  filter:drop-shadow(0 2px 0 rgba(0,0,0,.35))}
+.retrato .ret-ic{position:absolute;right:-1px;bottom:-1px;width:20px;height:20px;border-radius:7px 0 0 0;display:grid;place-items:center;font-size:11px;
+  background:#0a1626;border:2px solid #06101d}
+.retrato.bloq img{filter:grayscale(1) brightness(.45)}
+.cliente-faixa{position:relative;overflow:hidden;border-color:color-mix(in srgb,var(--g1,#3b82f6) 45%,transparent);
+  background:linear-gradient(90deg,color-mix(in srgb,var(--g1,#3b82f6) 18%,transparent),transparent 55%),linear-gradient(180deg,rgba(16,36,60,.78),rgba(8,20,36,.86))}
+.cliente-faixa .cf-fala{position:relative;padding:8px 12px;border-radius:4px 12px 12px 12px;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);color:var(--tinta)}
+.tela.com-cor>.card{position:relative;overflow:hidden}
+.tela.com-cor>.card::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,var(--g1),var(--g2));opacity:.95}
+.passos-fase{display:flex;gap:6px;align-items:center;margin:-4px 0 12px;flex-wrap:wrap}
+.passos-fase i{width:26px;height:6px;border-radius:99px;background:#1b3150;display:block}
+.passos-fase i.feita{background:#37df8b}
+.passos-fase i.agora{background:linear-gradient(90deg,var(--g1),var(--g2));box-shadow:0 0 10px color-mix(in srgb,var(--g1) 70%,transparent)}
+.passos-fase span{font:700 10px/1 var(--fonte-mono);letter-spacing:.12em;color:var(--apagado);margin-left:4px;text-transform:uppercase}
+.clientes-ini{list-style:none;padding:0;margin:4px 0 16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:560px}
+.clientes-ini li{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:12px;border:1px solid var(--linha);
+  background:linear-gradient(180deg,rgba(16,36,60,.7),rgba(8,20,36,.8));min-width:0}
+.clientes-ini .retrato{width:40px;height:40px;border-radius:10px}
+.clientes-ini .retrato .ret-ic{display:none}
+.clientes-ini b{display:block;font:800 10px/1.2 var(--fonte-mono);letter-spacing:.1em;color:var(--ambar-2)}
+.clientes-ini small{display:block;font-size:11.5px;line-height:1.3;color:var(--tinta-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.clientes-ini .mini-est{font-size:10px;letter-spacing:1px;color:#2c496f}
+.clientes-ini .mini-est .on{color:var(--amar)}
+.res-cliente{display:flex;align-items:center;gap:14px;max-width:640px;margin:0 auto 14px;padding:12px 16px}
+.res-cliente .retrato{width:64px;height:64px}
+.res-cliente p{margin:0;font-size:15px;line-height:1.5;color:var(--tinta)}
+.res-cliente p small{display:block;font:800 10.5px/1.3 var(--fonte-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--apagado);margin-bottom:3px}
+@media (max-width:520px){
+  .clientes-ini{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .duas .botao{min-width:0;flex:1;font-size:14px;padding:12px 10px;letter-spacing:.03em;white-space:nowrap}
+  .duas .botao kbd{display:none}
+  .hud{flex-wrap:nowrap}
+  .hud .chip{min-width:0;padding:6px 6px;font-size:10px}
+  #btn-som{flex:none;width:36px;height:34px}
+  .retrato{width:46px;height:46px}
+}
+@media (pointer:coarse){ .duas .botao kbd{display:none} }
+.estacao-item .retrato{width:100%;height:auto;aspect-ratio:1}
+
+
 /* ---------- responsivo ---------- */
 @media (max-width:1060px){
   .heroi{grid-template-columns:1fr;gap:20px}
@@ -980,9 +1026,9 @@ body.no-mundo .mundo-jogo{display:block}
 <section class="tela ativa" id="t-inicio">
   <div class="heroi">
     <div class="heroi-txt">
-      <p class="sobre">SENAI · bancada 03 · plantão noturno</p>
+      <p class="sobre">SENAI · Bancada 03 · Bairro da Oficina</p>
       <h1 class="titulo">Oficina do <b>Técnico</b></h1>
-      <p class="sub">O cliente quer mais memória e um SSD nos computadores. Antes de abrir o gabinete, o técnico confere tudo no <b>manual da placa-mãe</b>, segue o POP (passo a passo) com o PC <b>sem energia</b>, lê o que a tela mostra e, no fim, testa os periféricos. Cada fase vale pontos e estrelas.</p>
+      <p class="sub">Seis clientes do bairro chamaram o técnico. Antes de abrir o gabinete, você confere tudo no <b>manual</b>, segue o POP (passo a passo) com o PC <b>sem energia</b>, lê o que a tela mostra, testa os periféricos, faz a limpeza e confere a fonte. Cada casa vale pontos e estrelas.</p>
       <div class="campo-nome">
         <label for="nome">Crachá do técnico(a)</label>
         <div class="campo-linha">
@@ -992,13 +1038,11 @@ body.no-mundo .mundo-jogo{display:block}
       </div>
       <p class="aviso-nome" id="aviso-nome" role="alert" hidden>Escreva o seu nome aqui antes de jogar.</p>
       <div class="acoes">
-        <button class="botao dour" id="btn-comecar">Começar o plantão</button>
+        <button class="botao dour" id="btn-comecar">Ir para o bairro</button>
         <button class="botao cinza" id="btn-teste">Só o teste de periféricos</button>
       </div>
       <p class="nota-mundo">No bairro, ande com <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> ou as setas até a casa de cada cliente e aperte <kbd>E</kbd> na porta. O botão <b>Estações</b> marca o destino no GPS.</p>
-      <ul class="selos">
-        <li>Manual</li><li>POP</li><li>Tela</li><li>Periféricos</li><li>Limpeza</li><li>Fonte</li>
-      </ul>
+      <ul class="clientes-ini" id="clientes-ini" aria-label="Clientes do bairro"></ul>
       <div class="xp-caixa" id="xp-caixa" hidden></div>
     </div>
 
@@ -1055,7 +1099,7 @@ F_PANEL .... OK</pre>
   <div class="card">
     <div class="fase-cabeca">
       <div>
-        <span class="peq">BAIRRO SANTA MÔNICA · 6 CASAS</span>
+        <span class="peq">BAIRRO DA OFICINA · 6 CASAS</span>
         <h2>Para onde o técnico vai?</h2>
       </div>
       <button class="botao cinza" type="button" data-fechar>Voltar ao bairro</button>
@@ -1208,8 +1252,9 @@ F_PANEL .... OK</pre>
     <h1 id="r-titulo">Fase concluída</h1>
     <p class="sub" id="r-sub"></p>
     <div class="estrelas" id="r-estrelas"></div>
-    <div class="res-placar"><span class="res-pontos" id="r-pontos">0</span><span class="res-pontos-rot">pontos no plantão</span></div>
+    <div class="res-placar"><span class="res-pontos" id="r-pontos">0</span><span class="res-pontos-rot">pontos na oficina</span></div>
   </div>
+  <div class="card res-cliente" id="r-cliente" hidden></div>
   <div class="card xp-res" id="r-xp" hidden></div>
   <div class="card"><div class="lista-res" id="r-lista"></div></div>
   <div class="card res-codigo">
@@ -1352,11 +1397,12 @@ function toastMundo(txt){
   t._t=setTimeout(()=>{t.hidden=true;},3800);
 }
 function desenharListaEstacoes(){
+  desenharClientesInicio();
   const box=$("lista-estacoes");if(!box)return;
   box.innerHTML=FASES.map((f,i)=>{
     const p=E.progresso[f.id]||0,ab=aberta(i);
     return `<button type="button" class="estacao-item ${ab?"":"bloq"} ${i===FASE_SEL?"sel":""}" data-est="${i}" style="--g1:${f.g1};--g2:${f.g2}" title="${esc(f.d)}"${ab?"":' aria-disabled="true"'}>
-      <span class="ei-ic" aria-hidden="true">${ab?f.ic:"🔒"}</span>
+      ${htmlRetrato(f,!ab)}
       <span class="ei-txt"><b>${f.n} · ${f.t}</b><small>${ab?esc(f.cli.lugar)+" · "+esc(f.cli.nome):"Estação fechada: conclua a "+FASES[i-1].n+" para liberar."}</small></span>
       <span class="ei-est" aria-hidden="true">${[1,2,3].map(k=>`<span class="${k<=p?"on":""}">★</span>`).join("")}</span>
     </button>`;
@@ -1374,12 +1420,45 @@ function desenharListaEstacoes(){
 }
 window.addEventListener("hashchange",()=>{FASE_SEL=proximaEstacao();desenharListaEstacoes();});
 /* fala do cliente no cabeçalho de cada fase */
+/* retrato em pixel art do cliente (mesmo boneco que aparece na porta da casa) */
+const RETRATOS={};
+function retratoDe(f){
+  if(RETRATOS[f.id]!==undefined)return RETRATOS[f.id];
+  let url="";try{url=Mundo.retrato(f.v)||"";}catch(e){}
+  return RETRATOS[f.id]=url;
+}
+function htmlRetrato(f,bloq){
+  const url=retratoDe(f);
+  return `<span class="retrato${bloq?" bloq":""}" style="--g1:${f.g1};--g2:${f.g2}" aria-hidden="true">`+
+    (url?`<img src="${url}" alt="">`:"")+`<span class="ret-ic">${bloq?"🔒":f.ic}</span></span>`;
+}
 function pintarCliente(el,f){
   if(!el||!f||!f.cli)return;
   el.style.setProperty("--g1",f.g1);el.style.setProperty("--g2",f.g2);
-  el.innerHTML=`<span class="cf-ic" aria-hidden="true">${f.ic}</span><span class="cf-txt">` +
+  const tela=el.closest(".tela");
+  if(tela){tela.classList.add("com-cor");tela.style.setProperty("--g1",f.g1);tela.style.setProperty("--g2",f.g2);}
+  const i=FASES.indexOf(f);
+  const trilha=`<div class="passos-fase" aria-label="Fase ${i+1} de ${FASES.length}">`+FASES.map((g,k)=>
+    `<i class="${k===i?"agora":(E.progresso[g.id]||0)>0?"feita":""}"></i>`).join("")+`<span>Casa ${i+1} de ${FASES.length}</span></div>`;
+  el.innerHTML=htmlRetrato(f)+`<span class="cf-txt">` +
     `<span class="cf-nome">${esc(f.cli.nome)} · ${esc(f.cli.lugar)}</span>` +
     `<span class="cf-fala">“${esc(f.cli.fala)}”</span></span>`;
+  const velho=el.previousElementSibling;if(velho&&velho.classList.contains("passos-fase"))velho.remove();
+  el.insertAdjacentHTML("beforebegin",trilha);
+}
+function desenharClientesInicio(){
+  const box=$("clientes-ini");if(!box)return;
+  box.innerHTML=FASES.map((f,i)=>{const p=E.progresso[f.id]||0,ab=aberta(i);
+    return `<li title="${esc(f.cli.lugar)} · ${esc(f.t)}">${htmlRetrato(f,!ab)}<span style="min-width:0"><b>${f.n}</b><small>${esc(f.cli.nome)}</small>`+
+      `<span class="mini-est">${[1,2,3].map(k=>`<span class="${k<=p?"on":""}">★</span>`).join("")}</span></span></li>`;}).join("");
+}
+const FALA_FIM={3:"Ficou perfeito! Vou indicar o seu trabalho para todo o bairro.",2:"Funcionou, obrigado! Só faltou um detalhe, mas já dá para trabalhar.",1:"Hmm... ainda ficou faltando coisa. Dá para voltar e conferir de novo?"};
+function pintarClienteFim(fase,est){
+  const c=$("r-cliente"),f=FASES.find(x=>x.id===fase);
+  if(!c)return;if(!f||!est){c.hidden=true;return;}
+  c.style.setProperty("--g1",f.g1);c.style.setProperty("--g2",f.g2);
+  c.innerHTML=htmlRetrato(f)+`<p><small>${esc(f.cli.nome)} · ${esc(f.cli.lugar)}</small>“${FALA_FIM[Math.min(3,Math.max(1,est))]}”</p>`;
+  c.hidden=false;
 }
 function clienteDaTela(sel,fase){pintarCliente(document.querySelector(sel+" .cliente-faixa"),FASES.find(f=>f.id===fase));}
 function montarClientes(){
@@ -1584,6 +1663,7 @@ function aoStatusXp(m){
   if(XP.logado){
     lerResumoXp(m);
     if(!$("nome").value.trim()&&XP.nome)$("nome").value=XP.nome.slice(0,24);
+    if($("nome").value.trim())$("hud-nome").textContent="👷 "+$("nome").value.trim();
     let pend={};
     try{pend=JSON.parse(sessionStorage.getItem(XP_PENDENTE)||"{}");sessionStorage.removeItem(XP_PENDENTE);}catch(e){}
     Object.keys(pend).forEach(fase=>{if((XP.estrelas[fase]||0)<pend[fase])enviarXp({acao:"premiar",pedido:"pend-"+fase,fase,estrelas:pend[fase]});});
@@ -1682,7 +1762,8 @@ function mostrarResultado(tit,sub,est,linhas,fase){esconderRelogio();$("r-titulo
   $("r-estrelas").innerHTML=[1,2,3].map(i=>`<span class="${i<=est?"on":""}">★</span>`).join("");
   const total=FASES.reduce((s,f)=>s+(E.progresso[f.id]||0),0);
   const cargo=total>=16?"Técnico(a) sênior":total>=11?"Técnico(a) pleno":total>=4?"Técnico(a) júnior":"Estagiário(a) de bancada";
-  $("r-lista").innerHTML=linhas.map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join("")+`<div><span>Pontos no plantão</span><b>${E.pontos}</b></div><div><span>Estrelas nas ${FASES.length} fases</span><b>${total} de ${FASES.length*3} · ${cargo}</b></div>`;
+  $("r-lista").innerHTML=linhas.map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join("")+`<div><span>Pontos na oficina</span><b>${E.pontos}</b></div><div><span>Estrelas nas ${FASES.length} fases</span><b>${total} de ${FASES.length*3} · ${cargo}</b></div>`;
+  pintarClienteFim(fase,est);
   $("r-codigo").textContent=codigo();telas("t-resultado");contarPontos();confete(est);premiarXp(fase,est);if(est>=2){somBom();setTimeout(somBom,250);}
   const atual=FASES.findIndex(f=>f.id===fase),prox=proximaEstacao();
   $("r-prox").hidden=prox===atual||(E.progresso[FASES[prox].id]||0)>0;
@@ -3014,7 +3095,14 @@ const Mundo = (function () {
     if (best >= 0) { FASE_SEL = best; toastMundo("🧭 GPS: siga a seta amarela até a casa de " + FASES[best].cli.nome + "."); }
   });
   requestAnimationFrame(laco);
-  return { iniciar: iniciar, entrarProximo: entrarProximo, trocar: trocarMapa, mapaAtivo: function () { return MAPA; } };
+  function retrato(v) {
+    try {
+      var s = desenharPessoa("baixo", 0, v, false), c = tela(64, 64), g = c.getContext("2d");
+      g.imageSmoothingEnabled = false; g.drawImage(s, 0, 0, 16, 16, 0, 2, 64, 64);
+      return c.toDataURL("image/png");
+    } catch (e) { return ""; }
+  }
+  return { retrato: retrato, iniciar: iniciar, entrarProximo: entrarProximo, trocar: trocarMapa, mapaAtivo: function () { return MAPA; } };
 
 })();
 
@@ -3024,7 +3112,7 @@ FASE_SEL=proximaEstacao();desenharListaEstacoes();montarClientes();
 $("btn-estacoes").onclick=()=>{somClique();desenharListaEstacoes();telas("t-estacoes");};
 $("btn-ajuda").onclick=()=>{somClique();telas("t-ajuda");};
 document.querySelectorAll("[data-fechar]").forEach(b=>b.onclick=()=>{somClique();telas(null);});
-$("nome").addEventListener("input",()=>{if($("nome").value.trim()){$("aviso-nome").hidden=true;$("nome").classList.remove("erro");}});
+$("nome").addEventListener("input",()=>{const n=$("nome").value.trim();$("hud-nome").textContent=n?"👷 "+n:"Técnico";if(n){$("aviso-nome").hidden=true;$("nome").classList.remove("erro");}});
 iniciarXp();
 </script>
 </body>
