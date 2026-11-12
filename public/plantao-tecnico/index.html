@@ -4384,11 +4384,29 @@ body.no-intervalo .toast { display: none; }
     if (XP.logado) {
       lerResumoXp(m);
       if (!$("nome").value.trim() && XP.nome) { $("nome").value = XP.nome.slice(0, 24); }
+      if (!E.nome && XP.nome) E.nome = XP.nome.slice(0, 24);
+      recuperarDaConta();
       var pend = {};
       try { pend = JSON.parse(sessionStorage.getItem(XP_PENDENTE) || "{}"); sessionStorage.removeItem(XP_PENDENTE); } catch (e) {}
       Object.keys(pend).forEach(function (fase) { if ((XP.estrelas[fase] || 0) < pend[fase]) enviarXp({ acao: "premiar", pedido: "pend-" + fase, fase: fase, estrelas: pend[fase] }); });
     }
     desenharXp();
+  }
+  /* Recupera o progresso a partir das estrelas guardadas na conta do Game Hub.
+     O save do jogo fica no navegador (localStorage): troca de PC, de navegador ou limpeza
+     do navegador apagam esse save, mas as estrelas continuam na conta do aluno. */
+  function recuperarDaConta() {
+    var rec = 0;
+    OS.forEach(function (o) {
+      var conta = XP.estrelas[o.id] || 0;
+      if (conta > (E.progresso[o.id] || 0)) {
+        E.progresso[o.id] = conta; rec++;
+        if (!E.codigos[o.id] || E.codigos[o.id].estrelas < conta) E.codigos[o.id] = { codigo: codigo(o.id, conta), estrelas: conta, quando: "recuperado da conta" };
+      }
+    });
+    if (!rec) return;
+    salvar(); atualizarHud(); desenharLista();
+    toast("💾 <b>Progresso recuperado da sua conta do Game Hub:</b> " + rec + " OS com as estrelas que você já tinha.");
   }
   function linkEntrar() { return '<a class="botao peq-btn" href="/login?redirect=' + ROTA + '">Entrar</a> <a class="botao cinza peq-btn" href="/cadastro?redirect=' + ROTA + '">Criar cadastro</a>'; }
   function aoPremioXp(m) {
