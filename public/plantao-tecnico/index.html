@@ -5927,18 +5927,22 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
     else { ctx.lineWidth = 3; ctx.strokeStyle = CONTORNO; ctx.strokeText(txt, x, y + 1); }
     ctx.fillStyle = cor || "#ffffff"; ctx.fillText(txt, x, y + 1);
   }
+  // 1 no notebook (cada pixel do jogo = 3 px da tela); menor quando o mapa é desenhado menor (celular)
+  function escalaPlaca() { return Math.max(0.7, Math.min(1, (P / DPR) / 3)); }
   function placaTexto(x, y, txt, vert, parque, fundo) {
     x = Math.round(x); y = Math.round(y);
     ctx.save(); ctx.translate(x, y); if (vert) ctx.rotate(-Math.PI / 2);
-    ctx.font = "800 13px " + FONTE_JOGO; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    var w = Math.round(ctx.measureText(txt).width + 20), h = 24;
-    ctx.fillStyle = CONTORNO; ctx.fillRect(-w / 2 - 3, -h / 2 - 3, w + 6, h + 6);
+    // placa acompanha o tamanho do mapa: no celular o mapa fica menor, então a placa também
+    var k = escalaPlaca(), b = Math.max(2, Math.round(3 * k));
+    ctx.font = "800 " + Math.round(13 * k) + "px " + FONTE_JOGO; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    var w = Math.round(ctx.measureText(txt).width + 20 * k), h = Math.round(24 * k);
+    ctx.fillStyle = CONTORNO; ctx.fillRect(-w / 2 - b, -h / 2 - b, w + 2 * b, h + 2 * b);
     ctx.fillStyle = fundo || (parque ? "#2e7d32" : "#17663a"); ctx.fillRect(-w / 2, -h / 2, w, h);
-    ctx.fillStyle = "rgba(255,255,255,.85)"; ctx.fillRect(-w / 2 + 2, -h / 2 + 2, w - 4, 2); ctx.fillRect(-w / 2 + 2, h / 2 - 4, w - 4, 2);
+    if (k > 0.8) { ctx.fillStyle = "rgba(255,255,255,.85)"; ctx.fillRect(-w / 2 + 2, -h / 2 + 2, w - 4, 2); ctx.fillRect(-w / 2 + 2, h / 2 - 4, w - 4, 2); }
     ctx.fillStyle = "#ffffff"; ctx.fillText(txt, 0, 1);
     ctx.restore();
     // caixa externa da placa na tela (já rotacionada quando vert)
-    var rw = vert ? h + 6 : w + 6, rh = vert ? w + 6 : h + 6;
+    var rw = vert ? h + 2 * b : w + 2 * b, rh = vert ? w + 2 * b : h + 2 * b;
     return { x: x - rw / 2, y: y - rh / 2, w: rw, h: rh };
   }
   var FONTE_JOGO = '"Trebuchet MS", "Segoe UI", system-ui, sans-serif';
