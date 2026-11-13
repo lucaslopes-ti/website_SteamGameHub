@@ -1059,6 +1059,17 @@ body.na-ead #minimapa, body.na-ead .hud, body.na-ead .aviso-porta, body.na-ead .
 .ead-fig svg { width: 100%; height: auto; display: block; background: #fff; border-radius: 4px; }
 @media (max-width: 600px) { .ead-bloco { grid-template-columns: 1fr; } .ead-fig { max-width: 300px; } .ead-bloco p { font-size: 14px; } }
 
+/* easter egg: árvore de Natal */
+.natal-festa { position: fixed; inset: 0; z-index: 90; overflow: hidden; display: grid; place-items: center; background: rgba(8,14,28,.35); }
+.natal-festa i { position: absolute; top: -14px; width: 8px; height: 12px; border-radius: 2px; animation: natal-cai linear forwards; }
+@keyframes natal-cai { to { transform: translate(var(--vento), 110vh) rotate(var(--giro)); } }
+.natal-cartao { position: relative; background: #fffbe9; color: #2b2210; border: 4px solid #1b2333; border-radius: 10px; padding: 18px 26px; text-align: center; box-shadow: 6px 6px 0 rgba(0,0,0,.4); max-width: min(360px, calc(100vw - 32px)); animation: natal-pula .5s ease-out; }
+.natal-cartao h2 { margin: 4px 0 6px; font-size: 28px; color: #c92a2a; }
+.natal-cartao p { margin: 0 0 12px; font-size: 15px; line-height: 1.45; }
+.natal-arvore { font-size: 54px; line-height: 1; }
+@keyframes natal-pula { from { transform: scale(.4); opacity: 0; } 70% { transform: scale(1.08); } to { transform: scale(1); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .natal-festa i { display: none; } .natal-cartao { animation: none; } }
+
 </style>
 </head>
 <body class="jt">
@@ -5372,7 +5383,10 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
       if (hh > 0.38) arv(x, y, hh > 0.86 ? "palmeira" : hh > 0.62 ? "ipe" : "copa");
     }
     for (x = 46; x < W; x += 3) arv(x, 2, x % 2 ? "copa" : "ipe");
-    arv(3, 36, "copa"); arv(39, 36, "copa"); arv(29, 35, "ipe");
+    // easter egg: esta copa vira árvore de Natal quando o técnico aperta E perto dela
+    var nEgg = arvores.length; arv(3, 36, "copa");
+    if (arvores[nEgg]) { arvores[nEgg].egg = true; if (natalLigado()) arvores[nEgg].tipo = "natal"; }
+    arv(39, 36, "copa"); arv(29, 35, "ipe");
     // Av. Ortízio Borges: árvores acima das casas das missões EaD
     [1, 4, 6, 14, 18, 30, 34, 38, 41, 48, 51, 54, 57, 60, 63].forEach(function (x2, k) { arv(x2, 38, k % 3 ? "ipe" : "copa"); });
     // postes de luz, bancos, ponto de ônibus
@@ -6138,7 +6152,30 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
   /* ================================================================ laço */
   var teclas = {}, toque = {}, ultimo = 0, emJogo = false, perto = -1, pausado = false;
   function portaDe(ci) { var k = CASAS[ci]; return { x: (k.x + 1.5) * T, y: (k.y + 3.3) * T }; }
-  var pertoEad = -1;
+  var pertoEad = -1, pertoArv = null;
+  function natalLigado() { try { return localStorage.getItem("plantao-natal") === "1"; } catch (e) { return false; } }
+  function arvoreEgg() { for (var i = 0; i < arvores.length; i++) if (arvores[i].egg) return arvores[i]; return null; }
+  function virarNatal(a) {
+    a.tipo = "natal"; a.brilho = performance.now();
+    try { localStorage.setItem("plantao-natal", "1"); } catch (e) {}
+    festaNatal();
+    mostrarAvisoPorta();
+  }
+  function festaNatal() {
+    var velho = document.getElementById("natal-festa"); if (velho) velho.remove();
+    var f = document.createElement("div"); f.id = "natal-festa"; f.className = "natal-festa"; f.setAttribute("role", "status");
+    var CORES = ["#ff5a5f", "#ffd23f", "#5cc8ff", "#8cff9b", "#ffffff", "#c77dff"], h = "";
+    for (var i = 0; i < 90; i++) {
+      h += '<i style="left:' + (Math.random() * 100).toFixed(1) + "%;background:" + CORES[i % CORES.length] +
+        ";animation-delay:" + (Math.random() * 1.2).toFixed(2) + "s;animation-duration:" + (2.4 + Math.random() * 2).toFixed(2) + "s;--giro:" + Math.round(Math.random() * 720 - 360) + "deg;--vento:" + Math.round(Math.random() * 120 - 60) + 'px"></i>';
+    }
+    var nome = (E && E.nome) ? ", " + esc(String(E.nome).split(" ")[0]) : "";
+    f.innerHTML = h + '<div class="natal-cartao"><div class="natal-arvore">🎄</div><h2>Feliz Natal' + nome + '!</h2><p>Você achou o segredo do Santa Mônica.<br>Boas festas e bom plantão!</p><button type="button" class="botao">Valeu! ▸</button></div>';
+    document.body.appendChild(f);
+    var fim = function () { if (f.parentNode) f.remove(); };
+    f.querySelector("button").onclick = fim; f.onclick = function (ev) { if (ev.target === f) fim(); };
+    setTimeout(fim, 7000);
+  }
   function portaEad(i) { var k = CASAS_EAD[i]; return { x: (k.x + 1.5) * T, y: (k.y + 3.3) * T }; }
   function abrirEad(i) {
     if (!EADM) return;
@@ -6173,11 +6210,35 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
     else achou = estacaoNoPonto(J.x, J.y);
     if (MAPA === 0 && achou < 0) CASAS_EAD.forEach(function (k, i) { var p = portaEad(i); if (Math.hypot(J.x - p.x, J.y - p.y) < 13) achouE = i; });
     var pp = PORTAL[MAPA], np = !!pp && Math.hypot(J.x - pp.x, J.y - pp.y) < 26;
-    if (achou !== perto || np !== noPortal || achouE !== pertoEad) { perto = achou; noPortal = np; pertoEad = achouE; mostrarAvisoPorta(); }
+    var aE = null;
+    if (MAPA === 0 && achou < 0 && achouE < 0 && !np) { var eg = arvoreEgg(); if (eg && Math.hypot(J.x - (eg.x + 0.5) * T, J.y - (eg.y + 1) * T) < 22) aE = eg; }
+    if (achou !== perto || np !== noPortal || achouE !== pertoEad || aE !== pertoArv) { perto = achou; noPortal = np; pertoEad = achouE; pertoArv = aE; mostrarAvisoPorta(); }
+  }
+  // luzes que piscam e brilho de "mágica" na árvore do easter egg
+  var LUZ_NATAL = [[11, 8], [14, 10], [10, 14], [15, 16], [9, 18], [13, 19], [7, 23], [12, 23], [17, 24], [10, 26], [15, 26]], COR_NATAL = ["#ff5a5f", "#ffd23f", "#5cc8ff", "#8cff9b"];
+  function piscaNatal(g, a) {
+    var t = performance.now(), x0 = a.x * T - 4, y0 = (a.y + 1) * T - 34, fase = Math.floor(t / 350);
+    LUZ_NATAL.forEach(function (p, i) { g.fillStyle = COR_NATAL[(i + fase) % 4]; g.fillRect(x0 + p[0], y0 + p[1], 1, 1); });
+    if (fase % 2) { g.fillStyle = "#fff6b0"; g.fillRect(x0 + 12, y0 + 1, 1, 1); g.fillRect(x0 + 10, y0 + 2, 1, 1); g.fillRect(x0 + 14, y0 + 2, 1, 1); }
+    var dt = t - (a.brilho || 0);
+    if (dt < 1400) {
+      for (var k = 0; k < 14; k++) {
+        var ang = k / 14 * Math.PI * 2 + dt / 400, r = 6 + dt / 60;
+        g.globalAlpha = 1 - dt / 1400; g.fillStyle = COR_NATAL[k % 4];
+        g.fillRect(Math.round(x0 + 12 + Math.cos(ang) * r), Math.round(y0 + 16 + Math.sin(ang) * r * 0.8), 2, 2);
+      }
+      g.globalAlpha = 1;
+    }
   }
   function mostrarAvisoPorta() {
     var a = $("aviso-porta");
-    if ((perto < 0 && !noPortal && pertoEad < 0) || !emJogo) { a.hidden = true; $("btn-acao").classList.remove("pronto"); return; }
+    $("btn-entrar").innerHTML = "Entrar <kbd>E</kbd>";
+    if ((perto < 0 && !noPortal && pertoEad < 0 && !pertoArv) || !emJogo) { a.hidden = true; $("btn-acao").classList.remove("pronto"); return; }
+    if (pertoArv && perto < 0 && !noPortal && pertoEad < 0) {
+      if (pertoArv.tipo === "natal") { $("aviso-texto").innerHTML = "🎄 Feliz Natal, técnico!"; $("btn-entrar").hidden = true; $("btn-acao").classList.remove("pronto"); }
+      else { $("aviso-texto").innerHTML = "🌳 Hmm... essa árvore parece diferente. Aperte <b>E</b>."; $("btn-entrar").innerHTML = "Aperte <kbd>E</kbd>"; $("btn-entrar").hidden = false; $("btn-acao").classList.add("pronto"); }
+      a.hidden = false; return;
+    }
     if (noPortal) {
       var pt = PORTAL[MAPA];
       $("aviso-texto").innerHTML = "🚪 <b>" + esc(pt.rotulo) + "</b> · " + esc(pt.acao) + ".";
@@ -6407,7 +6468,7 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
     });
     predios.forEach(function (p, i2) { objs.push({ y: (p.y + p.h) * T - 1, f: function () { g.drawImage(SPR_PRED[i2], p.x * T - 1, p.y * T - 1); } }); });
     var x0 = Math.floor(CAM.x / T) - 2, x1 = Math.ceil((CAM.x + vw) / T) + 2, y0 = Math.floor(CAM.y / T) - 2, y1 = Math.ceil((CAM.y + vh) / T) + 3;
-    arvores.forEach(function (a) { if (a.x >= x0 && a.x <= x1 && a.y >= y0 && a.y <= y1) objs.push({ y: (a.y + 1) * T - 2, f: function () { g.drawImage(SPR_ARV[a.tipo], a.x * T - 4, (a.y + 1) * T - 34); } }); });
+    arvores.forEach(function (a) { if (a.x >= x0 && a.x <= x1 && a.y >= y0 && a.y <= y1) objs.push({ y: (a.y + 1) * T - 2, f: function () { g.drawImage(SPR_ARV[a.tipo], a.x * T - 4, (a.y + 1) * T - 34); if (a.egg && a.tipo === "natal") piscaNatal(g, a); } }); });
     enfeites.forEach(function (e2) {
       if (e2.x < x0 || e2.x > x1 || e2.y < y0 || e2.y > y1) return;
       if (e2.tipo === "semaforo") { objs.push({ y: (e2.y + 1) * T - 3, f: function () { desenharSemaforo(g, (e2.x + 0.5) * T, (e2.y + 1) * T - 3, luz(e2.eixo)); } }); return; }
@@ -7044,6 +7105,7 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
     if (!emJogo) return;
     if (noPortal) { trocarMapa(); return; }
     if (MAPA === 0 && pertoEad >= 0) { abrirEad(pertoEad); return; }
+    if (perto < 0 && pertoArv) { if (pertoArv.tipo !== "natal") virarNatal(pertoArv); return; }
     if (perto < 0) return;
     if (MAPA === 1) { abrirFase(perto); return; }
     var oi = osDaCasa(perto);
@@ -7516,7 +7578,7 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
   atualizarHud(); telas("t-personagem"); iniciarXp();
   requestAnimationFrame(laco);
   // para os testes automáticos
-  window.__jogo = { E: E, J: J, OS: OS, get carros() { return carros; }, mapa: function () { return MAPA; }, trocar: trocarMapa, aplicarMapa: aplicarMapa, PORTAL: PORTAL, ESTACOES: ESTACOES, abrirFase: abrirFase, abrirEad: abrirEad, portaEad: portaEad, pertoEad: function () { return pertoEad; }, perto: function () { return perto; }, caixa: caixaCarro, tile: tileDe, entrarNaCasa: entrarNaCasa, estado: function () { return C; }, portaDe: portaDe, telas: telas, mover: moverCarros, tempo: function () { return TEMPO_SEM; } };
+  window.__jogo = { E: E, J: J, OS: OS, get carros() { return carros; }, mapa: function () { return MAPA; }, trocar: trocarMapa, aplicarMapa: aplicarMapa, PORTAL: PORTAL, ESTACOES: ESTACOES, abrirFase: abrirFase, abrirEad: abrirEad, portaEad: portaEad, pertoEad: function () { return pertoEad; }, arvoreEgg: arvoreEgg, perto: function () { return perto; }, caixa: caixaCarro, tile: tileDe, entrarNaCasa: entrarNaCasa, estado: function () { return C; }, portaDe: portaDe, telas: telas, mover: moverCarros, tempo: function () { return TEMPO_SEM; } };
 })();
 
 </script>
