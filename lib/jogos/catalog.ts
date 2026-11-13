@@ -80,7 +80,7 @@ export const JOGOS_XP: readonly JogoXp[] = [
   },
   {
     id: "oficina-tecnico",
-    nome: "Oficina do Técnico (bancada de manutenção)",
+    nome: "Oficina do Técnico (Bairro da Oficina, dentro do Plantão do Técnico)",
     fases: [
       { id: "cabe", nome: "Fase 1 · Cabe ou não cabe?" },
       { id: "pop", nome: "Fase 2 · POP sem energia" },

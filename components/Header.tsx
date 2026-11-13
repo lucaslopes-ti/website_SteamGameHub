@@ -25,7 +25,6 @@ import {
   Cable,
   ShoppingBag,
   MapPinned,
-  Wrench,
   Cpu,
 } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -87,13 +86,6 @@ export default function Header() {
   const simulatorItems: NavItem[] = [
     { href: "/simulado-saep", label: "Simulador SAEP", icon: Trophy },
     {
-      href: "/oficina-tecnico",
-      label: "Oficina do Técnico",
-      icon: Wrench,
-      isNew: true,
-      isStatic: true,
-    },
-    {
       href: "/montador-cabo",
       label: "Montador de Cabo",
       icon: Cable,
@@ -101,7 +93,7 @@ export default function Header() {
     },
     {
       href: "/plantao-tecnico",
-      label: "Plantão do Técnico",
+      label: "Plantão e Oficina do Técnico",
       icon: MapPinned,
       isNew: true,
       isStatic: true,
