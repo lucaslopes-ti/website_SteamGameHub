@@ -5384,9 +5384,10 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
     }
     for (x = 46; x < W; x += 3) arv(x, 2, x % 2 ? "copa" : "ipe");
     // easter egg: esta copa vira árvore de Natal quando o técnico aperta E perto dela
-    var nEgg = arvores.length; arv(3, 36, "copa");
-    if (arvores[nEgg]) { arvores[nEgg].egg = true; if (natalLigado()) arvores[nEgg].tipo = "natal"; }
+    arv(3, 36, "copa");
     arv(39, 36, "copa"); arv(29, 35, "ipe");
+    // easter eggs: estas copas (ao lado do SENAI e no Parque do Sabiá) viram árvore de Natal com E
+    arvores.forEach(function (a) { if ((a.x === 3 && a.y === 36) || (a.x === 47 && a.y === 12)) { a.egg = true; if (natalLigado(a)) a.tipo = "natal"; } });
     // Av. Ortízio Borges: árvores acima das casas das missões EaD
     [1, 4, 6, 14, 18, 30, 34, 38, 41, 48, 51, 54, 57, 60, 63].forEach(function (x2, k) { arv(x2, 38, k % 3 ? "ipe" : "copa"); });
     // postes de luz, bancos, ponto de ônibus
@@ -6153,14 +6154,18 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
   var teclas = {}, toque = {}, ultimo = 0, emJogo = false, perto = -1, pausado = false;
   function portaDe(ci) { var k = CASAS[ci]; return { x: (k.x + 1.5) * T, y: (k.y + 3.3) * T }; }
   var pertoEad = -1, pertoArv = null;
-  function natalLigado() { try { return localStorage.getItem("plantao-natal") === "1"; } catch (e) { return false; } }
-  function arvoreEgg() { for (var i = 0; i < arvores.length; i++) if (arvores[i].egg) return arvores[i]; return null; }
+  // chave por árvore; "plantao-natal" = "1" é a da primeira versão (árvore do SENAI)
+  function chaveNatal(a) { return a.x === 3 && a.y === 36 ? "plantao-natal" : "plantao-natal-" + a.x + "-" + a.y; }
+  function natalLigado(a) { try { return localStorage.getItem(chaveNatal(a)) === "1"; } catch (e) { return false; } }
+  function arvoresEgg() { return arvores.filter(function (a) { return a.egg; }); }
+  function arvoreEgg(i) { return arvoresEgg()[i || 0] || null; }
   function virarNatal(a) {
     a.tipo = "natal"; a.brilho = performance.now();
-    try { localStorage.setItem("plantao-natal", "1"); } catch (e) {}
-    festaNatal();
+    try { localStorage.setItem(chaveNatal(a), "1"); } catch (e) {}
+    natalSabia = a.x >= 40; festaNatal();
     mostrarAvisoPorta();
   }
+  var natalSabia = false;
   function festaNatal() {
     var velho = document.getElementById("natal-festa"); if (velho) velho.remove();
     var f = document.createElement("div"); f.id = "natal-festa"; f.className = "natal-festa"; f.setAttribute("role", "status");
@@ -6170,7 +6175,7 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
         ";animation-delay:" + (Math.random() * 1.2).toFixed(2) + "s;animation-duration:" + (2.4 + Math.random() * 2).toFixed(2) + "s;--giro:" + Math.round(Math.random() * 720 - 360) + "deg;--vento:" + Math.round(Math.random() * 120 - 60) + 'px"></i>';
     }
     var nome = (E && E.nome) ? ", " + esc(String(E.nome).split(" ")[0]) : "";
-    f.innerHTML = h + '<div class="natal-cartao"><div class="natal-arvore">🎄</div><h2>Feliz Natal' + nome + '!</h2><p>Você achou o segredo do Santa Mônica.<br>Boas festas e bom plantão!</p><button type="button" class="botao">Valeu! ▸</button></div>';
+    f.innerHTML = h + '<div class="natal-cartao"><div class="natal-arvore">🎄</div><h2>Feliz Natal' + nome + '!</h2><p>' + (natalSabia ? "Você achou o segredo do Parque do Sabiá." : "Você achou o segredo do Santa Mônica.") + '<br>Boas festas e bom plantão!</p><button type="button" class="botao">Valeu! ▸</button></div>';
     document.body.appendChild(f);
     var fim = function () { if (f.parentNode) f.remove(); };
     f.querySelector("button").onclick = fim; f.onclick = function (ev) { if (ev.target === f) fim(); };
@@ -6211,7 +6216,7 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
     if (MAPA === 0 && achou < 0) CASAS_EAD.forEach(function (k, i) { var p = portaEad(i); if (Math.hypot(J.x - p.x, J.y - p.y) < 13) achouE = i; });
     var pp = PORTAL[MAPA], np = !!pp && Math.hypot(J.x - pp.x, J.y - pp.y) < 26;
     var aE = null;
-    if (MAPA === 0 && achou < 0 && achouE < 0 && !np) { var eg = arvoreEgg(); if (eg && Math.hypot(J.x - (eg.x + 0.5) * T, J.y - (eg.y + 1) * T) < 22) aE = eg; }
+    if (MAPA === 0 && achou < 0 && achouE < 0 && !np) arvoresEgg().forEach(function (eg) { if (Math.hypot(J.x - (eg.x + 0.5) * T, J.y - (eg.y + 1) * T) < 22) aE = eg; });
     if (achou !== perto || np !== noPortal || achouE !== pertoEad || aE !== pertoArv) { perto = achou; noPortal = np; pertoEad = achouE; pertoArv = aE; mostrarAvisoPorta(); }
   }
   // luzes que piscam e brilho de "mágica" na árvore do easter egg
@@ -7578,7 +7583,7 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
   atualizarHud(); telas("t-personagem"); iniciarXp();
   requestAnimationFrame(laco);
   // para os testes automáticos
-  window.__jogo = { E: E, J: J, OS: OS, get carros() { return carros; }, mapa: function () { return MAPA; }, trocar: trocarMapa, aplicarMapa: aplicarMapa, PORTAL: PORTAL, ESTACOES: ESTACOES, abrirFase: abrirFase, abrirEad: abrirEad, portaEad: portaEad, pertoEad: function () { return pertoEad; }, arvoreEgg: arvoreEgg, perto: function () { return perto; }, caixa: caixaCarro, tile: tileDe, entrarNaCasa: entrarNaCasa, estado: function () { return C; }, portaDe: portaDe, telas: telas, mover: moverCarros, tempo: function () { return TEMPO_SEM; } };
+  window.__jogo = { E: E, J: J, OS: OS, get carros() { return carros; }, mapa: function () { return MAPA; }, trocar: trocarMapa, aplicarMapa: aplicarMapa, PORTAL: PORTAL, ESTACOES: ESTACOES, abrirFase: abrirFase, abrirEad: abrirEad, portaEad: portaEad, pertoEad: function () { return pertoEad; }, arvoreEgg: arvoreEgg, arvores: function () { return arvores; }, perto: function () { return perto; }, caixa: caixaCarro, tile: tileDe, entrarNaCasa: entrarNaCasa, estado: function () { return C; }, portaDe: portaDe, telas: telas, mover: moverCarros, tempo: function () { return TEMPO_SEM; } };
 })();
 
 </script>
