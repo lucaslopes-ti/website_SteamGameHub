@@ -1070,6 +1070,11 @@ body.na-ead #minimapa, body.na-ead .hud, body.na-ead .aviso-porta, body.na-ead .
 @keyframes natal-pula { from { transform: scale(.4); opacity: 0; } 70% { transform: scale(1.08); } to { transform: scale(1); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .natal-festa i { display: none; } .natal-cartao { animation: none; } }
 
+/* modo fim de semana (sexta, sábado e domingo) */
+.fds-caixa { margin-top: 14px; padding: 12px 14px; border-radius: 12px; background: rgba(255,210,63,.14); border: 2px dashed #ffd23f; text-align: center; }
+.fds-caixa p { margin: 0 0 10px; font-weight: 700; }
+.fds-btn { background: #ffd23f; color: #2b2210; border-color: #1b2333; }
+
 </style>
 </head>
 <body class="jt">
@@ -1340,6 +1345,10 @@ body.na-ead #minimapa, body.na-ead .hud, body.na-ead .aviso-porta, body.na-ead .
         <p>O Plantão do Técnico funciona das <b>7h às 18h</b>. Seu progresso está salvo.</p>
         <div class="iv-relogio" id="nt-relogio">00:00</div>
         <p class="iv-falta">O plantão abre em <b id="nt-falta">0 min</b></p>
+        <div class="fds-caixa" id="nt-fds" hidden>
+          <p>Hoje é fim de semana! Quer estudar em casa?</p>
+          <button type="button" class="botao grande fds-btn" data-fds>🎉 Ativar modo fim de semana</button>
+        </div>
       </div>
     </div>
   </section>
@@ -1354,6 +1363,10 @@ body.na-ead #minimapa, body.na-ead .hud, body.na-ead .aviso-porta, body.na-ead .
         <p>O plantão está pausado de <b id="iv-faixa">9:30 às 10:00</b>. Levante, beba água e volte na hora certa. Seu progresso está salvo.</p>
         <div class="iv-relogio" id="iv-relogio">00:00</div>
         <p class="iv-falta">O jogo volta em <b id="iv-falta">0 min</b></p>
+        <div class="fds-caixa" id="iv-fds" hidden>
+          <p>Hoje é fim de semana! Quer estudar em casa?</p>
+          <button type="button" class="botao grande fds-btn" data-fds>🎉 Ativar modo fim de semana</button>
+        </div>
       </div>
     </div>
   </section>
@@ -7180,6 +7193,21 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
   var FORCAR_NOITE = /forcar-noite/.test(location.hash);
   var SEM_INTERVALO = /sem-intervalo/.test(location.hash), FORCAR_INTERVALO = /forcar-intervalo/.test(location.hash);
   var emIntervalo = false;
+  // modo fim de semana: sexta, sábado e domingo o aluno pode liberar o jogo fora do horário
+  // (para fazer a EaD em casa). Vale até a segunda-feira 0h. #forcar-fds simula fim de semana.
+  function ehFimDeSemana(d) { var w = d.getDay(); return /forcar-fds/.test(location.hash) || w === 5 || w === 6 || w === 0; }
+  function fdsAtivo(d) {
+    if (!ehFimDeSemana(d)) return false;
+    try { return +localStorage.getItem("plantao-fds") > d.getTime(); } catch (e) { return false; }
+  }
+  function ativarFds() {
+    var d = new Date(), seg = new Date(d.getFullYear(), d.getMonth(), d.getDate() + ((8 - d.getDay()) % 7 || 7));
+    if (/forcar-fds/.test(location.hash) && d.getDay() >= 1 && d.getDay() <= 4) seg = new Date(d.getTime() + 3 * 864e5);
+    try { localStorage.setItem("plantao-fds", String(seg.getTime())); } catch (e) {}
+    FDS_SESSAO = true; checarIntervalo();
+    toast("🎉 Modo fim de semana ativado! O plantão fica aberto até segunda. Bom estudo!", "ok");
+  }
+  var FDS_SESSAO = false;
   function hm(m) { return Math.floor(m / 60) + ":" + String(m % 60).padStart(2, "0"); }
   function faixaAgora(d) {
     var m = d.getHours() * 60 + d.getMinutes();
@@ -7189,8 +7217,12 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
   }
   function checarIntervalo() {
     var d = new Date(), m = d.getHours() * 60 + d.getMinutes(), ov = $("t-intervalo");
-    var noite = !SEM_INTERVALO && (FORCAR_NOITE || m >= FECHA || m < ABRE);
-    var f = SEM_INTERVALO || noite ? null : faixaAgora(d);
+    var fds = ehFimDeSemana(d) && (FDS_SESSAO || fdsAtivo(d));
+    var noite = !SEM_INTERVALO && !fds && (FORCAR_NOITE || m >= FECHA || m < ABRE);
+    var sexta = d.getDay() === 5 && !/forcar-fds/.test(location.hash);   // sexta de dia é dia de aula: o intervalo continua
+    var f = SEM_INTERVALO || noite || (fds && !sexta) ? null : faixaAgora(d);
+    var podeFds = ehFimDeSemana(d) && !fds;
+    $("nt-fds").hidden = !podeFds; $("iv-fds").hidden = !podeFds || sexta;
     var relogio = String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0") + ":" + String(d.getSeconds()).padStart(2, "0");
     if (f || noite) {
       if (!emIntervalo) {
@@ -7212,7 +7244,7 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
       }
     } else if (emIntervalo) {
       emIntervalo = false; pausado = false; ov.hidden = true; $("t-noite").hidden = true; document.body.classList.remove("no-intervalo");
-      toast("🔔 O plantão está aberto! Bom trabalho.", "ok");
+      if (!fds) toast("🔔 O plantão está aberto! Bom trabalho.", "ok");
     }
   }
   // tela da noite: o técnico descansa no sofá... ou joga videogame
@@ -7492,6 +7524,12 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
   ["keydown", "keyup", "keypress", "pointerdown", "mousedown", "click", "touchstart", "submit", "input", "focusin"].forEach(function (tipo) {
     addEventListener(tipo, function (ev) {
       if (!emIntervalo) return;
+      var bf = ev.target && ev.target.closest && ev.target.closest("[data-fds]");
+      if (bf) {   // único botão que funciona na tela da noite/intervalo: modo fim de semana
+        if (tipo === "click") { ev.stopPropagation(); ev.preventDefault(); ativarFds(); }
+        else if (tipo === "keydown" && (ev.key === "Enter" || ev.key === " ")) { ev.stopPropagation(); ev.preventDefault(); ativarFds(); }
+        return;
+      }
       ev.stopPropagation(); ev.preventDefault();
       if (tipo === "focusin" && ev.target && ev.target.blur) ev.target.blur();
     }, true);
