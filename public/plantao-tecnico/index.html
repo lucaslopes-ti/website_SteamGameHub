@@ -1050,6 +1050,25 @@ body.na-ead #minimapa, body.na-ead .hud, body.na-ead .aviso-porta, body.na-ead .
 .ead-comp-falta { background: #fff4e0; border: 2px solid #f39200; border-radius: 6px; padding: 10px; margin-top: 12px; color: #7a4a00; }
 .jt .hud-barra.ead em { background: linear-gradient(90deg, #7b4bd6, #b99cf5); }
 @media (max-width: 600px) { .ead-cab h2 { font-size: 19px; } .ead-p { font-size: 15px; } .ead-pino { width: 22px; height: 54px; } .ead-pinos { gap: 3px; padding: 8px 8px 14px; } }
+.ead-fala.curta { font-size: 13px; padding: 8px 12px; opacity: .95; }
+.ead-info { background: #fff6d6; border: 2px solid #f0b400; border-radius: 6px; padding: 9px 12px; margin: 0 0 12px; font-size: 15px; color: #4a3800; }
+.ead-aula { display: grid; gap: 12px; margin-bottom: 4px; }
+.ead-bloco { display: grid; grid-template-columns: 220px 1fr; gap: 14px; align-items: center; background: #f6f9fc; border: 2px solid #c9d6e3; border-radius: 6px; padding: 10px; }
+.ead-bloco h3 { margin: 0 0 4px; font-size: 16px; color: #16212e; }
+.ead-bloco p { margin: 0; font-size: 15px; line-height: 1.45; }
+.ead-fig svg { width: 100%; height: auto; display: block; background: #fff; border-radius: 4px; }
+@media (max-width: 600px) { .ead-bloco { grid-template-columns: 1fr; } .ead-fig { max-width: 300px; } .ead-bloco p { font-size: 14px; } }
+
+/* easter egg: árvore de Natal */
+.natal-festa { position: fixed; inset: 0; z-index: 90; overflow: hidden; display: grid; place-items: center; background: rgba(8,14,28,.35); }
+.natal-festa i { position: absolute; top: -14px; width: 8px; height: 12px; border-radius: 2px; animation: natal-cai linear forwards; }
+@keyframes natal-cai { to { transform: translate(var(--vento), 110vh) rotate(var(--giro)); } }
+.natal-cartao { position: relative; background: #fffbe9; color: #2b2210; border: 4px solid #1b2333; border-radius: 10px; padding: 18px 26px; text-align: center; box-shadow: 6px 6px 0 rgba(0,0,0,.4); max-width: min(360px, calc(100vw - 32px)); animation: natal-pula .5s ease-out; }
+.natal-cartao h2 { margin: 4px 0 6px; font-size: 28px; color: #c92a2a; }
+.natal-cartao p { margin: 0 0 12px; font-size: 15px; line-height: 1.45; }
+.natal-arvore { font-size: 54px; line-height: 1; }
+@keyframes natal-pula { from { transform: scale(.4); opacity: 0; } 70% { transform: scale(1.08); } to { transform: scale(1); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .natal-festa i { display: none; } .natal-cartao { animation: none; } }
 
 </style>
 </head>
@@ -4698,7 +4717,7 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
           itens: [["📺 Smart TV da sala, ao lado do roteador", 0], ["📱 Celular da Dona Lurdes", 1], ["🖥️ PC de mesa do escritório (a 2 metros do roteador)", 0],
                   ["💻 Notebook que vai da cozinha para o quarto", 1], ["🎮 Videogame na estante da sala", 0], ["🖨️ Impressora Wi-Fi no quarto", 1]],
           e: "Cabo é mais estável e rápido para quem fica parado perto do roteador. Wi-Fi é para quem se move ou está longe." },
-        { tipo: "escolha", p: "Quantas <b>portas LAN</b> (LAN = rede local, as portas amarelas atrás do roteador) os aparelhos com cabo vão usar?",
+        { tipo: "escolha", info: "Vão no <b>cabo</b>: Smart TV, PC de mesa e videogame.", p: "Quantas <b>portas LAN</b> (LAN = rede local, as portas amarelas atrás do roteador) os aparelhos com cabo vão usar?",
           o: ["1", "3", "6"], c: 1, e: "Smart TV, PC e videogame: 3 cabos, 3 portas LAN." },
         { tipo: "escolha", p: "Onde o roteador (<i>router</i>) deve ficar?",
           o: ["No alto e no centro da casa, longe de micro-ondas, espelhos e aquários", "Dentro do armário da cozinha, atrás do micro-ondas", "No chão do banheiro, perto do chuveiro"], c: 0,
@@ -4733,13 +4752,13 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
           cmd: /^ipconfig(\s+\/all)?$/i, dica: "O comando é ipconfig",
           saida: "Adaptador Ethernet Ethernet:\n\n   Endereço IPv4. . . . . . . . : 192.168.0.105\n   Máscara de Sub-rede . . . . : 255.255.255.0\n   Gateway Padrão. . . . . . . : 192.168.0.1",
           e: "O Gateway Padrão (<i>default gateway</i>) é o roteador: 192.168.0.1." },
-        { tipo: "digitar", p: "Abra o navegador e digite o endereço do roteador (o Gateway Padrão que apareceu).", rot: "Endereço", ph: "http://",
+        { tipo: "digitar", info: "O ipconfig mostrou: <b>Gateway Padrão 192.168.0.1</b>", p: "Abra o navegador e digite o endereço do roteador (o Gateway Padrão).", rot: "Endereço", ph: "http://",
           ok: function (v) { return /^(https?:\/\/)?192\.168\.0\.1\/?$/.test(v.trim()) || "Use o Gateway Padrão do ipconfig."; },
           e: "Abriu o painel do roteador em http://192.168.0.1." },
         { tipo: "escolha", p: "Apareceu a tela de login. Que usuário e senha usar?",
           o: ["Os que estão na etiqueta embaixo do roteador", "Sempre admin / 1234", "A senha do e-mail da cliente"], c: 0,
           e: "Cada roteador traz usuário e senha de fábrica na etiqueta. Depois, o técnico troca essa senha." },
-        { tipo: "digitar", p: "Em <b>Wireless</b> (sem fio), troque o <b>SSID</b> (nome da rede Wi-Fi) para o nome que a cliente pediu.", rot: "SSID", ph: "nome da rede",
+        { tipo: "digitar", info: "A Dra. Camila pediu o nome: <b>Consultorio_Camila</b>", p: "Em <b>Wireless</b> (sem fio), troque o <b>SSID</b> (nome da rede Wi-Fi) para o nome que a cliente pediu.", rot: "SSID", ph: "nome da rede",
           ok: function (v) { return v.trim() === "Consultorio_Camila" || "A cliente pediu exatamente Consultorio_Camila (com C maiúsculo e sem acento)."; },
           e: "SSID (<i>Service Set Identifier</i>) é o nome que aparece na lista de Wi-Fi do celular." },
         { tipo: "escolha", p: "Qual <b>segurança</b> escolher para o Wi-Fi?",
@@ -4760,19 +4779,26 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
       cli: { nome: "Kaio", lugar: "Casa do Kaio", v: { pele: "#c68a5e", cabelo: "#2b1a12", roupa: "#f2a33a" } },
       fala: "Na sala o Wi-Fi voa, mas no meu quarto, lá no fundo, a aula online trava toda hora. O roteador fica atrás da TV, dentro do rack.",
       passos: [
-        { tipo: "escolha", p: "O app do celular mostra o sinal no quarto: <b>-82 dBm</b>. Na sala: <b>-45 dBm</b>. O do quarto é...",
+        { tipo: "aula", p: "Antes de ajudar o Kaio, veja <b>5 ideias rápidas</b> sobre Wi-Fi. Elas vão aparecer de novo nas perguntas.", blocos: [
+          { img: "sinal", t: "1. Força do sinal (dBm)", txt: "O celular mede o Wi-Fi em <b>dBm</b> (decibel-miliwatt), sempre um número <b>negativo</b>. Quanto <b>mais perto de 0</b>, mais forte: <b>-45</b> ótimo, <b>-67</b> bom, <b>-80 ou menos</b> fraco (trava vídeo e aula online)." },
+          { img: "lugar", t: "2. Lugar do roteador", txt: "Paredes, rack fechado, TV, espelho e micro-ondas <b>enfraquecem</b> o sinal. O melhor lugar é <b>no alto, aberto e no meio da casa</b>. Mudar o roteador de lugar é grátis e resolve muitos casos." },
+          { img: "canais", t: "3. Canal", txt: "O Wi-Fi 2,4 GHz é dividido em <b>canais</b>, como faixas de uma avenida. Se o vizinho usa o mesmo canal, fica congestionado. Só os canais <b>1, 6 e 11</b> não se encostam: escolha o que estiver <b>livre</b>." },
+          { img: "faixas", t: "4. 2,4 GHz x 5 GHz", txt: "<b>2,4 GHz</b>: chega <b>mais longe</b> e passa melhor pelas paredes, mas é mais lento. <b>5 GHz</b>: <b>mais rápido</b>, mas alcança menos. Perto do roteador use 5 GHz; longe, 2,4 GHz." },
+          { img: "repetidor", t: "5. Repetidor e mesh", txt: "Se o cômodo é muito longe, um <b>repetidor</b> ou um <b>kit mesh</b> (<i>mesh</i> = malha: vários pontos de Wi-Fi com o mesmo nome) fica <b>no meio do caminho</b>, onde o sinal ainda é bom, e leva o Wi-Fi adiante." }
+        ], e: "Agora vamos ajudar o Kaio." },
+        { tipo: "escolha", info: "Lembre: dBm é negativo. Mais perto de 0 = mais forte. -45 ótimo · -67 bom · -80 ou menos fraco.", p: "O app do celular mostra o sinal no quarto: <b>-82 dBm</b>. Na sala: <b>-45 dBm</b>. O do quarto é...",
           o: ["Fraco (quanto mais perto de 0, melhor o sinal)", "Forte, porque o número é maior", "Igual ao da sala"], c: 0,
           e: "dBm é negativo: -45 é ótimo, -67 é bom, -80 ou menos é fraco." },
-        { tipo: "escolha", p: "Qual a <b>primeira</b> coisa a fazer, sem gastar nada?",
+        { tipo: "escolha", info: "Hoje o roteador fica <b>atrás da TV, dentro do rack</b> da sala. Lembre: rack, TV e paredes enfraquecem o sinal; o melhor é no alto, aberto e no meio da casa.", p: "Qual a <b>primeira</b> coisa a fazer, sem gastar nada?",
           o: ["Tirar o roteador de dentro do rack e de trás da TV, colocando no alto e mais no meio da casa", "Contratar um plano de internet mais rápido", "Desligar o roteador da tomada à noite"], c: 0,
           e: "Rack fechado e TV na frente bloqueiam o sinal. Mudar a posição resolve muitos casos." },
-        { tipo: "escolha", p: "No <b>2,4 GHz</b>, os vizinhos usam os canais 1 e 6, que estão lotados. Qual <b>canal</b> escolher?",
+        { tipo: "escolha", info: "Lembre: no 2,4 GHz só os canais <b>1, 6 e 11</b> não se encostam.", p: "No <b>2,4 GHz</b>, os vizinhos usam os canais 1 e 6, que estão lotados. Qual <b>canal</b> escolher?",
           o: ["11", "2", "7"], c: 0,
           e: "Em 2,4 GHz só os canais 1, 6 e 11 não se sobrepõem. Com 1 e 6 lotados, o 11 é o livre." },
-        { tipo: "escolha", p: "O roteador também tem <b>5 GHz</b>. Comparando com o 2,4 GHz, o 5 GHz é...",
+        { tipo: "escolha", info: "Lembre: uma faixa chega mais longe e é mais lenta; a outra é mais rápida e alcança menos.", p: "O roteador também tem <b>5 GHz</b>. Comparando com o 2,4 GHz, o 5 GHz é...",
           o: ["Mais rápido, mas alcança menos e passa pior pelas paredes", "Mais lento e alcança mais longe", "Igual, só muda o nome"], c: 0,
           e: "5 GHz: velocidade perto do roteador. 2,4 GHz: alcance maior, mais lento." },
-        { tipo: "escolha", p: "Mesmo com o roteador no lugar certo, o quarto ainda fica fraco. Que aparelho resolve?",
+        { tipo: "escolha", info: "Lembre: quando o cômodo é longe demais, um aparelho no <b>meio do caminho</b> leva o Wi-Fi adiante.", p: "Mesmo com o roteador no lugar certo, o quarto ainda fica fraco. Que aparelho resolve?",
           o: ["Repetidor ou kit mesh (<i>mesh</i> = malha: vários pontos de Wi-Fi com o mesmo nome) no meio do caminho", "Filtro de linha", "Um segundo modem do provedor"], c: 0,
           e: "O repetidor ou o ponto mesh fica no meio do caminho, onde o sinal ainda é bom, e leva o Wi-Fi até o quarto." }
       ] },
@@ -4783,7 +4809,7 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
         { tipo: "prompt", p: "No PC do caixa, abra o Prompt e veja o IP do computador.", cmd: /^ipconfig(\s+\/all)?$/i, dica: "Use ipconfig",
           saida: "Adaptador Ethernet Ethernet:\n\n   Endereço IPv4 de Autoconfiguração . : 169.254.23.10\n   Máscara de Sub-rede . . . . . . . . : 255.255.0.0\n   Gateway Padrão. . . . . . . . . . . :",
           e: "O PC não tem Gateway Padrão e o IP começa com 169.254." },
-        { tipo: "escolha", p: "O IP começa com <b>169.254</b> e não tem Gateway Padrão. O que isso quer dizer?",
+        { tipo: "escolha", info: "O ipconfig mostrou: IPv4 <b>169.254.23.10</b> · Gateway Padrão <b>(vazio)</b> · celulares no Wi-Fi funcionando.", p: "O IP começa com <b>169.254</b> e não tem Gateway Padrão. O que isso quer dizer?",
           o: ["O PC não recebeu IP do roteador (o DHCP não chegou até ele)", "A internet do provedor caiu na rua toda", "O PC está com vírus"], c: 0,
           e: "169.254 é o IP que o Windows inventa quando ninguém responde. Como os celulares funcionam, o problema está entre o PC e o roteador." },
         { tipo: "escolha", p: "O que conferir <b>primeiro</b>?",
@@ -4792,19 +4818,46 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
         { tipo: "prompt", p: "Você trocou o cabo por um novo (T568B, testado). Digite o comando de novo para ver se o PC recebeu IP.", cmd: /^ipconfig(\s+\/all)?$/i, dica: "Use ipconfig de novo",
           saida: "Adaptador Ethernet Ethernet:\n\n   Endereço IPv4. . . . . . . . : 192.168.1.23\n   Máscara de Sub-rede . . . . : 255.255.255.0\n   Gateway Padrão. . . . . . . : 192.168.1.1",
           e: "Agora o PC recebeu IP do roteador (192.168.1.23) e tem gateway (192.168.1.1)." },
-        { tipo: "prompt", p: "Teste se o PC conversa com o <b>roteador</b>: use o <b>ping</b> no Gateway Padrão.", cmd: /^ping\s+192\.168\.1\.1$/i, dica: "ping 192.168.1.1",
+        { tipo: "prompt", info: "O ipconfig mostrou: IPv4 192.168.1.23 · <b>Gateway Padrão 192.168.1.1</b>", p: "Teste se o PC conversa com o <b>roteador</b>: digite <b>ping</b> e o Gateway Padrão.", cmd: /^ping\s+192\.168\.1\.1$/i, dica: "ping 192.168.1.1",
           saida: "Disparando 192.168.1.1 com 32 bytes de dados:\nResposta de 192.168.1.1: bytes=32 tempo=1ms TTL=64\nResposta de 192.168.1.1: bytes=32 tempo<1ms TTL=64\nResposta de 192.168.1.1: bytes=32 tempo=1ms TTL=64\nResposta de 192.168.1.1: bytes=32 tempo<1ms TTL=64\n\n    Pacotes: Enviados = 4, Recebidos = 4, Perdidos = 0 (0% de perda)",
           e: "4 respostas, 0% de perda: o caminho PC ↔ roteador está bom." },
         { tipo: "prompt", p: "Agora teste a <b>internet</b>: faça ping no DNS do Google, <b>8.8.8.8</b>.", cmd: /^ping\s+8\.8\.8\.8$/i, dica: "ping 8.8.8.8",
           saida: "Disparando 8.8.8.8 com 32 bytes de dados:\nResposta de 8.8.8.8: bytes=32 tempo=14ms TTL=117\nResposta de 8.8.8.8: bytes=32 tempo=13ms TTL=117\nResposta de 8.8.8.8: bytes=32 tempo=15ms TTL=117\nResposta de 8.8.8.8: bytes=32 tempo=13ms TTL=117\n\n    Pacotes: Enviados = 4, Recebidos = 4, Perdidos = 0 (0% de perda)",
           e: "Respondeu: o PC chega até a internet." },
-        { tipo: "escolha", p: "Escolha o <b>laudo técnico</b> (relatório do que foi feito) certo para entregar ao Seu Raimundo:",
+        { tipo: "escolha", info: "O que aconteceu: PC sem IP (169.254) → conector do cabo quebrado → cabo novo T568B → PC com 192.168.1.23 → ping no roteador e no 8.8.8.8 sem perda.", p: "Escolha o <b>laudo técnico</b> (relatório do que foi feito) certo para entregar ao Seu Raimundo:",
           o: ["Defeito: cabo de rede do PC do caixa com conector quebrado; o PC estava sem IP (169.254). Solução: cabo novo T568B testado. Teste: PC recebeu 192.168.1.23 e o ping no roteador e no 8.8.8.8 respondeu sem perda.",
               "A internet voltou sozinha depois de reiniciar tudo.",
               "Defeito no provedor. Trocado o roteador por um novo."], c: 0,
           e: "Um bom laudo diz o defeito, a solução e o teste que prova que funcionou." }
       ] }
   ];
+
+  /* ------------------------------------------- figuras da introdução (SVG) */
+  var SVGA = '<svg viewBox="0 0 220 120" role="img" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">';
+  function ondas(x, y, n, cor) { var h = ""; for (var i = 1; i <= n; i++) h += '<path d="M' + (x - 8 * i) + " " + (y - 6 * i) + " Q" + x + " " + (y - 12 * i) + " " + (x + 8 * i) + " " + (y - 6 * i) + '" fill="none" stroke="' + cor + '" stroke-width="3" stroke-linecap="round"/>'; return h; }
+  function roteador(x, y) { return '<rect x="' + (x - 16) + '" y="' + y + '" width="32" height="12" rx="3" fill="#2f3a4c"/><line x1="' + (x - 10) + '" y1="' + y + '" x2="' + (x - 13) + '" y2="' + (y - 12) + '" stroke="#2f3a4c" stroke-width="3"/><line x1="' + (x + 10) + '" y1="' + y + '" x2="' + (x + 13) + '" y2="' + (y - 12) + '" stroke="#2f3a4c" stroke-width="3"/><circle cx="' + (x - 6) + '" cy="' + (y + 6) + '" r="2" fill="#5cf08a"/><circle cx="' + x + '" cy="' + (y + 6) + '" r="2" fill="#5cf08a"/>'; }
+  var FIG = {
+    sinal: SVGA + '<defs><linearGradient id="gS" x1="0" x2="1"><stop offset="0" stop-color="#e03131"/><stop offset=".5" stop-color="#f0b400"/><stop offset="1" stop-color="#2e9e4a"/></linearGradient></defs>' +
+      '<rect x="12" y="44" width="196" height="22" rx="11" fill="url(#gS)"/>' +
+      '<g font-size="12" text-anchor="middle" fill="#16212e"><text x="30" y="84">-90</text><text x="80" y="84">-80</text><text x="132" y="84">-67</text><text x="180" y="84">-45</text><text x="205" y="38" font-size="11">0</text></g>' +
+      '<g font-size="12" font-weight="bold" text-anchor="middle"><text x="50" y="106" fill="#c92a2a">fraco</text><text x="132" y="106" fill="#b07d00">bom</text><text x="182" y="106" fill="#237a39">ótimo</text></g>' +
+      '<text x="110" y="24" font-size="12" text-anchor="middle" fill="#16212e">mais perto de 0 = mais forte →</text></svg>',
+    lugar: SVGA + '<rect x="6" y="20" width="98" height="92" fill="#f4f0e6" stroke="#1b2333" stroke-width="2"/><rect x="116" y="20" width="98" height="92" fill="#f4f0e6" stroke="#1b2333" stroke-width="2"/>' +
+      '<rect x="14" y="76" width="50" height="30" fill="#7a5230"/><rect x="18" y="58" width="42" height="20" fill="#111"/>' + roteador(39, 88) + '<path d="M70 50 L96 90 M96 50 L70 90" stroke="#e03131" stroke-width="5" stroke-linecap="round"/>' +
+      '<rect x="150" y="62" width="30" height="6" fill="#7a5230"/>' + roteador(165, 50) + ondas(165, 44, 3, "#2e9e4a") + '<path d="M184 88 l8 9 l16 -20" fill="none" stroke="#2e9e4a" stroke-width="5" stroke-linecap="round"/>' +
+      '<g font-size="11" text-anchor="middle" fill="#16212e"><text x="55" y="14">no rack, atrás da TV</text><text x="165" y="14">no alto e aberto</text></g></svg>',
+    canais: SVGA + '<line x1="8" y1="96" x2="212" y2="96" stroke="#16212e" stroke-width="2"/>' +
+      '<path d="M18 96 Q42 20 66 96" fill="#2f86d6" fill-opacity=".55" stroke="#2f86d6" stroke-width="2"/><path d="M83 96 Q107 20 131 96" fill="#2e9e4a" fill-opacity=".55" stroke="#2e9e4a" stroke-width="2"/><path d="M148 96 Q172 20 196 96" fill="#f08c00" fill-opacity=".55" stroke="#f08c00" stroke-width="2"/>' +
+      '<path d="M44 96 Q68 40 92 96" fill="none" stroke="#868e96" stroke-width="2" stroke-dasharray="4 3"/>' +
+      '<g font-size="13" font-weight="bold" text-anchor="middle" fill="#16212e"><text x="42" y="112">1</text><text x="107" y="112">6</text><text x="172" y="112">11</text></g>' +
+      '<text x="70" y="36" font-size="10" text-anchor="middle" fill="#868e96">canal 2: encosta</text></svg>',
+    faixas: SVGA + '<circle cx="66" cy="62" r="54" fill="#2f86d6" fill-opacity=".18" stroke="#2f86d6" stroke-width="2"/><circle cx="66" cy="62" r="28" fill="#2e9e4a" fill-opacity=".3" stroke="#2e9e4a" stroke-width="2"/>' + roteador(66, 58) +
+      '<g font-size="11.5"><text x="126" y="34" fill="#1c6fb8" font-weight="bold">2,4 GHz</text><text x="126" y="49" fill="#1c6fb8">longe, mais lento</text><text x="126" y="80" fill="#237a39" font-weight="bold">5 GHz</text><text x="126" y="95" fill="#237a39">perto, rápido</text></g></svg>',
+    repetidor: SVGA + roteador(28, 74) + ondas(28, 68, 2, "#2e9e4a") + '<rect x="98" y="66" width="24" height="18" rx="4" fill="#f2f2f2" stroke="#2f3a4c" stroke-width="2"/><circle cx="110" cy="75" r="3" fill="#2f86d6"/>' + ondas(110, 62, 2, "#2e9e4a") +
+      '<rect x="168" y="50" width="44" height="44" fill="#f4f0e6" stroke="#1b2333" stroke-width="2"/><rect x="176" y="70" width="18" height="12" fill="#2f3a4c"/>' + ondas(190, 46, 2, "#2e9e4a") +
+      '<path d="M48 80 H92 M128 80 H162" stroke="#868e96" stroke-width="2" stroke-dasharray="5 4"/>' +
+      '<g font-size="11" text-anchor="middle" fill="#16212e"><text x="28" y="104">roteador</text><text x="110" y="104">repetidor</text><text x="190" y="110">quarto</text></g></svg>'
+  };
 
   /* ---------------------------------------------------------------- estado */
   var E = { progresso: {}, quando: {} };
@@ -4854,9 +4907,9 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
     var m = MISSOES[M.i], ps = m.passos[M.k];
     var pontos = m.passos.map(function (p, k) { return '<i class="' + (k < M.k ? "ok" : k === M.k ? "agora" : "") + '"></i>'; }).join("");
     var h = topo(m) + '<main class="ead-main">';
-    if (M.k === 0) h += '<div class="ead-fala"><b>' + esc(m.cli.nome) + ':</b> “' + esc(m.fala) + '”</div>';
+    h += '<div class="ead-fala' + (M.k ? " curta" : "") + '"><b>' + (M.k ? "📝 Pedido de " : "") + esc(m.cli.nome) + ':</b> “' + esc(m.fala) + '”</div>';
     h += '<div class="ead-card"><div class="ead-pontos" aria-label="Passo ' + (M.k + 1) + " de " + m.passos.length + '">' + pontos + '<span>Passo ' + (M.k + 1) + " de " + m.passos.length + "</span></div>" +
-      '<p class="ead-p">' + ps.p + "</p>" + corpo(ps) + '<div class="ead-msg" id="ead-msg" role="status" aria-live="polite" hidden></div>' +
+      '<p class="ead-p">' + ps.p + "</p>" + (ps.info ? '<div class="ead-info">📌 ' + ps.info + "</div>" : "") + corpo(ps) + '<div class="ead-msg" id="ead-msg" role="status" aria-live="polite" hidden></div>' +
       '<div class="ead-acoes"><button type="button" class="botao" id="ead-seguir" hidden>Continuar ▸</button></div></div></main>';
     HOST.innerHTML = '<div class="ead-raiz">' + h + "</div>";
     ligarPasso(ps);
@@ -4884,6 +4937,9 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
         '<form id="ead-form" autocomplete="off"><span>C:\\Users\\cliente&gt;</span><input id="ead-in" spellcheck="false" autocapitalize="off" aria-label="Comando"><button type="submit" class="botao">Enter</button></form></div>' +
         '<button type="button" class="ead-dica" id="ead-dica">💡 Dica</button>';
     }
+    if (ps.tipo === "aula") {
+      return '<div class="ead-aula">' + ps.blocos.map(function (bl) { return '<div class="ead-bloco"><div class="ead-fig">' + (FIG[bl.img] || "") + '</div><div><h3>' + bl.t + "</h3><p>" + bl.txt + "</p></div></div>"; }).join("") + "</div>";
+    }
     if (ps.tipo === "digitar") {
       return '<form class="ead-dig" id="ead-form" autocomplete="off"><label><span>' + esc(ps.rot) + '</span><input id="ead-in" placeholder="' + esc(ps.ph || "") + '" spellcheck="false" autocapitalize="off"></label><button type="submit" class="botao">OK</button></form>';
     }
@@ -4899,6 +4955,10 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
   }
   function ligarPasso(ps) {
     HOST.querySelector("[data-ead=fechar]").onclick = fechar;
+    if (ps.tipo === "aula") {
+      var sg = HOST.querySelector("#ead-seguir"); sg.hidden = false; sg.textContent = "Entendi, vamos às perguntas ▸";
+      sg.onclick = function () { M.k++; desenharPasso(); };
+    }
     if (ps.tipo === "escolha") HOST.querySelectorAll(".ead-op").forEach(function (b) {
       b.onclick = function () { if (+b.getAttribute("data-i") === ps.c) { b.classList.add("certa"); acertou(ps); } else { b.classList.add("errada"); b.disabled = true; erro("Ainda não. Leia de novo e tente outra opção."); } };
     });
@@ -5323,7 +5383,11 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
       if (hh > 0.38) arv(x, y, hh > 0.86 ? "palmeira" : hh > 0.62 ? "ipe" : "copa");
     }
     for (x = 46; x < W; x += 3) arv(x, 2, x % 2 ? "copa" : "ipe");
-    arv(3, 36, "copa"); arv(39, 36, "copa"); arv(29, 35, "ipe");
+    // easter egg: esta copa vira árvore de Natal quando o técnico aperta E perto dela
+    arv(3, 36, "copa");
+    arv(39, 36, "copa"); arv(29, 35, "ipe");
+    // easter eggs: estas copas (ao lado do SENAI e no Parque do Sabiá) viram árvore de Natal com E
+    arvores.forEach(function (a) { if ((a.x === 3 && a.y === 36) || (a.x === 47 && a.y === 12)) { a.egg = true; if (natalLigado(a)) a.tipo = "natal"; } });
     // Av. Ortízio Borges: árvores acima das casas das missões EaD
     [1, 4, 6, 14, 18, 30, 34, 38, 41, 48, 51, 54, 57, 60, 63].forEach(function (x2, k) { arv(x2, 38, k % 3 ? "ipe" : "copa"); });
     // postes de luz, bancos, ponto de ônibus
@@ -6089,7 +6153,34 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
   /* ================================================================ laço */
   var teclas = {}, toque = {}, ultimo = 0, emJogo = false, perto = -1, pausado = false;
   function portaDe(ci) { var k = CASAS[ci]; return { x: (k.x + 1.5) * T, y: (k.y + 3.3) * T }; }
-  var pertoEad = -1;
+  var pertoEad = -1, pertoArv = null;
+  // chave por árvore; "plantao-natal" = "1" é a da primeira versão (árvore do SENAI)
+  function chaveNatal(a) { return a.x === 3 && a.y === 36 ? "plantao-natal" : "plantao-natal-" + a.x + "-" + a.y; }
+  function natalLigado(a) { try { return localStorage.getItem(chaveNatal(a)) === "1"; } catch (e) { return false; } }
+  function arvoresEgg() { return arvores.filter(function (a) { return a.egg; }); }
+  function arvoreEgg(i) { return arvoresEgg()[i || 0] || null; }
+  function virarNatal(a) {
+    a.tipo = "natal"; a.brilho = performance.now();
+    try { localStorage.setItem(chaveNatal(a), "1"); } catch (e) {}
+    natalSabia = a.x >= 40; festaNatal();
+    mostrarAvisoPorta();
+  }
+  var natalSabia = false;
+  function festaNatal() {
+    var velho = document.getElementById("natal-festa"); if (velho) velho.remove();
+    var f = document.createElement("div"); f.id = "natal-festa"; f.className = "natal-festa"; f.setAttribute("role", "status");
+    var CORES = ["#ff5a5f", "#ffd23f", "#5cc8ff", "#8cff9b", "#ffffff", "#c77dff"], h = "";
+    for (var i = 0; i < 90; i++) {
+      h += '<i style="left:' + (Math.random() * 100).toFixed(1) + "%;background:" + CORES[i % CORES.length] +
+        ";animation-delay:" + (Math.random() * 1.2).toFixed(2) + "s;animation-duration:" + (2.4 + Math.random() * 2).toFixed(2) + "s;--giro:" + Math.round(Math.random() * 720 - 360) + "deg;--vento:" + Math.round(Math.random() * 120 - 60) + 'px"></i>';
+    }
+    var nome = (E && E.nome) ? ", " + esc(String(E.nome).split(" ")[0]) : "";
+    f.innerHTML = h + '<div class="natal-cartao"><div class="natal-arvore">🎄</div><h2>Feliz Natal' + nome + '!</h2><p>' + (natalSabia ? "Você achou o segredo do Parque do Sabiá." : "Você achou o segredo do Santa Mônica.") + '<br>Boas festas e bom plantão!</p><button type="button" class="botao">Valeu! ▸</button></div>';
+    document.body.appendChild(f);
+    var fim = function () { if (f.parentNode) f.remove(); };
+    f.querySelector("button").onclick = fim; f.onclick = function (ev) { if (ev.target === f) fim(); };
+    setTimeout(fim, 7000);
+  }
   function portaEad(i) { var k = CASAS_EAD[i]; return { x: (k.x + 1.5) * T, y: (k.y + 3.3) * T }; }
   function abrirEad(i) {
     if (!EADM) return;
@@ -6124,11 +6215,35 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
     else achou = estacaoNoPonto(J.x, J.y);
     if (MAPA === 0 && achou < 0) CASAS_EAD.forEach(function (k, i) { var p = portaEad(i); if (Math.hypot(J.x - p.x, J.y - p.y) < 13) achouE = i; });
     var pp = PORTAL[MAPA], np = !!pp && Math.hypot(J.x - pp.x, J.y - pp.y) < 26;
-    if (achou !== perto || np !== noPortal || achouE !== pertoEad) { perto = achou; noPortal = np; pertoEad = achouE; mostrarAvisoPorta(); }
+    var aE = null;
+    if (MAPA === 0 && achou < 0 && achouE < 0 && !np) arvoresEgg().forEach(function (eg) { if (Math.hypot(J.x - (eg.x + 0.5) * T, J.y - (eg.y + 1) * T) < 22) aE = eg; });
+    if (achou !== perto || np !== noPortal || achouE !== pertoEad || aE !== pertoArv) { perto = achou; noPortal = np; pertoEad = achouE; pertoArv = aE; mostrarAvisoPorta(); }
+  }
+  // luzes que piscam e brilho de "mágica" na árvore do easter egg
+  var LUZ_NATAL = [[11, 8], [14, 10], [10, 14], [15, 16], [9, 18], [13, 19], [7, 23], [12, 23], [17, 24], [10, 26], [15, 26]], COR_NATAL = ["#ff5a5f", "#ffd23f", "#5cc8ff", "#8cff9b"];
+  function piscaNatal(g, a) {
+    var t = performance.now(), x0 = a.x * T - 4, y0 = (a.y + 1) * T - 34, fase = Math.floor(t / 350);
+    LUZ_NATAL.forEach(function (p, i) { g.fillStyle = COR_NATAL[(i + fase) % 4]; g.fillRect(x0 + p[0], y0 + p[1], 1, 1); });
+    if (fase % 2) { g.fillStyle = "#fff6b0"; g.fillRect(x0 + 12, y0 + 1, 1, 1); g.fillRect(x0 + 10, y0 + 2, 1, 1); g.fillRect(x0 + 14, y0 + 2, 1, 1); }
+    var dt = t - (a.brilho || 0);
+    if (dt < 1400) {
+      for (var k = 0; k < 14; k++) {
+        var ang = k / 14 * Math.PI * 2 + dt / 400, r = 6 + dt / 60;
+        g.globalAlpha = 1 - dt / 1400; g.fillStyle = COR_NATAL[k % 4];
+        g.fillRect(Math.round(x0 + 12 + Math.cos(ang) * r), Math.round(y0 + 16 + Math.sin(ang) * r * 0.8), 2, 2);
+      }
+      g.globalAlpha = 1;
+    }
   }
   function mostrarAvisoPorta() {
     var a = $("aviso-porta");
-    if ((perto < 0 && !noPortal && pertoEad < 0) || !emJogo) { a.hidden = true; $("btn-acao").classList.remove("pronto"); return; }
+    $("btn-entrar").innerHTML = "Entrar <kbd>E</kbd>";
+    if ((perto < 0 && !noPortal && pertoEad < 0 && !pertoArv) || !emJogo) { a.hidden = true; $("btn-acao").classList.remove("pronto"); return; }
+    if (pertoArv && perto < 0 && !noPortal && pertoEad < 0) {
+      if (pertoArv.tipo === "natal") { $("aviso-texto").innerHTML = "🎄 Feliz Natal, técnico!"; $("btn-entrar").hidden = true; $("btn-acao").classList.remove("pronto"); }
+      else { $("aviso-texto").innerHTML = "🌳 Hmm... essa árvore parece diferente. Aperte <b>E</b>."; $("btn-entrar").innerHTML = "Aperte <kbd>E</kbd>"; $("btn-entrar").hidden = false; $("btn-acao").classList.add("pronto"); }
+      a.hidden = false; return;
+    }
     if (noPortal) {
       var pt = PORTAL[MAPA];
       $("aviso-texto").innerHTML = "🚪 <b>" + esc(pt.rotulo) + "</b> · " + esc(pt.acao) + ".";
@@ -6358,7 +6473,7 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
     });
     predios.forEach(function (p, i2) { objs.push({ y: (p.y + p.h) * T - 1, f: function () { g.drawImage(SPR_PRED[i2], p.x * T - 1, p.y * T - 1); } }); });
     var x0 = Math.floor(CAM.x / T) - 2, x1 = Math.ceil((CAM.x + vw) / T) + 2, y0 = Math.floor(CAM.y / T) - 2, y1 = Math.ceil((CAM.y + vh) / T) + 3;
-    arvores.forEach(function (a) { if (a.x >= x0 && a.x <= x1 && a.y >= y0 && a.y <= y1) objs.push({ y: (a.y + 1) * T - 2, f: function () { g.drawImage(SPR_ARV[a.tipo], a.x * T - 4, (a.y + 1) * T - 34); } }); });
+    arvores.forEach(function (a) { if (a.x >= x0 && a.x <= x1 && a.y >= y0 && a.y <= y1) objs.push({ y: (a.y + 1) * T - 2, f: function () { g.drawImage(SPR_ARV[a.tipo], a.x * T - 4, (a.y + 1) * T - 34); if (a.egg && a.tipo === "natal") piscaNatal(g, a); } }); });
     enfeites.forEach(function (e2) {
       if (e2.x < x0 || e2.x > x1 || e2.y < y0 || e2.y > y1) return;
       if (e2.tipo === "semaforo") { objs.push({ y: (e2.y + 1) * T - 3, f: function () { desenharSemaforo(g, (e2.x + 0.5) * T, (e2.y + 1) * T - 3, luz(e2.eixo)); } }); return; }
@@ -6995,6 +7110,7 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
     if (!emJogo) return;
     if (noPortal) { trocarMapa(); return; }
     if (MAPA === 0 && pertoEad >= 0) { abrirEad(pertoEad); return; }
+    if (perto < 0 && pertoArv) { if (pertoArv.tipo !== "natal") virarNatal(pertoArv); return; }
     if (perto < 0) return;
     if (MAPA === 1) { abrirFase(perto); return; }
     var oi = osDaCasa(perto);
@@ -7467,7 +7583,7 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
   atualizarHud(); telas("t-personagem"); iniciarXp();
   requestAnimationFrame(laco);
   // para os testes automáticos
-  window.__jogo = { E: E, J: J, OS: OS, get carros() { return carros; }, mapa: function () { return MAPA; }, trocar: trocarMapa, aplicarMapa: aplicarMapa, PORTAL: PORTAL, ESTACOES: ESTACOES, abrirFase: abrirFase, abrirEad: abrirEad, portaEad: portaEad, pertoEad: function () { return pertoEad; }, perto: function () { return perto; }, caixa: caixaCarro, tile: tileDe, entrarNaCasa: entrarNaCasa, estado: function () { return C; }, portaDe: portaDe, telas: telas, mover: moverCarros, tempo: function () { return TEMPO_SEM; } };
+  window.__jogo = { E: E, J: J, OS: OS, get carros() { return carros; }, mapa: function () { return MAPA; }, trocar: trocarMapa, aplicarMapa: aplicarMapa, PORTAL: PORTAL, ESTACOES: ESTACOES, abrirFase: abrirFase, abrirEad: abrirEad, portaEad: portaEad, pertoEad: function () { return pertoEad; }, arvoreEgg: arvoreEgg, arvores: function () { return arvores; }, perto: function () { return perto; }, caixa: caixaCarro, tile: tileDe, entrarNaCasa: entrarNaCasa, estado: function () { return C; }, portaDe: portaDe, telas: telas, mover: moverCarros, tempo: function () { return TEMPO_SEM; } };
 })();
 
 </script>
