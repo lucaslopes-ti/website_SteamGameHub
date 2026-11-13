@@ -941,6 +941,36 @@ body.na-oficina #minimapa, body.na-oficina .hud, body.na-oficina .aviso-porta, b
 .lista-sub { margin: 16px 0 2px; font-size: 17px; }
 @media (prefers-reduced-motion: reduce) { .mapa-fade { transition-duration: .08s; } }
 
+/* ================================================================ ficha do técnico (canto superior esquerdo) */
+.jt .hud-ficha { align-items: center; gap: 10px; padding: 6px 12px 6px 6px; background: linear-gradient(180deg, #1a2f4d, #12223a); min-width: 230px; max-width: min(340px, 58vw); }
+.jt .hud-avatar { position: relative; width: 52px; height: 52px; flex: none; padding: 0; overflow: visible; background: linear-gradient(180deg, #3d8fe0, #1559b3); border: 2px solid #0b1626; border-bottom: 4px solid var(--px-laranja); border-radius: 6px; }
+.jt .hud-avatar img { width: 100%; height: 100%; display: block; image-rendering: pixelated; border-radius: 3px; }
+.jt .hud-lv { position: absolute; right: -7px; bottom: -8px; min-width: 20px; height: 20px; padding: 0 4px; display: grid; place-items: center; background: #ffc61a; color: #16212e; border: 2px solid #0b1626; border-radius: 4px; font: 800 11px/1 var(--ap-fonte); }
+.jt .hud-txt { gap: 2px; flex: 1; }
+.jt .hud-l1 b { display: block; font-size: 15px; line-height: 1.15; max-width: 100%; }
+.jt .hud-nivel { color: #ffd27a; font: 800 11px/1.2 var(--ap-fonte); text-transform: uppercase; letter-spacing: .6px; }
+.jt .hud-barras { display: flex; flex-direction: column; gap: 3px; margin-top: 2px; }
+.jt .hud-barra { display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 6px; opacity: .72; }
+.jt .hud-barra[hidden] { display: none; }
+.jt .hud-barra.aqui { opacity: 1; }
+.jt .hud-barra .hb-ic { font-size: 12px; line-height: 1; text-align: center; }
+.jt .hud-barra i { display: block; height: 8px; min-width: 70px; background: #0b1626; border: 1px solid #2c4466; border-radius: 2px; overflow: hidden; }
+.jt .hud-barra em { display: block; height: 100%; width: 0; transition: width .4s; }
+.jt .hud-barra.redes em { background: linear-gradient(90deg, #2fb4ff, #6fd3ff); }
+.jt .hud-barra.micro em { background: linear-gradient(90deg, #f39200, #ffc61a); }
+.jt .hud-barra small { color: #dfe8f3; font: 700 11px/1 var(--ap-fonte); min-width: 32px; text-align: right; }
+.jt .hud-txt .hud-sub { color: #9fb3c9; font-size: 11px; font-weight: 600; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 600px) {
+  .jt .hud-ficha { min-width: 0; max-width: 62vw; gap: 8px; padding: 5px 9px 5px 5px; }
+  .jt .hud-avatar { width: 42px; height: 42px; }
+  .jt .hud-l1 b { font-size: 14px; }
+  .jt .hud-nivel { font-size: 10px; }
+  .jt .hud-barra i { min-width: 44px; height: 7px; }
+  .jt .hud-txt .hud-sub { display: none; }
+}
+/* no celular a ficha fica mais alta: o aviso desce para não cobrir as barras */
+@media (max-width: 600px) { .jt .toast { top: 112px; } }
+
 </style>
 </head>
 <body class="jt">
@@ -949,9 +979,17 @@ body.na-oficina #minimapa, body.na-oficina .hud, body.na-oficina .aviso-porta, b
   <canvas id="minimapa" width="224" height="130" aria-hidden="true"></canvas>
 
   <header class="hud" id="hud" hidden>
-    <div class="hud-esq">
-      <span class="hud-avatar" aria-hidden="true">🧰</span>
-      <div class="hud-txt"><b id="hud-nome">Técnico(a)</b><small id="hud-os">0 de 25 OS · 0 ★</small></div>
+    <div class="hud-esq hud-ficha" id="hud-ficha">
+      <span class="hud-avatar" aria-hidden="true"><img id="hud-foto" alt=""><span class="hud-lv" id="hud-lv">1</span></span>
+      <div class="hud-txt">
+        <div class="hud-l1"><b id="hud-nome">Técnico(a)</b></div>
+        <span class="hud-nivel" id="hud-nivel">Estagiário(a)</span>
+        <div class="hud-barras">
+          <div class="hud-barra redes" id="hb-redes" title="Redes: ordens de serviço no Santa Mônica"><span class="hb-ic" aria-hidden="true">📡</span><i><em id="hb-redes-fill"></em></i><small id="hb-redes-txt">0/25</small></div>
+          <div class="hud-barra micro" id="hb-micro" title="Micro: casas do Bairro da Oficina"><span class="hb-ic" aria-hidden="true">🛠</span><i><em id="hb-micro-fill"></em></i><small id="hb-micro-txt">0/6</small></div>
+        </div>
+        <small id="hud-os" class="hud-sub">📍 Santa Mônica</small>
+      </div>
     </div>
     <div class="hud-dir">
       <a class="hud-xp" id="hud-xp" hidden href="#">⚡ XP</a>
@@ -5780,9 +5818,9 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
     $("toast").hidden = true;
     telas("oficina"); OF.jogar(FASES[i].id);
   }
-  function retrato(v) {
+  function retrato(v, tec) {
     try {
-      var s2 = desenharPessoa("baixo", 0, v, false), c = tela(64, 64), g = c.getContext("2d");
+      var s2 = desenharPessoa("baixo", 0, v, !!tec), c = tela(64, 64), g = c.getContext("2d");
       g.imageSmoothingEnabled = false; g.drawImage(s2, 0, 0, 16, 16, 0, 2, 64, 64);
       return c.toDataURL("image/png");
     } catch (e) { return ""; }
@@ -5977,12 +6015,33 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
   }
   var ehToque = ("ontouchstart" in window) || (navigator.maxTouchPoints > 0);
   function estrelasTotais() { var s = 0; OS.forEach(function (o) { s += E.progresso[o.id] || 0; }); return s; }
+  /* cargo do técnico pelas estrelas somadas dos dois bairros (Redes + Micro) */
+  var CARGOS = [[0, "Estagiári", "1"], [8, "Técnic", " júnior"], [30, "Técnic", " pleno"], [60, "Técnic", " sênior"], [90, "Mestre do plantão", ""]];
+  var fotoDe = "";
   function atualizarHud() {
     var n = OS.filter(function (o, i) { return feita(i); }).length;
     $("hud-nome").textContent = E.nome || "Técnico(a)";
-    var nf = 0; FASES.forEach(function (f, i) { if (estrelasDe(i) > 0) nf++; });
-    $("hud-os").textContent = (MAPA === 1 ? "Oficina: " + nf + " de " + FASES.length + " casas" : n + " de " + OS.length + " OS · " + estrelasTotais() + " de " + OS.length * 3 + " ★") +
-      (MAPA === 0 && OF ? " · 🛠 " + nf + "/" + FASES.length : "") + (J.batidas ? " · 💥 " + J.batidas : "");
+    var nf = 0, ef = 0; FASES.forEach(function (f, i) { var e = estrelasDe(i); if (e > 0) nf++; ef += e; });
+    var eo = estrelasTotais(), tot = eo + ef, max = OS.length * 3 + FASES.length * 3;
+    // foto: rosto do personagem escolhido
+    if (fotoDe !== E.personagem) { var url = retrato(VISUAL_TEC, true); if (url) { $("hud-foto").src = url; fotoDe = E.personagem; } }
+    // cargo e nível
+    var nv = 0; CARGOS.forEach(function (c, i) { if (tot >= c[0]) nv = i; });
+    var fem = /^f/.test(E.personagem || ""), c = CARGOS[nv];
+    $("hud-nivel").textContent = nv === 4 ? c[1] : c[1] + (nv === 0 ? (fem ? "a" : "o") : (fem ? "a" : "o") + c[2]);
+    $("hud-lv").textContent = nv + 1;
+    $("hud-ficha").title = tot + " de " + max + " estrelas no total";
+    // barras: Redes (estrelas das OS) e Micro (estrelas das fases); a do bairro atual fica acesa
+    $("hb-redes-fill").style.width = Math.round(eo / (OS.length * 3) * 100) + "%";
+    $("hb-redes-txt").textContent = n + "/" + OS.length;
+    $("hb-redes").classList.toggle("aqui", MAPA === 0);
+    var bm = $("hb-micro"); bm.hidden = !OF;
+    if (OF) {
+      $("hb-micro-fill").style.width = Math.round(ef / (FASES.length * 3) * 100) + "%";
+      $("hb-micro-txt").textContent = nf + "/" + FASES.length; bm.classList.toggle("aqui", MAPA === 1);
+    }
+    $("hud-os").textContent = (MAPA === 1 ? "📍 Bairro da Oficina · " + nf + " de " + FASES.length + " casas" : "📍 Santa Mônica · " + n + " de " + OS.length + " OS") +
+      " · ★ " + tot + (J.batidas ? " · 💥 " + J.batidas : "");
   }
   var toastT = 0;
   function toast(txt, tipo) {
