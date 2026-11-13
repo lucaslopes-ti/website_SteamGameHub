@@ -72,6 +72,9 @@ describe("XP dos jogos das aulas", () => {
       Array.from({ length: 25 }, (_, i) => `os${String(i + 1).padStart(2, "0")}`)
     );
     expect(xpMaximoDoJogo(plantao)).toBe(2700);
+    const ead = JOGO_POR_ID.get("soho-ead")!;
+    expect(ead.fases.map((f) => f.id)).toEqual(["ead1", "ead2", "ead3", "ead4", "ead5"]);
+    expect(xpMaximoDoJogo(ead)).toBe(700);
     const r = aplicarResultadoFase([], "plantao-tecnico", "os01", 3);
     expect(r).toMatchObject({ ok: true, xpGanho: 100 });
   });

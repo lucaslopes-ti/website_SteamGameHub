@@ -92,6 +92,19 @@ export const JOGOS_XP: readonly JogoXp[] = [
     xpPorEstrela: [40, 30, 30],
     bonusCompleto: 200,
   },
+  {
+    id: "soho-ead",
+    nome: "Missões EaD · Redes SOHO (Av. Ortízio Borges, no Plantão do Técnico)",
+    fases: [
+      { id: "ead1", nome: "Missão 1 · Levantamento da casa" },
+      { id: "ead2", nome: "Missão 2 · Cabo certo (T568B)" },
+      { id: "ead3", nome: "Missão 3 · Configurar o roteador" },
+      { id: "ead4", nome: "Missão 4 · Wi-Fi fraco no quarto" },
+      { id: "ead5", nome: "Missão 5 · Chamado: a internet caiu" },
+    ],
+    xpPorEstrela: [40, 30, 30],
+    bonusCompleto: 200,
+  },
 ];
 
 export const JOGO_POR_ID: ReadonlyMap<string, JogoXp> = new Map(
