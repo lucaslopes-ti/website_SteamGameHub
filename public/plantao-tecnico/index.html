@@ -971,6 +971,86 @@ body.na-oficina #minimapa, body.na-oficina .hud, body.na-oficina .aviso-porta, b
 /* no celular a ficha fica mais alta: o aviso desce para não cobrir as barras */
 @media (max-width: 600px) { .jt .toast { top: 112px; } }
 
+/* ================================================================ missões EaD (Redes SOHO) */
+body.na-ead #minimapa, body.na-ead .hud, body.na-ead .aviso-porta, body.na-ead .toque, body.na-ead .teclas-ajuda { display: none !important; }
+.ead-host { position: fixed; inset: 0; z-index: 30; overflow: auto; background: #0e1a2b; color: #e9f0f8; -webkit-overflow-scrolling: touch; }
+.ead-host[hidden] { display: none; }
+.ead-raiz { min-height: 100%; background: radial-gradient(1200px 500px at 50% -10%, #263e66 0%, #0e1a2b 60%); font-family: var(--ap-fonte); }
+.ead-topo { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px; border-bottom: 3px solid var(--ead-cor, #7b4bd6); background: #0b1626; position: sticky; top: 0; z-index: 2; }
+.ead-marca { font-size: 14px; color: #c9d6e6; }
+.ead-marca b { color: #fff; }
+.ead-x { border: 2px solid #2c4466; background: #13233a; color: #fff; width: 40px; height: 40px; border-radius: 6px; font-size: 18px; cursor: pointer; }
+.ead-cab { display: flex; align-items: center; gap: 12px; max-width: 760px; margin: 18px auto 0; padding: 0 16px; }
+.ead-cab h2 { margin: 2px 0 0; font-size: 22px; line-height: 1.2; color: #fff; }
+.ead-n { font: 800 12px/1.2 var(--ap-fonte); text-transform: uppercase; letter-spacing: .6px; color: var(--ead-cor, #b99cf5); filter: brightness(1.6); }
+.ead-foto { width: 60px; height: 60px; image-rendering: pixelated; border-radius: 6px; border: 3px solid #0b1626; background: linear-gradient(180deg, #3d8fe0, #1559b3); border-bottom: 4px solid var(--ead-cor, #7b4bd6); flex: none; }
+.ead-main { max-width: 760px; margin: 0 auto; padding: 14px 16px 40px; }
+.ead-fala { background: #fffbe9; color: #2b2210; border: 3px solid #1b2333; border-radius: 6px; padding: 12px 14px; margin-bottom: 12px; box-shadow: 4px 4px 0 rgba(0,0,0,.35); font-size: 15px; }
+.ead-card { background: #fff; color: #16212e; border: 3px solid #1b2333; border-radius: 6px; padding: 16px; box-shadow: 4px 4px 0 rgba(0,0,0,.35); }
+.ead-pontos { display: flex; align-items: center; gap: 5px; margin-bottom: 10px; }
+.ead-pontos i { width: 22px; height: 7px; border-radius: 2px; background: #d6dee8; }
+.ead-pontos i.ok { background: #1f8a4c; } .ead-pontos i.agora { background: #f39200; }
+.ead-pontos span { margin-left: 6px; font: 700 12px var(--ap-fonte); color: #5b6b7d; }
+.ead-p { font-size: 16px; line-height: 1.5; margin: 0 0 12px; }
+.ead-ops { display: grid; gap: 8px; }
+.ead-op { text-align: left; border: 2px solid #c6d2df; border-bottom-width: 4px; background: #f6f9fc; color: #16212e; border-radius: 8px; padding: 12px 14px; font: 600 15px/1.4 var(--ap-fonte); cursor: pointer; }
+.ead-op:hover:not(:disabled) { border-color: #1559b3; background: #eef5ff; }
+.ead-op.certa { border-color: #1f8a4c; background: #e6f6ec; }
+.ead-op.errada { border-color: #c0392b; background: #fdecea; text-decoration: line-through; opacity: .75; }
+.ead-msg { margin-top: 12px; padding: 10px 12px; border-radius: 6px; font-size: 15px; line-height: 1.45; }
+.ead-msg.ok { background: #e6f6ec; color: #145c33; border: 2px solid #1f8a4c; }
+.ead-msg.erro { background: #fdecea; color: #8e2318; border: 2px solid #c0392b; }
+.ead-acoes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.ead-cls { display: grid; gap: 8px; }
+.ead-cl { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 8px 10px; border: 2px solid #d6dee8; border-radius: 8px; background: #f6f9fc; }
+.ead-cl span { font-weight: 600; }
+.ead-cl div { display: flex; gap: 6px; }
+.ead-cl button { border: 2px solid #c6d2df; background: #fff; border-radius: 6px; padding: 7px 12px; font: 700 14px var(--ap-fonte); cursor: pointer; color: #16212e; }
+.ead-cl button.sel { background: #1559b3; border-color: #0d3f84; color: #fff; }
+.ead-cl.certa { border-color: #1f8a4c; background: #e6f6ec; } .ead-cl.errada { border-color: #c0392b; background: #fdecea; }
+.ead-rj { display: flex; justify-content: center; margin: 4px 0 12px; }
+.ead-pinos { display: flex; gap: 4px; padding: 10px 12px 14px; background: linear-gradient(180deg, #e8eef5, #c9d4e0); border: 3px solid #8796a8; border-radius: 6px 6px 14px 14px; }
+.ead-pino { position: relative; width: 26px; height: 64px; border-radius: 3px; background: #f2f5f8; border: 2px dashed #9aa8b8; }
+.ead-pino.cheio { border: 2px solid #1b2333; }
+.ead-pino em { position: absolute; bottom: -18px; left: 0; right: 0; text-align: center; font: 800 11px var(--ap-fonte); font-style: normal; color: #445; }
+.ead-fios { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin-top: 18px; }
+.ead-fio { display: flex; align-items: center; gap: 8px; border: 2px solid #c6d2df; background: #f6f9fc; border-radius: 8px; padding: 8px 10px; font: 700 14px var(--ap-fonte); cursor: pointer; color: #16212e; text-align: left; }
+.ead-fio.usado { opacity: .35; }
+.ead-fio.treme { animation: ead-treme .35s; border-color: #c0392b; }
+@keyframes ead-treme { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+.ead-cor { width: 30px; height: 14px; border-radius: 3px; border: 1px solid #333; flex: none; }
+.ead-cmd { background: #0c0c0c; border: 3px solid #1b2333; border-radius: 6px; overflow: hidden; }
+.ead-cmd-topo { background: #e9ecef; color: #222; font: 12px var(--ap-fonte); padding: 4px 8px; }
+.ead-cmd pre { margin: 0; padding: 10px 12px; color: #d8d8d8; font: 14px/1.45 Consolas, "Courier New", monospace; white-space: pre-wrap; max-height: 260px; overflow: auto; }
+.ead-cmd form { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border-top: 1px solid #333; flex-wrap: wrap; }
+.ead-cmd form span { color: #d8d8d8; font: 14px Consolas, "Courier New", monospace; }
+.ead-cmd input { flex: 1; min-width: 140px; background: #1b1b1b; color: #fff; border: 1px solid #555; border-radius: 4px; padding: 8px; font: 15px Consolas, "Courier New", monospace; }
+.ead-dica { margin-top: 8px; border: 0; background: none; color: #1559b3; font: 700 14px var(--ap-fonte); cursor: pointer; padding: 4px 0; }
+.ead-dig { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; background: #f1f4f8; border: 2px solid #c6d2df; border-radius: 8px; padding: 12px; }
+.ead-dig label { display: grid; gap: 4px; flex: 1; min-width: 200px; font: 700 13px var(--ap-fonte); color: #445; }
+.ead-dig input { border: 2px solid #9fb0c4; border-radius: 6px; padding: 10px; font: 16px var(--ap-fonte); }
+.ead-fim { text-align: center; }
+.ead-fim .ead-acoes { justify-content: center; }
+.ead-est { font-size: 46px; color: #f5b400; letter-spacing: 6px; text-shadow: 2px 2px 0 #1b2333; }
+.ead-est span { color: #cfd6df; }
+.ead-comp { max-width: 560px; margin: 8px auto 0; border-color: #7b4bd6; }
+.ead-comp-topo { display: grid; gap: 2px; text-align: center; padding-bottom: 10px; border-bottom: 2px dashed #c9b8ee; }
+.ead-comp-topo span { font: 800 12px var(--ap-fonte); color: #7b4bd6; text-transform: uppercase; letter-spacing: .8px; }
+.ead-comp-topo b { font-size: 21px; }
+.ead-comp-topo small { color: #5b6b7d; }
+.ead-comp-nome { text-align: center; font-size: 22px; font-weight: 800; margin: 14px 0 10px; }
+.ead-tab { width: 100%; border-collapse: collapse; font-size: 14px; }
+.ead-tab td { padding: 7px 6px; border-bottom: 1px solid #e3e8ef; }
+.ead-tdest { text-align: right; color: #d79a00; font-weight: 800; white-space: nowrap; }
+.ead-comp-rod { display: flex; justify-content: space-between; gap: 8px; margin-top: 12px; text-align: center; flex-wrap: wrap; }
+.ead-comp-rod div { flex: 1; min-width: 90px; background: #f3effc; border-radius: 6px; padding: 8px; }
+.ead-comp-rod small { display: block; color: #6b5a8e; font-weight: 700; font-size: 11px; text-transform: uppercase; }
+.ead-cod { font: 800 18px Consolas, "Courier New", monospace; color: #4b2a9a; }
+.ead-comp-ok { background: #e6f6ec; border: 2px solid #1f8a4c; border-radius: 6px; padding: 10px; margin-top: 12px; color: #145c33; }
+.ead-comp-falta { background: #fff4e0; border: 2px solid #f39200; border-radius: 6px; padding: 10px; margin-top: 12px; color: #7a4a00; }
+.jt .hud-barra.ead em { background: linear-gradient(90deg, #7b4bd6, #b99cf5); }
+@media (max-width: 600px) { .ead-cab h2 { font-size: 19px; } .ead-p { font-size: 15px; } .ead-pino { width: 22px; height: 54px; } .ead-pinos { gap: 3px; padding: 8px 8px 14px; } }
+
 </style>
 </head>
 <body class="jt">
@@ -986,6 +1066,7 @@ body.na-oficina #minimapa, body.na-oficina .hud, body.na-oficina .aviso-porta, b
         <span class="hud-nivel" id="hud-nivel">Estagiário(a)</span>
         <div class="hud-barras">
           <div class="hud-barra redes" id="hb-redes" title="Redes: ordens de serviço no Santa Mônica"><span class="hb-ic" aria-hidden="true">📡</span><i><em id="hb-redes-fill"></em></i><small id="hb-redes-txt">0/25</small></div>
+          <div class="hud-barra ead" id="hb-ead" title="Missões EaD de Redes SOHO"><span class="hb-ic" aria-hidden="true">📚</span><i><em id="hb-ead-fill"></em></i><small id="hb-ead-txt">0/5</small></div>
           <div class="hud-barra micro" id="hb-micro" title="Micro: casas do Bairro da Oficina"><span class="hb-ic" aria-hidden="true">🛠</span><i><em id="hb-micro-fill"></em></i><small id="hb-micro-txt">0/6</small></div>
         </div>
         <small id="hud-os" class="hud-sub">📍 Santa Mônica</small>
@@ -1085,6 +1166,7 @@ body.na-oficina #minimapa, body.na-oficina .hud, body.na-oficina .aviso-porta, b
           <li>No <b>Prompt</b> do notebook do cliente, digite <kbd>ipconfig</kbd> e ache o <b>Gateway Padrão</b> (o IP do roteador).</li>
           <li>Digite esse IP no <b>navegador</b>, entre com o usuário e a senha da <b>etiqueta</b> e faça o que o cliente pediu.</li>
           <li><b>Oficina (Micro):</b> o portal da <b>Zona da Bancada</b>, ao sul do SENAI, leva ao Bairro da Oficina, com 6 clientes de manutenção de computador.</li>
+          <li><b>Missões EaD (Redes SOHO):</b> 5 casas na <b>Av. Ortízio Borges</b>, logo abaixo do SENAI. No fim, tire print do <b>comprovante</b> e poste no Classroom.</li>
         </ol>
         <label class="ini-nome">Seu nome <input id="nome" maxlength="24" autocomplete="off" placeholder="Digite seu nome"></label>
         <p class="ini-aviso" id="aviso-nome" hidden>Digite seu nome para o código de cada OS sair com ele.</p>
@@ -1105,7 +1187,10 @@ body.na-oficina #minimapa, body.na-oficina .hud, body.na-oficina .aviso-porta, b
       <h3 class="lista-sub">🛠️ Bairro da Oficina · manutenção de micro</h3>
       <p class="peq">Fica atrás do portal da <b>Zona da Bancada</b>, no fim da R. Elis Regina (ao sul do SENAI). A 1ª casa é livre; cada casa abre quando a anterior é concluída.</p>
       <div id="lista-oficina" class="lista-os"></div>
-      <div class="lista-rodape"><button type="button" class="botao cinza" id="btn-codigos">Ver meus códigos</button></div>
+      <h3 class="lista-sub">📚 Missões EaD · Instalação e Manutenção de Redes SOHO</h3>
+      <p class="peq">Ficam na <b>Av. Ortízio Borges</b>, a avenida mais ao sul do bairro (desça a R. Elis Regina ou a Av. João Naves). Faça as 5 em ordem e, no fim, <b>tire print do comprovante</b> e poste no Classroom.</p>
+      <div id="lista-ead" class="lista-os"></div>
+      <div class="lista-rodape"><button type="button" class="botao cinza" id="btn-codigos">Ver meus códigos</button> <button type="button" class="botao" id="btn-comprovante">📄 Comprovante EaD</button></div>
     </div>
   </section>
 
@@ -1121,6 +1206,7 @@ body.na-oficina #minimapa, body.na-oficina .hud, body.na-oficina .aviso-porta, b
         <li><b>Estrelas:</b> 3 estrelas se errar no máximo 1 vez (dicas contam). Pode repetir a casa para melhorar.</li>
         <li><b>Carros:</b> atravesse na <b>faixa de pedestre</b>. Lá os carros param; fora dela, eles batem em você.</li>
         <li><b>Oficina (Micro):</b> o portal da <b>Zona da Bancada</b>, ao sul da R. Elis Regina, leva ao <b>Bairro da Oficina</b>. Lá 6 clientes pedem manutenção de computador: manual da placa-mãe, POP, telas do POST, periféricos, limpeza e fonte. O portal de lá traz você de volta.</li>
+        <li><b>Missões EaD (Redes SOHO):</b> 5 casas na <b>Av. Ortízio Borges</b>, a avenida mais ao sul: levantamento da casa, cabo T568B, configurar o roteador, Wi-Fi fraco e o chamado da internet que caiu. Cada missão tem passos curtos; até 1 erro = 3 estrelas. Depois das 5, abra <b>📄 Comprovante EaD</b> na lista de OS, tire print e poste no Classroom.</li>
         <li><b>Intervalo:</b> das 9:30 às 10:00 e das 15:15 às 15:35 o jogo pausa sozinho. Das 18h às 7h o plantão fica fechado.</li>
         <li><b>Semáforos:</b> os carros param no vermelho. Atravesse na faixa de pedestre.</li>
       </ol>
@@ -4580,6 +4666,371 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
 })();
 
 </script>
+  <!-- ============ Missões EaD (Redes SOHO): 5 casas na Av. Ortízio Borges ============ -->
+  <div class="ead-host" id="ead-host" hidden></div>
+  <script>
+/* Missões EaD · Instalação e Manutenção de Redes SOHO
+   Cinco casas na Av. Ortízio Borges (sul do Santa Mônica). Cada missão é uma sequência de passos curtos:
+   escolher, classificar, pôr em ordem, digitar um comando no Prompt ou um valor no painel do roteador.
+   No fim das 5 missões aparece o Comprovante (nome, data, estrelas e código EAD-XXXX) para postar no Classroom.
+   XP no SENAI Game Hub: jogo "soho-ead" (ponte própria). Progresso salvo em localStorage "soho-ead-v1". */
+(function () {
+  "use strict";
+  var API = window.EAD = window.EAD || {};
+  var HOST = document.getElementById("ead-host");
+  if (!HOST) return;
+  var CHAVE = "soho-ead-v1", JOGO_ID = "soho-ead";
+
+  /* ---------------------------------------------------------------- missões */
+  var T568B = ["Branco-laranja", "Laranja", "Branco-verde", "Azul", "Branco-azul", "Verde", "Branco-marrom", "Marrom"];
+  var CORES_FIO = { "Branco-laranja": ["#fff", "#f39200"], "Laranja": ["#f39200", "#f39200"], "Branco-verde": ["#fff", "#2e9e4a"], "Azul": ["#1f63c6", "#1f63c6"],
+    "Branco-azul": ["#fff", "#1f63c6"], "Verde": ["#2e9e4a", "#2e9e4a"], "Branco-marrom": ["#fff", "#7a4a26"], "Marrom": ["#7a4a26", "#7a4a26"] };
+  var MISSOES = [
+    { id: "ead1", n: "Missão 1", t: "Levantamento da casa", cor: "#7b4bd6", casa: [13, 40],
+      cli: { nome: "Dona Lurdes", lugar: "Casa nova da Dona Lurdes", v: { pele: "#d9a37a", cabelo: "#9a9a9a", roupa: "#c45b9a", longo: true } },
+      fala: "Acabei de mudar e a internet vai ser instalada amanhã. Antes, me ajuda a planejar: quais aparelhos usam cabo, quais usam Wi-Fi e onde fica o roteador?",
+      passos: [
+        { tipo: "escolha", p: "Antes de instalar, o técnico faz o <b>levantamento</b> (lista do que existe na casa). O que ele anota primeiro?",
+          o: ["Os aparelhos que vão usar a internet e em qual cômodo cada um fica", "A cor e a marca do roteador", "A senha do Wi-Fi do vizinho"], c: 0,
+          e: "Primeiro a lista: aparelho + cômodo. É com ela que o técnico decide cabo ou Wi-Fi e onde pôr o roteador." },
+        { tipo: "classificar", p: "Para cada aparelho, escolha <b>Cabo</b> ou <b>Wi-Fi</b>. Regra: aparelho parado e perto do roteador → cabo; aparelho que anda pela casa → Wi-Fi.",
+          cats: ["Cabo", "Wi-Fi"],
+          itens: [["📺 Smart TV da sala, ao lado do roteador", 0], ["📱 Celular da Dona Lurdes", 1], ["🖥️ PC de mesa do escritório (a 2 metros do roteador)", 0],
+                  ["💻 Notebook que vai da cozinha para o quarto", 1], ["🎮 Videogame na estante da sala", 0], ["🖨️ Impressora Wi-Fi no quarto", 1]],
+          e: "Cabo é mais estável e rápido para quem fica parado perto do roteador. Wi-Fi é para quem se move ou está longe." },
+        { tipo: "escolha", p: "Quantas <b>portas LAN</b> (LAN = rede local, as portas amarelas atrás do roteador) os aparelhos com cabo vão usar?",
+          o: ["1", "3", "6"], c: 1, e: "Smart TV, PC e videogame: 3 cabos, 3 portas LAN." },
+        { tipo: "escolha", p: "Onde o roteador (<i>router</i>) deve ficar?",
+          o: ["No alto e no centro da casa, longe de micro-ondas, espelhos e aquários", "Dentro do armário da cozinha, atrás do micro-ondas", "No chão do banheiro, perto do chuveiro"], c: 0,
+          e: "O sinal sai em volta do roteador. No alto e no centro ele chega melhor a todos os cômodos. Micro-ondas, metal, espelho e água atrapalham." },
+        { tipo: "escolha", p: "A internet chega por <b>fibra óptica</b>. Qual aparelho do provedor recebe a fibra e entrega a internet para a casa?",
+          o: ["A ONT (terminal de rede óptica, a \"caixinha da fibra\")", "O repetidor de Wi-Fi", "O switch"], c: 0,
+          e: "A ONT (<i>Optical Network Terminal</i> = terminal de rede óptica) converte a luz da fibra em sinal de rede. Muitas ONTs já têm o roteador dentro." }
+      ] },
+    { id: "ead2", n: "Missão 2", t: "Cabo certo · T568B", cor: "#1f63c6", casa: [17, 40],
+      cli: { nome: "Seu Valdir", lugar: "Escritório do Seu Valdir", v: { pele: "#8d5a3b", cabelo: "#1a1a1a", roupa: "#3d7a3a" } },
+      fala: "O cachorro mordeu o cabo do computador e o conector quebrou. Você monta um cabo novo para mim, no padrão certo?",
+      passos: [
+        { tipo: "escolha", p: "Como se chama o conector do cabo de rede?", o: ["RJ45", "RJ11 (de telefone)", "USB-C", "HDMI"], c: 0,
+          e: "O RJ45 tem 8 pinos, um para cada fio do cabo de par trançado." },
+        { tipo: "ordem", p: "Monte o padrão <b>T568B</b>: clique nas cores na ordem, do <b>pino 1 ao 8</b> (conector com a trava para baixo, pinos virados para você).",
+          itens: T568B, e: "T568B: branco-laranja, laranja, branco-verde, azul, branco-azul, verde, branco-marrom, marrom." },
+        { tipo: "escolha", p: "As <b>duas pontas</b> foram feitas em T568B. Que cabo é esse?",
+          o: ["Cabo direto (<i>straight-through</i>): liga PC no roteador ou switch", "Cabo cruzado (<i>crossover</i>)", "Cabo de console"], c: 0,
+          e: "Pontas iguais = cabo direto, o mais usado: PC, TV ou videogame no roteador." },
+        { tipo: "escolha", p: "Qual ferramenta prende o conector RJ45 no cabo?",
+          o: ["Alicate de crimpagem (<i>crimp</i> = prender apertando)", "Testador de cabo", "Chave Phillips"], c: 0,
+          e: "O alicate de crimpagem aperta os pinos do RJ45 sobre os fios. O testador vem depois, para conferir." },
+        { tipo: "escolha", p: "No <b>testador de cabo</b>, as luzes acenderam 1, 2, 3, 4, 5, 6, 7, 8 na mesma ordem nas duas pontas. E agora?",
+          o: ["O cabo está certo: pode ligar no PC", "Um fio está invertido: refazer", "O cabo está cruzado"], c: 0,
+          e: "Mesma ordem nas duas pontas, sem luz faltando: cabo direto e sem defeito." }
+      ] },
+    { id: "ead3", n: "Missão 3", t: "Configurar o roteador", cor: "#e3007a", casa: [29, 40],
+      cli: { nome: "Dra. Camila", lugar: "Consultório da Dra. Camila", v: { pele: "#f1c9a5", cabelo: "#5a3420", roupa: "#ffffff", longo: true } },
+      fala: "Comprei um roteador novo para o consultório. Quero o Wi-Fi com o nome Consultorio_Camila e uma senha segura. Pode configurar?",
+      passos: [
+        { tipo: "prompt", p: "No notebook do consultório, abra o <b>Prompt de Comando</b> e digite o comando que mostra o IP do computador e o <b>Gateway Padrão</b> (o IP do roteador).",
+          cmd: /^ipconfig(\s+\/all)?$/i, dica: "O comando é ipconfig",
+          saida: "Adaptador Ethernet Ethernet:\n\n   Endereço IPv4. . . . . . . . : 192.168.0.105\n   Máscara de Sub-rede . . . . : 255.255.255.0\n   Gateway Padrão. . . . . . . : 192.168.0.1",
+          e: "O Gateway Padrão (<i>default gateway</i>) é o roteador: 192.168.0.1." },
+        { tipo: "digitar", p: "Abra o navegador e digite o endereço do roteador (o Gateway Padrão que apareceu).", rot: "Endereço", ph: "http://",
+          ok: function (v) { return /^(https?:\/\/)?192\.168\.0\.1\/?$/.test(v.trim()) || "Use o Gateway Padrão do ipconfig."; },
+          e: "Abriu o painel do roteador em http://192.168.0.1." },
+        { tipo: "escolha", p: "Apareceu a tela de login. Que usuário e senha usar?",
+          o: ["Os que estão na etiqueta embaixo do roteador", "Sempre admin / 1234", "A senha do e-mail da cliente"], c: 0,
+          e: "Cada roteador traz usuário e senha de fábrica na etiqueta. Depois, o técnico troca essa senha." },
+        { tipo: "digitar", p: "Em <b>Wireless</b> (sem fio), troque o <b>SSID</b> (nome da rede Wi-Fi) para o nome que a cliente pediu.", rot: "SSID", ph: "nome da rede",
+          ok: function (v) { return v.trim() === "Consultorio_Camila" || "A cliente pediu exatamente Consultorio_Camila (com C maiúsculo e sem acento)."; },
+          e: "SSID (<i>Service Set Identifier</i>) é o nome que aparece na lista de Wi-Fi do celular." },
+        { tipo: "escolha", p: "Qual <b>segurança</b> escolher para o Wi-Fi?",
+          o: ["WPA2-Personal (AES)", "WEP", "Aberta (<i>open</i>, sem senha)", "WPA (TKIP)"], c: 0,
+          e: "WPA2 com AES é a segurança certa para casa e pequeno escritório. WEP e WPA antigo são fáceis de quebrar." },
+        { tipo: "digitar", p: "Crie a <b>senha do Wi-Fi</b>: pelo menos <b>8 caracteres</b>, com <b>letras e números</b>, e diferente do nome da rede.", rot: "Senha", ph: "senha nova",
+          ok: function (v) {
+            if (v.length < 8) return "A senha precisa de pelo menos 8 caracteres.";
+            if (!/[a-zA-Z]/.test(v) || !/[0-9]/.test(v)) return "Misture letras e números.";
+            if (/^(12345678|senha123|password1|abc12345)$/i.test(v) || /consultorio/i.test(v)) return "Essa é fácil de adivinhar. Invente outra.";
+            return true; },
+          e: "Senha longa, com letras e números, e que não tem o nome da rede nem sequências óbvias." },
+        { tipo: "escolha", p: "O <b>DHCP</b> (servidor que entrega IP automático para cada aparelho) deve ficar como?",
+          o: ["Ligado: os aparelhos recebem IP sozinhos", "Desligado: a cliente digita o IP em cada celular", "Tanto faz"], c: 0,
+          e: "Com o DHCP ligado, cada celular e notebook que entra no Wi-Fi recebe IP, máscara e gateway sem ninguém digitar nada." }
+      ] },
+    { id: "ead4", n: "Missão 4", t: "Wi-Fi fraco no quarto", cor: "#2e9e4a", casa: [33, 40],
+      cli: { nome: "Kaio", lugar: "Casa do Kaio", v: { pele: "#c68a5e", cabelo: "#2b1a12", roupa: "#f2a33a" } },
+      fala: "Na sala o Wi-Fi voa, mas no meu quarto, lá no fundo, a aula online trava toda hora. O roteador fica atrás da TV, dentro do rack.",
+      passos: [
+        { tipo: "escolha", p: "O app do celular mostra o sinal no quarto: <b>-82 dBm</b>. Na sala: <b>-45 dBm</b>. O do quarto é...",
+          o: ["Fraco (quanto mais perto de 0, melhor o sinal)", "Forte, porque o número é maior", "Igual ao da sala"], c: 0,
+          e: "dBm é negativo: -45 é ótimo, -67 é bom, -80 ou menos é fraco." },
+        { tipo: "escolha", p: "Qual a <b>primeira</b> coisa a fazer, sem gastar nada?",
+          o: ["Tirar o roteador de dentro do rack e de trás da TV, colocando no alto e mais no meio da casa", "Contratar um plano de internet mais rápido", "Desligar o roteador da tomada à noite"], c: 0,
+          e: "Rack fechado e TV na frente bloqueiam o sinal. Mudar a posição resolve muitos casos." },
+        { tipo: "escolha", p: "No <b>2,4 GHz</b>, os vizinhos usam os canais 1 e 6, que estão lotados. Qual <b>canal</b> escolher?",
+          o: ["11", "2", "7"], c: 0,
+          e: "Em 2,4 GHz só os canais 1, 6 e 11 não se sobrepõem. Com 1 e 6 lotados, o 11 é o livre." },
+        { tipo: "escolha", p: "O roteador também tem <b>5 GHz</b>. Comparando com o 2,4 GHz, o 5 GHz é...",
+          o: ["Mais rápido, mas alcança menos e passa pior pelas paredes", "Mais lento e alcança mais longe", "Igual, só muda o nome"], c: 0,
+          e: "5 GHz: velocidade perto do roteador. 2,4 GHz: alcance maior, mais lento." },
+        { tipo: "escolha", p: "Mesmo com o roteador no lugar certo, o quarto ainda fica fraco. Que aparelho resolve?",
+          o: ["Repetidor ou kit mesh (<i>mesh</i> = malha: vários pontos de Wi-Fi com o mesmo nome) no meio do caminho", "Filtro de linha", "Um segundo modem do provedor"], c: 0,
+          e: "O repetidor ou o ponto mesh fica no meio do caminho, onde o sinal ainda é bom, e leva o Wi-Fi até o quarto." }
+      ] },
+    { id: "ead5", n: "Missão 5", t: "Chamado: a internet caiu", cor: "#d9480f", casa: [44, 40],
+      cli: { nome: "Seu Raimundo", lugar: "Mercearia do Raimundo", v: { pele: "#a86b46", cabelo: "#d0d0d0", roupa: "#2f86d6" } },
+      fala: "O computador do caixa ficou sem internet! Os celulares no Wi-Fi funcionam. Me ajuda? E escreve no laudo o que foi, para eu guardar.",
+      passos: [
+        { tipo: "prompt", p: "No PC do caixa, abra o Prompt e veja o IP do computador.", cmd: /^ipconfig(\s+\/all)?$/i, dica: "Use ipconfig",
+          saida: "Adaptador Ethernet Ethernet:\n\n   Endereço IPv4 de Autoconfiguração . : 169.254.23.10\n   Máscara de Sub-rede . . . . . . . . : 255.255.0.0\n   Gateway Padrão. . . . . . . . . . . :",
+          e: "O PC não tem Gateway Padrão e o IP começa com 169.254." },
+        { tipo: "escolha", p: "O IP começa com <b>169.254</b> e não tem Gateway Padrão. O que isso quer dizer?",
+          o: ["O PC não recebeu IP do roteador (o DHCP não chegou até ele)", "A internet do provedor caiu na rua toda", "O PC está com vírus"], c: 0,
+          e: "169.254 é o IP que o Windows inventa quando ninguém responde. Como os celulares funcionam, o problema está entre o PC e o roteador." },
+        { tipo: "escolha", p: "O que conferir <b>primeiro</b>?",
+          o: ["O cabo de rede do PC e a luz da porta (no PC e no roteador)", "Formatar o computador", "Trocar o roteador por um novo"], c: 0,
+          e: "Do mais simples para o mais difícil: cabo, conector e luz da porta. A luz estava apagada e o conector, quebrado." },
+        { tipo: "prompt", p: "Você trocou o cabo por um novo (T568B, testado). Digite o comando de novo para ver se o PC recebeu IP.", cmd: /^ipconfig(\s+\/all)?$/i, dica: "Use ipconfig de novo",
+          saida: "Adaptador Ethernet Ethernet:\n\n   Endereço IPv4. . . . . . . . : 192.168.1.23\n   Máscara de Sub-rede . . . . : 255.255.255.0\n   Gateway Padrão. . . . . . . : 192.168.1.1",
+          e: "Agora o PC recebeu IP do roteador (192.168.1.23) e tem gateway (192.168.1.1)." },
+        { tipo: "prompt", p: "Teste se o PC conversa com o <b>roteador</b>: use o <b>ping</b> no Gateway Padrão.", cmd: /^ping\s+192\.168\.1\.1$/i, dica: "ping 192.168.1.1",
+          saida: "Disparando 192.168.1.1 com 32 bytes de dados:\nResposta de 192.168.1.1: bytes=32 tempo=1ms TTL=64\nResposta de 192.168.1.1: bytes=32 tempo<1ms TTL=64\nResposta de 192.168.1.1: bytes=32 tempo=1ms TTL=64\nResposta de 192.168.1.1: bytes=32 tempo<1ms TTL=64\n\n    Pacotes: Enviados = 4, Recebidos = 4, Perdidos = 0 (0% de perda)",
+          e: "4 respostas, 0% de perda: o caminho PC ↔ roteador está bom." },
+        { tipo: "prompt", p: "Agora teste a <b>internet</b>: faça ping no DNS do Google, <b>8.8.8.8</b>.", cmd: /^ping\s+8\.8\.8\.8$/i, dica: "ping 8.8.8.8",
+          saida: "Disparando 8.8.8.8 com 32 bytes de dados:\nResposta de 8.8.8.8: bytes=32 tempo=14ms TTL=117\nResposta de 8.8.8.8: bytes=32 tempo=13ms TTL=117\nResposta de 8.8.8.8: bytes=32 tempo=15ms TTL=117\nResposta de 8.8.8.8: bytes=32 tempo=13ms TTL=117\n\n    Pacotes: Enviados = 4, Recebidos = 4, Perdidos = 0 (0% de perda)",
+          e: "Respondeu: o PC chega até a internet." },
+        { tipo: "escolha", p: "Escolha o <b>laudo técnico</b> (relatório do que foi feito) certo para entregar ao Seu Raimundo:",
+          o: ["Defeito: cabo de rede do PC do caixa com conector quebrado; o PC estava sem IP (169.254). Solução: cabo novo T568B testado. Teste: PC recebeu 192.168.1.23 e o ping no roteador e no 8.8.8.8 respondeu sem perda.",
+              "A internet voltou sozinha depois de reiniciar tudo.",
+              "Defeito no provedor. Trocado o roteador por um novo."], c: 0,
+          e: "Um bom laudo diz o defeito, a solução e o teste que prova que funcionou." }
+      ] }
+  ];
+
+  /* ---------------------------------------------------------------- estado */
+  var E = { progresso: {}, quando: {} };
+  try { var d = JSON.parse(localStorage.getItem(CHAVE) || "null"); if (d && d.progresso) { E.progresso = d.progresso; E.quando = d.quando || {}; } } catch (e) {}
+  function salvar() { try { localStorage.setItem(CHAVE, JSON.stringify(E)); } catch (e) {} }
+  function estrelas(i) { return E.progresso[MISSOES[i].id] || 0; }
+  function aberta(i) { return i === 0 || estrelas(i - 1) > 0 || hashTodas(); }
+  function hashTodas() { return /todas/.test(location.hash); }
+  function proxima() { for (var i = 0; i < MISSOES.length; i++) if (!estrelas(i)) return i; return MISSOES.length - 1; }
+  function concluidas() { return MISSOES.filter(function (m, i) { return estrelas(i) > 0; }).length; }
+  var SEL = proxima();
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function embaralhar(a, semente) {
+    var r = a.slice(), s = semente || 7;
+    for (var i = r.length - 1; i > 0; i--) { s = (s * 9301 + 49297) % 233280; var j = Math.floor(s / 233280 * (i + 1)); var t = r[i]; r[i] = r[j]; r[j] = t; }
+    return r;
+  }
+  function hash(txt) { var h = 2166136261; for (var i = 0; i < txt.length; i++) { h ^= txt.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return h; }
+  function codigo() {
+    var nome = (API.nome ? API.nome() : "") || "";
+    var base = nome.trim().toLowerCase() + "|" + MISSOES.map(function (m, i) { return estrelas(i); }).join("");
+    var c = hash(base).toString(36).toUpperCase(); while (c.length < 6) c = "0" + c;
+    return "EAD-" + c.slice(0, 4);
+  }
+
+  /* ---------------------------------------------------------------- tela */
+  var M = null; // missão em andamento: { i, k (passo), erros, estado do passo }
+  function abrir(i) {
+    if (!aberta(i)) return false;
+    SEL = i; M = { i: i, k: 0, erros: 0, ini: Date.now() };
+    HOST.hidden = false; document.body.classList.add("na-ead"); HOST.scrollTop = 0;
+    desenharPasso(); return true;
+  }
+  function fechar() {
+    M = null; HOST.hidden = true; HOST.innerHTML = ""; document.body.classList.remove("na-ead");
+    if (API.aoVoltar) API.aoVoltar();
+  }
+  function topo(m, titulo) {
+    var foto = API.retrato ? API.retrato(m.cli.v) : "";
+    return '<div class="ead-topo" style="--ead-cor:' + m.cor + '"><div class="ead-marca">📚 Missões EaD · <b>Redes SOHO</b></div>' +
+      '<button type="button" class="ead-x" data-ead="fechar" aria-label="Voltar ao bairro">✕</button></div>' +
+      '<div class="ead-cab" style="--ead-cor:' + m.cor + '">' + (foto ? '<img class="ead-foto" alt="" src="' + foto + '">' : "") +
+      '<div><div class="ead-n">' + esc(m.n) + " · " + esc(m.cli.lugar) + '</div><h2>' + esc(titulo || m.t) + "</h2></div></div>";
+  }
+  function desenharPasso() {
+    var m = MISSOES[M.i], ps = m.passos[M.k];
+    var pontos = m.passos.map(function (p, k) { return '<i class="' + (k < M.k ? "ok" : k === M.k ? "agora" : "") + '"></i>'; }).join("");
+    var h = topo(m) + '<main class="ead-main">';
+    if (M.k === 0) h += '<div class="ead-fala"><b>' + esc(m.cli.nome) + ':</b> “' + esc(m.fala) + '”</div>';
+    h += '<div class="ead-card"><div class="ead-pontos" aria-label="Passo ' + (M.k + 1) + " de " + m.passos.length + '">' + pontos + '<span>Passo ' + (M.k + 1) + " de " + m.passos.length + "</span></div>" +
+      '<p class="ead-p">' + ps.p + "</p>" + corpo(ps) + '<div class="ead-msg" id="ead-msg" role="status" aria-live="polite" hidden></div>' +
+      '<div class="ead-acoes"><button type="button" class="botao" id="ead-seguir" hidden>Continuar ▸</button></div></div></main>';
+    HOST.innerHTML = '<div class="ead-raiz">' + h + "</div>";
+    ligarPasso(ps);
+    var f = HOST.querySelector(".ead-op, .ead-cmd input, .ead-dig input, .ead-fio, .ead-cl button"); if (f && !API.toque) f.focus();
+  }
+  function corpo(ps) {
+    if (ps.tipo === "escolha") {
+      var ordem = embaralhar(ps.o.map(function (x, i) { return i; }), M.i * 31 + M.k * 7 + 3);
+      return '<div class="ead-ops">' + ordem.map(function (i) { return '<button type="button" class="ead-op" data-i="' + i + '">' + ps.o[i] + "</button>"; }).join("") + "</div>";
+    }
+    if (ps.tipo === "classificar") {
+      M.cl = ps.itens.map(function () { return -1; });
+      return '<div class="ead-cls">' + ps.itens.map(function (it, j) {
+        return '<div class="ead-cl" data-j="' + j + '"><span>' + esc(it[0]) + "</span><div>" + ps.cats.map(function (c, ci) { return '<button type="button" data-c="' + ci + '">' + (ci ? "📶 " : "🔌 ") + esc(c) + "</button>"; }).join("") + "</div></div>";
+      }).join("") + '</div><div class="ead-acoes"><button type="button" class="botao" id="ead-conferir">Conferir</button></div>';
+    }
+    if (ps.tipo === "ordem") {
+      M.ord = [];
+      return '<div class="ead-rj"><div class="ead-pinos" id="ead-pinos">' + ps.itens.map(function (x, k) { return '<span class="ead-pino" data-k="' + k + '"><em>' + (k + 1) + "</em></span>"; }).join("") + '</div></div>' +
+        '<div class="ead-fios">' + embaralhar(ps.itens, M.i * 13 + 5).map(function (c) { var cc = CORES_FIO[c] || ["#ccc", "#ccc"];
+          return '<button type="button" class="ead-fio" data-c="' + esc(c) + '"><span class="ead-cor" style="background:repeating-linear-gradient(135deg,' + cc[0] + " 0 5px," + cc[1] + ' 5px 10px)"></span>' + esc(c) + "</button>"; }).join("") + "</div>";
+    }
+    if (ps.tipo === "prompt") {
+      return '<div class="ead-cmd"><div class="ead-cmd-topo">C:\\Windows\\system32\\cmd.exe</div><pre id="ead-tela">Microsoft Windows [versão 10.0]\n\nC:\\Users\\cliente&gt;</pre>' +
+        '<form id="ead-form" autocomplete="off"><span>C:\\Users\\cliente&gt;</span><input id="ead-in" spellcheck="false" autocapitalize="off" aria-label="Comando"><button type="submit" class="botao">Enter</button></form></div>' +
+        '<button type="button" class="ead-dica" id="ead-dica">💡 Dica</button>';
+    }
+    if (ps.tipo === "digitar") {
+      return '<form class="ead-dig" id="ead-form" autocomplete="off"><label><span>' + esc(ps.rot) + '</span><input id="ead-in" placeholder="' + esc(ps.ph || "") + '" spellcheck="false" autocapitalize="off"></label><button type="submit" class="botao">OK</button></form>';
+    }
+    return "";
+  }
+  function msg(txt, ok) { var b = HOST.querySelector("#ead-msg"); b.innerHTML = txt; b.className = "ead-msg " + (ok ? "ok" : "erro"); b.hidden = false; }
+  function erro(txt) { M.erros++; msg("❌ " + txt, false); if (API.som) API.som("erro"); }
+  function acertou(ps) {
+    msg("✅ " + ps.e, true); if (API.som) API.som("ok");
+    HOST.querySelectorAll(".ead-op, .ead-fio, .ead-cl button, #ead-conferir, #ead-form button, #ead-in").forEach(function (b) { b.disabled = true; });
+    var s = HOST.querySelector("#ead-seguir"); s.hidden = false; s.focus();
+    s.onclick = function () { M.k++; if (M.k >= MISSOES[M.i].passos.length) terminar(); else desenharPasso(); };
+  }
+  function ligarPasso(ps) {
+    HOST.querySelector("[data-ead=fechar]").onclick = fechar;
+    if (ps.tipo === "escolha") HOST.querySelectorAll(".ead-op").forEach(function (b) {
+      b.onclick = function () { if (+b.getAttribute("data-i") === ps.c) { b.classList.add("certa"); acertou(ps); } else { b.classList.add("errada"); b.disabled = true; erro("Ainda não. Leia de novo e tente outra opção."); } };
+    });
+    if (ps.tipo === "classificar") {
+      HOST.querySelectorAll(".ead-cl").forEach(function (lin) {
+        var j = +lin.getAttribute("data-j");
+        lin.querySelectorAll("button").forEach(function (b) { b.onclick = function () { M.cl[j] = +b.getAttribute("data-c"); lin.querySelectorAll("button").forEach(function (x) { x.classList.toggle("sel", x === b); }); lin.classList.remove("errada"); }; });
+      });
+      HOST.querySelector("#ead-conferir").onclick = function () {
+        if (M.cl.indexOf(-1) >= 0) { msg("Escolha Cabo ou Wi-Fi em todos os aparelhos.", false); return; }
+        var errados = 0;
+        HOST.querySelectorAll(".ead-cl").forEach(function (lin) { var j = +lin.getAttribute("data-j"), ok = M.cl[j] === ps.itens[j][1]; lin.classList.toggle("errada", !ok); lin.classList.toggle("certa", ok); if (!ok) errados++; });
+        if (errados) erro(errados + (errados > 1 ? " aparelhos estão" : " aparelho está") + " no lugar errado (marcados em vermelho). Troque e confira de novo.");
+        else acertou(ps);
+      };
+    }
+    if (ps.tipo === "ordem") HOST.querySelectorAll(".ead-fio").forEach(function (b) {
+      b.onclick = function () {
+        var c = b.getAttribute("data-c"), k = M.ord.length;
+        if (c === ps.itens[k]) {
+          M.ord.push(c); b.disabled = true; b.classList.add("usado");
+          var pino = HOST.querySelector('.ead-pino[data-k="' + k + '"]'), cc = CORES_FIO[c];
+          pino.style.background = "repeating-linear-gradient(0deg," + cc[0] + " 0 6px," + cc[1] + " 6px 12px)"; pino.classList.add("cheio");
+          if (M.ord.length === ps.itens.length) acertou(ps);
+        } else { b.classList.add("treme"); setTimeout(function () { b.classList.remove("treme"); }, 400); erro("O pino " + (k + 1) + " não é " + c + ". Lembre: T568B começa pelo par laranja."); }
+      };
+    });
+    if (ps.tipo === "prompt" || ps.tipo === "digitar") {
+      var dica = HOST.querySelector("#ead-dica");
+      if (dica) dica.onclick = function () { M.erros++; msg("💡 " + esc(ps.dica) + " (a dica conta como 1 erro)", false); };
+      HOST.querySelector("#ead-form").onsubmit = function (ev) {
+        ev.preventDefault(); var inp = HOST.querySelector("#ead-in"), v = inp.value;
+        if (!v.trim()) return;
+        if (ps.tipo === "prompt") {
+          var tela = HOST.querySelector("#ead-tela"), cmd = v.trim().replace(/\s+/g, " ");
+          tela.innerHTML += esc(cmd) + "\n";
+          if (ps.cmd.test(cmd)) { tela.innerHTML += "\n" + esc(ps.saida) + "\n\nC:\\Users\\cliente&gt;"; tela.scrollTop = 1e6; acertou(ps); }
+          else { tela.innerHTML += "'" + esc(cmd.split(" ")[0]) + "' não é o comando certo para isso.\n\nC:\\Users\\cliente&gt;"; tela.scrollTop = 1e6; inp.value = ""; erro("Esse não é o comando. Tente de novo (ou peça a dica)."); }
+        } else {
+          var r = ps.ok(v);
+          if (r === true) acertou(ps); else erro(esc(r));
+        }
+      };
+    }
+  }
+  function estrelasDeErros(n) { return n <= 1 ? 3 : n <= 3 ? 2 : 1; }
+  function terminar() {
+    var i = M.i, m = MISSOES[i], est = estrelasDeErros(M.erros), antes = estrelas(i);
+    E.progresso[m.id] = Math.max(antes, est); if (!E.quando[m.id]) E.quando[m.id] = new Date().toISOString(); salvar();
+    var prox = proxima(), tudo = concluidas() === MISSOES.length;
+    SEL = tudo ? i : prox;
+    var h = topo(m, m.n + " concluída") + '<main class="ead-main"><div class="ead-card ead-fim">' +
+      '<div class="ead-est">' + "★".repeat(est) + '<span>' + "★".repeat(3 - est) + "</span></div>" +
+      '<p class="ead-p">' + (M.erros === 0 ? "Sem nenhum erro!" : M.erros + (M.erros > 1 ? " erros" : " erro") + " nesta missão.") + " 3 estrelas = até 1 erro.</p>" +
+      '<div class="ead-fala"><b>' + esc(m.cli.nome) + ':</b> “' + (est === 3 ? "Perfeito! Vou indicar você para todo mundo." : "Obrigado! Ficou funcionando.") + '”</div>' +
+      '<div class="card xp-res" id="ead-xp" hidden></div><div class="ead-acoes">' +
+      (tudo ? '<button type="button" class="botao" id="ead-comp">📄 Ver o comprovante para o Classroom</button>' : '<button type="button" class="botao" id="ead-prox">Próxima: ' + esc(MISSOES[prox].n) + " ▸</button>") +
+      '<button type="button" class="botao cinza" id="ead-voltar">Voltar ao bairro</button></div></div></main>';
+    HOST.innerHTML = '<div class="ead-raiz">' + h + "</div>"; HOST.scrollTop = 0;
+    HOST.querySelector("[data-ead=fechar]").onclick = fechar;
+    HOST.querySelector("#ead-voltar").onclick = fechar;
+    var bp = HOST.querySelector("#ead-prox"); if (bp) bp.onclick = function () { fechar(); if (API.toast) API.toast("🧭 GPS: siga a seta amarela até a casa de " + esc(MISSOES[prox].cli.nome) + " · " + esc(MISSOES[prox].n) + "."); };
+    var bc = HOST.querySelector("#ead-comp"); if (bc) bc.onclick = comprovante;
+    premiarXp(m.id, est);
+    if (API.aoMudar) API.aoMudar();
+  }
+  function comprovante() {
+    var nome = (API.nome ? API.nome() : "") || "", tudo = concluidas() === MISSOES.length;
+    var agora = new Date(), dt = agora.toLocaleDateString("pt-BR") + " " + agora.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    var linhas = MISSOES.map(function (m, i) { var e = estrelas(i);
+      return "<tr><td>" + esc(m.n) + "</td><td>" + esc(m.t) + '</td><td class="ead-tdest">' + (e ? "★".repeat(e) + "☆".repeat(3 - e) : "não feita") + "</td></tr>"; }).join("");
+    var tot = MISSOES.reduce(function (s, m, i) { return s + estrelas(i); }, 0);
+    var h = '<div class="ead-topo" style="--ead-cor:#7b4bd6"><div class="ead-marca">📚 Missões EaD · <b>Redes SOHO</b></div><button type="button" class="ead-x" data-ead="fechar" aria-label="Fechar">✕</button></div>' +
+      '<main class="ead-main"><div class="ead-card ead-comp"><div class="ead-comp-topo"><span>SENAI · Plantão do Técnico</span><b>Comprovante da atividade EaD</b><small>UC Instalação e Manutenção de Redes SOHO</small></div>' +
+      '<p class="ead-comp-nome">' + (nome ? esc(nome) : "<i>(digite seu nome no início do jogo)</i>") + "</p>" +
+      '<table class="ead-tab"><tbody>' + linhas + "</tbody></table>" +
+      '<div class="ead-comp-rod"><div><small>Estrelas</small><b>' + tot + " de " + MISSOES.length * 3 + '</b></div><div><small>Data</small><b>' + esc(dt) + '</b></div><div><small>Código</small><b class="ead-cod">' + (tudo ? codigo() : "—") + "</b></div></div>" +
+      (tudo ? '<p class="ead-comp-ok">✅ Atividade completa. <b>Tire um print desta tela</b> e poste no Google Classroom, na atividade EaD.</p>'
+            : '<p class="ead-comp-falta">Faltam ' + (MISSOES.length - concluidas()) + " missão(ões). O código aparece quando as 5 estiverem feitas.</p>") +
+      '<div class="ead-acoes"><button type="button" class="botao cinza" id="ead-voltar">Voltar ao bairro</button></div></div></main>';
+    HOST.hidden = false; document.body.classList.add("na-ead");
+    HOST.innerHTML = '<div class="ead-raiz">' + h + "</div>"; HOST.scrollTop = 0;
+    HOST.querySelector("[data-ead=fechar]").onclick = fechar; HOST.querySelector("#ead-voltar").onclick = fechar;
+  }
+
+  /* ---------------------------------------------------------------- XP no SENAI Game Hub */
+  var XP = { on: false, logado: false, estrelas: {}, total: 0, porEstrela: [40, 30, 30], frame: null, pedidos: 0, ult: "" };
+  function xpDe(e) { var s = 0; for (var i = 0; i < e; i++) s += XP.porEstrela[i] || 0; return s; }
+  function iniciarXp() {
+    if (location.protocol === "file:") return;
+    var f = document.createElement("iframe"); f.src = "/jogos/ponte-xp?jogo=" + JOGO_ID; f.title = "Ponte de XP das missões EaD";
+    f.setAttribute("aria-hidden", "true"); f.tabIndex = -1; f.style.cssText = "position:absolute;width:1px;height:1px;border:0;opacity:0;pointer-events:none;left:-9999px;top:0";
+    document.body.appendChild(f); XP.frame = f;
+    addEventListener("message", function (ev) {
+      if (ev.origin !== location.origin || ev.source !== f.contentWindow) return;
+      var m = ev.data; if (!m || m.tipo !== "gh-xp") return;
+      if (m.estrelas && typeof m.estrelas === "object") XP.estrelas = m.estrelas;
+      if (typeof m.totalXp === "number") { XP.total = m.totalXp; if (API.aoXp) API.aoXp(XP.total); }
+      if (Array.isArray(m.xpPorEstrela)) XP.porEstrela = m.xpPorEstrela;
+      if (m.evento === "status") {
+        XP.on = true; XP.logado = !!m.logado;
+        // progresso guardado na conta volta para este navegador
+        var mudou = false;
+        MISSOES.forEach(function (mi) { var e = +(XP.estrelas[mi.id] || 0); if (e > (E.progresso[mi.id] || 0)) { E.progresso[mi.id] = e; mudou = true; } });
+        if (mudou) { salvar(); SEL = proxima(); if (API.aoMudar) API.aoMudar(); }
+      }
+      if (m.evento === "premio" && m.pedido === XP.ult) {
+        var cx = HOST.querySelector("#ead-xp"); if (!cx) return;
+        if (m.ok && m.xpGanho > 0) { cx.className = "card xp-res ganhou"; cx.innerHTML = '<div class="xp-num">+' + m.xpGanho + " XP</div><p>Guardado na sua conta do SENAI Game Hub. Agora você tem <b>" + XP.total + "</b> XP.</p>"; }
+        else if (m.ok) { cx.className = "card xp-res"; cx.innerHTML = "<p>Esta missão já tinha estas estrelas na sua conta, então não somam XP de novo (<b>" + XP.total + " XP</b> no total).</p>"; }
+        else { cx.className = "card xp-res"; cx.innerHTML = "<p>Não deu para salvar o XP agora (" + esc(m.error || "sem conexão") + "). Faça a missão de novo mais tarde.</p>"; }
+        cx.hidden = false;
+      }
+    });
+  }
+  function premiarXp(fase, est) {
+    var cx = HOST.querySelector("#ead-xp"); if (!XP.on || !cx) return;
+    if (!XP.logado) { cx.className = "card xp-res"; cx.innerHTML = "<p>⚡ Estas estrelas valem até <b>" + xpDe(est) + ' XP</b>. Entre no SENAI Game Hub para guardar o XP.</p>'; cx.hidden = false; return; }
+    XP.ult = "e" + (++XP.pedidos); cx.className = "card xp-res"; cx.innerHTML = "<p>⚡ Guardando o XP na sua conta...</p>"; cx.hidden = false;
+    if (XP.frame && XP.frame.contentWindow) XP.frame.contentWindow.postMessage({ tipo: "gh-xp", acao: "premiar", pedido: XP.ult, fase: fase, estrelas: est }, location.origin);
+  }
+  API.xpTotal = function (t) { XP.total = t; };
+  iniciarXp();
+
+  addEventListener("keydown", function (ev) { if (ev.key === "Escape" && !HOST.hidden) fechar(); });
+
+  Object.assign(API, { MISSOES: MISSOES, aberta: aberta, estrelas: estrelas, proxima: proxima, concluidas: concluidas, abrir: abrir, fechar: fechar,
+    comprovante: comprovante, aberto: function () { return !HOST.hidden; }, _t: function () { return { M: M, E: E }; } });
+  Object.defineProperty(API, "sel", { get: function () { return SEL; }, set: function (i) { SEL = i; }, configurable: true });
+})();
+
+</script>
   <script>
 /*
  * Ordens de serviço (OS) do jogo "Plantão do Técnico · Santa Mônica".
@@ -4768,6 +5219,8 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
   var OF = window.Oficina && window.Oficina.FASES ? window.Oficina : null;
   var FASES = OF ? OF.FASES : [];
   var CASAS_A = CASAS;
+  var EADM = window.EAD && window.EAD.MISSOES ? window.EAD : null;
+  var CASAS_EAD = EADM ? EADM.MISSOES.map(function (m) { return { x: m.casa[0], y: m.casa[1] }; }) : [];
   var CASAS_B = FASES.map(function (f) { return { x: f.casa[0], y: f.casa[1] }; });
   function aberta(i) { return OF ? OF.aberta(i) : false; }
   function estrelasDe(i) { return OF ? OF.estrelas(i) : 0; }
@@ -4805,7 +5258,7 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
   /* Tudo em pixel art: o mundo é desenhado num canvas pequeno (1 quadradinho = 16 px)
      e ampliado sem suavizar. Chão visto de cima; casas, prédios, árvores, carros e
      pessoas na mesma vista 3/4 (de cima e um pouco de frente), como nos RPGs 2D. */
-  var T = 16, W = 64, H = 37;
+  var T = 16, W = 64, H = 48;
   var G = [];   // g grama, r rua, s calçada, m canteiro, w água, p trilha, c pedra/praça
   var solido = [];
   var arvores = [], predios = [], enfeites = [], placas = [], PONTE = {}, OBST = [];
@@ -4816,21 +5269,23 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
   function ehFaixa(x, y) { return G[y] && G[y][x] === "r" && (LINHAS_FAIXA[y] || COLS_FAIXA[x]); }
 
   function montarMapa() {
-    LINHAS_FAIXA = { 5: 1, 8: 1, 16: 1, 19: 1, 27: 1, 30: 1 }; COLS_FAIXA = { 8: 1, 11: 1, 21: 1, 27: 1 };
+    LINHAS_FAIXA = { 5: 1, 8: 1, 16: 1, 19: 1, 27: 1, 30: 1, 44: 1, 47: 1 }; COLS_FAIXA = { 8: 1, 11: 1, 21: 1, 27: 1 };
     for (var y = 0; y < H; y++) { G.push([]); solido.push([]); for (var x = 0; x < W; x++) { G[y].push("g"); solido[y].push(false); } }
     rect(0, 5, W - 1, 5, "s"); rect(0, 6, W - 1, 7, "r"); rect(0, 8, W - 1, 8, "s");         // Av. Anselmo Alves dos Santos
     rect(0, 16, 39, 16, "s"); rect(0, 17, 39, 18, "r"); rect(0, 19, 39, 19, "s");    // Av. Segismundo Pereira
     rect(0, 27, 39, 27, "s"); rect(0, 28, 39, 29, "r"); rect(0, 30, 39, 30, "s");    // Av. Belarmino Cotta Pacheco
+    rect(0, 44, W - 1, 44, "s"); rect(0, 45, W - 1, 46, "r"); rect(0, 47, W - 1, 47, "s");   // Av. Ortízio Borges (missões EaD)
     rect(8, 8, 8, 30, "s"); rect(9, 8, 10, 30, "r"); rect(11, 8, 11, 30, "s");
     rect(36, 8, 36, 30, "s"); rect(37, 8, 38, 30, "r"); rect(39, 8, 39, 30, "s");
-    rect(21, 0, 21, 36, "s"); rect(22, 0, 23, 36, "r"); rect(24, 0, 24, 36, "m"); rect(25, 0, 26, 36, "r"); rect(27, 0, 27, 36, "s");
-    [6, 7, 17, 18, 28, 29].forEach(function (yy) { setT(24, yy, "r"); });
+    rect(21, 0, 21, H - 1, "s"); rect(22, 0, 23, H - 1, "r"); rect(24, 0, 24, H - 1, "m"); rect(25, 0, 26, H - 1, "r"); rect(27, 0, 27, H - 1, "s");
+    [6, 7, 17, 18, 28, 29, 45, 46].forEach(function (yy) { setT(24, yy, "r"); });
     for (y = 0; y < H; y++) for (x = 0; x < W; x++) {
-      if ((y >= 6 && y <= 7) || (y >= 17 && y <= 18) || (y >= 28 && y <= 29)) { if (G[y][x] === "s" || (G[y][x] === "m" && x === 24)) G[y][x] = "r"; }
+      if ((y >= 6 && y <= 7) || (y >= 17 && y <= 18) || (y >= 28 && y <= 29) || (y >= 45 && y <= 46)) { if (G[y][x] === "s" || (G[y][x] === "m" && x === 24)) G[y][x] = "r"; }
     }
-    rect(0, 31, 20, 36, "g"); rect(28, 31, 39, 36, "g");   // a João Naves segue até a borda do mapa
-    // Rua Elis Regina (onde fica o SENAI) desce até a borda de baixo
-    rect(8, 31, 8, 36, "s"); rect(9, 31, 10, 36, "r"); rect(11, 31, 11, 36, "s");
+    rect(0, 31, 20, 36, "g"); rect(28, 31, 39, 36, "g");   // a João Naves segue até a Av. Ortízio Borges
+    // Rua Elis Regina (onde fica o SENAI) desce até a Av. Ortízio Borges
+    rect(8, 31, 8, H - 1, "s"); rect(9, 31, 10, H - 1, "r"); rect(11, 31, 11, H - 1, "s");
+    [45, 46].forEach(function (yy) { for (var xx = 8; xx <= 11; xx++) setT(xx, yy, "r"); });
     // Parque do Sabiá: de frente para a Av. Anselmo Alves dos Santos, com trilhas e uma lagoa grande no meio
     for (y = 9; y <= 35; y++) { setT(42, y, "p"); setT(61, y, "p"); }
     for (x = 42; x <= 61; x++) { setT(x, 10, "p"); setT(x, 35, "p"); }
@@ -4852,6 +5307,7 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
     predios.push({ tipo: "mercado", x: 37, y: 0, w: 8, h: 4, nome: "Mercadinho do Bairro" });
     predios.forEach(function (p) { sol(p.x, p.y, p.x + p.w - 1, p.y + p.h - 1); });
     CASAS.forEach(function (c) { sol(c.x, c.y, c.x + 2, c.y + 2); setT(c.x + 1, c.y + 3, "c"); });
+    CASAS_EAD.forEach(function (c) { sol(c.x, c.y, c.x + 2, c.y + 2); setT(c.x + 1, c.y + 3, "c"); });
     function arv(x, y, tipo) { if (solido[y] && !solido[y][x] && G[y][x] !== "r" && G[y][x] !== "c" && !(x >= 40 && G[y][x] === "s")) { arvores.push({ x: x, y: y, tipo: tipo || "ipe" }); solido[y][x] = true; } }
     [0, 4, 7, 12, 16, 20, 28, 31, 35].forEach(function (x) { arv(x, 10); arv(x, 21); });
     [2, 6, 13, 18, 29, 34].forEach(function (x) { arv(x, 9, "copa"); arv(x, 20, "copa"); });
@@ -4868,11 +5324,13 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
     }
     for (x = 46; x < W; x += 3) arv(x, 2, x % 2 ? "copa" : "ipe");
     arv(3, 36, "copa"); arv(39, 36, "copa"); arv(29, 35, "ipe");
+    // Av. Ortízio Borges: árvores acima das casas das missões EaD
+    [1, 4, 6, 14, 18, 30, 34, 38, 41, 48, 51, 54, 57, 60, 63].forEach(function (x2, k) { arv(x2, 38, k % 3 ? "ipe" : "copa"); });
     // postes de luz, bancos, ponto de ônibus
     [3, 16, 31].forEach(function (x) { enfeites.push({ tipo: "poste", x: x, y: 16 }); enfeites.push({ tipo: "poste", x: x, y: 27 }); });
     [12, 23, 34].forEach(function (y) { enfeites.push({ tipo: "poste", x: 21, y: y }); });
     // semáforos em cada cruzamento: um para a avenida (h) e outro para a rua que cruza (v)
-    [[6, 7], [17, 18], [28, 29]].forEach(function (hz) {
+    [[6, 7], [17, 18], [28, 29], [45, 46]].forEach(function (hz) {
       [[9, 10], [22, 26], [37, 38]].forEach(function (vt) {
         enfeites.push({ tipo: "semaforo", eixo: "h", x: vt[0] - 1, y: hz[0] - 1 });
         enfeites.push({ tipo: "semaforo", eixo: "v", x: vt[1] + 1, y: hz[1] + 1 });
@@ -4888,7 +5346,8 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
     placas.push({ x: 15.5, y: 17.9, txt: "Av. Segismundo Pereira" });
     placas.push({ x: 15.5, y: 28.9, txt: "Av. Belarmino Cotta Pacheco" });
     placas.push({ x: 51.5, y: 9.4, txt: "Parque do Sabiá", parque: true });
-    placas.push({ x: 10, y: 31.6, txt: "R. Elis Regina", vert: true });   // acima do portal da Zona da Bancada
+    placas.push({ x: 10, y: 31.6, txt: "R. Elis Regina", vert: true });
+    if (CASAS_EAD.length) placas.push({ x: 33, y: 45.9, txt: "Av. Ortízio Borges · Missões EaD" });   // acima do portal da Zona da Bancada
   }
   /* ---------------------------------------------------------------- Mapa B: bairro da oficina (44 x 26) */
   /* Região industrial de serviço: duas ruas horizontais e duas verticais, calçadas,
@@ -5328,10 +5787,11 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
     else { c = tela(16, 26); g = c.getContext("2d"); px(g, 0, 0, 16, 4, "#1f8a4c"); px(g, 1, 4, 1, 22, "#5b6470"); px(g, 14, 4, 1, 22, "#5b6470"); px(g, 2, 6, 12, 10, "rgba(170,215,240,.7)"); px(g, 2, 18, 12, 3, "#a0632f"); px(g, 4, 1, 8, 2, "#ffffff"); }
     return contornar(c);
   }
-  var SPR_CASAS = [], SPR_PLACAS = {}, SPR_ARV = {}, SPR_PRED = [], SPR_ENF = {};
+  var SPR_CASAS = [], SPR_PLACAS = {}, SPR_ARV = {}, SPR_PRED = [], SPR_ENF = {}, SPR_EAD = [];
   function montarSprites() {
     SPR_CASAS = []; SPR_PRED = []; SPR_ARV = {}; SPR_ENF = {};
     CASAS.forEach(function (k, ci) { SPR_CASAS.push(spriteCasa(ci)); });
+    if (!SPR_EAD.length) CASAS_EAD.forEach(function (k, i) { SPR_EAD.push(spriteCasa(i + 2)); });
     Object.keys(COR).forEach(function (op) { SPR_PLACAS[op] = spritePlaca(op); });
     ["ipe", "copa", "palmeira", "natal"].forEach(function (t2) { SPR_ARV[t2] = spriteArvore(t2); });
     predios.forEach(function (p) { SPR_PRED.push(spritePredio(p)); });
@@ -5443,7 +5903,7 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
     if (eixo === "h") return c < 6 ? "verde" : c < 8 ? "amarelo" : "vermelho";
     return c < 8 ? "vermelho" : c < 14 ? "verde" : "amarelo";
   }
-  var ZONAS_H = [[8, 12], [21, 28], [36, 40]], ZONAS_V = [[5, 9], [16, 20], [27, 31]];
+  var ZONAS_H = [[8, 12], [21, 28], [36, 40]], ZONAS_V = [[5, 9], [16, 20], [27, 31], [44, 48]];
   function paraNoSinal(k, sent, frente) {
     var cor = luz(k.vert ? "v" : "h"); if (cor === "verde") return false;
     var zonas = k.vert ? ZONAS_V : ZONAS_H;
@@ -5614,7 +6074,12 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
       var oi = osDaCasa(ci), os = OS[oi];
       mctx.fillStyle = feita(oi) ? "#1f8a4c" : liberada(oi) ? COR[os.op] : "#8a94a3";
       mctx.fillRect(k.x * T * sx, k.y * T * sy, 3 * T * sx, 3 * T * sy);
-      if (E.alvo === oi && E.destino !== "oficina") { mctx.strokeStyle = "#ffd23f"; mctx.lineWidth = 2; mctx.strokeRect(k.x * T * sx - 2, k.y * T * sy - 2, 3 * T * sx + 4, 3 * T * sy + 4); }
+      if (E.alvo === oi && E.destino !== "oficina" && E.destino !== "ead") { mctx.strokeStyle = "#ffd23f"; mctx.lineWidth = 2; mctx.strokeRect(k.x * T * sx - 2, k.y * T * sy - 2, 3 * T * sx + 4, 3 * T * sy + 4); }
+    });
+    if (MAPA === 0) CASAS_EAD.forEach(function (k, i2) {
+      mctx.fillStyle = EADM.estrelas(i2) ? "#1f8a4c" : EADM.aberta(i2) ? EADM.MISSOES[i2].cor : "#8a94a3";
+      mctx.fillRect(k.x * T * sx, k.y * T * sy, 3 * T * sx, 3 * T * sy);
+      if (E.destino === "ead" && EADM.sel === i2) { mctx.strokeStyle = "#ffd23f"; mctx.lineWidth = 2; mctx.strokeRect(k.x * T * sx - 2, k.y * T * sy - 2, 3 * T * sx + 4, 3 * T * sy + 4); }
     });
     mctx.fillStyle = "#ff8a1f"; carros.forEach(function (k) { var b = caixaCarro(k); mctx.fillRect((b.x + b.w / 2) * sx - 1, (b.y + b.h / 2) * sy - 1, 2, 2); });
     mctx.fillStyle = "#fff"; mctx.strokeStyle = "#1f63c6"; mctx.lineWidth = 2;
@@ -5624,6 +6089,14 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
   /* ================================================================ laço */
   var teclas = {}, toque = {}, ultimo = 0, emJogo = false, perto = -1, pausado = false;
   function portaDe(ci) { var k = CASAS[ci]; return { x: (k.x + 1.5) * T, y: (k.y + 3.3) * T }; }
+  var pertoEad = -1;
+  function portaEad(i) { var k = CASAS_EAD[i]; return { x: (k.x + 1.5) * T, y: (k.y + 3.3) * T }; }
+  function abrirEad(i) {
+    if (!EADM) return;
+    if (!EADM.aberta(i)) { toast("🔒 Faça antes a " + esc(EADM.MISSOES[i - 1].n) + " · " + esc(EADM.MISSOES[i - 1].t) + "."); return; }
+    EADM.sel = i; E.destino = "ead"; teclas = {}; toque = {};
+    $("toast").hidden = true; telas("oficina"); EADM.abrir(i);
+  }
   function atualizar(dt) {
     var vx = 0, vy = 0;
     if (J.tonto > 0) J.tonto -= dt;
@@ -5646,19 +6119,31 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
       J.passo += dt * 9;
     } else J.passo = 0;
     moverCarros(dt);
-    var achou = -1;
+    var achou = -1, achouE = -1;
     if (MAPA === 0) CASAS.forEach(function (k, ci) { var p = portaDe(ci); if (Math.hypot(J.x - p.x, J.y - p.y) < 13) achou = ci; });
     else achou = estacaoNoPonto(J.x, J.y);
+    if (MAPA === 0 && achou < 0) CASAS_EAD.forEach(function (k, i) { var p = portaEad(i); if (Math.hypot(J.x - p.x, J.y - p.y) < 13) achouE = i; });
     var pp = PORTAL[MAPA], np = !!pp && Math.hypot(J.x - pp.x, J.y - pp.y) < 26;
-    if (achou !== perto || np !== noPortal) { perto = achou; noPortal = np; mostrarAvisoPorta(); }
+    if (achou !== perto || np !== noPortal || achouE !== pertoEad) { perto = achou; noPortal = np; pertoEad = achouE; mostrarAvisoPorta(); }
   }
   function mostrarAvisoPorta() {
     var a = $("aviso-porta");
-    if ((perto < 0 && !noPortal) || !emJogo) { a.hidden = true; $("btn-acao").classList.remove("pronto"); return; }
+    if ((perto < 0 && !noPortal && pertoEad < 0) || !emJogo) { a.hidden = true; $("btn-acao").classList.remove("pronto"); return; }
     if (noPortal) {
       var pt = PORTAL[MAPA];
       $("aviso-texto").innerHTML = "🚪 <b>" + esc(pt.rotulo) + "</b> · " + esc(pt.acao) + ".";
       $("btn-entrar").hidden = false; $("btn-acao").classList.add("pronto"); a.hidden = false; return;
+    }
+    if (pertoEad >= 0 && MAPA === 0) {
+      var mi = EADM.MISSOES[pertoEad], ee = EADM.estrelas(pertoEad);
+      if (EADM.aberta(pertoEad)) {
+        $("aviso-texto").innerHTML = '<span class="op-ponto" style="background:' + mi.cor + '"></span><b>' + esc(mi.cli.nome) + "</b> · 📚 " + esc(mi.n) + " · " + esc(mi.t) + (ee ? ' <span class="ok">' + "★".repeat(ee) + "</span>" : "");
+        $("btn-entrar").hidden = false; $("btn-acao").classList.add("pronto");
+      } else {
+        $("aviso-texto").innerHTML = "🔒 <b>" + esc(mi.cli.nome) + "</b> · " + esc(mi.n) + " · faça antes a " + esc(EADM.MISSOES[pertoEad - 1].n) + ".";
+        $("btn-entrar").hidden = true; $("btn-acao").classList.remove("pronto");
+      }
+      a.hidden = false; return;
     }
     if (MAPA === 1) {
       var fi = perto, f = FASES[fi], est1 = estrelasDe(fi);
@@ -5768,12 +6253,13 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
       return e ? { x: e.x, y: e.y, rot: f.cli.nome.split(" ")[0] + " · " + f.n } : null;
     }
     if (querOficina) return { x: PORTAL[0].x, y: PORTAL[0].y, rot: "Portal · Oficina" };
+    if (E.destino === "ead" && EADM) { var pe = portaEad(EADM.sel), me = EADM.MISSOES[EADM.sel]; return { x: pe.x, y: pe.y, rot: me.cli.nome.split(" ")[0] + " · EaD " + (EADM.sel + 1) }; }
     if (E.alvo == null) return null;
     var pa = portaDe(OS[E.alvo].casa);
     return { x: pa.x, y: pa.y, rot: OS[E.alvo].cliente.split(" ")[0] };
   }
   function construirMapa(mi) {
-    W = mi ? 44 : 64; H = mi ? 26 : 37;
+    W = mi ? 44 : 64; H = mi ? 26 : 48;
     G = []; solido = []; arvores = []; predios = []; enfeites = []; placas = []; PONTE = {}; OBST = []; carros = [];
     CASAS = mi ? CASAS_B : CASAS_A;
     if (mi) montarMapaB(); else montarMapa();
@@ -5864,6 +6350,12 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
         var oi = MAPA === 0 ? osDaCasa(ci) : -1; if (oi >= 0) g.drawImage(SPR_PLACAS[OS[oi].op], k.x * T + 34, k.y * T + 33);
       } });
     });
+    if (MAPA === 0) CASAS_EAD.forEach(function (k, i2) {
+      objs.push({ y: (k.y + 3) * T - 1, f: function () { g.drawImage(SPR_EAD[i2], k.x * T - 2, k.y * T - 4); } });
+      if (EADM.estrelas(i2) || !EADM.aberta(i2)) return;
+      var pe = portaEad(i2);
+      objs.push({ y: pe.y - 3, f: function () { pessoa(g, Math.round(pe.x + 13), Math.round(pe.y - 3), "baixo", Math.floor(t / 480 + i2) % 4 === 1 ? 1 : 0, EADM.MISSOES[i2].cli.v, false); } });
+    });
     predios.forEach(function (p, i2) { objs.push({ y: (p.y + p.h) * T - 1, f: function () { g.drawImage(SPR_PRED[i2], p.x * T - 1, p.y * T - 1); } }); });
     var x0 = Math.floor(CAM.x / T) - 2, x1 = Math.ceil((CAM.x + vw) / T) + 2, y0 = Math.floor(CAM.y / T) - 2, y1 = Math.ceil((CAM.y + vh) / T) + 3;
     arvores.forEach(function (a) { if (a.x >= x0 && a.x <= x1 && a.y >= y0 && a.y <= y1) objs.push({ y: (a.y + 1) * T - 2, f: function () { g.drawImage(SPR_ARV[a.tipo], a.x * T - 4, (a.y + 1) * T - 34); } }); });
@@ -5907,6 +6399,10 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
       var est = estrelasDe(i2), lib = aberta(i2), f = FASES[i2], sobe = REDUZ ? 0 : Math.floor(t / 350 + i2) % 2;
       bolha(g, Math.round(e.x), Math.max(22, Math.round(e.hy * T - 4)) - sobe, est ? "#1f8a4c" : lib ? f.g1 : "#8a94a3", est ? "ok" : lib ? "!" : "cadeado");
     });
+    if (MAPA === 0) CASAS_EAD.forEach(function (k, i2) {
+      var est = EADM.estrelas(i2), lib = EADM.aberta(i2), sobe = Math.floor(t / 350 + i2) % 2;
+      bolha(g, (k.x + 1.5) * T, k.y * T - 4 - sobe, est ? "#1f8a4c" : lib ? EADM.MISSOES[i2].cor : "#8a94a3", est ? "ok" : lib ? "!" : "cadeado");
+    });
     if (MAPA === 0) CASAS.forEach(function (k, ci) {
       var oi = osDaCasa(ci); if (oi < 0) return;
       var os = OS[oi], est = E.progresso[os.id] || 0, lib = liberada(oi), sobe = Math.floor(t / 350 + ci) % 2;
@@ -5941,6 +6437,10 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
       var s = naTela(k.x * T + 40, k.y * T + 36.5), s2 = naTela(k.x * T + 10, k.y * T + 29);
       rotulo(s.x, s.y, NOME_OP[OS[oi].op], 10 * P / 4);
       rotulo(s2.x, s2.y, "nº " + OS[oi].numero, 9 * P / 4, "#3b2a1a", "#f4ecd8");
+    });
+    if (MAPA === 0) CASAS_EAD.forEach(function (k, i2) {
+      var s = naTela(k.x * T + 24, k.y * T + 52);
+      rotulo(s.x, s.y, "📚 EaD " + (i2 + 1), 10 * P / 4, "#ffffff", EADM.MISSOES[i2].cor);
     });
     // seta do GPS na borda: OS, casa da oficina ou o portal do outro bairro
     var ag = alvoGps();
@@ -6022,7 +6522,8 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
     var n = OS.filter(function (o, i) { return feita(i); }).length;
     $("hud-nome").textContent = E.nome || "Técnico(a)";
     var nf = 0, ef = 0; FASES.forEach(function (f, i) { var e = estrelasDe(i); if (e > 0) nf++; ef += e; });
-    var eo = estrelasTotais(), tot = eo + ef, max = OS.length * 3 + FASES.length * 3;
+    var eo = estrelasTotais(), ead = 0; if (EADM) EADM.MISSOES.forEach(function (m, i) { ead += EADM.estrelas(i); });
+    var tot = eo + ef + ead, max = OS.length * 3 + FASES.length * 3 + (EADM ? EADM.MISSOES.length * 3 : 0);
     // foto: rosto do personagem escolhido
     if (fotoDe !== E.personagem) { var url = retrato(VISUAL_TEC, true); if (url) { $("hud-foto").src = url; fotoDe = E.personagem; } }
     // cargo e nível
@@ -6034,7 +6535,13 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
     // barras: Redes (estrelas das OS) e Micro (estrelas das fases); a do bairro atual fica acesa
     $("hb-redes-fill").style.width = Math.round(eo / (OS.length * 3) * 100) + "%";
     $("hb-redes-txt").textContent = n + "/" + OS.length;
-    $("hb-redes").classList.toggle("aqui", MAPA === 0);
+    $("hb-redes").classList.toggle("aqui", MAPA === 0 && E.destino !== "ead");
+    var be = $("hb-ead"); be.hidden = !EADM;
+    if (EADM) {
+      var ne = EADM.concluidas(), se = 0; EADM.MISSOES.forEach(function (m, i) { se += EADM.estrelas(i); });
+      $("hb-ead-fill").style.width = Math.round(se / (EADM.MISSOES.length * 3) * 100) + "%";
+      $("hb-ead-txt").textContent = ne + "/" + EADM.MISSOES.length; be.classList.toggle("aqui", MAPA === 0 && E.destino === "ead");
+    }
     var bm = $("hb-micro"); bm.hidden = !OF;
     if (OF) {
       $("hb-micro-fill").style.width = Math.round(ef / (FASES.length * 3) * 100) + "%";
@@ -6071,6 +6578,23 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
       b.onclick = function () {
         var i = +b.getAttribute("data-fase"); OF.sel = i; E.destino = "oficina"; salvar(); telas(null);
         toast("📍 GPS ligado: " + esc(FASES[i].cli.nome) + " · " + esc(FASES[i].n) + (MAPA === 0 ? ". Siga a seta até o portal da <b>Zona da Bancada</b>, ao sul da R. Elis Regina." : "."));
+      };
+    });
+    desenharListaEad();
+  }
+  function desenharListaEad() {
+    var le = $("lista-ead"); if (!le || !EADM) return;
+    le.innerHTML = EADM.MISSOES.map(function (m, i) {
+      var est = EADM.estrelas(i), lib = EADM.aberta(i);
+      return '<button type="button" class="os-item' + (lib ? "" : " trancada") + (E.destino === "ead" && EADM.sel === i ? " alvo" : "") + '" data-ead="' + i + '"' + (lib ? "" : " disabled") + ">" +
+        '<span class="os-num" style="background:' + m.cor + '">' + (i + 1) + "</span>" +
+        '<span class="os-txt"><b>' + esc(m.n) + " · " + esc(m.t) + "</b><small>" + esc(m.cli.lugar) + " · " + esc(m.cli.nome) + "</small></span>" +
+        '<span class="os-est">' + (lib ? (est ? "★".repeat(est) + "☆".repeat(3 - est) : "nova") : "🔒") + "</span></button>";
+    }).join("");
+    Array.prototype.forEach.call(le.querySelectorAll("[data-ead]"), function (b) {
+      b.onclick = function () {
+        var i = +b.getAttribute("data-ead"); EADM.sel = i; E.destino = "ead"; telas(null);
+        toast("📍 GPS ligado: " + esc(EADM.MISSOES[i].cli.nome) + " · " + esc(EADM.MISSOES[i].n) + (MAPA === 1 ? ". Volte pelo portal para Santa Mônica." : ". Siga a seta até a <b>Av. Ortízio Borges</b>, no sul do bairro."));
       };
     });
   }
@@ -6394,7 +6918,7 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
     if (m.estrelas && typeof m.estrelas === "object") XP.estrelas = m.estrelas;
     if (typeof m.xpNoJogo === "number") XP.xpNoJogo = m.xpNoJogo;
     if (typeof m.xpMaximo === "number") XP.xpMax = m.xpMaximo;
-    if (typeof m.totalXp === "number") { XP.total = m.totalXp; if (OF && OF.xpTotal) OF.xpTotal(XP.total); }
+    if (typeof m.totalXp === "number") { XP.total = m.totalXp; if (OF && OF.xpTotal) OF.xpTotal(XP.total); if (EADM && EADM.xpTotal) EADM.xpTotal(XP.total); }
     if (Array.isArray(m.xpPorEstrela)) XP.porEstrela = m.xpPorEstrela;
     if (typeof m.bonusCompleto === "number") XP.bonus = m.bonusCompleto;
   }
@@ -6470,6 +6994,7 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
   function acao() {
     if (!emJogo) return;
     if (noPortal) { trocarMapa(); return; }
+    if (MAPA === 0 && pertoEad >= 0) { abrirEad(pertoEad); return; }
     if (perto < 0) return;
     if (MAPA === 1) { abrirFase(perto); return; }
     var oi = osDaCasa(perto);
@@ -6523,7 +7048,12 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
       toast("Bom trabalho, " + esc(n.split(" ")[0]) + "! Você está no <b>Bairro da Oficina</b>: siga o tapete amarelo até o primeiro cliente.");
       return;
     }
-    toast("Bom plantão, " + esc(n.split(" ")[0]) + "! Siga a seta amarela até a primeira casa." + (OF ? " A <b>Oficina</b> (Micro) fica atrás do portal da Zona da Bancada, ao sul." : ""));
+    if (EADM && /ead/.test(location.hash)) {
+      E.destino = "ead"; EADM.sel = EADM.proxima(); atualizarHud();
+      toast("Bom trabalho, " + esc(n.split(" ")[0]) + "! As <b>missões EaD</b> ficam logo ao sul do SENAI, na <b>Av. Ortízio Borges</b>. Siga a seta amarela.");
+      return;
+    }
+    toast("Bom plantão, " + esc(n.split(" ")[0]) + "! Siga a seta amarela até a primeira casa." + (OF ? " A <b>Oficina</b> (Micro) fica atrás do portal da Zona da Bancada." : "") + (EADM ? " As <b>missões EaD</b> ficam na Av. Ortízio Borges, no sul." : ""));
   };
   $("nome").addEventListener("keydown", function (ev) { if (ev.key === "Enter") $("btn-comecar").click(); });
 
@@ -6867,6 +7397,16 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
     OF.aoVoltar = function () { telas(null); atualizarHud(); };
     OF.aoXp = function (t) { if (XP.logado) { XP.total = t; desenharXp(); } };
   }
+  if (EADM) {
+    EADM.retrato = retrato;
+    EADM.toast = function (txt) { toast(txt); };
+    EADM.nome = function () { return E.nome; };
+    EADM.toque = ehToque;
+    EADM.aoMudar = function () { if (!$("t-lista").hidden) desenharLista(); atualizarHud(); desenharMinimapa(); };
+    EADM.aoVoltar = function () { E.destino = "ead"; telas(null); atualizarHud(); };
+    EADM.aoXp = function (t) { if (XP.logado) { XP.total = t; desenharXp(); } if (OF && OF.xpTotal) OF.xpTotal(t); };
+    var bcp = $("btn-comprovante"); if (bcp) bcp.onclick = function () { telas("oficina"); EADM.comprovante(); };
+  } else if ($("btn-comprovante")) $("btn-comprovante").hidden = true;
   $("nome").value = E.nome;
   E.alvo = proximaOs();
   // etapa 1: carrossel de personagens · etapa 2: orientações
@@ -6927,7 +7467,7 @@ Object.defineProperty(API,"sel",{get(){return FASE_SEL;},set(i){FASE_SEL=i;},con
   atualizarHud(); telas("t-personagem"); iniciarXp();
   requestAnimationFrame(laco);
   // para os testes automáticos
-  window.__jogo = { E: E, J: J, OS: OS, get carros() { return carros; }, mapa: function () { return MAPA; }, trocar: trocarMapa, aplicarMapa: aplicarMapa, PORTAL: PORTAL, ESTACOES: ESTACOES, abrirFase: abrirFase, perto: function () { return perto; }, caixa: caixaCarro, tile: tileDe, entrarNaCasa: entrarNaCasa, estado: function () { return C; }, portaDe: portaDe, telas: telas, mover: moverCarros, tempo: function () { return TEMPO_SEM; } };
+  window.__jogo = { E: E, J: J, OS: OS, get carros() { return carros; }, mapa: function () { return MAPA; }, trocar: trocarMapa, aplicarMapa: aplicarMapa, PORTAL: PORTAL, ESTACOES: ESTACOES, abrirFase: abrirFase, abrirEad: abrirEad, portaEad: portaEad, pertoEad: function () { return pertoEad; }, perto: function () { return perto; }, caixa: caixaCarro, tile: tileDe, entrarNaCasa: entrarNaCasa, estado: function () { return C; }, portaDe: portaDe, telas: telas, mover: moverCarros, tempo: function () { return TEMPO_SEM; } };
 })();
 
 </script>
